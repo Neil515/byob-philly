@@ -70,6 +70,16 @@
   transform: translateY(0);
 }
 
+/* 餐廳列表頁面標題和內容右邊距調整 */
+.restaurant-card h2,
+.restaurant-card .field {
+  padding-right: 140px !important;
+}
+
+.restaurant-title-line {
+  padding-right: 140px !important;
+}
+
 /* 圖片懶載入樣式 */
 .restaurant-image {
   opacity: 0;
