@@ -1,5 +1,30 @@
 <?php get_header(); ?>
 
+<style>
+/* 單一餐廳頁面標題樣式 - 覆蓋通用h1樣式 */
+.single-restaurant .restaurant-card h1 {
+  padding-right: 200px !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding-left: 0 !important;
+  text-align: left !important;
+  margin-bottom: 30px !important;
+  font-size: 3.0rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 2px !important;
+  font-family: sans-serif !important;
+  color: #333 !important;
+}
+
+/* 手機版響應式 */
+@media (max-width: 768px) {
+  .single-restaurant .restaurant-card h1 {
+    padding-right: 100px !important;
+    font-size: 2.5rem !important;
+  }
+}
+</style>
+
 <div class="restaurant-card" style="max-width: 800px; margin: auto; padding: 2em; font-family: sans-serif; position: relative;">
   <!-- 加入圖片顯示 -->
   <?php 
