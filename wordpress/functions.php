@@ -1236,8 +1236,12 @@ function byob_send_approval_notification($restaurant_id) {
                 <li>✅ 修改餐廳基本資訊</li>
                 <li>✅ 上傳餐廳照片</li>
                 <li>✅ 更新 BYOB 政策</li>
-                <li>✅ 查看瀏覽統計</li>
-                <li>✅ 回覆顧客評論</li>
+            </ul>
+            
+            <h4 style="color: #666; font-style: italic; margin-top: 20px;">🚧 即將推出的功能（敬請期待）：</h4>
+            <ul style="color: #888;">
+                <li>🔜 查看瀏覽統計</li>
+                <li>🔜 回覆顧客評論</li>
             </ul>
             
             <p><strong>邀請碼：</strong> ' . $invitation_code . '</p>
