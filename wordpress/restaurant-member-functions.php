@@ -1272,8 +1272,42 @@ function byob_member_management_page() {
     <script>
     function sendInvitation(restaurantId) {
         if (confirm('確定要發送會員邀請郵件嗎？')) {
-            // 這裡可以加入 AJAX 請求來發送邀請
-            alert('邀請郵件已發送！');
+            // 顯示載入狀態
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = '發送中...';
+            button.disabled = true;
+            
+            // 發送AJAX請求
+            fetch(ajaxurl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'action': 'byob_send_invitation',
+                    'restaurant_id': restaurantId,
+                    'nonce': '<?php echo wp_create_nonce('byob_send_invitation'); ?>'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('邀請郵件已成功發送！');
+                    // 可以選擇重新載入頁面或更新按鈕狀態
+                    location.reload();
+                } else {
+                    alert('發送失敗：' + (data.message || '未知錯誤'));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('發送失敗，請稍後再試');
+            })
+            .finally(() => {
+                button.textContent = originalText;
+                button.disabled = false;
+            });
         }
     }
     </script>
