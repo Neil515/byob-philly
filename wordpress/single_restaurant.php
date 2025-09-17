@@ -72,7 +72,11 @@
         $map_link = get_field('map_link');
 
         if (!$map_link && $address) {
-          $map_link = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($address);
+          // 清理地址：移除樓層資訊用於Google Maps搜尋
+          $clean_address = preg_replace('/(\d+樓|\d+[Ff]|\d+樓層|地下\d+樓|[Bb]\d+)/u', '', $address);
+          $clean_address = trim($clean_address);
+          
+          $map_link = 'https://www.google.com/maps/search/?api=1&query=' . urlencode($clean_address);
         }
       ?>
 
