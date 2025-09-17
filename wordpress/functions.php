@@ -564,6 +564,51 @@ function byob_init_membership_systems() {
 // 在 WordPress 初始化時載入會員系統
 add_action('init', 'byob_init_membership_systems');
 
+// 處理AJAX發送邀請請求
+add_action('wp_ajax_byob_send_invitation', 'byob_handle_send_invitation_ajax');
+
+function byob_handle_send_invitation_ajax() {
+    // 檢查nonce
+    if (!wp_verify_nonce($_POST['nonce'], 'byob_send_invitation')) {
+        wp_die('安全驗證失敗');
+    }
+    
+    // 檢查權限
+    if (!current_user_can('manage_options')) {
+        wp_die('權限不足');
+    }
+    
+    $restaurant_id = intval($_POST['restaurant_id']);
+    
+    if (!$restaurant_id) {
+        wp_send_json_error('無效的餐廳ID');
+        return;
+    }
+    
+    // 檢查餐廳是否存在
+    $restaurant = get_post($restaurant_id);
+    if (!$restaurant || $restaurant->post_type !== 'restaurant') {
+        wp_send_json_error('餐廳不存在');
+        return;
+    }
+    
+    // 檢查是否已經有會員
+    $owner_id = get_post_meta($restaurant_id, '_restaurant_owner_id', true);
+    if ($owner_id) {
+        wp_send_json_error('該餐廳已有會員註冊');
+        return;
+    }
+    
+    // 發送邀請郵件
+    $result = byob_send_approval_notification($restaurant_id);
+    
+    if ($result) {
+        wp_send_json_success('邀請郵件已成功發送');
+    } else {
+        wp_send_json_error('郵件發送失敗');
+    }
+}
+
 // 設定餐廳列表頁每頁顯示30家餐廳
 function byob_custom_restaurant_posts_per_page($query) {
     if (!is_admin() && $query->is_main_query()) {
