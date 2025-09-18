@@ -3,8 +3,8 @@
 GOOGLE_PLACES_API_KEY = "AIzaSyCzcNzweMQjo_vbspHtQcHGmWqhE2GDwjg"
 
 # 搜尋設定
-SEARCH_QUERY = "台北 熱炒"
-MAX_RESULTS = 100
+SEARCH_QUERY = "台北 義式餐廳"
+MAX_RESULTS = 200
 
 # 網格搜尋設定 - 突破60筆限制
 USE_GRID_SEARCH = True  # 啟用網格搜尋
@@ -26,10 +26,11 @@ SEARCH_CENTERS = [
     {'name': '南港區', 'lat': 25.0550, 'lng': 121.6060}   # 南港
 ]
 
+#熱炒 0,1 義式餐廳 4
 # 當前使用的中心點索引（手動調整）
-CURRENT_CENTER_INDEX = 0  # 0-11，對應上面的12個區域
+CURRENT_CENTER_INDEX = 4  # 0-11，對應上面的12個區域
 
-GRID_RADIUS = 0.03  # 搜尋半徑（度），約3公里（更精確的區域搜尋）
+GRID_RADIUS = 0.05  # 搜尋半徑（度），約5公里（更精確的區域搜尋）
 
 # 輸出設定
 OUTPUT_FILE = "restaurant_data.xlsx"
