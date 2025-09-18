@@ -24,7 +24,24 @@ python restaurant_email_search.py 您的Excel檔案.xlsx -n 5
 
 # 只處理前20家餐廳
 python restaurant_email_search.py 您的Excel檔案.xlsx -n 20
+
+
 ```
+#### **找出重複email**
+
+公式如下：假設「K2」是第一個 File1 的 email，「H:H」是 File2 的 email 欄，在「L2」輸入：
+=IF(COUNTIF(H:H, K2)>0, "重複", "")
+然後將 L2 往下拖曳，就能快速判斷 K 欄 email 是否在 H 欄出現過（即有重複）
+
+# Highlight 重複email
+選取 H 欄所有資料（例如 H2:H100）
+在功能區點「首頁」→「條件格式」→「新增規則」→「使用公式決定要設定格式的儲存格」.
+公式欄輸入：
+=COUNTIF($K:$K, H2)>0
+
+設定您想要的格式，例如底色或字體顏色。
+
+
 
 ## 📋 限制家數功能說明
 
