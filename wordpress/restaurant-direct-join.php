@@ -75,6 +75,11 @@ function byob_handle_direct_restaurant_registration($form_data) {
     if (isset($result['post_id'])) {
         update_post_meta($result['post_id'], '_restaurant_owner_id', $user_id);
         update_user_meta($user_id, '_owned_restaurant_id', $result['post_id']);
+        
+        // 手動觸發註冊通知（確保餐廳關聯已完成）
+        if (function_exists('byob_trigger_member_notification')) {
+            byob_trigger_member_notification($user_id);
+        }
     }
     
     return array(
