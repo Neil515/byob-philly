@@ -1466,6 +1466,14 @@ function byob_auto_setup_restaurant_owner($user_id) {
 add_action('user_register', 'byob_send_member_registration_notification');
 
 function byob_send_member_registration_notification($user_id) {
+    // 延遲執行，確保所有相關資料都已建立
+    wp_schedule_single_event(time() + 5, 'byob_delayed_member_notification', array($user_id));
+}
+
+// 延遲通知函數
+add_action('byob_delayed_member_notification', 'byob_send_delayed_member_notification');
+
+function byob_send_delayed_member_notification($user_id) {
     // 獲取用戶資訊
     $user = get_user_by('id', $user_id);
     if (!$user) {
@@ -1482,10 +1490,24 @@ function byob_send_member_registration_notification($user_id) {
     $restaurant = null;
     $restaurant_name = '未知餐廳';
     
+    // 記錄除錯資訊
+    error_log("BYOB: 通知函數執行 - 用戶ID: {$user_id}, 餐廳ID: {$restaurant_id}");
+    
     if ($restaurant_id) {
         $restaurant = get_post($restaurant_id);
         if ($restaurant && $restaurant->post_type === 'restaurant') {
             $restaurant_name = $restaurant->post_title;
+            error_log("BYOB: 找到餐廳 - ID: {$restaurant_id}, 名稱: {$restaurant_name}");
+        } else {
+            error_log("BYOB: 餐廳不存在或類型錯誤 - ID: {$restaurant_id}");
+        }
+    } else {
+        error_log("BYOB: 用戶沒有關聯的餐廳ID");
+        
+        // 嘗試從用戶的display_name中提取餐廳名稱
+        if (strpos($user->display_name, ' 負責人') !== false) {
+            $restaurant_name = str_replace(' 負責人', '', $user->display_name);
+            error_log("BYOB: 從display_name提取餐廳名稱: {$restaurant_name}");
         }
     }
     
@@ -1594,6 +1616,13 @@ function byob_send_member_registration_notification($user_id) {
     }
     
     return $sent;
+}
+
+// 手動觸發通知的函數（供直接加入流程使用）
+function byob_trigger_member_notification($user_id) {
+    if (function_exists('byob_send_delayed_member_notification')) {
+        byob_send_delayed_member_notification($user_id);
+    }
 }
 
 // 發送歡迎郵件給新註冊的餐廳業者
