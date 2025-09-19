@@ -56,6 +56,9 @@ function byob_handle_direct_restaurant_registration($form_data) {
         return new WP_Error('user_creation_failed', '用戶建立失敗');
     }
     
+    // 設定註冊類型標記
+    update_user_meta($user_id, '_byob_registration_type', '直接加入');
+    
     // 建立餐廳
     $restaurant_data = array(
         'restaurant_name' => $form_data['restaurant_name'],
@@ -66,6 +69,12 @@ function byob_handle_direct_restaurant_registration($form_data) {
     if (is_wp_error($result)) {
         wp_delete_user($user_id);
         return $result;
+    }
+    
+    // 關聯用戶和餐廳
+    if (isset($result['post_id'])) {
+        update_post_meta($result['post_id'], '_restaurant_owner_id', $user_id);
+        update_user_meta($user_id, '_owned_restaurant_id', $result['post_id']);
     }
     
     return array(
