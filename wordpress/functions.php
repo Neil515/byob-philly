@@ -1462,6 +1462,140 @@ function byob_auto_setup_restaurant_owner($user_id) {
     unset($_SESSION['byob_invitation_data']);
 }
 
+// 餐廳業者正式註冊通知功能
+add_action('user_register', 'byob_send_member_registration_notification');
+
+function byob_send_member_registration_notification($user_id) {
+    // 獲取用戶資訊
+    $user = get_user_by('id', $user_id);
+    if (!$user) {
+        return;
+    }
+    
+    // 檢查是否為餐廳業者
+    if (!in_array('restaurant_owner', $user->roles)) {
+        return;
+    }
+    
+    // 獲取餐廳資訊
+    $restaurant_id = get_user_meta($user_id, '_owned_restaurant_id', true);
+    $restaurant = null;
+    $restaurant_name = '未知餐廳';
+    
+    if ($restaurant_id) {
+        $restaurant = get_post($restaurant_id);
+        if ($restaurant && $restaurant->post_type === 'restaurant') {
+            $restaurant_name = $restaurant->post_title;
+        }
+    }
+    
+    // 判斷註冊方式
+    $registration_type = get_user_meta($user_id, '_byob_registration_type', true);
+    if (!$registration_type) {
+        // 檢查是否有邀請碼使用記錄
+        $invitation_data = get_post_meta($restaurant_id, '_byob_invitation_code', true);
+        if ($invitation_data && isset($invitation_data['used']) && $invitation_data['used']) {
+            $registration_type = '邀請碼註冊';
+        } else {
+            $registration_type = '直接加入';
+        }
+    }
+    
+    // 準備Email內容
+    $admin_email = 'byobmap.tw@gmail.com';
+    $subject = 'BYOB 新餐廳業者正式註冊 - ' . $restaurant_name;
+    
+    $message = '
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9f9f9;">
+        <div style="background-color: #8b2635; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+            <h1 style="margin: 0; font-size: 24px;">🍷 BYOB 新餐廳業者註冊通知</h1>
+        </div>
+        
+        <div style="background-color: white; padding: 30px; border-radius: 0 0 8px 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h2 style="color: #8b2635; margin-top: 0;">新餐廳業者已正式註冊</h2>
+            
+            <div style="background-color: #f8f9fa; padding: 20px; border-radius: 6px; margin: 20px 0;">
+                <h3 style="color: #495057; margin-top: 0;">📋 註冊資訊</h3>
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #6c757d; width: 30%;">餐廳名稱：</td>
+                        <td style="padding: 8px 0; color: #212529;">' . esc_html($restaurant_name) . '</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #6c757d;">聯絡人：</td>
+                        <td style="padding: 8px 0; color: #212529;">' . esc_html($user->display_name) . '</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #6c757d;">Email：</td>
+                        <td style="padding: 8px 0; color: #212529;">' . esc_html($user->user_email) . '</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #6c757d;">註冊方式：</td>
+                        <td style="padding: 8px 0; color: #212529;">' . esc_html($registration_type) . '</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #6c757d;">註冊時間：</td>
+                        <td style="padding: 8px 0; color: #212529;">' . date('Y-m-d H:i:s', strtotime($user->user_registered)) . '</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #6c757d;">用戶ID：</td>
+                        <td style="padding: 8px 0; color: #212529;">' . $user_id . '</td>
+                    </tr>';
+    
+    if ($restaurant_id) {
+        $message .= '
+                    <tr>
+                        <td style="padding: 8px 0; font-weight: bold; color: #6c757d;">餐廳ID：</td>
+                        <td style="padding: 8px 0; color: #212529;">' . $restaurant_id . '</td>
+                    </tr>';
+    }
+    
+    $message .= '
+                </table>
+            </div>
+            
+            <div style="background-color: #e7f3ff; padding: 15px; border-radius: 6px; border-left: 4px solid #007bff; margin: 20px 0;">
+                <h4 style="color: #0056b3; margin-top: 0;">📊 後台管理</h4>
+                <p style="margin: 5px 0; color: #0056b3;">
+                    <a href="' . admin_url('edit.php?post_type=restaurant&page=byob-member-management') . '" style="color: #007bff; text-decoration: none;">→ 前往會員管理頁面</a>
+                </p>
+                <p style="margin: 5px 0; color: #0056b3;">
+                    <a href="' . admin_url('edit.php?post_type=restaurant') . '" style="color: #007bff; text-decoration: none;">→ 前往餐廳管理頁面</a>
+                </p>
+            </div>
+            
+            <div style="background-color: #fff3cd; padding: 15px; border-radius: 6px; border-left: 4px solid #ffc107; margin: 20px 0;">
+                <h4 style="color: #856404; margin-top: 0;">⚠️ 注意事項</h4>
+                <ul style="margin: 5px 0; color: #856404; padding-left: 20px;">
+                    <li>請確認餐廳資料完整性</li>
+                    <li>檢查聯絡資訊是否正確</li>
+                    <li>必要時可主動聯絡新註冊業者</li>
+                </ul>
+            </div>
+            
+            <hr style="border: none; border-top: 1px solid #dee2e6; margin: 30px 0;">
+            
+            <p style="color: #6c757d; font-size: 14px; text-align: center; margin: 0;">
+                此郵件由 BYOB 自動化系統發送<br>
+                時間：' . current_time('Y-m-d H:i:s') . '
+            </p>
+        </div>
+    </div>';
+    
+    // 發送Email
+    $headers = array('Content-Type: text/html; charset=UTF-8');
+    $sent = wp_mail($admin_email, $subject, $message, $headers);
+    
+    // 記錄日誌
+    if ($sent) {
+        error_log("BYOB: 餐廳業者註冊通知已發送 - 用戶ID: {$user_id}, 餐廳: {$restaurant_name}, 註冊方式: {$registration_type}");
+    } else {
+        error_log("BYOB: 餐廳業者註冊通知發送失敗 - 用戶ID: {$user_id}");
+    }
+    
+    return $sent;
+}
+
 // 發送歡迎郵件給新註冊的餐廳業者
 function byob_send_welcome_email($user_id, $restaurant_id) {
     $user = get_user_by('id', $user_id);
