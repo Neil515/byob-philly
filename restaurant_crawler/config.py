@@ -3,7 +3,7 @@
 GOOGLE_PLACES_API_KEY = "AIzaSyCzcNzweMQjo_vbspHtQcHGmWqhE2GDwjg"
 
 # 搜尋設定
-SEARCH_QUERY = "台北 居酒 日本料理"
+SEARCH_QUERY = "台北 懷石料理 無菜單料理 私廚"
 MAX_RESULTS = 250
 
 # 網格搜尋設定 - 突破60筆限制
@@ -26,11 +26,11 @@ SEARCH_CENTERS = [
     {'name': '南港區', 'lat': 25.0550, 'lng': 121.6060}   # 南港
 ]
 
-#熱炒 0,1 義式餐廳 4 法式餐廳 2 居酒 日本料理 1
+#熱炒 0,1 義式餐廳 4 法式餐廳 2 居酒 日本料理 1 鐵板燒 3 懷石料理 無菜單料理 私廚 4
 # 當前使用的中心點索引（手動調整）
-CURRENT_CENTER_INDEX = 1  # 0-11，對應上面的12個區域
+CURRENT_CENTER_INDEX = 3  # 0-11，對應上面的12個區域
 
-GRID_RADIUS = 0.06  # 搜尋半徑（度），約5公里
+GRID_RADIUS = 0.05  # 搜尋半徑（度），約5公里
 
 # 輸出設定
 OUTPUT_FILE = "restaurant_data.xlsx"
