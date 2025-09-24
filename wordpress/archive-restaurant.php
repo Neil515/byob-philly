@@ -117,6 +117,33 @@
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* 餐廳卡片行距優化 */
+.restaurant-card .field {
+  line-height: 1.6 !important;
+  margin-bottom: 8px !important;
+}
+
+.restaurant-card .info-group {
+  margin-bottom: 15px !important;
+}
+
+.restaurant-card .acf-fields {
+  line-height: 1.5 !important;
+}
+
+/* 餐廳標題行距 */
+.restaurant-card h2 {
+  line-height: 1.4 !important;
+  margin-bottom: 15px !important;
+}
+
+/* 更多詳情按鈕間距 */
+.more-details-btn {
+  margin-top: 20px !important;
+  padding-top: 15px !important;
+  border-top: 1px solid #eee !important;
+}
 </style>
 <div class="page-header">
   <h1 class="page-title">所有餐廳列表</h1>
@@ -442,8 +469,13 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
 
         <div class="info-group other-info">
-          <?php if(get_field('notes')): ?>
-            <div class="field"><strong>備註說明：</strong><?php the_field('notes'); ?> 📝</div>
+          <?php 
+          $notes = get_field('notes');
+          if($notes): 
+            // 限制備註說明在列表頁面只顯示前100個字元
+            $truncated_notes = mb_strlen($notes) > 100 ? mb_substr($notes, 0, 100) . '...' : $notes;
+          ?>
+            <div class="field"><strong>備註說明：</strong><?php echo esc_html($truncated_notes); ?> 📝</div>
           <?php else: ?>
             <div class="field"><strong>備註說明：</strong></div>
           <?php endif; ?>
