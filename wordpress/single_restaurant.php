@@ -23,6 +23,33 @@
     font-size: 2.5rem !important;
   }
 }
+
+/* 單一餐廳頁面行距優化 */
+.single-restaurant .field {
+  line-height: 1.6 !important;
+  margin-bottom: 10px !important;
+}
+
+.single-restaurant .info-group {
+  margin-bottom: 20px !important;
+}
+
+.single-restaurant .acf-fields {
+  line-height: 1.5 !important;
+}
+
+/* 單一餐廳頁面標題行距 */
+.single-restaurant .restaurant-card h1 {
+  line-height: 1.3 !important;
+  margin-bottom: 25px !important;
+}
+
+/* 底部操作按鈕間距 */
+.single-page-actions {
+  margin-top: 30px !important;
+  padding-top: 20px !important;
+  border-top: 2px solid #eee !important;
+}
 </style>
 
 <div class="restaurant-card" style="max-width: 800px; margin: auto; padding: 2em; font-family: sans-serif; position: relative;">
