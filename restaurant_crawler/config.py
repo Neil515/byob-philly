@@ -3,7 +3,7 @@
 GOOGLE_PLACES_API_KEY = "AIzaSyCzcNzweMQjo_vbspHtQcHGmWqhE2GDwjg"
 
 # 搜尋設定
-SEARCH_QUERY = "台北 中式餐廳 川菜 粵菜"
+SEARCH_QUERY = "台北 火鍋 羊肉爐 薑母鴨"
 MAX_RESULTS = 300
 
 # 網格搜尋設定 - 突破60筆限制
@@ -26,7 +26,7 @@ SEARCH_CENTERS = [
     {'name': '南港區', 'lat': 25.0550, 'lng': 121.6060}   # 南港
 ]
 
-#熱炒 0,1 義式餐廳 4 法式餐廳 2 居酒 日本料理 1 鐵板燒 3 懷石料理 無菜單料理 私廚 4 中式餐廳 川菜 粵菜 2,7
+#熱炒 0,1 義式餐廳 4 法式餐廳 2 居酒 日本料理 1 鐵板燒 3 懷石料理 無菜單料理 私廚 4 中式餐廳 川菜 粵菜 2,7 美式餐廳 2,7 韓式料理 泰式料理 4, 7 台北 小酒館 Bistro 4,7 火鍋 羊肉爐 薑母鴨 4,7
 # 當前使用的中心點索引（手動調整）
 CURRENT_CENTER_INDEX = 7  # 0-11，對應上面的12個區域
 
