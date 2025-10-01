@@ -1,58 +1,177 @@
-# BYOB 專案開發進度記錄（更新版）
+# BYOB 專案開發進度記錄
 
 ## 📅 專案概覽
 
 * **專案名稱**：BYOB (Bring Your Own Bottle) 餐廳平台
-* **目前階段**：顧客推薦表單系統建立完成，進入欄位映射修正階段
+* **目前階段**：顧客推薦表單系統核心功能已完成，進入功能優化階段
 * **核心功能**：餐廳資料管理、BYOB 服務設定、前台展示、SEO、社群與短影音行銷、自動化資料收集、Email/通知系統、顧客推薦表單系統
-* **技術架構**：WordPress + ACF + WooCommerce + Rank Math SEO + Google Places API + SendGrid + Google Apps Script + 爬蟲（Grid Search）+ 顧客推薦表單系統
+* **技術架構**：WordPress + ACF + WooCommerce + Google Places API + Google Apps Script + 顧客推薦表單系統
+
+---
+
+## ✅ 2025年10月1日 — 顧客推薦表單欄位映射修正完成
+
+### 🎯 今日目標
+修正顧客推薦表單的欄位映射錯誤，確保推薦者資料正確儲存到專用 ACF 欄位。
+
+### 已完成項目
+
+* [x] **問題診斷與根源分析**
+  * 發現問題：推薦者資料錯誤地存入餐廳聯絡人欄位
+  * 根源分析：Apps Script 錯誤覆寫邏輯 + functions.php 必填欄位限制
+  * 確認解決方案：簡化必填欄位 + 修正資料映射
+
+* [x] **修正 functions.php（4 處修改）**
+  * 將 5 個欄位改為非必填（contact_person、email、restaurant_type、district、phone）
+  * 新增 3 個 API 參數（customer_recommender_name、customer_recommender_email、source）
+  * 在參數映射表中加入推薦者欄位映射
+  * 在資料轉換中加入推薦者欄位處理
+  * 修正 `byob_create_restaurant_article` 必填欄位檢查（只保留 3 個核心欄位）
+  * 修正 `byob_create_restaurant_post` 必填參數檢查（只保留 3 個核心欄位）
+  * ACF 欄位更新加入 customer_recommender_name 和 customer_recommender_email
+  * 優化 source 欄位邏輯（優先使用傳入的 source 值）
+
+* [x] **修正 Apps Script - 顧客推薦版.js（2 處修改）**
+  * 刪除錯誤的覆寫邏輯（將推薦者資料複製到 contact_person 和 email）
+  * 改用空字串作為預設值（不使用誤導性的「待確認」、「pending@byob.com」）
+  * 正確保留 customer_recommender_name 和 customer_recommender_email 的原始值
+  * 新增 source 欄位標記為 'customer_recommendation'
+  * 更新必填欄位檢查（只檢查 3 個核心欄位）
+
+* [x] **測試與驗證**
+  * 提交測試表單（餐廳：牛肉麵，推薦者：NeilHH）
+  * 驗證推薦者資料正確顯示在 customer_recommender_name 和 customer_recommender_email
+  * 驗證 contact_person 和 email 為空字串（不是預設值）
+  * 驗證 source 欄位標記為 'customer_recommendation'
+  * 驗證餐廳類型「排除法」處理正常（日式, Buffet, 其他 + 海鮮說明）
+
+### 技術實現細節
+
+**問題根源：**
+```
+原因：functions.php 要求 contact_person 和 email 必填
+      ↓
+應急方案：Apps Script 將推薦者資料複製到這些欄位
+      ↓
+結果：推薦者資料覆寫了餐廳聯絡人欄位
+```
+
+**解決方案：**
+```
+1. functions.php：簡化必填欄位為 3 個核心欄位
+2. functions.php：新增推薦者欄位的 API 參數和映射
+3. Apps Script：改用空字串預設值，不覆寫推薦者欄位
+4. 結果：推薦者資料正確存入專用欄位，餐廳聯絡資料為空
+```
+
+**核心必填欄位（最終版）：**
+* `restaurant_name`：餐廳名稱
+* `address`：餐廳地址
+* `is_charged`：開瓶費政策
+
+**推薦者專用欄位（已正確實作）：**
+* `customer_recommender_name`：推薦者姓名
+* `customer_recommender_email`：推薦者 Email
+* `source`：資料來源（'customer_recommendation'）
+
+**測試結果（成功）：**
+```json
+{
+  "restaurant_name": "牛肉麵",
+  "address": "台北市中山區中山北路二段100號",
+  "is_charged": "其他",
+  "customer_recommender_name": "NeilHH",
+  "customer_recommender_email": "wavyclub21@gmail.com",
+  "source": "customer_recommendation",
+  "contact_person": "",
+  "email": "",
+  "district": ""
+}
+```
 
 ---
 
 ## ✅ 2025年9月30日 — 顧客推薦表單系統建立完成
 
-### 🎯 今日目標
-建立完整的顧客推薦表單系統，實現「雙軌制」策略中的顧客端收集功能。
-
 ### 已完成項目
 
-* [x] **建立顧客推薦 Google 表單**
-  * 設計 11 個欄位的表單結構
-  * 包含餐廳資訊、開瓶費條件、推薦者聯絡方式
-  * 支援條件式顯示邏輯（開瓶費相關欄位）
-  * 餐廳類型多選，支援「其他」選項
+* [x] **建立顧客推薦 Google 表單**：11 個欄位，支援條件式顯示
+* [x] **建立 Google Apps Script 處理程式**：基於純淨版結構，動態欄位映射
+* [x] **整合 WordPress REST API**：成功建立餐廳草稿文章
+* [x] **新增 ACF 欄位**：customer_recommender_name、customer_recommender_email
 
-* [x] **建立 Google Apps Script 處理程式**
-  * 基於純淨版結構，確保穩定性
-  * 支援「欄位設定表」工作表動態映射
-  * 實現條件式欄位處理（開瓶費邏輯）
-  * 餐廳類型「排除法」識別「其他」內容
-  * 全形轉半形函數處理
+### 技術實現
 
-* [x] **建立「欄位設定表」工作表**
-  * 實現 WordPress ACF 欄位與表單欄位的動態映射
-  * 支援欄位名稱變更而不需修改程式碼
-  * 包含所有必要欄位的對應關係
+* Apps Script 基於純淨版結構，使用「欄位設定表」工作表
+* 餐廳類型「排除法」識別「其他」內容
+* 開瓶費條件式邏輯處理
+* 全形轉半形函數確保標題匹配
 
-* [x] **整合 WordPress REST API**
-  * 成功建立餐廳草稿文章
-  * 修正 API 端點問題（從 `/customer-recommendation` 改為 `/restaurant`）
-  * 補上必填欄位預設值（`contact_person`、`email`、`district`、`phone`）
+---
 
-* [x] **新增 ACF 欄位**
-  * `customer_recommender_name`：推薦者姓名
-  * `customer_recommender_email`：推薦者 Email
-  * 確保顧客推薦資料與餐廳業者資料分離
+## 🔄 策略調整 — 「顧客/餐廳雙軌制」
 
-* [x] **修正必填欄位問題**
-  * 補上 WordPress API 需要的必填欄位
-  * 使用預設值處理顧客推薦時無法提供的資訊
-  * 確保表單提交不會因缺少必填欄位而失敗
+**決議日期**：2025-09-28
 
-### 技術實現細節
+### 雙軌描述
+
+* **顧客軌（收集驅動）**：
+  * 「爆料 BYOB 餐廳」表單 + 抽獎誘因 + 社群排行榜
+  * 來源標記：`source=customer_recommendation`
+  * 每週公布新增名單，建立參與回饋
+
+* **餐廳軌（低摩擦轉化）**：
+  * 先收錄精簡卡片 → 通知店家「已免費上架」→ 引導一鍵補資料
+  * 來源標記：`source=google_form | direct`
+  * 追蹤：補資料轉化率、回覆時長
+
+### 成功指標（首週）
+
+* 顧客端：提交 ≥ 50 筆、表單完成率 ≥ 60%、社群 CTR ≥ 2%
+* 餐廳端：先收錄 100 家覆核完成、通知開啟率 ≥ 25%、補資料轉化 ≥ 15%
+
+---
+
+## 📊 專案整體進度（截至 2025-10-01）
+
+### 已完成里程碑
+
+* ✅ **顧客推薦表單系統**（核心功能完整）
+  * Google 表單建立與 Apps Script 處理
+  * WordPress REST API 整合
+  * 推薦者資料正確儲存
+  * 欄位映射問題完全修正
+
+* ✅ **餐廳業者表單系統**（純淨版）
+  * 動態欄位映射機制
+  * 餐廳類型「其他」欄位處理
+  * 開瓶費條件式邏輯
+
+* ✅ **WordPress 架構優化**
+  * 必填欄位簡化為 3 個核心欄位
+  * 支援多種資料來源標記
+  * ACF 欄位動態映射
+
+### 進行中
+
+* 🔄 酒器設備「其他」欄位處理（待實作）
+* 🔄 推薦成功通知系統（規劃中）
+* 🔄 表單自動回覆系統（規劃中）
+
+### 待開發
+
+* ⏳ 重複餐廳檢查機制
+* ⏳ 社群推廣素材製作
+* ⏳ 抽獎活動系統
+* ⏳ KPI 追蹤儀表板
+
+---
+
+## 📝 技術筆記
+
+### 顧客推薦表單系統架構（已完成）
 
 **表單欄位設計：**
-```
 1. 餐廳名稱（必填）
 2. 餐廳類型（選填，多選）
 3. 餐廳地址（必填）
@@ -62,278 +181,223 @@
 7. 開瓶費說明（條件顯示）
 8. 酒器設備（選填，多選）
 9. 餐廳特色（選填）
-10. 您的姓名或暱稱（選填）
-11. 聯絡Email（選填）
+10. 推薦者姓名（選填）
+11. 推薦者 Email（選填）
+
+**欄位映射機制：**
+```
+Google 表單欄位 → 欄位設定表 → Apps Script 解析 → WordPress API → ACF 欄位
 ```
 
-**Apps Script 程式架構：**
-```javascript
-// 主要函數
-function onCustomerFormSubmit(e) { ... }
+**核心必填欄位（Final）：**
+* `restaurant_name`：餐廳名稱
+* `address`：餐廳地址
+* `is_charged`：開瓶費政策
 
-// 解析函數（基於純淨版結構）
-function parseCustomerFormData() { ... }
+**推薦者專用欄位：**
+* `customer_recommender_name`：推薦者姓名
+* `customer_recommender_email`：推薦者 Email
+* `source`：資料來源標記（'customer_recommendation'）
 
-// 全形轉半形函數
-function toHalfWidth(str) { ... }
-
-// WordPress API 發送函數
-function sendToCustomerWordPress(data) { ... }
-
-// 通知函數
-function sendCustomerNotificationEmail(data, result) { ... }
-function sendErrorNotification(error) { ... }
-```
-
-**欄位設定表結構：**
-```
-WordPress 欄位 | 表單欄位名稱
-restaurant_type | 餐廳類型 (選填)
-address | 餐廳地址(必填)
-phone | 餐廳電話(選填)
-is_charged | 開瓶費(必填)
-corkage_fee_amount | 開瓶費金額
-corkage_fee_note | 開瓶費說明
-equipment | 酒器設備(選填)
-notes | 餐廳特色(選填)
-customer_recommender_name | 您的姓名或暱稱
-customer_recommender_email | 聯絡Email
-```
-
-### 待修正問題
-
-**欄位映射錯誤：**
-* 推薦人 Email 出現在原有 `email` 欄位，而 `customer_recommender_email` 欄位空白
-* 推薦人名稱出現在 `contact_person`，而 `customer_recommender_name` 欄位空白
-* 需要修正 Apps Script 資料發送邏輯，確保正確的欄位對應
-
-### 測試結果
-
-* ✅ 表單提交成功，建立餐廳草稿文章
-* ✅ 欄位解析正確，支援條件式邏輯
-* ✅ 餐廳類型「排除法」處理正常
-* ✅ 必填欄位檢查通過
-* ❌ ACF 欄位映射錯誤，需要修正
+**「排除法」識別機制（已實作）：**
+* 餐廳類型：已知類型列表比對，未知類型自動歸類為「其他」並記錄說明
+* 開瓶費：支援「不收費」、「酌收」、「其他」三種選項
+* 酒器設備：待實作（明日任務）
 
 ---
 
-## ✅ 2025年9月29日 — 實作日成果（短影音製作 + 串燒餐廳爬取）
+## 🧭 明日（10/2）行動清單
 
-### 🎬 短影音製作（完成）
+### 優先級 1：酒器設備「其他」欄位處理
 
-**今日目標**：完成 1–2 支 30–45 秒素材，用於後續社群發佈與顧客招募引流（9/30 版將加入顧客爆料 CTA 的改版）。
+**實作步驟：**
+1. 新增 ACF 欄位：`equipment_other_note`
+2. 修改 Apps Script：加入「排除法」識別邏輯
+3. 修改 functions.php：API 參數和映射處理
+4. 測試驗證
 
-**已完成項目**
+### 優先級 2：推薦成功通知準備
 
-* [x] 最終腳本確認（從既有 6 個腳本挑選 1–2 個，今日版不含顧客爆料 CTA）
-* [x] 拍攝準備（場地、道具、設備、燈光、服裝）
-* [x] 主鏡頭拍攝（多角度/多 take）
-* [x] B-roll 補拍（菜色、環境、酒杯手部特寫）
-* [x] 初剪完成（節奏與段落）
-* [x] 字幕與版面設計（大字標、重點詞）
-* [x] 音樂挑選與音量平衡
-* [x] 色彩/亮度微調
-
-**輸出規格**
-
-* 解析度：1080x1920（9:16）
-* 時長：30–45 秒
-* 格式：MP4（H.264 + AAC）
-* 版本：V1（不含 CTA）、V1.1（留白位可插入 CTA 字卡）
-
-**待上架素材**（供 9/30 改版與上線）
-
-* 🎥 影片母檔（V1/V1.1）
-* 🎞 封面 3 款草案（含標題版）
-* 📝 字幕 .srt / 文案草案（標題、Hashtag、Description）
+**規劃步驟：**
+1. 設計 Email 模板（感謝推薦 + 餐廳連結 + 繼續推薦 CTA）
+2. 規劃觸發邏輯（餐廳發布時檢查 source）
+3. 準備實作方案文檔
+4. 設計防重複發送機制
 
 ---
 
-### 🍢 串燒餐廳爬取（完成）
+## 📁 核心檔案
 
-**今日目標**：擴充台北市「串燒/燒烤/居酒屋/日式燒烤」店家名單，為後續先收錄與通知打基礎。
-
-**已完成項目**
-
-* [x] 關鍵字設定：串燒、燒烤、居酒屋、日式燒烤
-* [x] 搜尋範圍：台北市多中心點網格搜尋已啟用
-* [x] 參數與過濾：restaurant/food/establishment；去重規則（name+address+phone）
-* [x] 執行與監控：紀錄查詢配額與錯誤重試
-* [x] 資料清理：移除重複/關閉店家/資訊不足者
-* [x] 欄位補強：嘗試補齊電話、營業時段、類型標籤
-* [x] 匯出：Excel/CSV（供「先收錄」流程使用）
-
-**欄位結構（爬取表）**
-
-```
-place_id, name, address, district, lat, lng,
-phone, opening_hours, rating, user_ratings_total,
-categories, price_level, website, google_maps_url,
-source=places_api, dedupe_key, fetched_at
-```
-
-**品質控制**
-
-* 去重策略：`lower(name) + normalized(address) + digits(phone)`
-* 狀態標記：`status = valid | duplicate | closed | incomplete`
-* 補充任務：對 `incomplete` 逐步補齊電話/時段/類型
-
-**產出**
-
-* 📦 `exports/2025-09-29_taipei_yakitori.xlsx`
-* 🗒 `logs/2025-09-29_search_log.json`（查詢記錄與斷點）
-
-> 備註：實際筆數與錯誤碼統計留存於 logs；若需我可明日回填統計表與可視化（直方圖/熱點地圖）。
-
----
-
-## 🔄 策略調整 — 「顧客/餐廳雙軌制」
-
-**決議日期**：2025-09-29（實施自 2025-09-30 起）
-
-### 為何調整
-
-* 僅從餐廳端推進回覆慢、摩擦高；Email 觸及與 CTA 點擊受限。
-* 顧客端具天然動機：分享與索取名單；形成社群內容與口碑循環。
-
-### 雙軌描述
-
-* **顧客軌（收集驅動）**：
-
-  * 「爆料 BYOB 餐廳」表單 + 抽獎誘因 + 社群排行榜
-  * 來源標記：`source=customer_tip`；驗證流程：`verify_status=pending/verified/declined`
-  * 每週公布新增名單，建立參與回饋
-* **餐廳軌（低摩擦轉化）**：
-
-  * 先收錄精簡卡片 → 通知店家「已免費上架」→ 引導一鍵補資料
-  * 來源標記：`source=auto_listed | partner_signup`
-  * 追蹤：補資料轉化率、回覆時長、同意政策紀錄
-
-### 9/30 啟動清單（摘要）
-
-* 建立顧客表單（問題：店名/地點/BYOB條件/特色/暱稱/聯絡方式；圖片可選）
-* 啟用自動回覆（感謝信＋抽獎規則）並串接到 Google Sheet/Airtable
-* 發布社群素材（Reels/貼文/Story 投票）與表單入口
-* 依 9/29 爬取結果建立 30 家「先收錄」並寄出通知
-
-### 成功指標（首週）
-
-* 顧客端：提交 ≥ 50 筆、表單完成率 ≥ 60%、社群 CTR ≥ 2%
-* 餐廳端：先收錄 100 家覆核完成、通知開啟率 ≥ 25%、補資料轉化 ≥ 15%
-
----
-
-## 📊 專案整體進度（截至 2025-09-30）
-
-### 新增已完成里程碑（今日）
-
-* ✅ 顧客推薦表單系統建立完成
-* ✅ Google Apps Script 處理程式完成
-* ✅ 「欄位設定表」工作表建立
-* ✅ WordPress REST API 整合完成
-* ✅ ACF 欄位新增完成
-* ✅ 必填欄位問題修正完成
-
-### 進行中
-
-* 🔄 顧客推薦表單欄位映射修正
-* 🔄 表單使用者體驗優化
-* 🔄 自動回覆系統設定
-
-### 待辦（明日優先）
-
-* ⏳ 修正 Apps Script 資料發送邏輯
-* ⏳ 驗證 ACF 欄位正確填入
-* ⏳ 測試表單提交完整流程
-* ⏳ 建立資料驗證機制
-
----
-
-## 📝 今日技術/流程筆記（9/30）
-
-### 顧客推薦表單系統技術筆記
-
-* **Apps Script 架構**：基於純淨版結構，確保穩定性與一致性
-* **欄位映射機制**：使用「欄位設定表」工作表實現動態映射，支援欄位名稱變更
-* **條件式欄位處理**：開瓶費邏輯支援「不收費」、「酌收」、「其他」三種情況
-* **餐廳類型處理**：使用「排除法」識別「其他」內容，自動分類已知/未知類型
-* **全形轉半形**：確保表單標題與程式碼查找的一致性
-* **必填欄位處理**：補上 WordPress API 需要的必填欄位，使用預設值
-
-### 待修正技術問題
-
-* **欄位映射錯誤**：推薦人資料出現在錯誤的 ACF 欄位
-* **資料發送邏輯**：需要修正 Apps Script 發送到 WordPress 的資料格式
-* **ACF 欄位對應**：確保 `customer_recommender_name` 和 `customer_recommender_email` 正確填入
-
-### 9/29 技術筆記（保留）
-
-* 影片字幕字體：中文黑體粗 72pt（行高 120%），關鍵字加背景條
-* 音量準則：背景樂 -18 LUFS，語音 -14 至 -16 LUFS（避免社群壓縮爆音）
-* 版型保留 1.0s CTA 空窗，便於 9/30 插入「爆料表單」連結字卡
-* 爬蟲重試策略：`429/5xx` 指數退避（最大 5 次），記錄 `backoff_ms`
-* 去重鍵正規化規則：
-
-  * `name`: 移除空白/全半形/特殊符號；
-  * `address`: 中文數字統一、路段與巷弄格式化；
-  * `phone`: 僅保留數字與區碼
-
----
-
-## 📁 成果檔案（今日）
-
-### 9/30 顧客推薦表單系統檔案
-
+### WordPress 檔案
+* `wordpress/functions.php`：REST API 端點和 ACF 欄位處理
 * `wordpress/Apps script - 顧客推薦版.js`：顧客推薦表單處理程式
+* `wordpress/Apps script - 純淨版.js`：餐廳業者表單處理程式
+
+### 文檔檔案
+* `doc/Next Task Prompt Byob.md`：工作規劃與任務追蹤
+* `doc/ai_progress_byob.md`：開發進度詳細記錄
+* `doc/message_and_form/`：Email 模板資料夾
+
+### 爬蟲檔案
+* `restaurant_crawler/restaurant_crawler.py`：Google Places API 爬蟲程式
+* `restaurant_crawler/restaurant_crawler_gui_chinese.py`：GUI 版本爬蟲
+
+---
+
+## 📌 10月1日技術問題解決記錄
+
+### 問題 1：推薦者資料出現在錯誤的 ACF 欄位
+
+**現象：**
+* 推薦者姓名出現在 `contact_person` 欄位
+* 推薦者 Email 出現在 `email` 欄位
+* `customer_recommender_name` 和 `customer_recommender_email` 欄位空白
+
+**根本原因：**
+* functions.php 要求 contact_person 和 email 必填
+* Apps Script 為了通過驗證，將推薦者資料複製到這些欄位
+* 導致推薦者資料覆寫了餐廳聯絡人欄位
+
+**解決方案：**
+1. functions.php 簡化必填欄位為 3 個核心欄位（restaurant_name, address, is_charged）
+2. functions.php 新增推薦者欄位的 API 參數映射和處理
+3. Apps Script 改用空字串預設值，不覆寫推薦者欄位
+4. 所有非核心欄位加上 `?? ''` 保護
+
+### 問題 2：functions.php 兩處必填檢查不一致
+
+**現象：**
+* 修改了 `byob_create_restaurant_article` 的必填檢查
+* 但 `byob_create_restaurant_post` 仍檢查 8 個必填參數
+* 導致 API 請求被拒絕（400 錯誤）
+
+**解決方案：**
+* 修正 `byob_create_restaurant_post` 函數（第 370-382 行）
+* 統一兩處必填檢查邏輯，都只檢查 3 個核心欄位
+
+### 修改檔案清單
+
+1. **wordpress/functions.php**（6 處修改）
+   * 第 18-33 行：API 參數必填設定（5 個欄位改為 false）
+   * 第 82-93 行：新增推薦者專用 API 參數
+   * 第 157-169 行：修正共用函數必填欄位檢查
+   * 第 252-272 行：ACF 更新加入推薦者欄位
+   * 第 354-356 行：參數映射加入推薦者欄位
+   * 第 370-383 行：修正 API 函數必填參數檢查
+   * 第 408-410 行：資料轉換加入推薦者欄位
+
+2. **wordpress/Apps script - 顧客推薦版.js**（2 處修改）
+   * 第 190-197 行：修正預設值邏輯，不覆寫推薦者欄位
+   * 第 201-217 行：更新必填欄位檢查
+
+### 測試驗證結果
+
+**測試資料：**
+* 餐廳名稱：牛肉麵
+* 餐廳類型：日式, Buffet, 海鮮（自動識別為「其他」）
+* 推薦者：NeilHH (wavyclub21@gmail.com)
+
+**驗證結果：**
+* ✅ 推薦者姓名正確顯示在 `customer_recommender_name` 欄位
+* ✅ 推薦者 Email 正確顯示在 `customer_recommender_email` 欄位
+* ✅ `contact_person` 欄位為空白（不是「待確認」）
+* ✅ `email` 欄位為空白（不是「pending@byob.com」）
+* ✅ `source` 欄位顯示 'customer_recommendation'
+* ✅ 餐廳類型「排除法」正常運作（海鮮 → 其他說明）
+
+---
+
+## 🧭 明日（10/2）行動清單
+
+### 優先級 1：酒器設備「其他」欄位處理
+
+**目標：** 支援顧客在選擇「其他」酒器設備時輸入詳細說明
+
+**實作步驟：**
+1. 新增 ACF 欄位：`equipment_other_note`（酒器設備其他說明）
+2. 修改 Apps Script 加入「排除法」識別邏輯（類似餐廳類型處理）
+3. 修改 functions.php 加入 `equipment_other_note` 參數映射和 ACF 更新
+4. 測試驗證
+
+**已知酒器設備清單：**
+```javascript
+['酒杯', '開瓶器', '冰桶', '醒酒器', '酒架', '保溫袋']
+```
+
+### 優先級 2：推薦成功通知準備
+
+**目標：** 當顧客推薦的餐廳通過審核並上架後，自動發送感謝通知給推薦者
+
+**規劃步驟：**
+1. 設計 Email 模板
+   * 感謝推薦者的貢獻
+   * 告知餐廳已成功上架
+   * 提供餐廳頁面連結
+   * 邀請繼續推薦其他餐廳
+   * 說明抽獎資格（如有）
+
+2. 規劃觸發邏輯
+   * Hook：`transition_post_status`（餐廳發布時）
+   * 檢查：source = 'customer_recommendation'
+   * 檢查：customer_recommender_email 不為空
+   * 防重複：post meta `_byob_recommender_notified`
+
+3. 準備實作方案
+   * 建立 `byob_send_recommender_notification` 函數
+   * 參考現有的 `byob_send_approval_notification` 結構
+   * 建立錯誤處理和日誌記錄
+
+---
+
+## 📌 待解決問題清單
+
+### 技術問題
+
+* ⏳ **酒器設備「其他」欄位**：需要 ACF 欄位和識別邏輯
+* ⏳ **推薦成功通知**：需要 Email 模板和觸發機制
+* ⏳ **重複餐廳檢查**：避免同一餐廳被重複推薦
+* ⏳ **表單自動回覆**：推薦者提交後立即收到感謝信
+
+### 行銷問題
+
+* ⏳ **社群推廣素材**：IG Reels、貼文、Story 投票
+* ⏳ **抽獎活動規則**：獎品、頻率、公告方式
+* ⏳ **KPI 追蹤系統**：提交數、完成率、CTR 監控
+
+---
+
+## 🎯 短期目標（10月第一週）
+
+### 技術開發
+- [ ] 完成酒器設備「其他」欄位處理
+- [ ] 實作推薦成功通知功能
+- [ ] 建立表單自動回覆系統
+- [ ] 設計重複餐廳檢查機制
+
+### 內容準備
+- [ ] 設計推薦成功通知 Email 模板
+- [ ] 準備表單自動回覆內容
+- [ ] 準備社群推廣素材（IG Reels、貼文）
+- [ ] 設計抽獎活動規則
+
+### 測試驗證
+- [ ] 完整流程測試（表單 → 審核 → 通知）
+- [ ] Email 發送測試
+- [ ] 資料完整性驗證
+
+---
+
+## 📖 參考文檔
+
+### 技術文檔
+* `wordpress/Apps script - 顧客推薦版.js`：顧客推薦表單處理程式
+* `wordpress/Apps script - 純淨版.js`：餐廳業者表單處理程式
 * `wordpress/functions.php`：WordPress REST API 端點和 ACF 欄位處理
-* 顧客推薦 Google 表單：包含 11 個欄位的表單結構
-* 「欄位設定表」工作表：動態欄位映射設定
 
-### 9/29 成果檔案（保留）
+### 規劃文檔
+* `doc/Next Task Prompt Byob.md`：工作規劃與任務追蹤
+* `doc/ai_progress_byob.md`：開發進度詳細記錄
 
-* `exports/2025-09-29_taipei_yakitori.xlsx`
-* `logs/2025-09-29_search_log.json`
-* `videos/V1_main.mp4`, `videos/V1_1_with-cta-slot.mp4`
-* `videos/captions/beta_zh-TW.srt`
-* `videos/covers/cover_a.jpg`, `cover_b.jpg`, `cover_c.jpg`
-* `social/copy/reels_caption_draft.txt`
-
-> 如需我將以上檔名對應你實際資料夾結構，明日可同步一次並補上連結與版本號。
-
----
-
-## 📌 風險與對策（短期）
-
-### 顧客推薦表單系統風險
-
-* **欄位映射錯誤** → 修正 Apps Script 資料發送邏輯，確保正確的 ACF 欄位對應
-* **表單冷啟動量不足** → 以短影音 + Story 投票多入口引流；投放小額廣告測試 CTA
-* **名單品質參差** → 驗證欄位與上傳截圖；設 `verify_status` 與審核備註
-* **餐廳端回覆慢** → 先收錄降低摩擦；通知模板清楚說明好處與 1 分鐘補資料流程
-
----
-
-## 🧭 明日（10/1）行動清單（Sprint）
-
-### 優先級 1：修正顧客推薦表單欄位映射
-
-1. **分析 WordPress API 處理邏輯**
-   * 檢查 `byob_create_restaurant_post` 函數的參數處理
-   * 分析 ACF 欄位更新邏輯
-   * 確認 `customer_recommender_name` 和 `customer_recommender_email` 欄位處理
-
-2. **修正 Apps Script 資料發送**
-   * 檢查 `sendToCustomerWordPress` 函數的資料格式
-   * 修正欄位映射，確保正確的欄位名稱傳送
-   * 測試修正後的資料格式
-
-3. **測試與驗證**
-   * 提交測試表單資料
-   * 檢查 WordPress 後台草稿文章
-   * 驗證 ACF 欄位是否正確填入
-
-### 優先級 2：表單優化準備
-
-4. 優化表單使用者體驗（問題順序、說明文字）
-5. 建立資料驗證機制（重複餐廳檢查）
-6. 準備社群推廣素材
+### Email 模板
+* `doc/message_and_form/byob_invitation_friendly.txt`：餐廳邀約 Email 模板
+* `doc/message_and_form/byob_invitation_formal.txt`：餐廳邀約正式版模板
