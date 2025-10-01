@@ -187,16 +187,19 @@ function parseCustomerFormData() {
       parsedData['restaurant_name'] = String(lastFormRow[restaurantNameIndex] || '').trim();
     }
     
-    // 補上 WordPress API 需要的必填欄位（顧客推薦專用）
-    parsedData['contact_person'] = parsedData['customer_recommender_name'] || '顧客推薦';
-    parsedData['email'] = parsedData['customer_recommender_email'] || 'customer@byob.com';
-    parsedData['district'] = '未知'; // 顧客推薦時無法確定行政區
-    parsedData['phone'] = parsedData['phone'] || '未提供'; // 確保 phone 欄位不為空
+    // 補上顧客推薦時的預設值（不覆寫推薦者欄位）
+    // 使用空字串作為預設值，因為 WordPress 端已不要求這些欄位必填
+    parsedData['contact_person'] = parsedData['contact_person'] || '';
+    parsedData['email'] = parsedData['email'] || '';
+    parsedData['district'] = parsedData['district'] || '';
+    parsedData['phone'] = parsedData['phone'] || '';
+    parsedData['source'] = 'customer_recommendation'; // 標記為顧客推薦來源
+    // customer_recommender_name 和 customer_recommender_email 保持原本解析的值，不覆寫
     
     Logger.log('最終解析結果:');
     Logger.log(JSON.stringify(parsedData, null, 2));
     
-    // 檢查必填欄位
+    // 檢查核心必填欄位（只檢查 3 個絕對必要的欄位）
     var requiredFields = ['restaurant_name', 'address', 'is_charged'];
     var missingFields = [];
     
@@ -208,10 +211,10 @@ function parseCustomerFormData() {
     }
     
     if (missingFields.length > 0) {
-      Logger.log('❌ 缺少必填欄位: ' + missingFields.join(', '));
-      throw new Error('缺少必填欄位: ' + missingFields.join(', '));
+      Logger.log('❌ 缺少核心必填欄位: ' + missingFields.join(', '));
+      throw new Error('缺少核心必填欄位: ' + missingFields.join(', '));
     } else {
-      Logger.log('✅ 所有必填欄位都有資料');
+      Logger.log('✅ 所有核心必填欄位都有資料');
     }
     
     return parsedData;
