@@ -16,19 +16,19 @@ add_action('rest_api_init', function () {
                 'sanitize_callback' => 'sanitize_text_field',
             ),
             'contact_person' => array(
-                'required' => true,
+                'required' => false,
                 'sanitize_callback' => 'sanitize_text_field',
             ),
             'email' => array(
-                'required' => true,
+                'required' => false,
                 'sanitize_callback' => 'sanitize_email',
             ),
             'restaurant_type' => array(
-                'required' => true,
+                'required' => false,
                 'sanitize_callback' => 'sanitize_text_field',
             ),
             'district' => array(
-                'required' => true,
+                'required' => false,
                 'sanitize_callback' => 'sanitize_text_field',
             ),
             'address' => array(
@@ -60,7 +60,7 @@ add_action('rest_api_init', function () {
                 'sanitize_callback' => 'sanitize_text_field',
             ),
             'phone' => array(
-                'required' => true,
+                'required' => false,
                 'sanitize_callback' => 'sanitize_text_field',
             ),
             'website' => array(
@@ -76,6 +76,18 @@ add_action('rest_api_init', function () {
                 'sanitize_callback' => 'sanitize_textarea_field',
             ),
             'is_owner' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'customer_recommender_name' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'customer_recommender_email' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_email',
+            ),
+            'source' => array(
                 'required' => false,
                 'sanitize_callback' => 'sanitize_text_field',
             ),
@@ -142,8 +154,8 @@ function byob_verify_api_key($request) {
  */
 function byob_create_restaurant_article($restaurant_data, $source = 'direct') {
     try {
-        // 檢查必填欄位
-        $required_fields = array('restaurant_name', 'contact_person', 'email', 'restaurant_type', 'district', 'address', 'is_charged', 'phone');
+        // 檢查核心必填欄位（只保留 3 個絕對必要的欄位）
+        $required_fields = array('restaurant_name', 'address', 'is_charged');
         $missing_fields = array();
         
         foreach ($required_fields as $field) {
@@ -153,7 +165,7 @@ function byob_create_restaurant_article($restaurant_data, $source = 'direct') {
         }
         
         if (!empty($missing_fields)) {
-            return new WP_Error('missing_required_fields', '缺少必填欄位: ' . implode(', ', $missing_fields), array('status' => 400));
+            return new WP_Error('missing_required_fields', '缺少核心必填欄位: ' . implode(', ', $missing_fields), array('status' => 400));
         }
         
         // 決定文章狀態
@@ -237,9 +249,9 @@ function byob_create_restaurant_article($restaurant_data, $source = 'direct') {
         // 更新 ACF 欄位
         if (function_exists('update_field')) {
             $acf_updates = array(
-                'contact_person' => sanitize_text_field($restaurant_data['contact_person']),
-                'email' => sanitize_email($restaurant_data['email']),
-                'district' => sanitize_text_field($restaurant_data['district']),
+                'contact_person' => sanitize_text_field($restaurant_data['contact_person'] ?? ''),
+                'email' => sanitize_email($restaurant_data['email'] ?? ''),
+                'district' => sanitize_text_field($restaurant_data['district'] ?? ''),
                 'restaurant_type' => $types ?: array(),
                 'restaurant_type_other_note' => sanitize_text_field($restaurant_data['restaurant_type_other_note'] ?? ''),
                 'address' => sanitize_text_field($restaurant_data['address']),
@@ -249,13 +261,15 @@ function byob_create_restaurant_article($restaurant_data, $source = 'direct') {
                 'equipment' => $equipment ?: array(),
                 'open_bottle_service' => sanitize_text_field($bottleService),
                 'open_bottle_service_other_note' => sanitize_textarea_field($restaurant_data['open_bottle_service_other_note'] ?? ''),
-                'phone' => sanitize_text_field($restaurant_data['phone']),
+                'phone' => sanitize_text_field($restaurant_data['phone'] ?? ''),
                 'website' => esc_url_raw($restaurant_data['website'] ?? ''),
                 'social_links' => $social_media_primary,
                 'notes' => sanitize_textarea_field($restaurant_data['notes'] ?? ''),
                 'last_updated' => current_time('Y-m-d'),
-                'source' => $restaurant_data['is_owner'] === '是' ? '店主' : '表單填寫者',
+                'source' => $restaurant_data['source'] ?? ($restaurant_data['is_owner'] === '是' ? '店主' : '表單填寫者'),
                 'is_owner' => sanitize_text_field($restaurant_data['is_owner'] ?? ''),
+                'customer_recommender_name' => sanitize_text_field($restaurant_data['customer_recommender_name'] ?? ''),
+                'customer_recommender_email' => sanitize_email($restaurant_data['customer_recommender_email'] ?? ''),
                 'review_status' => ($source === 'google_form') ? 'pending' : 'approved',
                 'submitted_date' => current_time('mysql'),
                 'review_date' => ($source === 'google_form') ? '' : current_time('mysql'),
@@ -336,7 +350,10 @@ function byob_create_restaurant_post($request) {
             'website' => array('website', 'website_url', 'url'),
             'social_media' => array('social_media', 'social', 'social_links', '餐廳 Instagram 或 Facebook'),
             'notes' => array('notes', 'additional_notes', 'comments'),
-            'is_owner' => array('is_owner', 'owner', 'is_restaurant_owner')
+            'is_owner' => array('is_owner', 'owner', 'is_restaurant_owner'),
+            'customer_recommender_name' => array('customer_recommender_name', 'recommender_name', 'customer_name'),
+            'customer_recommender_email' => array('customer_recommender_email', 'recommender_email', 'customer_email'),
+            'source' => array('source', 'data_source', 'origin')
         );
         
         // 獲取參數值（支援多種名稱）
@@ -350,11 +367,8 @@ function byob_create_restaurant_post($request) {
             return '';
         };
         
-        // 檢查必填參數
-        $required_params = array(
-            'restaurant_name', 'contact_person', 'email', 'restaurant_type', 
-            'district', 'address', 'is_charged', 'phone'
-        );
+        // 檢查核心必填參數（只檢查 3 個絕對必要的參數）
+        $required_params = array('restaurant_name', 'address', 'is_charged');
         
         $missing_params = array();
         foreach ($required_params as $param) {
@@ -364,8 +378,8 @@ function byob_create_restaurant_post($request) {
         }
         
         if (!empty($missing_params)) {
-            error_log('BYOB API: 缺少必填參數: ' . implode(', ', $missing_params));
-            return new WP_Error('missing_required_params', '缺少必填參數: ' . implode(', ', $missing_params), array('status' => 400));
+            error_log('BYOB API: 缺少核心必填參數: ' . implode(', ', $missing_params));
+            return new WP_Error('missing_required_params', '缺少核心必填參數: ' . implode(', ', $missing_params), array('status' => 400));
         }
         
         // 轉換API請求為標準資料格式
@@ -387,7 +401,10 @@ function byob_create_restaurant_post($request) {
             'website' => $get_param_value($request, $param_mapping['website']),
             'social_media' => $get_param_value($request, $param_mapping['social_media']),
             'notes' => $get_param_value($request, $param_mapping['notes']),
-            'is_owner' => $get_param_value($request, $param_mapping['is_owner'])
+            'is_owner' => $get_param_value($request, $param_mapping['is_owner']),
+            'customer_recommender_name' => $get_param_value($request, $param_mapping['customer_recommender_name']),
+            'customer_recommender_email' => $get_param_value($request, $param_mapping['customer_recommender_email']),
+            'source' => $get_param_value($request, $param_mapping['source'])
         );
         
         // 記錄餐廳類型相關的除錯資訊
