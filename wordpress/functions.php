@@ -243,14 +243,23 @@ function byob_create_restaurant_article($restaurant_data, $source = 'direct') {
         if (!empty($equipmentOtherNote)) {
             // 如果有其他說明，確保 equipment 包含「其他」選項
             if (empty($equipment)) {
-                $equipment = '其他';
-            } elseif (strpos($equipment, '其他') === false) {
-                $equipment = $equipment . ', 其他';
+                $equipment = array('其他');
+            } elseif (is_array($equipment)) {
+                // 如果沒有「其他」選項，添加它
+                if (!in_array('其他', $equipment)) {
+                    $equipment[] = '其他';
+                }
+            } else {
+                // 處理字串情況
+                if (strpos($equipment, '其他') === false) {
+                    $equipment = $equipment . ', 其他';
+                }
             }
             error_log('BYOB API: 酒器設備處理 - 因有說明文字而加入「其他」: "' . $equipmentOtherNote . '"');
         }
         
-        error_log('BYOB API: 酒器設備處理 - 最終選項: "' . $equipment . '"');
+        $equipment_str = is_array($equipment) ? implode(', ', $equipment) : $equipment;
+        error_log('BYOB API: 酒器設備處理 - 最終選項: "' . $equipment_str . '"');
         error_log('BYOB API: 酒器設備處理 - 其他說明: "' . $equipmentOtherNote . '"');
         
         if (!empty($equipment) && !is_array($equipment)) {
