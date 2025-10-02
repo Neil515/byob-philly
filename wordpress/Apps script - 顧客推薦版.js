@@ -170,6 +170,14 @@ function parseCustomerFormData() {
           }
           
           Logger.log('🏷️ 最終餐廳類型: "' + parsedData[wordpressField] + '"');
+        } else if (wordpressField === 'restaurant_type_other_note') {
+          // 跳過 restaurant_type_other_note 的欄位映射，因為它由餐廳類型邏輯自動生成
+          Logger.log('⏭️ 跳過 restaurant_type_other_note 的欄位映射，因為它由餐廳類型邏輯自動生成');
+          continue;
+        } else if (wordpressField === 'equipment_other_note') {
+          // 跳過 equipment_other_note 的欄位映射，因為它由酒器設備邏輯自動生成
+          Logger.log('⏭️ 跳過 equipment_other_note 的欄位映射，因為它由酒器設備邏輯自動生成');
+          continue;
         } else if (wordpressField === 'equipment') {
           // 特殊處理酒器設備，使用「排除法」識別「其他」內容（類似餐廳類型）
           var equipmentValue = String(value || '');
