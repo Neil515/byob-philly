@@ -51,6 +51,10 @@ add_action('rest_api_init', function () {
                 'required' => false,
                 'sanitize_callback' => 'sanitize_text_field',
             ),
+            'equipment_other_note' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
             'open_bottle_service' => array(
                 'required' => false,
                 'sanitize_callback' => 'sanitize_text_field',
@@ -232,8 +236,23 @@ function byob_create_restaurant_article($restaurant_data, $source = 'direct') {
         error_log('BYOB API: 開酒服務處理 - 最終選項: "' . $bottleService . '"');
         error_log('BYOB API: 開酒服務處理 - 其他說明: "' . $bottleServiceOtherNote . '"');
         
-        // 處理設備
+        // 處理設備 - 增強處理邏輯，支援「其他」選項
         $equipment = $restaurant_data['equipment'];
+        $equipmentOtherNote = $restaurant_data['equipment_other_note'] ?? '';
+        
+        if (!empty($equipmentOtherNote)) {
+            // 如果有其他說明，確保 equipment 包含「其他」選項
+            if (empty($equipment)) {
+                $equipment = '其他';
+            } elseif (strpos($equipment, '其他') === false) {
+                $equipment = $equipment . ', 其他';
+            }
+            error_log('BYOB API: 酒器設備處理 - 因有說明文字而加入「其他」: "' . $equipmentOtherNote . '"');
+        }
+        
+        error_log('BYOB API: 酒器設備處理 - 最終選項: "' . $equipment . '"');
+        error_log('BYOB API: 酒器設備處理 - 其他說明: "' . $equipmentOtherNote . '"');
+        
         if (!empty($equipment) && !is_array($equipment)) {
             $equipment = array_map('trim', explode(',', $equipment));
         }
@@ -259,6 +278,7 @@ function byob_create_restaurant_article($restaurant_data, $source = 'direct') {
                 'corkage_fee_amount' => intval($restaurant_data['corkage_fee_amount'] ?? 0),
                 'corkage_fee_note' => sanitize_text_field($restaurant_data['corkage_fee_note'] ?? ''),
                 'equipment' => $equipment ?: array(),
+                'equipment_other_note' => sanitize_text_field($equipmentOtherNote),
                 'open_bottle_service' => sanitize_text_field($bottleService),
                 'open_bottle_service_other_note' => sanitize_textarea_field($restaurant_data['open_bottle_service_other_note'] ?? ''),
                 'phone' => sanitize_text_field($restaurant_data['phone'] ?? ''),
@@ -344,7 +364,8 @@ function byob_create_restaurant_post($request) {
             'phone' => array('phone', 'contact_phone', 'phone_number'),
             'corkage_fee_amount' => array('corkage_fee_amount', 'fee_amount', '開瓶費金額'),
             'corkage_fee_note' => array('corkage_fee_note', 'fee_note', '其他：請說明'),
-            'equipment' => array('equipment', 'equipment_list', 'available_equipment'),
+            'equipment' =>	array('equipment', 'equipment_list', 'available_equipment'),
+            'equipment_other_note' => array('equipment_other_note', 'equipment_note', 'equipment_other'),
             'open_bottle_service' => array('open_bottle_service', 'bottle_service', 'service_type'),
             'open_bottle_service_other_note' => array('open_bottle_service_other_note', 'service_note', 'other_service'),
             'website' => array('website', 'website_url', 'url'),
@@ -396,6 +417,7 @@ function byob_create_restaurant_post($request) {
             'corkage_fee_amount' => $get_param_value($request, $param_mapping['corkage_fee_amount']),
             'corkage_fee_note' => $get_param_value($request, $param_mapping['corkage_fee_note']),
             'equipment' => $get_param_value($request, $param_mapping['equipment']),
+            'equipment_other_note' => $get_param_value($request, $param_mapping['equipment_other_note']),
             'open_bottle_service' => $get_param_value($request, $param_mapping['open_bottle_service']),
             'open_bottle_service_other_note' => $get_param_value($request, $param_mapping['open_bottle_service_other_note']),
             'website' => $get_param_value($request, $param_mapping['website']),
@@ -1981,6 +2003,7 @@ function flatsome_byob_create_simple_restaurant($restaurant_data) {
             'corkage_fee_amount' => 0,
             'corkage_fee_note' => '',
             'equipment' => array(),
+            'equipment_other_note' => '',
             'open_bottle_service' => '',
             'open_bottle_service_other_note' => '',
             'website' => '',
