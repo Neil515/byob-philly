@@ -443,8 +443,40 @@ document.addEventListener('DOMContentLoaded', function() {
           <?php else: ?>
             <div class="field"><strong>開瓶費說明：</strong></div>
           <?php endif; ?>
-          <?php if(get_field('equipment')): ?>
-            <div class="field"><strong>提供酒器設備：</strong><?php the_field('equipment'); ?></div>
+          <?php 
+          $equipment = get_field('equipment');
+          $equipment_other_note = get_field('equipment_other_note');
+          
+          if ($equipment): 
+            if (is_array($equipment)) {
+              // 將「其他」替換為實際說明文字（類似餐廳類型的顯示方式）
+              $equipment_display = array();
+              foreach ($equipment as $item) {
+                if ($item === '其他') {
+                  if (!empty($equipment_other_note)) {
+                    $equipment_display[] = '其他: ' . $equipment_other_note;
+                  } else {
+                    $equipment_display[] = $item;
+                  }
+                } else {
+                  $equipment_display[] = $item;
+                }
+              }
+              $equipment_output = implode(' | ', $equipment_display);
+            } else {
+              // 處理字串情況（防備）
+              if (strpos($equipment, '其他') !== false) {
+                if (!empty($equipment_other_note)) {
+                  $equipment_output = str_replace('其他', '其他: ' . $equipment_other_note, $equipment);
+                } else {
+                  $equipment_output = $equipment;
+                }
+              } else {
+                $equipment_output = $equipment;
+              }
+            }
+          ?>
+            <div class="field"><strong>提供酒器設備：</strong><?php echo esc_html($equipment_output); ?></div>
           <?php else: ?>
             <div class="field"><strong>提供酒器設備：</strong></div>
           <?php endif; ?>
