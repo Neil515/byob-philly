@@ -170,6 +170,79 @@ function parseCustomerFormData() {
           }
           
           Logger.log('🏷️ 最終餐廳類型: "' + parsedData[wordpressField] + '"');
+        } else if (wordpressField === 'equipment') {
+          // 特殊處理酒器設備，使用「排除法」識別「其他」內容（類似餐廳類型）
+          var equipmentValue = String(value || '');
+          Logger.log('🔍 處理酒器設備: "' + equipmentValue + '"');
+          
+          // 防護機制：檢查是否已經處理過
+          if (parsedData.hasOwnProperty('equipment')) {
+            Logger.log('⚠️ 酒器設備已經處理過，跳過重複處理');
+            parsedData[wordpressField] = value || '';
+            Logger.log('成功映射: ' + wordpressField + ' = "' + parsedData[wordpressField] + '"');
+            continue;
+          }
+          
+          // 檢查是否為空或空白
+          if (!equipmentValue || equipmentValue.trim() === '') {
+            Logger.log('⚠️ 酒器設備為空，跳過處理');
+            parsedData[wordpressField] = '';
+            Logger.log('成功映射: ' + wordpressField + ' = "' + parsedData[wordpressField] + '"');
+            continue;
+          }
+          
+          // 已知的酒器設備清單（對應 Google 表單的選項）
+          var knownEquipment = [
+            '無提供', '開瓶器', '酒杯', '冰桶', '醒酒器'
+          ];
+          
+          // 分割酒器設備（如果是多選的分隔字串）
+          var equipmentArray = equipmentValue.split(',').map(function(item) {
+            return item.trim();
+          }).filter(function(item) {
+            return item.length > 0;
+          });
+          Logger.log('📋 分割後的設備陣列: [' + equipmentArray.join(', ') + ']');
+          
+          // 使用「排除法」識別「其他」內容
+          var validEquipment = [];
+          var otherNotes = [];
+          var hasOther = false;
+          
+          for (var j = 0; j < equipmentArray.length; j++) {
+            var item = equipmentArray[j];
+            
+            if (knownEquipment.includes(item) || item === '其他') {
+              validEquipment.push(item);
+              if (item === '其他') {
+                hasOther = true;
+              }
+              Logger.log('✅ 識別到已知設備: "' + item + '"');
+            } else {
+              // 未知項目（如「嘔吐」）歸類為「其他」說明
+              otherNotes.push(item);
+              Logger.log('🔍 識別到未知設備，歸類為「其他」說明: "' + item + '"');
+              hasOther = true;
+            }
+          }
+          
+          // 處理結果
+          if (otherNotes.length > 0) {
+            // 如果有未知項目，確保包含「其他」選項
+            if (!validEquipment.includes('其他')) {
+              validEquipment.push('其他');
+            }
+            parsedData[wordpressField] = validEquipment.join(', ');
+            parsedData['equipment_other_note'] = otherNotes.join(', ');
+            Logger.log('✅ 自動加入「其他」選項，說明: "' + parsedData['equipment_other_note'] + '"');
+          } else {
+            parsedData[wordpressField] = validEquipment.join(', ');
+          }
+          
+          Logger.log('🏷️ 最終酒器設備: "' + parsedData[wordpressField] + '"');
+          if (parsedData['equipment_other_note']) {
+            Logger.log('📝 酒器設備其他說明: "' + parsedData['equipment_other_note'] + '"');
+          }
         } else {
           parsedData[wordpressField] = value || '';
         }
