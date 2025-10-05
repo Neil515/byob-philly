@@ -2976,8 +2976,45 @@ function byob_restaurant_review_admin_page() {
     
     // 標籤頁
     echo '<h2 class="nav-tab-wrapper">';
-    echo '<a href="#general-review" class="nav-tab nav-tab-active">一般審核</a>';
-    echo '<a href="#duplicate-review" class="nav-tab">重複檢查</a>';
+    
+    // 計算一般審核數量
+    $general_count = count(get_posts([
+        'post_type' => 'restaurant',
+        'post_status' => 'draft',
+        'meta_query' => [
+            [
+                'key' => '_byob_review_status',
+                'value' => 'pending_general_review'
+            ]
+        ]
+    ]));
+    
+    // 計算重複檢查數量
+    $duplicate_count = count(get_posts([
+        'post_type' => 'restaurant',
+        'post_status' => 'pending',
+        'meta_query' => [
+            [
+                'key' => '_byob_review_status',
+                'value' => 'pending_duplicate_review'
+            ]
+        ]
+    ]));
+    
+    echo '<a href="#general-review" class="nav-tab nav-tab-active">';
+    echo '一般審核';
+    if ($general_count > 0) {
+        echo ' <span class="nav-tab-count" style="background: #d63638; color: white; border-radius: 10px; padding: 2px 6px; font-size: 11px; margin-left: 5px;">' . $general_count . '</span>';
+    }
+    echo '</a>';
+    
+    echo '<a href="#duplicate-review" class="nav-tab">';
+    echo '重複檢查';
+    if ($duplicate_count > 0) {
+        echo ' <span class="nav-tab-count" style="background: #d63638; color: white; border-radius: 10px; padding: 2px 6px; font-size: 11px; margin-left: 5px;">' . $duplicate_count . '</span>';
+    }
+    echo '</a>';
+    
     echo '</h2>';
     
     // 一般審核區塊
