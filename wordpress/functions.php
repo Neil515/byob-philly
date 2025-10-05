@@ -172,8 +172,18 @@ function byob_create_restaurant_article($restaurant_data, $source = 'direct') {
             return new WP_Error('missing_required_fields', '缺少核心必填欄位: ' . implode(', ', $missing_fields), array('status' => 400));
         }
         
-        // 決定文章狀態
-        $post_status = ($source === 'google_form') ? 'draft' : 'publish';
+        // 1. 先檢查重複
+        $duplicate_check = byob_check_duplicate_restaurant($restaurant_data);
+        
+        if ($duplicate_check['is_duplicate']) {
+            // 重複檢查：使用 'pending' 狀態
+            $post_status = 'pending';
+            $review_status = 'pending_duplicate_review';
+        } else {
+            // 一般審核：使用 'draft' 狀態
+            $post_status = 'draft';
+            $review_status = 'pending_general_review';
+        }
         
         // 建立餐廳文章
         $post_data = array(
@@ -277,6 +287,7 @@ function byob_create_restaurant_article($restaurant_data, $source = 'direct') {
         // 更新 ACF 欄位
         if (function_exists('update_field')) {
             $acf_updates = array(
+                'restaurant_name' => sanitize_text_field($restaurant_data['restaurant_name']),
                 'contact_person' => sanitize_text_field($restaurant_data['contact_person'] ?? ''),
                 'email' => sanitize_email($restaurant_data['email'] ?? ''),
                 'district' => sanitize_text_field($restaurant_data['district'] ?? ''),
@@ -316,17 +327,168 @@ function byob_create_restaurant_article($restaurant_data, $source = 'direct') {
         // 記錄建立時間
         update_post_meta($post_id, '_byob_created_at', current_time('mysql'));
         
+        // 儲存審核狀態
+        update_post_meta($post_id, '_byob_review_status', $review_status);
+        
+        if ($duplicate_check['is_duplicate']) {
+            // 儲存重複檢查資訊
+            update_post_meta($post_id, '_byob_duplicate_check', $duplicate_check);
+        }
+        
         return array(
             'success' => true,
             'post_id' => $post_id,
             'post_url' => get_edit_post_link($post_id, ''),
             'post_status' => $post_status,
-            'message' => ($source === 'google_form') ? '餐廳資料已建立為草稿，等待審核' : '餐廳資料已建立並發布'
+            'review_status' => $review_status,
+            'message' => $duplicate_check['is_duplicate'] ? 
+                '發現相似餐廳，已標記為重複檢查' : 
+                '餐廳資料已建立，等待審核'
         );
         
     } catch (Exception $e) {
         return new WP_Error('restaurant_creation_failed', $e->getMessage(), array('status' => 500));
     }
+}
+
+// =============================================================================
+// 🔍 重複檢查功能群組
+// =============================================================================
+
+/**
+ * 重複檢查主函數（簡化版）
+ * 
+ * @param array $new_restaurant 新餐廳資料
+ * @return array 重複檢查結果
+ */
+function byob_check_duplicate_restaurant($new_restaurant) {
+    // 取得現有餐廳資料
+    $existing_restaurants = get_posts([
+        'post_type' => 'restaurant',
+        'post_status' => ['publish', 'draft', 'pending'],
+        'numberposts' => -1,
+        'meta_query' => [
+            [
+                'key' => '_byob_duplicate_status',
+                'compare' => 'NOT EXISTS'
+            ]
+        ]
+    ]);
+    
+    foreach ($existing_restaurants as $existing) {
+        $existing_data = [
+            'name' => get_field('restaurant_name', $existing->ID),
+            'address' => get_field('address', $existing->ID)
+        ];
+        
+        // 使用簡化的相似度計算
+        $similarity = byob_calculate_simple_similarity(
+            $new_restaurant['restaurant_name'], 
+            $new_restaurant['address'],
+            $existing_data['name'],
+            $existing_data['address']
+        );
+        
+        if ($similarity >= 80) {
+            return [
+                'is_duplicate' => true,
+                'similar_restaurant_id' => $existing->ID,
+                'similar_restaurant_name' => $existing_data['name'],
+                'similar_restaurant_address' => $existing_data['address'],
+                'similarity_score' => $similarity
+            ];
+        }
+    }
+    
+    return ['is_duplicate' => false];
+}
+
+/**
+ * 簡化版相似度計算（通用型）
+ * 
+ * @param string $name1 新餐廳名稱
+ * @param string $addr1 新餐廳地址
+ * @param string $name2 現有餐廳名稱
+ * @param string $addr2 現有餐廳地址
+ * @return float 相似度百分比
+ */
+function byob_calculate_simple_similarity($name1, $addr1, $name2, $addr2) {
+    // 標準化所有字串（移除空格、標點、大小寫）
+    $normalize = function($str) {
+        // 移除所有標點符號、空格、引號
+        $str = preg_replace('/[\s\'"「」『』【】（）()，。、；：！？]/', '', $str);
+        // 轉小寫
+        $str = strtolower($str);
+        // 移除常見詞彙
+        $str = preg_replace('/[店餐廳有限公司股份有限公司]/', '', $str);
+        return $str;
+    };
+    
+    $name1_norm = $normalize($name1);
+    $addr1_norm = $normalize($addr1);
+    $name2_norm = $normalize($name2);
+    $addr2_norm = $normalize($addr2);
+    
+    // 如果名稱和地址都完全相同，100% 相似
+    if ($name1_norm === $name2_norm && $addr1_norm === $addr2_norm) {
+        return 100;
+    }
+    
+    // 如果地址完全相同，檢查名稱相似度
+    if ($addr1_norm === $addr2_norm) {
+        // 使用 levenshtein 距離計算名稱相似度
+        $name_similarity = byob_calculate_string_similarity($name1_norm, $name2_norm);
+        if ($name_similarity >= 70) {
+            return 90; // 地址相同且名稱相似，高相似度
+        }
+    }
+    
+    // 如果名稱完全相同，檢查地址相似度
+    if ($name1_norm === $name2_norm) {
+        $addr_similarity = byob_calculate_string_similarity($addr1_norm, $addr2_norm);
+        if ($addr_similarity >= 70) {
+            return 85; // 名稱相同且地址相似，高相似度
+        }
+    }
+    
+    // 計算整體相似度
+    $name_similarity = byob_calculate_string_similarity($name1_norm, $name2_norm);
+    $addr_similarity = byob_calculate_string_similarity($addr1_norm, $addr2_norm);
+    
+    // 綜合評分：名稱和地址相似度的加權平均
+    $total_similarity = ($name_similarity * 0.4) + ($addr_similarity * 0.6);
+    
+    return round($total_similarity, 2);
+}
+
+
+/**
+ * 提取門牌號碼
+ * 
+ * @param string $address 完整地址
+ * @return int 門牌號碼
+ */
+function byob_extract_house_number($address) {
+    preg_match('/(\d+)號/', $address, $matches);
+    return isset($matches[1]) ? intval($matches[1]) : 0;
+}
+
+/**
+ * 計算字串相似度
+ * 
+ * @param string $str1 字串1
+ * @param string $str2 字串2
+ * @return float 相似度百分比
+ */
+function byob_calculate_string_similarity($str1, $str2) {
+    // 使用 levenshtein 距離計算相似度
+    $max_len = max(strlen($str1), strlen($str2));
+    if ($max_len === 0) return 100;
+    
+    $distance = levenshtein($str1, $str2);
+    $similarity = (1 - ($distance / $max_len)) * 100;
+    
+    return round($similarity, 2);
 }
 
 // =============================================================================
@@ -691,10 +853,10 @@ add_action('admin_menu', function() {
     if ($restaurant_member_file) {
         require_once $restaurant_member_file;
         
-        // 註冊審核管理選單
-        if (function_exists('byob_add_review_management_menu')) {
-            byob_add_review_management_menu();
-        }
+        // 註冊審核管理選單 - 已移至主選單註冊區塊，避免重複
+        // if (function_exists('byob_add_review_management_menu')) {
+        //     byob_add_review_management_menu();
+        // }
         
         // 註冊會員管理選單
         if (function_exists('byob_add_member_management_menu')) {
@@ -855,6 +1017,26 @@ add_action('admin_menu', function() {
         'byob-system-status',
         'byob_system_status_page'
     );
+    
+    // 新增餐廳審核管理頁面
+    add_submenu_page(
+        'edit.php?post_type=restaurant',
+        '餐廳審核管理',
+        '審核管理',
+        'manage_options',
+        'restaurant-review',
+        'byob_restaurant_review_admin_page'
+    );
+    
+    // 移除發布管理頁面 - 改為審核通過即立刻發布
+    // add_submenu_page(
+    //     'edit.php?post_type=restaurant',
+    //     '餐廳發布管理',
+    //     '發布管理',
+    //     'manage_options',
+    //     'restaurant-publish',
+    //     'byob_publish_management_admin_page'
+    // );
     
     // 移除檔案上傳工具選單 - 不再需要
 });
@@ -1042,7 +1224,7 @@ function byob_system_status_page() {
     
     echo '<h2>🧪 快速連結</h2>';
     echo '<p><a href="' . admin_url('admin.php?page=byob-api-settings') . '" class="button">API 設定</a> ';
-    echo '<a href="' . admin_url('edit.php?post_type=restaurant&page=byob-review-management') . '" class="button">審核管理</a> ';
+    echo '<a href="' . admin_url('edit.php?post_type=restaurant&page=restaurant-review') . '" class="button">審核管理</a> ';
     echo '<a href="' . admin_url('edit.php?post_type=restaurant&page=byob-member-management') . '" class="button">會員管理</a> ';
     echo '<a href="' . admin_url('tools.php?page=byob-feature-toggle') . '" class="button">功能開關</a></p>';
     
@@ -1496,20 +1678,6 @@ function byob_generate_recommender_notification_html($recommender_name, $restaur
                 font-weight: bold;
                 color: #495057;
             }
-            .cta-button {
-                display: inline-block;
-                background-color: rgba(139, 38, 53, 0.7);
-                color: #f8f9fa;
-                padding: 16px 32px;
-                text-decoration: none;
-                border-radius: 6px;
-                margin: 10px 0;
-                font-weight: bold;
-                font-size: 16px;
-            }
-            .cta-button:hover {
-                background-color: rgba(139, 38, 53, 0.9);
-            }
             .prize-section {
                 background-color: #fff3cd;
                 padding: 20px;
@@ -1546,9 +1714,12 @@ function byob_generate_recommender_notification_html($recommender_name, $restaur
 
             <p>太棒了！你推薦的「<strong>[餐廳名稱]</strong>」已經通過審核並成功上架我們的 BYOB 平台了！</p>
 
-            <p style="text-align: center;">
-                <a href="[餐廳頁面連結]" class="cta-button">🔗 立即查看餐廳頁面</a>
-            </p>
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="[餐廳頁面連結]" 
+                   style="display: inline-block; background-color: rgba(139, 38, 53, 0.8); color: #f8f9fa; text-decoration: none; padding: 16px 32px; border-radius: 6px; font-size: 16px; font-weight: 500; transition: background-color 0.3s ease;">
+                    🔗 立即查看餐廳頁面
+                </a>
+            </div>
 
             <p>感謝你的推薦，讓更多愛酒的朋友能找到這個好地方！你的貢獻讓台北變得更開瓶友善 🥂</p>
 
@@ -1565,9 +1736,12 @@ function byob_generate_recommender_notification_html($recommender_name, $restaur
 
             <h3>💡 繼續推薦</h3>
             <p>知道其他可以自帶酒的餐廳嗎？歡迎繼續推薦：</p>
-            <p style="text-align: center;">
-                <a href="https://forms.gle/[顧客推薦表單連結]" class="cta-button">📝 推薦更多餐廳</a>
-            </p>
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="https://forms.gle/[顧客推薦表單連結]" 
+                   style="display: inline-block; background-color: rgba(139, 38, 53, 0.8); color: #f8f9fa; text-decoration: none; padding: 16px 32px; border-radius: 6px; font-size: 16px; font-weight: 500; transition: background-color 0.3s ease;">
+                    📝 推薦更多餐廳
+                </a>
+            </div>
 
             <div class="footer">
                 <p><strong>Cheers！<br>— 台北 BYOB 小隊</strong></p>
@@ -2303,6 +2477,7 @@ function flatsome_byob_create_simple_restaurant($restaurant_data) {
     // 更新 ACF 欄位
     if (function_exists('update_field')) {
         $acf_updates = array(
+            'restaurant_name' => sanitize_text_field($restaurant_data['restaurant_name']),
             'contact_person' => sanitize_text_field($restaurant_data['contact_person']),
             'email' => sanitize_email($restaurant_data['email']),
             'phone' => sanitize_text_field($restaurant_data['phone']),
@@ -2783,3 +2958,640 @@ function flatsome_byob_restaurant_registration_form_shortcode($atts) {
 
 // 註冊短代碼
 add_shortcode('flatsome_byob_restaurant_registration_form', 'flatsome_byob_restaurant_registration_form_shortcode');
+
+// =============================================================================
+// 🔍 重複檢查後台管理功能
+// =============================================================================
+
+/**
+ * 餐廳審核管理頁面
+ */
+function byob_restaurant_review_admin_page() {
+    if (!current_user_can('manage_options')) {
+        wp_die('權限不足');
+    }
+    
+    echo '<div class="wrap">';
+    echo '<h1>餐廳審核管理</h1>';
+    
+    // 標籤頁
+    echo '<h2 class="nav-tab-wrapper">';
+    echo '<a href="#general-review" class="nav-tab nav-tab-active">一般審核</a>';
+    echo '<a href="#duplicate-review" class="nav-tab">重複檢查</a>';
+    echo '</h2>';
+    
+    // 一般審核區塊
+    echo '<div id="general-review" class="tab-content">';
+    echo '<h3>一般審核 (草稿狀態)</h3>';
+    
+    $general_pending = get_posts([
+        'post_type' => 'restaurant',
+        'post_status' => 'draft',
+        'meta_query' => [
+            [
+                'key' => '_byob_review_status',
+                'value' => 'pending_general_review'
+            ]
+        ]
+    ]);
+    
+    if (empty($general_pending)) {
+        echo '<p>目前沒有待審核的餐廳。</p>';
+    } else {
+        foreach ($general_pending as $restaurant) {
+            echo '<div class="review-item" style="border: 1px solid #ddd; padding: 15px; margin: 10px 0;">';
+            echo '<h4>' . get_field('restaurant_name', $restaurant->ID) . '</h4>';
+            echo '<p>地址：' . get_field('address', $restaurant->ID) . '</p>';
+            echo '<p>提交時間：' . get_post_meta($restaurant->ID, '_byob_created_at', true) . '</p>';
+            
+            echo '<div class="actions">';
+            echo '<button onclick="approveRestaurant(' . $restaurant->ID . ')" class="button button-primary">審核通過</button>';
+            echo '<button onclick="rejectRestaurant(' . $restaurant->ID . ')" class="button">審核拒絕</button>';
+            echo '</div>';
+            echo '</div>';
+        }
+    }
+    
+    echo '</div>';
+    
+    // 重複檢查區塊
+    echo '<div id="duplicate-review" class="tab-content" style="display:none;">';
+    echo '<h3>重複檢查 (待審核狀態)</h3>';
+    
+    $duplicate_pending = get_posts([
+        'post_type' => 'restaurant',
+        'post_status' => 'pending',
+        'meta_query' => [
+            [
+                'key' => '_byob_review_status',
+                'value' => 'pending_duplicate_review'
+            ]
+        ]
+    ]);
+    
+    if (empty($duplicate_pending)) {
+        echo '<p>目前沒有待重複檢查的餐廳。</p>';
+    } else {
+        foreach ($duplicate_pending as $restaurant) {
+            $duplicate_info = get_post_meta($restaurant->ID, '_byob_duplicate_check', true);
+            $similar_restaurant = get_post($duplicate_info['similar_restaurant_id']);
+            
+            echo '<div class="duplicate-item" style="border: 1px solid #ff6b6b; padding: 15px; margin: 10px 0; background: #fff5f5;">';
+            echo '<h4>⚠️ 待審核餐廳：' . get_field('restaurant_name', $restaurant->ID) . '</h4>';
+            echo '<p>地址：' . get_field('address', $restaurant->ID) . '</p>';
+            echo '<p>相似度：' . $duplicate_info['similarity_score'] . '%</p>';
+            
+            echo '<h5>相似餐廳：' . get_field('restaurant_name', $similar_restaurant->ID) . '</h5>';
+            echo '<p>地址：' . get_field('address', $similar_restaurant->ID) . '</p>';
+            
+            echo '<div class="actions">';
+            echo '<button onclick="confirmDuplicate(' . $restaurant->ID . ')" class="button">確認重複</button>';
+            echo '<button onclick="confirmNotDuplicate(' . $restaurant->ID . ')" class="button button-primary">確認不重複</button>';
+            echo '</div>';
+            echo '</div>';
+        }
+    }
+    
+    echo '</div>';
+    echo '</div>';
+    
+    // 載入 JavaScript 和 jQuery UI
+    wp_enqueue_script('jquery');
+    wp_enqueue_script('jquery-ui-dialog');
+    wp_enqueue_style('wp-jquery-ui-dialog');
+    ?>
+    <script>
+    // 標籤頁切換
+    jQuery(document).ready(function($) {
+        $('.nav-tab').click(function(e) {
+            e.preventDefault();
+            $('.nav-tab').removeClass('nav-tab-active');
+            $(this).addClass('nav-tab-active');
+            $('.tab-content').hide();
+            $($(this).attr('href')).show();
+        });
+    });
+    
+    // 審核函數
+    function approveRestaurant(restaurantId) {
+        if (confirm('確定要審核通過這家餐廳嗎？')) {
+            jQuery.post(ajaxurl, {
+                action: 'byob_handle_review',
+                action_type: 'approve_general',
+                restaurant_id: restaurantId
+            }, function(response) {
+                if (response.success) {
+                    alert('審核通過！');
+                    location.reload();
+                } else {
+                    alert('操作失敗：' + response.data);
+                }
+            });
+        }
+    }
+    
+    function rejectRestaurant(restaurantId) {
+        // 顯示拒絕原因選擇對話框
+        var rejectionReasons = {
+            'duplicate_restaurant': '此餐廳與我們資料庫中的現有餐廳重複',
+            'incomplete_info': '餐廳資訊不完整，無法提供準確的 BYOB 資訊',
+            'invalid_address': '提供的地址格式不正確或無法確認位置',
+            'not_byob_restaurant': '經查證，此餐廳不提供 BYOB（自帶酒水）服務',
+            'closed_restaurant': '此餐廳已歇業或不存在',
+            'inappropriate_content': '推薦內容不符合平台規範',
+            'fake_recommendation': '經查證為虛假推薦',
+            'custom': '其他原因'
+        };
+        
+        var reasonHtml = '<div style="margin: 20px 0;">';
+        reasonHtml += '<h4>請選擇拒絕原因：</h4>';
+        
+        Object.keys(rejectionReasons).forEach(function(key) {
+            reasonHtml += '<label style="display: block; margin: 10px 0; cursor: pointer;">';
+            reasonHtml += '<input type="radio" name="rejection_reason" value="' + key + '" style="margin-right: 8px;">';
+            reasonHtml += rejectionReasons[key];
+            reasonHtml += '</label>';
+        });
+        
+        reasonHtml += '<div id="custom_reason_div" style="margin-top: 15px; display: none;">';
+        reasonHtml += '<label>請說明具體原因：</label><br>';
+        reasonHtml += '<textarea id="custom_reason" rows="3" cols="50" style="width: 100%; margin-top: 5px;"></textarea>';
+        reasonHtml += '</div>';
+        
+        reasonHtml += '</div>';
+        
+        // 創建對話框
+        var dialog = jQuery('<div>').html(reasonHtml).dialog({
+            title: '選擇拒絕原因',
+            modal: true,
+            width: 500,
+            height: 400,
+            buttons: {
+                '確定拒絕': function() {
+                    var selectedReason = jQuery('input[name="rejection_reason"]:checked').val();
+                    var customReason = jQuery('#custom_reason').val();
+                    
+                    if (!selectedReason) {
+                        alert('請選擇拒絕原因');
+                        return;
+                    }
+                    
+                    if (selectedReason === 'custom' && !customReason.trim()) {
+                        alert('請填寫具體的拒絕原因');
+                        return;
+                    }
+                    
+                    // 發送拒絕請求
+                    jQuery.post(ajaxurl, {
+                        action: 'byob_handle_review',
+                        action_type: 'reject_general',
+                        restaurant_id: restaurantId,
+                        rejection_reason: selectedReason,
+                        custom_reason: customReason
+                    }, function(response) {
+                        if (response.success) {
+                            alert('已拒絕並發送通知！');
+                            location.reload();
+                        } else {
+                            alert('操作失敗：' + response.data);
+                        }
+                    });
+                    
+                    dialog.dialog('close');
+                },
+                '取消': function() {
+                    dialog.dialog('close');
+                }
+            }
+        });
+        
+        // 監聽單選按鈕變化
+        jQuery('input[name="rejection_reason"]').change(function() {
+            if (jQuery(this).val() === 'custom') {
+                jQuery('#custom_reason_div').show();
+            } else {
+                jQuery('#custom_reason_div').hide();
+            }
+        });
+    }
+    
+    function confirmDuplicate(restaurantId) {
+        // 顯示重複餐廳拒絕原因選擇對話框
+        var rejectionReasons = {
+            'duplicate_restaurant': '此餐廳與我們資料庫中的現有餐廳重複',
+            'incomplete_info': '餐廳資訊不完整，無法提供準確的 BYOB 資訊',
+            'invalid_address': '提供的地址格式不正確或無法確認位置',
+            'not_byob_restaurant': '經查證，此餐廳不提供 BYOB（自帶酒水）服務',
+            'closed_restaurant': '此餐廳已歇業或不存在',
+            'inappropriate_content': '推薦內容不符合平台規範',
+            'fake_recommendation': '經查證為虛假推薦',
+            'custom': '其他原因'
+        };
+        
+        var reasonHtml = '<div style="margin: 20px 0;">';
+        reasonHtml += '<h4>請選擇拒絕原因：</h4>';
+        
+        Object.keys(rejectionReasons).forEach(function(key) {
+            reasonHtml += '<label style="display: block; margin: 10px 0; cursor: pointer;">';
+            reasonHtml += '<input type="radio" name="duplicate_rejection_reason" value="' + key + '" style="margin-right: 8px;">';
+            reasonHtml += rejectionReasons[key];
+            reasonHtml += '</label>';
+        });
+        
+        reasonHtml += '<div id="duplicate_custom_reason_div" style="margin-top: 15px; display: none;">';
+        reasonHtml += '<label>請說明具體原因：</label><br>';
+        reasonHtml += '<textarea id="duplicate_custom_reason" rows="3" cols="50" style="width: 100%; margin-top: 5px;"></textarea>';
+        reasonHtml += '</div>';
+        
+        reasonHtml += '</div>';
+        
+        // 創建對話框
+        var dialog = jQuery('<div>').html(reasonHtml).dialog({
+            title: '確認重複餐廳 - 選擇拒絕原因',
+            modal: true,
+            width: 500,
+            height: 400,
+            buttons: {
+                '確認重複並拒絕': function() {
+                    var selectedReason = jQuery('input[name="duplicate_rejection_reason"]:checked').val();
+                    var customReason = jQuery('#duplicate_custom_reason').val();
+                    
+                    if (!selectedReason) {
+                        alert('請選擇拒絕原因');
+                        return;
+                    }
+                    
+                    if (selectedReason === 'custom' && !customReason.trim()) {
+                        alert('請填寫具體的拒絕原因');
+                        return;
+                    }
+                    
+                    // 發送確認重複請求
+                    jQuery.post(ajaxurl, {
+                        action: 'byob_handle_review',
+                        action_type: 'confirm_duplicate',
+                        restaurant_id: restaurantId,
+                        rejection_reason: selectedReason,
+                        custom_reason: customReason
+                    }, function(response) {
+                        if (response.success) {
+                            alert('已確認重複並發送通知！');
+                            location.reload();
+                        } else {
+                            alert('操作失敗：' + response.data);
+                        }
+                    });
+                    
+                    dialog.dialog('close');
+                },
+                '取消': function() {
+                    dialog.dialog('close');
+                }
+            }
+        });
+        
+        // 監聽單選按鈕變化
+        jQuery('input[name="duplicate_rejection_reason"]').change(function() {
+            if (jQuery(this).val() === 'custom') {
+                jQuery('#duplicate_custom_reason_div').show();
+            } else {
+                jQuery('#duplicate_custom_reason_div').hide();
+            }
+        });
+    }
+    
+    function confirmNotDuplicate(restaurantId) {
+        if (confirm('確定這兩家不是重複的餐廳嗎？')) {
+            jQuery.post(ajaxurl, {
+                action: 'byob_handle_review',
+                action_type: 'confirm_not_duplicate',
+                restaurant_id: restaurantId
+            }, function(response) {
+                if (response.success) {
+                    alert('已確認不重複，等待發布！');
+                    location.reload();
+                } else {
+                    alert('操作失敗：' + response.data);
+                }
+            });
+        }
+    }
+    </script>
+    <?php
+}
+
+/**
+ * 處理審核確認的 AJAX
+ */
+add_action('wp_ajax_byob_handle_review', 'byob_handle_review_confirmation');
+
+function byob_handle_review_confirmation() {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('權限不足');
+        return;
+    }
+    
+    $action = $_POST['action_type'];
+    $restaurant_id = intval($_POST['restaurant_id']);
+    
+    if ($action === 'approve_general') {
+        // 一般審核通過 - 立即發布
+        wp_update_post([
+            'ID' => $restaurant_id,
+            'post_status' => 'publish'
+        ]);
+        
+        update_post_meta($restaurant_id, '_byob_review_status', 'published');
+        update_post_meta($restaurant_id, '_byob_approved_at', current_time('mysql'));
+        update_post_meta($restaurant_id, '_byob_published_at', current_time('mysql'));
+        
+        // 觸發推薦成功通知（如果是顧客推薦）
+        $source = get_post_meta($restaurant_id, '_byob_registration_source', true);
+        if ($source === 'customer_recommendation') {
+            do_action('byob_restaurant_published', $restaurant_id);
+        }
+        
+        wp_send_json_success('審核通過並已發布');
+        
+    } elseif ($action === 'reject_general') {
+        // 一般審核拒絕
+        $rejection_reason = sanitize_text_field($_POST['rejection_reason'] ?? '');
+        $custom_reason = sanitize_textarea_field($_POST['custom_reason'] ?? '');
+        
+        wp_trash_post($restaurant_id);
+        update_post_meta($restaurant_id, '_byob_review_status', 'rejected');
+        update_post_meta($restaurant_id, '_byob_rejection_reason', $rejection_reason);
+        update_post_meta($restaurant_id, '_byob_rejection_custom_reason', $custom_reason);
+        update_post_meta($restaurant_id, '_byob_rejected_at', current_time('mysql'));
+        
+        // 發送拒絕通知 Email（如果是顧客推薦）
+        $source = get_field('source', $restaurant_id);
+        if ($source === 'customer_recommendation') {
+            $sent = byob_send_customer_rejection_notification($restaurant_id, $rejection_reason, $custom_reason);
+            error_log("BYOB: 一般審核拒絕 - 來源: {$source}, Email發送: " . ($sent ? '成功' : '失敗'));
+        } else {
+            error_log("BYOB: 一般審核拒絕 - 來源: {$source}, 非顧客推薦，不發送Email");
+        }
+        
+        wp_send_json_success('審核拒絕並已發送通知');
+        
+    } elseif ($action === 'confirm_not_duplicate') {
+        // 重複檢查確認不重複 - 立即發布
+        wp_update_post([
+            'ID' => $restaurant_id,
+            'post_status' => 'publish'
+        ]);
+        
+        delete_post_meta($restaurant_id, '_byob_duplicate_check');
+        update_post_meta($restaurant_id, '_byob_review_status', 'published');
+        update_post_meta($restaurant_id, '_byob_approved_at', current_time('mysql'));
+        update_post_meta($restaurant_id, '_byob_published_at', current_time('mysql'));
+        
+        // 觸發推薦成功通知（如果是顧客推薦）
+        $source = get_post_meta($restaurant_id, '_byob_registration_source', true);
+        if ($source === 'customer_recommendation') {
+            do_action('byob_restaurant_published', $restaurant_id);
+        }
+        
+        wp_send_json_success('確認不重複並已發布');
+        
+    } elseif ($action === 'confirm_duplicate') {
+        // 重複檢查確認重複 - 接收拒絕原因參數
+        $rejection_reason = sanitize_text_field($_POST['rejection_reason'] ?? 'duplicate_restaurant');
+        $custom_reason = sanitize_textarea_field($_POST['custom_reason'] ?? '此餐廳與現有餐廳重複');
+        
+        wp_trash_post($restaurant_id);
+        update_post_meta($restaurant_id, '_byob_review_status', 'rejected');
+        update_post_meta($restaurant_id, '_byob_rejection_reason', $rejection_reason);
+        update_post_meta($restaurant_id, '_byob_rejection_custom_reason', $custom_reason);
+        update_post_meta($restaurant_id, '_byob_rejected_at', current_time('mysql'));
+        
+        // 發送拒絕通知 Email（如果是顧客推薦）
+        $source = get_field('source', $restaurant_id);
+        if ($source === 'customer_recommendation') {
+            $sent = byob_send_customer_rejection_notification($restaurant_id, $rejection_reason, $custom_reason);
+            error_log("BYOB: 一般審核拒絕 - 來源: {$source}, Email發送: " . ($sent ? '成功' : '失敗'));
+        } else {
+            error_log("BYOB: 一般審核拒絕 - 來源: {$source}, 非顧客推薦，不發送Email");
+        }
+        
+        wp_send_json_success('確認重複並已發送通知');
+    }
+}
+
+/**
+ * 發送顧客推薦審核拒絕通知 Email
+ * 
+ * @param int $restaurant_id 餐廳ID
+ * @param string $rejection_reason 拒絕原因代碼
+ * @param string $custom_reason 自訂拒絕原因
+ */
+function byob_send_customer_rejection_notification($restaurant_id, $rejection_reason, $custom_reason = '') {
+    $restaurant = get_post($restaurant_id);
+    if (!$restaurant) {
+        error_log("BYOB: 拒絕通知失敗 - 餐廳不存在，ID: {$restaurant_id}");
+        return false;
+    }
+    
+    $recommender_email = get_field('customer_recommender_email', $restaurant_id);
+    $recommender_name = get_field('customer_recommender_name', $restaurant_id);
+    $restaurant_name = get_field('restaurant_name', $restaurant_id);
+    
+    error_log("BYOB: 拒絕通知檢查 - 餐廳: {$restaurant_name}, Email: {$recommender_email}, 姓名: {$recommender_name}");
+    
+    // 除錯：檢查所有相關資料
+    byob_debug_recommender_info($restaurant_id);
+    
+    // 如果沒有 Email 就不發送
+    if (empty($recommender_email)) {
+        error_log("BYOB: 拒絕通知失敗 - 推薦者Email為空，餐廳ID: {$restaurant_id}");
+        return false;
+    }
+    
+    // 取得拒絕原因說明
+    $reason_text = byob_get_rejection_reason_text($rejection_reason);
+    if ($rejection_reason === 'custom' && !empty($custom_reason)) {
+        $reason_text = $custom_reason;
+    }
+    
+    // 準備 Email 內容
+    $admin_email = 'byobmap.tw@gmail.com';
+    $subject = 'BYOB 餐廳推薦審核結果 - ' . $restaurant_name;
+    
+    $message = byob_generate_rejection_notification_html($restaurant_name, $recommender_name, $reason_text);
+    
+    $headers = array(
+        'Content-Type: text/html; charset=UTF-8',
+        'From: BYOB <' . $admin_email . '>'
+    );
+    
+    $sent = wp_mail($recommender_email, $subject, $message, $headers);
+    
+    // 記錄發送狀態
+    if ($sent) {
+        error_log("BYOB: 拒絕通知已發送 - 收件人: {$recommender_email}, 餐廳: {$restaurant_name}");
+    } else {
+        error_log("BYOB: 拒絕通知發送失敗 - 收件人: {$recommender_email}, 餐廳: {$restaurant_name}");
+    }
+    
+    return $sent;
+}
+
+/**
+ * 測試函數：檢查餐廳的推薦者資訊
+ * 
+ * @param int $restaurant_id 餐廳ID
+ */
+function byob_debug_recommender_info($restaurant_id) {
+    $restaurant = get_post($restaurant_id);
+    $source = get_field('source', $restaurant_id);
+    $recommender_email = get_field('customer_recommender_email', $restaurant_id);
+    $recommender_name = get_field('customer_recommender_name', $restaurant_id);
+    $restaurant_name = get_field('restaurant_name', $restaurant_id);
+    
+    error_log("BYOB DEBUG - 餐廳ID: {$restaurant_id}");
+    error_log("BYOB DEBUG - 餐廳名稱: {$restaurant_name}");
+    error_log("BYOB DEBUG - 資料來源: {$source}");
+    error_log("BYOB DEBUG - 推薦者Email: {$recommender_email}");
+    error_log("BYOB DEBUG - 推薦者姓名: {$recommender_name}");
+    
+    return [
+        'restaurant_id' => $restaurant_id,
+        'restaurant_name' => $restaurant_name,
+        'source' => $source,
+        'recommender_email' => $recommender_email,
+        'recommender_name' => $recommender_name
+    ];
+}
+
+/**
+ * 取得拒絕原因說明文字
+ * 
+ * @param string $reason_code 拒絕原因代碼
+ * @return string 拒絕原因說明
+ */
+function byob_get_rejection_reason_text($reason_code) {
+    $reasons = array(
+        'duplicate_restaurant' => '此餐廳與我們資料庫中的現有餐廳重複',
+        'incomplete_info' => '餐廳資訊不完整，無法提供準確的 BYOB 資訊',
+        'invalid_address' => '提供的地址格式不正確或無法確認位置',
+        'not_byob_restaurant' => '經查證，此餐廳不提供 BYOB（自帶酒水）服務',
+        'closed_restaurant' => '此餐廳已歇業或不存在',
+        'inappropriate_content' => '推薦內容不符合平台規範',
+        'fake_recommendation' => '經查證為虛假推薦',
+        'custom' => '其他原因'
+    );
+    
+    return isset($reasons[$reason_code]) ? $reasons[$reason_code] : '未知原因';
+}
+
+/**
+ * 生成拒絕通知 Email HTML 內容
+ * 
+ * @param string $restaurant_name 餐廳名稱
+ * @param string $recommender_name 推薦者姓名
+ * @param string $reason_text 拒絕原因
+ * @return string HTML 內容
+ */
+function byob_generate_rejection_notification_html($restaurant_name, $recommender_name, $reason_text) {
+    $display_name = !empty($recommender_name) ? $recommender_name : '親愛的推薦者';
+    
+    return '
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BYOB 餐廳推薦審核結果</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            
+            <!-- 標題區塊 -->
+            <div style="background: linear-gradient(135deg, #8b2635 0%, #a0303e 100%); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
+                <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 300;">🍷 BYOBMAP</h1>
+                <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">台灣 BYOB 餐廳地圖</p>
+            </div>
+            
+            <!-- 內容區塊 -->
+            <div style="padding: 40px 30px;">
+                <h2 style="color: #8b2635; margin: 0 0 20px 0; font-size: 24px;">餐廳推薦審核結果</h2>
+                
+                <p style="color: #495057; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                    親愛的 <strong>' . esc_html($display_name) . '</strong>，
+                </p>
+                
+                <p style="color: #495057; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                    感謝您推薦餐廳「<strong>' . esc_html($restaurant_name) . '</strong>」給我們！
+                </p>
+                
+                <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                    <h3 style="color: #856404; margin: 0 0 10px 0; font-size: 18px;">📋 審核結果</h3>
+                    <p style="color: #856404; margin: 0; font-size: 16px; line-height: 1.5;">
+                        很遺憾地通知您，經過我們的審核，此餐廳推薦未能通過。<br>
+                        <strong>原因：</strong>' . esc_html($reason_text) . '
+                    </p>
+                </div>
+                
+                <p style="color: #495057; font-size: 16px; line-height: 1.6; margin: 20px 0;">
+                    請不要灰心！我們非常重視每一位用戶的推薦，您的參與對我們來說非常重要。
+                </p>
+                
+                <div style="background-color: #e7f3ff; border-left: 4px solid #007bff; padding: 20px; margin: 20px 0;">
+                    <h4 style="color: #0056b3; margin: 0 0 10px 0; font-size: 16px;">💡 建議</h4>
+                    <p style="color: #0056b3; margin: 0; font-size: 14px; line-height: 1.5;">
+                        如果您有其他優質的 BYOB 餐廳推薦，歡迎繼續使用我們的推薦表單分享給大家！
+                    </p>
+                </div>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="https://forms.gle/jAnvmwh2BKyVXq5M8" 
+                       style="display: inline-block; background-color: rgba(139, 38, 53, 0.8); color: #f8f9fa; text-decoration: none; padding: 16px 32px; border-radius: 6px; font-size: 16px; font-weight: 500; transition: background-color 0.3s ease;">
+                        繼續推薦餐廳
+                    </a>
+                </div>
+                
+                <p style="color: #6c757d; font-size: 14px; line-height: 1.5; margin: 30px 0 0 0; text-align: center;">
+                    感謝您對 BYOBMAP 的支持！<br>
+                    如有任何問題，歡迎隨時聯繫我們。
+                </p>
+            </div>
+            
+            <!-- 頁腳 -->
+            <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #e9ecef;">
+                <p style="color: #6c757d; font-size: 12px; margin: 0;">
+                    © 2025 BYOBMAP. All rights reserved.<br>
+                    Email: byobmap.tw@gmail.com
+                </p>
+            </div>
+            
+        </div>
+    </body>
+    </html>';
+}
+
+// =============================================================================
+// 合併餐廳資料函數（已移除 - 改為直接拒絕重複餐廳）
+// =============================================================================
+// 
+// 原本的合併功能已移除，因為：
+// 1. 合併邏輯複雜，容易出錯
+// 2. 可能覆蓋正確的資料
+// 3. 維護成本高
+// 
+// 現在改為直接拒絕重複餐廳，更簡單、安全、可靠
+// =============================================================================
+
+// =============================================================================
+// 📢 餐廳發布管理功能（已移除 - 改為審核通過即立刻發布）
+// =============================================================================
+// 
+// 原本的發布管理頁面已移除，因為現在改為審核通過即立刻發布
+// 與 WordPress 文章管理頁面的發布機制保持一致
+// 
+// 發布流程：
+// 1. 管理員在審核管理頁面點擊「審核通過」
+// 2. 系統立即將餐廳狀態改為「已發布」
+// 3. 觸發 transition_post_status hook
+// 4. 自動發送推薦成功通知（如果是顧客推薦）
+// =============================================================================
