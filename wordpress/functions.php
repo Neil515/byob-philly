@@ -1389,13 +1389,13 @@ function byob_auto_send_invitation_on_publish($new_status, $old_status, $post) {
             $result = byob_send_recommender_notification($post->ID);
             if ($result) {
                 update_post_meta($post->ID, '_byob_recommender_notified', current_time('mysql'));
-            error_log('BYOB: 推薦者通知發送成功 - 文章ID: ' . $post->ID);
+                error_log('BYOB: 推薦者通知發送成功 - 文章ID: ' . $post->ID);
             
             // 記錄抽獎參與者
             byob_record_lottery_participant($post->ID, $recommender_name, $recommender_email);
-        } else {
-            error_log('BYOB: 推薦者通知發送失敗 - 文章ID: ' . $post->ID);
-        }
+            } else {
+                error_log('BYOB: 推薦者通知發送失敗 - 文章ID: ' . $post->ID);
+            }
         } else {
             error_log('BYOB: 顧客推薦但無推薦者email，跳過通知發送 - 文章ID: ' . $post->ID);
         }
