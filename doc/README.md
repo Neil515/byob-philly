@@ -37,6 +37,7 @@ WordPress 後端
 ├── ACF 欄位管理
 ├── 餐廳文章類型 (Custom Post Type)
 ├── 推薦成功通知系統
+├── 抽獎系統（參與者管理、抽獎執行、通知發送）
 └── 會員系統 (Restaurant Owner Role)
     ↓
 前端展示
@@ -67,6 +68,8 @@ WordPress 建立餐廳草稿
 管理員審核通過
   ↓
 自動發送感謝通知給推薦者
+  ↓
+記錄推薦者參與抽獎
 ```
 
 * **來源標記**: `source=customer_recommendation`
@@ -136,91 +139,119 @@ WordPress 建立餐廳草稿
 
 ---
 
-## 📅 最新進度（2025年10月3日）
+## 🎲 抽獎系統（完整功能）
 
-### 完成項目
+### 系統架構
 
-✅ **推薦成功通知功能完整實作**
-* 修改 `byob_auto_send_invitation_on_publish` 函數
-* 新增 `byob_send_recommender_notification` 函數
-* 新增輔助函數群組（資料取得、格式化、HTML 生成）
-* 內嵌 HTML Email 模板
-* 測試驗證：推薦者成功收到通知郵件
+**1. 抽獎參與者管理**
+* 自動記錄推薦者為抽獎參與者
+* 統一的 ACF 欄位命名（customer_recommender_name, customer_recommender_email）
+* 月份分類管理
 
-✅ **酒器設備「其他」欄位處理**
-* 新增 `equipment_other_note` ACF 欄位
-* 修改 Apps Script 支援「排除法」識別邏輯
-* 更新 functions.php 完成欄位處理
-* 測試驗證成功
+**2. 抽獎執行系統**
+* 高品質隨機數生成（mt_rand()）
+* 防重複中獎機制
+* 加權抽獎邏輯（額外分享機會）
+* 獎項配置：一獎1名（進口酒商電子禮券）、二獎2名（高級進口紅白酒杯）
 
-✅ **Email 模板優化**
-* 移除餐廳資訊區塊
-* 調整按鈕樣式（字體顏色、大小）
-* 移除追蹤我們區塊
-* 更新推薦表單連結為實際連結
+**3. 通知系統**
+* 中獎者通知（包含獎項資訊）
+* 未中獎者通知（包含公平性說明）
+* 防重複發送機制（同 Email 只發送一次）
+* HTML Email 模板
 
-### 技術實現細節
+**4. 管理介面**
+* 抽獎管理頁面（WordPress 後台）
+* 月份選擇下拉選單
+* AJAX 動態更新統計數據
+* 參與者列表展示
 
-**推薦成功通知系統架構：**
-```
-餐廳發布 → transition_post_status hook → 判別資料來源 → 發送對應通知
-```
-
-**判別邏輯（最終版）：**
-```php
-if ($source === 'customer_recommendation' && !empty($recommender_email)) {
-    // 發送推薦者通知
-    byob_send_recommender_notification($restaurant_id);
-} elseif (!empty($contact_person)) {
-    // 發送業者邀請通知
-    byob_send_approval_notification($restaurant_id);
-}
-```
+### 技術實現
 
 **核心函數群組：**
-* `byob_auto_send_invitation_on_publish`：主要觸發函數
-* `byob_send_recommender_notification`：發送推薦者通知
-* `byob_get_restaurant_display_data`：取得餐廳資料
-* `byob_generate_recommender_notification_html`：生成 HTML 內容
-* `byob_format_corkage_fee`：格式化開瓶費
-* `byob_format_equipment`：格式化酒器設備
-* `byob_format_contact_info`：格式化聯絡資訊
+* `byob_record_lottery_participant`：記錄抽獎參與者
+* `byob_execute_lottery`：執行抽獎
+* `byob_send_winner_notifications`：發送中獎通知
+* `byob_send_non_winner_notifications`：發送未中獎通知
+* `byob_lottery_management_page`：抽獎管理頁面
 
-**Email 模板特色：**
-* 移除餐廳資訊區塊，版面更簡潔
-* 按鈕樣式：`rgba(139, 38, 53, 0.7)` 背景，`#f8f9fa` 字體
-* 按鈕大小：`padding: 16px 32px`，`font-size: 16px`
-* 移除追蹤我們區塊，聚焦主要行動
-* 推薦表單連結：`https://forms.gle/jAnvmwh2BKyVXq5M8`
+**公平性保證：**
+* 使用 PHP 的 mt_rand() 高品質隨機數生成器
+* 防重複中獎機制確保每人最多中獎一次
+* 加權抽獎支援額外分享機會
+* 完整的抽獎記錄和統計
 
-**防重複機制：**
-* 推薦者通知：`_byob_recommender_notified` post meta
-* 業者邀請：`_byob_invitation_sent` post meta
+---
+
+## 📅 最新進度（2025年10月6日）
+
+### 🎯 今日完成項目
+
+✅ **抽獎系統完整測試與優化**
+* 統一 ACF 欄位命名（customer_recommender_name, customer_recommender_email）
+* 修正推薦者姓名空白問題
+* 實現動態月份選擇功能（AJAX）
+* 測試抽獎執行流程
+
+✅ **未中獎者通知系統**
+* 實作未中獎者 Email 通知功能
+* 防重複發送機制（同 Email 只發送一次）
+* 包含抽獎公平性說明
+* 測試驗證成功
+
+✅ **獎項配置優化**
+* 更新獎項名稱：一獎、二獎
+* 更新獎品描述：進口酒商電子禮券、高級進口紅白酒杯
+* 移除金額資訊，聚焦獎品本身
+
+✅ **額外抽獎機會優化**
+* 簡化分享流程為 3 步驟
+* 提供直接分享連結（https://reurl.cc/4N01nL）
+* 移除重複的標記步驟
+* 優化使用者體驗
+
+### 🔧 技術修正
+
+**ACF 欄位統一：**
+* 將所有抽獎相關的 ACF 欄位統一為 customer_recommender_name 和 customer_recommender_email
+* 修正推薦者姓名空白問題
+* 確保資料一致性
+
+**動態月份選擇：**
+* 實作 AJAX 功能處理月份選擇
+* 動態更新統計數據和參與者列表
+* 提升管理介面使用者體驗
+
+**通知系統完善：**
+* 新增未中獎者通知功能
+* 實作防重複發送機制
+* 優化 Email 模板內容
 
 ---
 
 ## 🔜 下一步計畫
 
-### 近期任務（10月第一週）
+### 明日任務（10月7日）
 
-**優先級 1：顧客推薦表單自動回覆系統**
-* 設計自動回覆 Email 模板
-* 修改 Apps Script 加入自動回覆功能
-* 設定抽獎活動說明
-* 測試自動回覆流程
+**優先級 1：抽獎活動文章製作**
+* 撰寫抽獎活動宣傳文章
+* 設計社群媒體分享素材
+* 準備活動說明頁面
 
-**優先級 2：重複餐廳檢查機制**
-* 設計重複檢查邏輯
-* 實作餐廳名稱比對功能
-* 建立友善的錯誤提示
-* 測試重複檢查機制
+**優先級 2：推薦成功通知重新測試**
+* 重新測試推薦成功通知流程
+* 驗證 Email 模板內容
+* 確認額外抽獎機會說明
 
-### 中期目標（10月）
+**優先級 3：Email 模板完整驗證**
+* 測試所有 Email 類型（推薦成功、中獎、未中獎）
+* 驗證 Email 內容和格式
+* 確認連結和按鈕功能
 
-* 社群推廣素材製作（IG Reels、貼文、Story）
-* 抽獎活動系統建立
-* KPI 追蹤儀表板
-* 首週目標：收集 ≥50 筆顧客推薦
+**優先級 4：系統整合測試**
+* 完整測試從推薦到抽獎的流程
+* 驗證資料一致性
+* 確認所有功能正常運作
 
 ---
 
@@ -229,7 +260,7 @@ if ($source === 'customer_recommendation' && !empty($recommender_email)) {
 ```
 BYOB/
 ├── wordpress/                          # WordPress 相關檔案
-│   ├── functions.php                   # REST API 端點、ACF 欄位處理、推薦通知系統
+│   ├── functions.php                   # REST API 端點、ACF 欄位處理、推薦通知系統、抽獎系統
 │   ├── Apps script - 顧客推薦版.js      # 顧客推薦表單處理
 │   ├── Apps script - 純淨版.js          # 餐廳業者表單處理
 │   ├── restaurant-member-functions.php # 餐廳業者會員系統
@@ -253,103 +284,6 @@ BYOB/
 
 ---
 
-## 🔑 核心技術說明
-
-### 顧客推薦表單資料流
-
-```
-Google 表單提交
-  ↓
-Apps Script 觸發 (onCustomerFormSubmit)
-  ↓
-解析表單資料 (parseCustomerFormData)
-  - 讀取「欄位設定表」工作表
-  - 動態映射表單欄位到 WordPress 欄位
-  - 處理條件式欄位（開瓶費、餐廳類型、酒器設備）
-  - 保留推薦者資料到專用欄位
-  ↓
-發送到 WordPress API (sendToCustomerWordPress)
-  - POST /byob/v1/restaurant
-  - 包含推薦者欄位：customer_recommender_name, customer_recommender_email
-  - 標記來源：source = 'customer_recommendation'
-  ↓
-WordPress 處理 (byob_create_restaurant_post)
-  - 參數映射和資料轉換
-  - 只檢查 3 個核心必填欄位
-  - 調用共用函數建立餐廳文章
-  ↓
-建立餐廳草稿 (byob_create_restaurant_article)
-  - 更新所有 ACF 欄位
-  - 包含推薦者資料到專用欄位
-  - 設定 review_status = 'pending'
-  ↓
-管理員審核通過
-  ↓
-自動發送推薦成功通知
-```
-
-### 推薦成功通知流程
-
-```
-餐廳文章狀態變更為 'publish'
-  ↓
-transition_post_status hook 觸發
-  ↓
-byob_auto_send_invitation_on_publish 函數執行
-  ↓
-檢查資料來源 (source 欄位)
-  ↓
-判別邏輯：
-  - source === 'customer_recommendation' → 發送推薦者通知
-  - contact_person 不為空 → 發送業者邀請
-  ↓
-byob_send_recommender_notification 函數
-  ↓
-生成 HTML Email 內容
-  ↓
-發送通知郵件
-  ↓
-設定防重複標記 (_byob_recommender_notified)
-```
-
-### 必填欄位設計哲學
-
-**前端（Google 表單）：** 完整的必填欄位控制
-* 餐廳名稱、地址、開瓶費政策等
-
-**後端（WordPress API）：** 最小化必填限制
-* 只檢查 3 個絕對核心欄位：restaurant_name, address, is_charged
-* 其他欄位都可選，支援不同來源的資料結構
-
-**優點：**
-* 前端保持嚴謹的資料品質
-* 後端保持彈性，支援多種資料來源
-* 降低系統耦合度
-
-### 欄位映射機制
-
-使用 Google Sheets「欄位設定表」工作表：
-
-```
-WordPress 欄位           | 表單欄位名稱
-------------------------+---------------------------
-restaurant_type         | 餐廳類型 (選填)
-address                 | 餐廳地址(必填)
-phone                   | 餐廳電話(選填)
-is_charged              | 開瓶費(必填)
-equipment               | 酒器設備(選填)
-notes                   | 餐廳特色(選填)
-customer_recommender_name  | 您的姓名或暱稱
-customer_recommender_email | 聯絡Email
-```
-
-**優點：**
-* 表單欄位名稱改變時，只需更新試算表
-* 不需修改程式碼
-* 容易維護和擴充
-
----
-
 ## 🎯 已實作功能
 
 ### ✅ 顧客推薦表單系統（完整）
@@ -368,12 +302,6 @@ customer_recommender_email | 聯絡Email
 * 完整的錯誤處理和日誌記錄
 * 管理員 Email 通知
 
-**ACF 欄位設計：**
-* `customer_recommender_name`: 推薦者姓名
-* `customer_recommender_email`: 推薦者 Email
-* `source`: 資料來源標記 ('customer_recommendation')
-* `review_status`: 審核狀態 ('pending')
-
 ### ✅ 推薦成功通知系統（完整）
 
 **核心功能：**
@@ -381,7 +309,7 @@ customer_recommender_email | 聯絡Email
 * 判別邏輯完善（區分推薦者與業者）
 * HTML Email 模板
 * 防重複機制
-* 測試驗證成功
+* 額外抽獎機會說明
 
 **技術特點：**
 * 使用 `transition_post_status` hook
@@ -389,12 +317,20 @@ customer_recommender_email | 聯絡Email
 * 完整的錯誤處理和日誌記錄
 * 支援動態內容替換
 
-### ✅ 餐廳業者表單系統（完整）
+### ✅ 抽獎系統（完整）
 
-* 動態欄位映射機制
-* 餐廳類型「其他」欄位處理
-* 開瓶費條件式邏輯
-* 邀請碼系統整合
+**核心功能：**
+* 自動記錄推薦者為抽獎參與者
+* 抽獎執行（高品質隨機數生成）
+* 防重複中獎機制
+* 中獎者和未中獎者通知
+* 管理介面（月份選擇、統計展示）
+
+**技術特點：**
+* 統一的 ACF 欄位命名
+* AJAX 動態更新功能
+* 防重複發送機制
+* 完整的抽獎記錄
 
 ### ✅ WordPress REST API（完整）
 
@@ -417,13 +353,12 @@ customer_recommender_email | 聯絡Email
 
 ## 🔜 待開發功能
 
-### 近期開發（10月第一週）
+### 近期開發（10月第二週）
 
-* [ ] **顧客推薦表單自動回覆系統**
-  * 設計自動回覆 Email 模板
-  * 修改 Apps Script 加入自動回覆功能
-  * 設定抽獎活動說明
-  * 測試自動回覆流程
+* [ ] **抽獎活動文章製作**
+  * 撰寫抽獎活動宣傳文章
+  * 設計社群媒體分享素材
+  * 準備活動說明頁面
 
 * [ ] **重複餐廳檢查機制**
   * 設計重複檢查邏輯
@@ -433,13 +368,41 @@ customer_recommender_email | 聯絡Email
 
 ### 中期開發（10月）
 
-* [ ] 抽獎活動系統
 * [ ] 社群推廣素材製作
 * [ ] KPI 追蹤儀表板
+* [ ] 餐廳業者會員系統完善
 
 ---
 
 ## 📝 重要技術筆記
+
+### 10月6日完成：抽獎系統測試與優化
+
+**ACF 欄位統一：**
+* 統一所有抽獎相關欄位為 customer_recommender_name 和 customer_recommender_email
+* 修正推薦者姓名空白問題
+* 確保資料一致性
+
+**動態月份選擇：**
+* 實作 AJAX 功能處理月份選擇
+* 動態更新統計數據和參與者列表
+* 提升管理介面使用者體驗
+
+**未中獎者通知：**
+* 實作未中獎者 Email 通知功能
+* 防重複發送機制（同 Email 只發送一次）
+* 包含抽獎公平性說明
+
+**獎項配置優化：**
+* 更新獎項名稱：一獎、二獎
+* 更新獎品描述：進口酒商電子禮券、高級進口紅白酒杯
+* 移除金額資訊，聚焦獎品本身
+
+**額外抽獎機會優化：**
+* 簡化分享流程為 3 步驟
+* 提供直接分享連結（https://reurl.cc/4N01nL）
+* 移除重複的標記步驟
+* 優化使用者體驗
 
 ### 10月3日完成：推薦成功通知系統
 
@@ -458,26 +421,6 @@ customer_recommender_email | 聯絡Email
 * `byob_format_equipment`：格式化酒器設備
 * `byob_format_contact_info`：格式化聯絡資訊
 
-**Email 模板特色：**
-* 移除餐廳資訊區塊，版面更簡潔
-* 按鈕樣式：`rgba(139, 38, 53, 0.7)` 背景，`#f8f9fa` 字體
-* 按鈕大小：`padding: 16px 32px`，`font-size: 16px`
-* 移除追蹤我們區塊，聚焦主要行動
-* 推薦表單連結：`https://forms.gle/jAnvmwh2BKyVXq5M8`
-
-### 10月3日完成：酒器設備「其他」欄位處理
-
-**實作內容：**
-* 新增 `equipment_other_note` ACF 欄位
-* 修改 Apps Script 支援「排除法」識別邏輯
-* 更新 functions.php 完成欄位處理
-* 測試驗證成功
-
-**已知酒器設備清單：**
-```javascript
-['無提供', '酒杯', '開瓶器', '冰桶', '醒酒器', '酒架', '保溫袋']
-```
-
 ### 10月1日修正：必填欄位簡化
 
 **問題：** 顧客推薦表單無法提供餐廳聯絡人資料，但 WordPress API 要求必填
@@ -491,31 +434,6 @@ customer_recommender_email | 聯絡Email
 * 系統更靈活，支援多種資料來源
 * 顧客推薦不需要提供餐廳聯絡資料
 * 餐廳業者表單仍保持完整的資料收集
-
-### 10月1日修正：推薦者資料正確儲存
-
-**問題：** 推薦者資料被錯誤存入餐廳聯絡人欄位
-
-**根源：**
-```javascript
-// 錯誤的覆寫邏輯（已刪除）
-parsedData['contact_person'] = parsedData['customer_recommender_name'] || '顧客推薦';
-parsedData['email'] = parsedData['customer_recommender_email'] || 'customer@byob.com';
-```
-
-**正確做法：**
-```javascript
-// 使用空字串預設值，不覆寫推薦者欄位
-parsedData['contact_person'] = parsedData['contact_person'] || '';
-parsedData['email'] = parsedData['email'] || '';
-parsedData['source'] = 'customer_recommendation';
-// customer_recommender_name 和 customer_recommender_email 保持原本解析的值
-```
-
-**結果：**
-* 推薦者資料正確存入 customer_recommender_name 和 customer_recommender_email
-* 餐廳聯絡資料（contact_person, email）為空白
-* 可透過 source 欄位區分資料來源
 
 ---
 
@@ -551,8 +469,21 @@ parsedData['source'] = 'customer_recommendation';
 **系統資料：**
 * source, review_status, submitted_date
 
+### 抽獎系統欄位
+
+**抽獎參與者：**
+* customer_recommender_name（推薦者姓名）
+* customer_recommender_email（推薦者 Email）
+* lottery_month（參與月份）
+* additional_chances（額外抽獎機會次數）
+
+**抽獎結果：**
+* lottery_result（中獎結果）
+* prize_name（獎項名稱）
+* prize_description（獎品描述）
+
 ---
 
-*最後更新：2025-10-03*  
-*專案階段：推薦成功通知功能已完成，進入自動回覆系統開發階段*  
-*下一步：自動回覆系統 + 重複餐廳檢查機制*
+*最後更新：2025-10-06*  
+*專案階段：抽獎系統完整測試完成，進入活動文章製作階段*  
+*下一步：抽獎活動文章製作 + 推薦成功通知重新測試*
