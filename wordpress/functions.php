@@ -1373,6 +1373,7 @@ function byob_auto_send_invitation_on_publish($new_status, $old_status, $post) {
     // 檢查資料來源和聯絡資訊
     $source = get_field('source', $post->ID);
     $contact_person = get_field('contact_person', $post->ID);
+    $recommender_name = get_field('customer_recommender_name', $post->ID);
     $recommender_email = get_field('customer_recommender_email', $post->ID);
     
     if ($source === 'customer_recommendation') {
@@ -1740,9 +1741,8 @@ function byob_generate_recommender_notification_html($recommender_name, $restaur
                 <h3>🎁 抽獎活動說明</h3>
                 <p>你已經獲得本月推薦抽獎資格，獎品包括：</p>
                 <ul>
-                    <li>🥂 一等獎：高級酒杯組 (NT$ 800-1,200)</li>
-                    <li>🎫 二等獎：酒商電子禮券 (NT$ 500)</li>
-                    <li>🎁 三等獎：BYOB 專屬禮券 (NT$ 300)</li>
+                    <li>🎫 一獎：進口酒商電子禮券</li>
+                    <li>🥂 二獎：高級進口紅白酒杯</li>
                 </ul>
                 <p>每月月底我們會抽出幸運得主，記得關注我們的社群更新喔！</p>
             </div>
@@ -1751,10 +1751,9 @@ function byob_generate_recommender_notification_html($recommender_name, $restaur
                 <h4 style="color: #0056b3; margin: 0 0 10px 0; font-size: 16px;">📢 額外抽獎機會</h4>
                 <p style="color: #0056b3; margin: 0; font-size: 14px; line-height: 1.5;">
                     想要額外1次抽獎機會嗎？<br>
-                    1. 分享此Email到社群媒體（Facebook/Instagram/Line）<br>
-                    2. 標記 @BYOBMAP 或 #BYOBMAP<br>
-                    3. 回覆此Email附上分享截圖<br>
-                    4. 我們確認後會為你增加1次抽獎機會！
+                    1. 點擊連結 <a href="https://reurl.cc/4N01nL" style="color: #0056b3; text-decoration: underline;">https://reurl.cc/4N01nL</a> 開啟抽獎活動貼文，然後分享到你的社群媒體<br>
+                    2. 分享後回覆此Email並附上你的分享貼文連結<br>
+                    3. 我們確認後會為你增加1次抽獎機會！
                 </p>
             </div>
 
@@ -1865,7 +1864,7 @@ function byob_record_lottery_participant($restaurant_id, $recommender_name, $rec
         'post_type' => 'lottery_participant',
         'meta_query' => [
             [
-                'key' => 'recommender_email',
+                'key' => 'customer_recommender_email',
                 'value' => $recommender_email
             ],
             [
@@ -1891,8 +1890,8 @@ function byob_record_lottery_participant($restaurant_id, $recommender_name, $rec
     
     if ($participant_id) {
         // 儲存參與者資料
-        update_field('recommender_name', $recommender_name, $participant_id);
-        update_field('recommender_email', $recommender_email, $participant_id);
+        update_field('customer_recommender_name', $recommender_name, $participant_id);
+        update_field('customer_recommender_email', $recommender_email, $participant_id);
         update_field('restaurant_name', $restaurant_name, $participant_id);
         update_field('restaurant_id', $restaurant_id, $participant_id);
         update_field('submission_date', current_time('mysql'), $participant_id);
@@ -1955,8 +1954,8 @@ function byob_execute_lottery($month = null) {
         $total_chances += $chances;
         $participant_chances[] = [
             'id' => $participant->ID,
-            'name' => get_field('recommender_name', $participant->ID),
-            'email' => get_field('recommender_email', $participant->ID),
+            'name' => get_field('customer_recommender_name', $participant->ID),
+            'email' => get_field('customer_recommender_email', $participant->ID),
             'restaurant' => get_field('restaurant_name', $participant->ID),
             'chances' => $chances
         ];
@@ -1965,9 +1964,8 @@ function byob_execute_lottery($month = null) {
     // 執行抽獎
     $winners = [];
     $prizes = [
-        ['name' => '一等獎', 'count' => 1, 'description' => '高級酒杯組 (NT$ 800-1,200)'],
-        ['name' => '二等獎', 'count' => 2, 'description' => '酒商電子禮券 (NT$ 500)'],
-        ['name' => '三等獎', 'count' => 3, 'description' => 'BYOB 專屬禮券 (NT$ 300)']
+        ['name' => '一獎', 'count' => 1, 'description' => '進口酒商電子禮券'],
+        ['name' => '二獎', 'count' => 2, 'description' => '高級進口紅白酒杯']
     ];
     
     foreach ($prizes as $prize) {
@@ -2028,6 +2026,9 @@ function byob_execute_lottery($month = null) {
     foreach ($winners as $winner) {
         byob_send_winner_notification($winner);
     }
+    
+    // 發送未中獎通知
+    byob_send_non_winner_notifications($participants, $winners, $month);
     
     return [
         'success' => true,
@@ -2114,7 +2115,9 @@ function byob_generate_winner_notification_html($winner) {
                     <h4 style="color: #0056b3; margin: 0 0 10px 0; font-size: 16px;">📋 領獎說明</h4>
                     <p style="color: #0056b3; margin: 0; font-size: 14px; line-height: 1.5;">
                         請在 7 天內回覆此郵件確認領獎，我們將安排獎品寄送。<br>
-                        如有疑問，請聯繫：byobmap.tw@gmail.com
+                        回覆郵件請註明地址(一獎可免地址)、電話、以及收件人。<br>
+						逾時未回覆，獎項將轉贈其他參加者，並恕不另行通知。<br>
+						如有疑問，請聯繫：byobmap.tw@gmail.com
                     </p>
                 </div>
                 
@@ -2132,6 +2135,163 @@ function byob_generate_winner_notification_html($winner) {
                 <p style="color: #6c757d; font-size: 14px; line-height: 1.5; margin: 30px 0 0 0; text-align: center;">
                     感謝您對 BYOBMAP 的支持！<br>
                     如有任何問題，歡迎隨時聯繫我們。
+                </p>
+            </div>
+            
+            <!-- 頁腳 -->
+            <div style="background-color: #f8f9fa; padding: 20px; text-align: center; border-radius: 0 0 8px 8px; border-top: 1px solid #e9ecef;">
+                <p style="color: #6c757d; font-size: 12px; margin: 0;">
+                    © 2025 BYOBMAP. All rights reserved.<br>
+                    Email: byobmap.tw@gmail.com
+                </p>
+            </div>
+            
+        </div>
+    </body>
+    </html>';
+}
+
+/**
+ * 發送未中獎通知
+ * 
+ * @param array $participants 所有參與者
+ * @param array $winners 中獎者清單
+ * @param string $month 抽獎月份
+ */
+function byob_send_non_winner_notifications($participants, $winners, $month) {
+    // 取得中獎者的 Email 清單
+    $winner_emails = array_column($winners, 'email');
+    
+    // 找出未中獎的參與者
+    $non_winners = [];
+    $sent_emails = []; // 記錄已發送的 Email，避免重複發送
+    
+    foreach ($participants as $participant) {
+        $email = get_field('customer_recommender_email', $participant->ID);
+        $name = get_field('customer_recommender_name', $participant->ID);
+        
+        // 檢查是否有 Email 且未中獎且未發送過
+        if (!empty($email) && !in_array($email, $winner_emails) && !in_array($email, $sent_emails)) {
+            $non_winners[] = [
+                'name' => $name,
+                'email' => $email,
+                'restaurant' => get_field('restaurant_name', $participant->ID)
+            ];
+            $sent_emails[] = $email; // 記錄已發送
+        }
+    }
+    
+    // 發送未中獎通知
+    foreach ($non_winners as $non_winner) {
+        byob_send_non_winner_notification($non_winner, $month);
+    }
+    
+    error_log("BYOB: 未中獎通知發送完成 - 共發送 " . count($non_winners) . " 封通知");
+}
+
+/**
+ * 發送單一未中獎通知
+ * 
+ * @param array $non_winner 未中獎者資料
+ * @param string $month 抽獎月份
+ */
+function byob_send_non_winner_notification($non_winner, $month) {
+    $admin_email = 'byobmap.tw@gmail.com';
+    $month_name = date('Y年m月', strtotime($month . '-01'));
+    $subject = '🎲 BYOB 推薦抽獎結果通知 - ' . $month_name;
+    
+    $message = byob_generate_non_winner_notification_html($non_winner, $month_name);
+    
+    $headers = array(
+        'Content-Type: text/html; charset=UTF-8',
+        'From: BYOB <' . $admin_email . '>'
+    );
+    
+    $sent = wp_mail($non_winner['email'], $subject, $message, $headers);
+    
+    if ($sent) {
+        error_log("BYOB: 未中獎通知已發送 - 收件人: {$non_winner['email']}, 姓名: {$non_winner['name']}");
+    } else {
+        error_log("BYOB: 未中獎通知發送失敗 - 收件人: {$non_winner['email']}, 姓名: {$non_winner['name']}");
+    }
+    
+    return $sent;
+}
+
+/**
+ * 生成未中獎通知 HTML 內容
+ * 
+ * @param array $non_winner 未中獎者資料
+ * @param string $month_name 月份名稱
+ * @return string HTML 內容
+ */
+function byob_generate_non_winner_notification_html($non_winner, $month_name) {
+    return '
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>抽獎結果通知</title>
+    </head>
+    <body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f8f9fa;">
+        <div style="max-width: 600px; margin: 0 auto; background-color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            
+            <!-- 標題區塊 -->
+            <div style="background: linear-gradient(135deg, #8b2635 0%, #a0303e 100%); padding: 40px 30px; text-align: center; border-radius: 8px 8px 0 0;">
+                <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 300;">🍷 BYOBMAP</h1>
+                <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0; font-size: 16px;">台灣 BYOB 餐廳地圖</p>
+            </div>
+            
+            <!-- 內容區塊 -->
+            <div style="padding: 40px 30px;">
+                <h2 style="color: #8b2635; margin: 0 0 20px 0; font-size: 24px;">🎲 抽獎結果通知</h2>
+                
+                <p style="color: #495057; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                    親愛的 <strong>' . esc_html($non_winner['name'] ?: '朋友') . '</strong>，
+                </p>
+                
+                <p style="color: #495057; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                    感謝您參與 ' . $month_name . ' 的 BYOB 推薦抽獎活動！雖然這次沒有中獎，但您的推薦讓更多愛酒的朋友發現了「<strong>' . esc_html($non_winner['restaurant']) . '</strong>」這個好地方。
+                </p>
+                
+                <div style="background-color: #e7f3ff; border-left: 4px solid #007bff; padding: 20px; margin: 20px 0;">
+                    <h4 style="color: #0056b3; margin: 0 0 10px 0; font-size: 16px;">🎯 抽獎說明</h4>
+                    <p style="color: #0056b3; margin: 0; font-size: 14px; line-height: 1.5;">
+                        我們的抽獎系統使用 PHP 的 Mersenne Twister 演算法（mt_rand）生成隨機數，確保每次抽獎的完全隨機性和公平性。
+                    </p>
+                </div>
+                
+                <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 6px; padding: 20px; margin: 20px 0;">
+                    <h3 style="color: #856404; margin: 0 0 10px 0; font-size: 18px;">🎁 下個月再來！</h3>
+                    <p style="color: #856404; margin: 0 0 15px 0; font-size: 16px; line-height: 1.5;">
+                        每月的抽獎活動持續進行中，獎品包括：
+                    </p>
+                    <ul style="color: #856404; margin: 0; padding-left: 20px;">
+                        <li>🎫 一獎：進口酒商電子禮券</li>
+                        <li>🥂 二獎：高級進口紅白酒杯</li>
+                    </ul>
+                </div>
+                
+                <h3 style="color: #8b2635; margin: 30px 0 15px 0; font-size: 18px;">💡 繼續推薦</h3>
+                <p style="color: #495057; font-size: 16px; line-height: 1.6; margin: 0 0 20px 0;">
+                    知道其他可以自帶酒的餐廳嗎？歡迎繼續推薦，增加下次中獎機會：
+                </p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="https://forms.gle/jAnvmwh2BKyVXq5M8" 
+                       style="display: inline-block; background-color: rgba(139, 38, 53, 0.8); color: #f8f9fa; text-decoration: none; padding: 16px 32px; border-radius: 6px; font-size: 16px; font-weight: 500; transition: background-color 0.3s ease;">
+                        📝 推薦更多餐廳
+                    </a>
+                </div>
+                
+                <p style="color: #495057; font-size: 16px; line-height: 1.6; margin: 20px 0 0 0;">
+                    感謝您對 BYOB 平台的支持，讓我們一起讓台北變得更開瓶友善！🥂
+                </p>
+                
+                <p style="color: #495057; font-size: 16px; line-height: 1.6; margin: 20px 0 0 0;">
+                    Cheers！<br>
+                    — 台北 BYOB 小隊
                 </p>
             </div>
             
@@ -3769,18 +3929,18 @@ function byob_lottery_management_page() {
     ]);
     
     echo '<div class="card" style="max-width: 800px; margin: 20px 0;">';
-    echo '<h2>本月參與者統計 (' . date('Y年m月') . ')</h2>';
-    echo '<p><strong>參與人數：</strong>' . count($participants) . ' 人</p>';
+    echo '<h2 class="lottery-stats-title">本月參與者統計 (' . date('Y年m月') . ')</h2>';
+    echo '<p class="participant-count"><strong>參與人數：</strong>' . count($participants) . ' 人</p>';
     
     if (!empty($participants)) {
         echo '<h3>參與者清單</h3>';
-        echo '<table class="wp-list-table widefat fixed striped">';
+        echo '<table class="wp-list-table widefat fixed striped participant-table">';
         echo '<thead><tr><th>姓名</th><th>Email</th><th>推薦餐廳</th><th>基本機會</th><th>分享機會</th><th>總機會</th><th>操作</th></tr></thead>';
         echo '<tbody>';
         
         foreach ($participants as $participant) {
-            $name = get_field('recommender_name', $participant->ID);
-            $email = get_field('recommender_email', $participant->ID);
+            $name = get_field('customer_recommender_name', $participant->ID);
+            $email = get_field('customer_recommender_email', $participant->ID);
             $restaurant = get_field('restaurant_name', $participant->ID);
             $base_chances = get_field('base_chances', $participant->ID) ?: 1;
             $social_share_chance = get_field('social_share_chance', $participant->ID) ?: 0;
@@ -3854,7 +4014,132 @@ function byob_lottery_management_page() {
         echo '</div>';
     }
     
+    // 加入 JavaScript 實現動態月份選擇
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        // 為月份選擇下拉選單添加事件監聽器
+        $('select[name="lottery_month"]').on('change', function() {
+            var selectedMonth = $(this).val();
+            var monthName = $(this).find('option:selected').text();
+            
+            // 更新統計標題
+            $('.lottery-stats-title').text('本月參與者統計 (' + monthName + ')');
+            
+            // 發送 AJAX 請求獲取該月份的參與者資料
+            $.ajax({
+                url: ajaxurl,
+                type: 'POST',
+                data: {
+                    action: 'get_monthly_participants',
+                    month: selectedMonth,
+                    nonce: '<?php echo wp_create_nonce('lottery_month_ajax'); ?>'
+                },
+                success: function(response) {
+                    if (response.success) {
+                        // 更新統計數字
+                        $('.participant-count').text('參與人數: ' + response.data.total + '人');
+                        
+                        // 更新參與者清單
+                        var tbody = $('.participant-table tbody');
+                        tbody.empty();
+                        
+                        if (response.data.participants.length > 0) {
+                            $.each(response.data.participants, function(index, participant) {
+                                var row = '<tr>' +
+                                    '<td>' + participant.name + '</td>' +
+                                    '<td>' + participant.email + '</td>' +
+                                    '<td>' + participant.restaurant + '</td>' +
+                                    '<td>' + participant.base_chances + '</td>' +
+                                    '<td>' + participant.social_share_chance + '</td>' +
+                                    '<td>' + participant.total_chances + '</td>' +
+                                    '<td>' + participant.actions + '</td>' +
+                                    '</tr>';
+                                tbody.append(row);
+                            });
+                        } else {
+                            tbody.append('<tr><td colspan="7" style="text-align: center;">該月份無參與者</td></tr>');
+                        }
+                    }
+                },
+                error: function() {
+                    console.log('載入月份資料失敗');
+                }
+            });
+        });
+    });
+    </script>
+    <?php
+    
     echo '</div>';
+}
+
+/**
+ * AJAX 處理函數：獲取月份參與者資料
+ */
+add_action('wp_ajax_get_monthly_participants', 'byob_get_monthly_participants_ajax');
+
+function byob_get_monthly_participants_ajax() {
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error('權限不足');
+        return;
+    }
+    
+    if (!wp_verify_nonce($_POST['nonce'], 'lottery_month_ajax')) {
+        wp_send_json_error('安全驗證失敗');
+        return;
+    }
+    
+    $month = sanitize_text_field($_POST['month']);
+    
+    // 取得該月份的參與者
+    $participants = get_posts([
+        'post_type' => 'lottery_participant',
+        'meta_query' => [
+            [
+                'key' => 'month',
+                'value' => $month
+            ]
+        ],
+        'numberposts' => -1
+    ]);
+    
+    $participant_data = [];
+    foreach ($participants as $participant) {
+        $name = get_field('customer_recommender_name', $participant->ID);
+        $email = get_field('customer_recommender_email', $participant->ID);
+        $restaurant = get_field('restaurant_name', $participant->ID);
+        $base_chances = get_field('base_chances', $participant->ID) ?: 1;
+        $social_share_chance = get_field('social_share_chance', $participant->ID) ?: 0;
+        $total_chances = get_field('total_chances', $participant->ID) ?: 1;
+        
+        // 生成操作按鈕
+        $actions = '';
+        if ($social_share_chance == 0) {
+            $actions .= '<form method="post" style="display: inline;">';
+            $actions .= wp_nonce_field('add_social_share', 'social_share_nonce', true, false);
+            $actions .= '<input type="hidden" name="participant_id" value="' . $participant->ID . '">';
+            $actions .= '<input type="submit" name="add_social_share" value="增加分享機會" class="button button-small">';
+            $actions .= '</form>';
+        } else {
+            $actions .= '<span style="color: green;">✓ 已分享</span>';
+        }
+        
+        $participant_data[] = [
+            'name' => $name,
+            'email' => $email,
+            'restaurant' => $restaurant,
+            'base_chances' => $base_chances,
+            'social_share_chance' => $social_share_chance,
+            'total_chances' => $total_chances,
+            'actions' => $actions
+        ];
+    }
+    
+    wp_send_json_success([
+        'total' => count($participants),
+        'participants' => $participant_data
+    ]);
 }
 
 /**
