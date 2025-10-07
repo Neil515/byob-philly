@@ -1751,7 +1751,7 @@ function byob_generate_recommender_notification_html($recommender_name, $restaur
                 <h4 style="color: #0056b3; margin: 0 0 10px 0; font-size: 16px;">📢 額外抽獎機會</h4>
                 <p style="color: #0056b3; margin: 0; font-size: 14px; line-height: 1.5;">
                     想要額外1次抽獎機會嗎？<br>
-                    1. 點擊連結 <a href="https://reurl.cc/4N01nL" style="color: #0056b3; text-decoration: underline;">https://reurl.cc/4N01nL</a> 開啟抽獎活動貼文，然後分享到你的社群媒體<br>
+                    1. 點擊連結 <a href="https://reurl.cc/DOVDdO" style="color: #0056b3; text-decoration: underline;">https://reurl.cc/4N01nL</a> 開啟抽獎活動貼文，然後分享到你的社群媒體<br>
                     2. 分享後回覆此Email並附上你的分享貼文連結<br>
                     3. 我們確認後會為你增加1次抽獎機會！
                 </p>
