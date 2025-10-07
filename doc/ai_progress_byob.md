@@ -3,16 +3,124 @@
 ## 📅 專案概覽
 
 * **專案名稱**：BYOB (Bring Your Own Bottle) 餐廳平台
-* **目前階段**：抽獎系統完整實作與優化完成，準備進入行銷推廣階段
-* **核心功能**：餐廳資料管理、BYOB 服務設定、前台展示、SEO、社群與短影音行銷、自動化資料收集、Email/通知系統、顧客推薦表單系統、推薦成功通知系統、抽獎系統
-* **技術架構**：WordPress + ACF + WooCommerce + Google Places API + Google Apps Script + 抽獎系統 + Email 通知系統
+* **目前階段**：抽獎活動推廣策略執行階段
+* **核心功能**：餐廳資料管理、BYOB 服務設定、前台展示、SEO、社群與短影音行銷、自動化資料收集、Email/通知系統、顧客推薦表單系統、推薦成功通知系統、抽獎系統、多平台推廣策略
+* **技術架構**：WordPress + ACF + WooCommerce + Google Places API + Google Apps Script + 抽獎系統 + Email 通知系統 + 多平台推廣工具
+
+---
+
+## ✅ 2025年10月7日 — 抽獎活動文章與推廣素材完成
+
+### 🎯 今日目標
+完成抽獎活動的社群媒體宣傳文章，並準備多平台推廣策略。
+
+### 已完成項目
+
+* [x] **抽獎活動文章製作** ⭐ 行銷內容
+  * 完成 Facebook 抽獎活動宣傳貼文
+  * 包含獎品資訊（一獎：進口酒商電子禮券、二獎：高級進口紅白酒杯）
+  * 說明參與方式（推薦餐廳獲得抽獎機會）
+  * 加入公平性說明（Mersenne Twister 演算法）
+  * 設計視覺元素和排版
+
+* [x] **社群媒體素材準備** ⭐ 視覺設計
+  * 完成 Facebook 貼文版本
+  * 準備 Instagram 貼文版本
+  * 準備相關圖片或視覺素材（黃色酒瓶圖）
+  * 設定適當的標籤和標記
+
+* [x] **活動連結建立** ⭐ 技術整合
+  * 建立抽獎活動的專屬連結
+  * 更新 Email 中的分享連結（https://reurl.cc/4N01nL）
+  * 測試連結功能正常
+
+* [x] **重複檢查系統優化** ⭐ 核心功能修正
+  * 修正地址100%相同但餐廳名稱不同時的重複檢查邏輯
+  * 地址完全相同時強制判定為重複（無論名稱是否相似）
+  * 提高相似度分數：名稱相似時95%，名稱不同時85%
+
+* [x] **多平台推廣策略規劃** ⭐ 行銷策略
+  * 制定 6 大推廣策略：LinkedIn、酒商合作、品酒社團、Facebook 社團、Instagram、Google 我的商家
+  * 設計推廣效果追蹤指標
+  * 建立成本效益評估框架
+  * 準備各平台推廣素材
+
+### 技術實現細節
+
+**重複檢查系統優化：**
+```php
+// 如果地址完全相同，強制判定為重複（無論名稱是否相似）
+if ($addr1_norm === $addr2_norm) {
+    $name_similarity = byob_calculate_string_similarity($name1_norm, $name2_norm);
+    if ($name_similarity >= 70) {
+        return 95; // 地址相同且名稱相似，極高相似度
+    } else {
+        return 85; // 地址相同但名稱不同，仍然判定為重複
+    }
+}
+```
+
+**Facebook 抽獎活動貼文：**
+```
+🍷【BYOB 推薦餐廳抽獎活動】🍷
+
+愛享用好酒的你，是否曾經為了找一家可以自帶酒水的餐廳而煩惱？
+
+現在，只要分享推薦你喜歡的 BYOB 餐廳，就有機會獲得超值好禮！
+
+🎁【獎品內容】
+🏆 一獎（1名）：進口酒商電子禮券
+🥈 二獎（2名）：高級進口紅白酒杯
+
+🎯【參加方式超簡單】
+1️⃣ 點擊下方連結推薦你喜歡的 BYOB 餐廳 
+2️⃣ 填寫餐廳基本資訊（名稱、地址、開瓶費等）
+3️⃣ 留下你的姓名和 Email
+4️⃣ 一旦審核通過，立即獲得抽獎機會！（資料越詳細完整，審核速度越快哦！）
+
+📝【推薦表單按這裡】
+👉 https://forms.gle/jAnvmwh2BKyVXq5M8
+
+💡【小提醒】
+推薦的餐廳必須是允許自帶酒水的店家（無論有無開瓶費），
+讓我們一起建立最完整的 BYOB 餐廳地圖！
+
+📅 每月定期抽獎，中獎與否都會收到 Email 通知
+
+💡 本抽獎使用 Mersenne Twister 演算法，確保結果隨機公正。
+
+✨【額外抽獎機會】
+審核通過的推薦人，分享活動貼文到你的社群媒體，並回覆 Email 附上分享連結，就能再獲得 1 次額外抽獎機會！
+🔗 分享連結：https://reurl.cc/4N01nL
+
+⏰【活動時間】
+即日起開始，每月抽獎一次。
+募集達300家活動即結束，參加從速！
+
+📣 趕快揪朋友一起參加，讓更多 BYOB 餐廳被看見，也讓你離享用好酒更近一步！
+
+#BYOB #自帶酒水 #BYOB台北 #自帶酒水餐廳 #推薦抽好禮 #餐廳推薦 #抽獎活動 #紅酒 #白酒 #美食推薦 #台北美食 #新北美食
+```
+
+**Instagram 推廣文案：**
+```
+推薦你愛的 #BYOB 餐廳 🍷
+抽進口酒商禮券與紅白酒杯！
+👉 詳情請見 @byobmap 粉專最新貼文
+#自帶酒水 #台北美食 #抽獎活動 #紅酒控
+```
+
+**多平台推廣策略：**
+1. **LinkedIn 專業版推廣**：目標餐飲業從業人員、品酒愛好者、商務人士
+2. **酒商合作夥伴推廣**：邀請現有合作酒商協助推廣
+3. **Facebook 品酒愛好者社團**：5-8個相關社團推廣
+4. **Facebook 相關社團**：6個目標社團（台北美食、紅酒愛好者等）
+5. **Instagram 推廣**：貼文和 Story 版本，加入連結貼紙
+6. **Google 我的商家推廣**：Maps 活動貼文，SEO 優化
 
 ---
 
 ## ✅ 2025年10月6日 — 抽獎系統測試與優化
-
-### 🎯 今日目標
-完成抽獎系統的完整測試，修正發現的問題，並優化用戶體驗。
 
 ### 已完成項目
 
@@ -41,48 +149,6 @@
   * 簡化操作步驟：從4步簡化為3步
   * 移除重複的標記和回覆步驟
   * 優化社群帳號標記說明
-
-### 技術實現細節
-
-**抽獎系統架構：**
-```
-餐廳審核通過 → 自動記錄參與者 → 執行抽獎 → 發送中獎/未中獎通知
-```
-
-**獎項配置（最終版）：**
-```php
-$prizes = [
-    ['name' => '一獎', 'count' => 1, 'description' => '進口酒商電子禮券'],
-    ['name' => '二獎', 'count' => 2, 'description' => '高級進口紅白酒杯']
-];
-```
-
-**未中獎通知系統：**
-* 智能去重：使用 `$sent_emails` 陣列記錄已發送的 Email
-* 自動觸發：在抽獎執行後自動發送
-* 個性化內容：包含推薦者姓名和推薦的餐廳名稱
-* 公平性說明：包含 Mersenne Twister 演算法說明
-
-**動態月份選擇功能：**
-* JavaScript AJAX 實現無刷新更新
-* 為統計區塊和參與者清單添加 CSS 類別
-* AJAX 處理函數 `byob_get_monthly_participants_ajax`
-* 選擇不同月份時自動更新統計資料
-
-**額外抽獎機會優化：**
-```
-1. 點擊連結 https://reurl.cc/4N01nL 開啟抽獎活動貼文，然後分享到你的社群媒體
-2. 分享後回覆此Email並附上你的分享貼文連結
-3. 我們確認後會為你增加1次抽獎機會！
-```
-
-**測試結果（成功）：**
-* 抽獎系統基礎功能測試成功
-* 推薦者姓名正確顯示
-* 動態月份選擇功能正常
-* 未中獎通知系統運作正常
-* 獎項配置更新正確
-* 額外抽獎機會流程簡化成功
 
 ---
 
@@ -150,110 +216,7 @@ $prizes = [
 
 ---
 
-## ✅ 2025年10月3日 — 推薦成功通知功能完整實作
-
-### 已完成項目
-
-* [x] **推薦成功通知功能實作**
-  * 修改 `byob_auto_send_invitation_on_publish` 函數
-  * 新增 `byob_send_recommender_notification` 函數
-  * 新增輔助函數群組（資料取得、格式化、HTML 生成）
-  * 內嵌 HTML Email 模板
-  * 測試驗證：推薦者成功收到通知郵件
-
-* [x] **Email 模板優化**
-  * 移除餐廳資訊區塊
-  * 調整按鈕樣式（字體顏色、大小）
-  * 移除追蹤我們區塊
-  * 更新推薦表單連結為實際連結
-
-### 技術實現細節
-
-**推薦成功通知系統架構：**
-```
-餐廳發布 → transition_post_status hook → 判別資料來源 → 發送對應通知
-```
-
-**判別邏輯（最終版）：**
-```php
-if ($source === 'customer_recommendation' && !empty($recommender_email)) {
-    // 發送推薦者通知
-    byob_send_recommender_notification($restaurant_id);
-} elseif (!empty($contact_person)) {
-    // 發送業者邀請通知
-    byob_send_approval_notification($restaurant_id);
-}
-```
-
-**核心函數群組：**
-* `byob_auto_send_invitation_on_publish`：主要觸發函數
-* `byob_send_recommender_notification`：發送推薦者通知
-* `byob_get_restaurant_display_data`：取得餐廳資料
-* `byob_generate_recommender_notification_html`：生成 HTML 內容
-* `byob_format_corkage_fee`：格式化開瓶費
-* `byob_format_equipment`：格式化酒器設備
-* `byob_format_contact_info`：格式化聯絡資訊
-
-**Email 模板特色：**
-* 移除餐廳資訊區塊，版面更簡潔
-* 按鈕樣式：`rgba(139, 38, 53, 0.7)` 背景，`#f8f9fa` 字體
-* 按鈕大小：`padding: 16px 32px`，`font-size: 16px`
-* 移除追蹤我們區塊，聚焦主要行動
-* 推薦表單連結：`https://forms.gle/jAnvmwh2BKyVXq5M8`
-
-**防重複機制：**
-* 推薦者通知：`_byob_recommender_notified` post meta
-* 業者邀請：`_byob_invitation_sent` post meta
-
----
-
-## ✅ 2025年10月1日 — 顧客推薦表單欄位映射修正完成
-
-### 已完成項目
-
-* [x] **問題診斷與根源分析**
-  * 發現問題：推薦者資料錯誤地存入餐廳聯絡人欄位
-  * 根源分析：Apps Script 錯誤覆寫邏輯 + functions.php 必填欄位限制
-  * 確認解決方案：簡化必填欄位 + 修正資料映射
-
-* [x] **修正 functions.php（4 處修改）**
-  * 將 5 個欄位改為非必填（contact_person、email、restaurant_type、district、phone）
-  * 新增 3 個 API 參數（customer_recommender_name、customer_recommender_email、source）
-  * 在參數映射表中加入推薦者欄位映射
-  * 在資料轉換中加入推薦者欄位處理
-  * 修正 `byob_create_restaurant_article` 必填欄位檢查（只保留 3 個核心欄位）
-  * 修正 `byob_create_restaurant_post` 必填參數檢查（只保留 3 個核心欄位）
-  * ACF 欄位更新加入 customer_recommender_name 和 customer_recommender_email
-  * 優化 source 欄位邏輯（優先使用傳入的 source 值）
-
-* [x] **修正 Apps Script - 顧客推薦版.js（2 處修改）**
-  * 刪除錯誤的覆寫邏輯（將推薦者資料複製到 contact_person 和 email）
-  * 改用空字串作為預設值（不使用誤導性的「待確認」、「pending@byob.com」）
-  * 正確保留 customer_recommender_name 和 customer_recommender_email 的原始值
-  * 新增 source 欄位標記為 'customer_recommendation'
-  * 更新必填欄位檢查（只檢查 3 個核心欄位）
-
----
-
-## ✅ 2025年9月30日 — 顧客推薦表單系統建立完成
-
-### 已完成項目
-
-* [x] **建立顧客推薦 Google 表單**：11 個欄位，支援條件式顯示
-* [x] **建立 Google Apps Script 處理程式**：基於純淨版結構，動態欄位映射
-* [x] **整合 WordPress REST API**：成功建立餐廳草稿文章
-* [x] **新增 ACF 欄位**：customer_recommender_name、customer_recommender_email
-
-### 技術實現
-
-* Apps Script 基於純淨版結構，使用「欄位設定表」工作表
-* 餐廳類型「排除法」識別「其他」內容
-* 開瓶費條件式邏輯處理
-* 全形轉半形函數確保標題匹配
-
----
-
-## 📊 專案整體進度（截至 2025-10-06）
+## 📊 專案整體進度（截至 2025-10-07）
 
 ### 已完成里程碑
 
@@ -270,11 +233,12 @@ if ($source === 'customer_recommendation' && !empty($recommender_email)) {
   * 防重複機制
   * 測試驗證成功
 
-* ✅ **重複檢查系統**（完整實作）
+* ✅ **重複檢查系統**（完整實作 + 優化）
   * 相似度計算演算法
   * 自動觸發機制
   * 後台管理介面
   * 審核處理機制
+  * 地址相同強制判定重複邏輯
 
 * ✅ **抽獎系統**（完整實作）
   * 抽獎參與者記錄
@@ -282,6 +246,12 @@ if ($source === 'customer_recommendation' && !empty($recommender_email)) {
   * 中獎/未中獎通知
   * 後台管理介面
   * 動態月份選擇
+
+* ✅ **抽獎活動推廣素材**（完整實作）
+  * Facebook 抽獎活動貼文
+  * Instagram 推廣文案
+  * 多平台推廣策略規劃
+  * 推廣效果追蹤指標
 
 * ✅ **餐廳業者表單系統**（純淨版）
   * 動態欄位映射機制
@@ -295,19 +265,38 @@ if ($source === 'customer_recommendation' && !empty($recommender_email)) {
 
 ### 進行中模組
 
-* 🔄 抽獎活動文章製作（明日進行）
+* 🔄 多平台推廣策略執行（明日執行）
 
 ### 待開發模組
 
 * ⏳ 自動回覆系統實作
-* ⏳ 社群推廣素材製作
-* ⏳ 抽獎活動推廣素材
 * ⏳ KPI 追蹤儀表板
 * ⏳ 行銷活動管理系統
 
 ---
 
 ## 📝 技術筆記
+
+### 重複檢查系統架構（已完成 + 優化）
+
+**功能架構：**
+* 自動觸發：在 `byob_create_restaurant_article` 中檢查重複
+* 相似度計算：名稱相似度 + 地址相似度 ÷ 2
+* 閾值設定：≥ 80% 視為可能重複
+* 狀態管理：重複設為 `pending`，不重複設為 `draft`
+
+**核心函數：**
+* `byob_check_duplicate_restaurant`：主檢查函數
+* `byob_calculate_simple_similarity`：簡化版相似度計算
+* `byob_calculate_string_similarity`：字串相似度計算
+* `byob_extract_road_name`：路名提取
+* `byob_extract_house_number`：門牌號碼提取
+
+**相似度計算邏輯（優化版）：**
+* 地址完全相同：強制判定為重複（85% 或 95%）
+* 名稱完全相同：檢查地址相似度
+* 綜合評分：名稱相似度 × 0.4 + 地址相似度 × 0.6
+* 閾值：≥ 80% 視為可能重複
 
 ### 抽獎系統架構（已完成）
 
@@ -328,21 +317,6 @@ if ($source === 'customer_recommendation' && !empty($recommender_email)) {
 **獎項配置：**
 * 一獎：進口酒商電子禮券（1名）
 * 二獎：高級進口紅白酒杯（2名）
-
-### 重複檢查系統架構（已完成）
-
-**功能架構：**
-* 自動觸發：在 `byob_create_restaurant_article` 中檢查重複
-* 相似度計算：名稱相似度 + 地址相似度 ÷ 2
-* 閾值設定：≥ 80% 視為可能重複
-* 狀態管理：重複設為 `pending`，不重複設為 `draft`
-
-**核心函數：**
-* `byob_check_duplicate_restaurant`：主檢查函數
-* `byob_calculate_name_similarity`：名稱相似度計算
-* `byob_calculate_address_similarity`：地址相似度計算
-* `byob_extract_road_name`：路名提取
-* `byob_extract_house_number`：門牌號碼提取
 
 ### 推薦成功通知系統架構（已完成）
 
@@ -411,5 +385,5 @@ Google 表單欄位 → 欄位設定表 → Apps Script 解析 → WordPress API
 
 ---
 
-*最後更新：2025年10月6日*
-*版本：v3.0*
+*最後更新：2025年10月7日*
+*版本：v4.0*
