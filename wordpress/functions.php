@@ -434,12 +434,14 @@ function byob_calculate_simple_similarity($name1, $addr1, $name2, $addr2) {
         return 100;
     }
     
-    // 如果地址完全相同，檢查名稱相似度
+    // 如果地址完全相同，強制判定為重複（無論名稱是否相似）
     if ($addr1_norm === $addr2_norm) {
         // 使用 levenshtein 距離計算名稱相似度
         $name_similarity = byob_calculate_string_similarity($name1_norm, $name2_norm);
         if ($name_similarity >= 70) {
-            return 90; // 地址相同且名稱相似，高相似度
+            return 95; // 地址相同且名稱相似，極高相似度
+        } else {
+            return 85; // 地址相同但名稱不同，仍然判定為重複
         }
     }
     
@@ -1742,7 +1744,7 @@ function byob_generate_recommender_notification_html($recommender_name, $restaur
                 <p>你已經獲得本月推薦抽獎資格，獎品包括：</p>
                 <ul>
                     <li>🎫 一獎：進口酒商電子禮券</li>
-                    <li>🥂 二獎：高級進口紅白酒杯</li>
+                    <li>🥂 二獎：高級進口紅(白)酒杯</li>
                 </ul>
                 <p>每月月底我們會抽出幸運得主，記得關注我們的社群更新喔！</p>
             </div>
@@ -1751,14 +1753,14 @@ function byob_generate_recommender_notification_html($recommender_name, $restaur
                 <h4 style="color: #0056b3; margin: 0 0 10px 0; font-size: 16px;">📢 額外抽獎機會</h4>
                 <p style="color: #0056b3; margin: 0; font-size: 14px; line-height: 1.5;">
                     想要額外1次抽獎機會嗎？<br>
-                    1. 點擊連結 <a href="https://reurl.cc/DOVDdO" style="color: #0056b3; text-decoration: underline;">https://reurl.cc/4N01nL</a> 開啟抽獎活動貼文，然後分享到你的社群媒體<br>
+                    1. 點擊連結 <a href="https://reurl.cc/DOVDdO" style="color: #0056b3; text-decoration: underline;">https://reurl.cc/DOVDdO</a> 開啟抽獎活動貼文，然後分享到你的社群媒體<br>
                     2. 分享後回覆此Email並附上你的分享貼文連結<br>
                     3. 我們確認後會為你增加1次抽獎機會！
                 </p>
             </div>
 
             <h3>💡 繼續推薦</h3>
-            <p>知道其他可以自帶酒的餐廳嗎？歡迎繼續推薦：</p>
+            <p>知道其他可以自帶酒的餐廳嗎？歡迎繼續推薦,每成功推薦1家即增加1次抽獎機會！：</p>
             <div style="text-align: center; margin: 30px 0;">
                 <a href="https://forms.gle/[顧客推薦表單連結]" 
                    style="display: inline-block; background-color: rgba(139, 38, 53, 0.8); color: #f8f9fa; text-decoration: none; padding: 16px 32px; border-radius: 6px; font-size: 16px; font-weight: 500; transition: background-color 0.3s ease;">
