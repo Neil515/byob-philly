@@ -1,165 +1,222 @@
-# 餐廳Email搜尋程式使用說明
+# 🍷 BYOB (Bring Your Own Bottle) 餐廳平台
+
+## 📅 專案概覽
+
+**BYOB** 是一個專注於台北地區自帶酒水餐廳的資訊平台，提供完整的餐廳資料管理、推薦系統、抽獎活動和多平台推廣功能。
+
+### 🎯 核心功能
+- **餐廳資料管理**：完整的 BYOB 餐廳資訊收集與展示
+- **顧客推薦系統**：用戶可推薦餐廳並參與抽獎活動
+- **智能重複檢查**：自動檢測重複餐廳，確保資料品質
+- **抽獎活動系統**：每月抽獎，獎品包括進口酒商電子禮券和高級酒杯
+- **多平台推廣**：Facebook、Instagram、LinkedIn、Google 我的商家等
+- **Email 通知系統**：推薦成功、中獎、未中獎通知
+
+### 🛠️ 技術架構
+- **後端**：WordPress + ACF (Advanced Custom Fields)
+- **前端**：Flatsome 主題
+- **資料處理**：Google Apps Script + REST API
+- **通知系統**：WordPress Email 系統
+- **推廣工具**：多平台社群媒體整合
+
+---
 
 ## 🚀 快速開始
 
-### 1. 安裝套件（只需執行一次）
-```bash
-python install_requirements.py
+### 1. 系統需求
+- WordPress 5.0+
+- PHP 7.4+
+- MySQL 5.7+
+- ACF Pro 插件
+
+### 2. 安裝步驟
+1. 上傳 WordPress 主題檔案
+2. 安裝並啟用 ACF Pro
+3. 匯入 ACF 欄位設定
+4. 設定 Google Apps Script
+5. 配置 Email 通知系統
+
+### 3. 核心檔案結構
+```
+BYOB/
+├── wordpress/
+│   ├── functions.php              # 核心功能函數
+│   ├── Apps script - 顧客推薦版.js  # 顧客推薦表單處理
+│   ├── Apps script - 純淨版.js     # 餐廳業者表單處理
+│   └── invitation-handler.php     # 邀請處理器
+├── doc/
+│   ├── Next Task Prompt Byob.md   # 工作規劃與任務追蹤
+│   ├── ai_progress_byob.md        # 開發進度詳細記錄
+│   └── message_and_form/          # Email 模板資料夾
+└── restaurant_crawler/            # 餐廳資料爬蟲工具
 ```
 
-### 2. 執行程式
+---
 
-#### **處理全部餐廳**
+## 📊 系統功能
+
+### 🏪 餐廳管理系統
+- **餐廳資料收集**：透過 Google 表單和爬蟲工具
+- **智能重複檢查**：地址相同強制判定重複，相似度計算
+- **審核管理**：後台審核介面，一鍵通過/拒絕
+- **自動發布**：審核通過即時發布並發送通知
+
+### 👥 顧客推薦系統
+- **推薦表單**：11個欄位，支援條件式顯示
+- **抽獎機制**：推薦成功自動獲得抽獎機會
+- **額外機會**：社群分享可獲得額外抽獎機會
+- **通知系統**：推薦成功、中獎、未中獎 Email 通知
+
+### 🎁 抽獎活動系統
+- **參與者記錄**：自動記錄推薦者資訊
+- **隨機抽獎**：使用 Mersenne Twister 演算法
+- **獎品配置**：
+  - 一獎：進口酒商電子禮券（1名）
+  - 二獎：高級進口紅白酒杯（2名）
+- **通知發送**：中獎者和未中獎者都會收到通知
+
+### 📱 多平台推廣系統
+- **Facebook**：抽獎活動貼文，目標美食愛好者
+- **Instagram**：輕快版文案，Story 連結貼紙
+- **LinkedIn**：專業版推廣，目標餐飲業從業人員
+- **Google 我的商家**：Maps 活動貼文，SEO 優化
+- **酒商合作**：邀請合作夥伴協助推廣
+- **社團推廣**：品酒愛好者、美食相關 Facebook 社團
+
+---
+
+## 🔧 技術實現
+
+### 重複檢查系統
+```php
+// 地址完全相同時強制判定為重複
+if ($addr1_norm === $addr2_norm) {
+    $name_similarity = byob_calculate_string_similarity($name1_norm, $name2_norm);
+    if ($name_similarity >= 70) {
+        return 95; // 地址相同且名稱相似，極高相似度
+    } else {
+        return 85; // 地址相同但名稱不同，仍然判定為重複
+    }
+}
+```
+
+### 抽獎系統架構
+```
+餐廳審核通過 → 自動記錄參與者 → 執行抽獎 → 發送中獎/未中獎通知
+```
+
+### Email 通知系統
+- **推薦成功通知**：包含抽獎說明和額外機會
+- **中獎通知**：獎品詳情和領獎說明
+- **未中獎通知**：鼓勵繼續參與，公平性說明
+
+---
+
+## 📈 推廣策略
+
+### 6大推廣平台
+1. **LinkedIn 專業版**：餐飲業從業人員、品酒愛好者、商務人士
+2. **酒商合作夥伴**：現有合作酒商協助推廣
+3. **Facebook 品酒社團**：5-8個相關社團推廣
+4. **Facebook 相關社團**：台北美食、紅酒愛好者等6個目標社團
+5. **Instagram**：貼文和 Story 版本，加入連結貼紙
+6. **Google 我的商家**：Maps 活動貼文，SEO 優化
+
+### 推廣素材
+- **主圖**：黃色酒瓶圖
+- **Facebook 貼文**：完整活動說明，包含獎品資訊和參與方式
+- **Instagram 文案**：輕快版文案，適合手機瀏覽
+- **分享連結**：https://reurl.cc/4N01nL
+
+---
+
+## 📊 效果追蹤
+
+### 量化指標
+- **觸及人數**：各平台貼文觸及人數
+- **互動數**：按讚、留言、分享數量
+- **點擊率**：連結點擊次數
+- **轉換率**：從推廣到表單提交的轉換
+- **參與者增加**：抽獎參與者數量變化
+
+### 質化指標
+- **品牌知名度**：搜尋「BYOB 台北」的排名變化
+- **用戶反饋**：各平台用戶留言和反應
+- **合作夥伴滿意度**：酒商合作推廣效果
+- **社群影響力**：在相關社群的討論度
+
+---
+
+## 🛠️ 開發工具
+
+### 餐廳資料爬蟲
 ```bash
+# 處理全部餐廳
 python restaurant_email_search.py 您的Excel檔案.xlsx
-```
 
-#### **限制處理家數**
-```bash
-# 只處理前10家餐廳
+# 限制處理家數
 python restaurant_email_search.py 您的Excel檔案.xlsx -n 10
-
-# 只處理前5家餐廳
-python restaurant_email_search.py 您的Excel檔案.xlsx -n 5
-
-# 只處理前20家餐廳
-python restaurant_email_search.py 您的Excel檔案.xlsx -n 20
 ```
 
-## 📋 限制家數功能說明
-
-### 🎯 **使用場景**
-
-1. **測試階段**：先用少量資料測試程式是否正常
-2. **分批處理**：避免一次處理太多，降低風險
-3. **時間控制**：控制每次執行的時間長度
-4. **資源管理**：避免長時間佔用電腦資源
-
-### ⚙️ **參數說明**
-
-- `-n` 或 `--max-restaurants`：限制處理的餐廳數量
-- 數值範圍：1-999（建議不超過50）
-- 預設值：無限制（處理全部）
-
-### 📊 **輸出檔案命名**
-
-- **無限制**：`原檔名_with_emails.xlsx`
-- **有限制**：`原檔名_with_emails_limit10.xlsx`（限制10家）
-
-## 💡 使用建議
-
-### 🔬 **測試階段**
-```bash
-# 先用5家測試
-python restaurant_email_search.py restaurants.xlsx -n 5
-```
-
-### 📈 **分批處理**
-```bash
-# 第一批：前10家
-python restaurant_email_search.py restaurants.xlsx -n 10
-
-# 第二批：第11-20家（需要修改Excel檔案）
-python restaurant_email_search.py restaurants_11-20.xlsx -n 10
-```
-
-### ⏱️ **時間控制**
-```bash
-# 5家：約2-3分鐘
-python restaurant_email_search.py restaurants.xlsx -n 5
-
-# 10家：約5-8分鐘
-python restaurant_email_search.py restaurants.xlsx -n 10
-
-# 20家：約10-15分鐘
-python restaurant_email_search.py restaurants.xlsx -n 20
-```
-
-## 📋 程式功能
-
+### 功能特色
 - **自動搜尋Email**：從Facebook專頁和官方網站搜尋聯絡email
 - **智能識別**：自動判斷是Facebook專頁還是官方網站
 - **結果輸出**：在原Excel檔案後方新增email欄位
 - **錯誤處理**：自動跳過無法存取的網站
 - **家數限制**：可設定每次處理的餐廳數量
 
-## 📊 輸入檔案格式
+---
 
-Excel檔案必須包含以下欄位：
-- `name`：餐廳名稱
-- `website`：社群連結（Facebook專頁或官方網站）
-- 其他欄位：`address`, `phone`, `rating`, `user_ratings_total`, `place_id`
+## 📝 專案進度
 
-## 📈 輸出結果
+### 已完成模組 ✅
+- 餐廳業者表單系統
+- 顧客推薦表單系統（核心功能）
+- WordPress REST API 整合
+- ACF 欄位動態映射
+- 推薦成功通知系統
+- 重複檢查系統（完整實作 + 優化）
+- 審核管理系統（完整實作）
+- 抽獎系統（完整實作）
+- 抽獎活動推廣素材（完整實作）
 
-程式會生成新檔案，新增欄位：
-- `email`：找到的email地址
-- `search_status`：搜尋狀態（found/not_found/error）
+### 進行中模組 🔄
+- 多平台推廣策略執行
 
-## ⏱️ 執行時間參考
+### 待開發模組 ⏳
+- 自動回覆系統實作
+- KPI 追蹤儀表板
+- 行銷活動管理系統
 
-| 餐廳數量 | 預估時間 | 建議用途 |
-|---------|---------|---------|
-| 5家 | 2-3分鐘 | 測試 |
-| 10家 | 5-8分鐘 | 小批量 |
-| 20家 | 10-15分鐘 | 中批量 |
-| 50家 | 25-40分鐘 | 大批量 |
-
-## 🔧 技術細節
-
-### Facebook專頁搜尋
-- 使用Selenium模擬瀏覽器
-- 搜尋「關於」頁面和聯絡資訊
-- 自動處理需要登入的頁面
-
-### 官方網站搜尋
-- 搜尋常見頁面：/contact, /about, /聯絡我們
-- 使用HTTP請求，速度較快
-- 自動解析HTML內容
-
-### Email驗證
-- 標準email格式驗證
-- 過濾無效email（example.com等）
-- 自動去重
-
-## 📝 日誌檔案
-
-程式執行時會生成 `email_search.log` 檔案，記錄：
-- 搜尋進度
-- 找到的email
-- 錯誤訊息
-- 限制家數資訊
-
-## ⚠️ 注意事項
-
-1. **需要Chrome瀏覽器**：程式使用Chrome WebDriver
-2. **網路連線**：需要穩定的網路連線
-3. **執行時間**：請耐心等待，不要中途關閉程式
-4. **檔案備份**：建議先備份原始Excel檔案
-5. **限制家數**：建議不超過50家，避免執行時間過長
-
-## 🆘 常見問題
-
-### Q: 如何知道程式正在執行？
-A: 查看命令提示字元會顯示處理進度，或查看 `email_search.log` 檔案
-
-### Q: 可以中途停止程式嗎？
-A: 可以按 Ctrl+C 停止，但建議讓程式自然完成
-
-### Q: 限制家數後如何處理剩餘的餐廳？
-A: 需要手動分割Excel檔案，或修改原始檔案後重新執行
-
-### Q: 程式執行失敗怎麼辦？
-A: 檢查Chrome瀏覽器是否已安裝，或手動安裝套件：
-```bash
-pip install pandas requests selenium openpyxl
-```
+---
 
 ## 📞 技術支援
 
-如有問題，請檢查：
-1. Python版本（建議3.7+）
-2. Chrome瀏覽器版本
-3. 網路連線狀態
-4. Excel檔案格式
-5. 限制家數參數是否正確
+### 系統需求
+- WordPress 5.0+
+- PHP 7.4+
+- MySQL 5.7+
+- ACF Pro 插件
+- Chrome 瀏覽器（爬蟲工具）
+
+### 常見問題
+- **重複檢查問題**：確保地址格式一致，系統會自動標準化
+- **Email 通知問題**：檢查 WordPress Email 設定和 SMTP 配置
+- **抽獎系統問題**：確認 Post Type 已正確註冊
+- **推廣效果追蹤**：使用各平台內建分析工具
+
+---
+
+## 📄 相關文檔
+
+- `doc/Next Task Prompt Byob.md`：工作規劃與任務追蹤
+- `doc/ai_progress_byob.md`：開發進度詳細記錄
+- `doc/message_and_form/`：Email 模板資料夾
+- `wordpress/functions.php`：核心功能函數
+- `restaurant_crawler/`：餐廳資料爬蟲工具
+
+---
+
+*最後更新：2025年10月7日*  
+*版本：v4.0*  
+*專案階段：抽獎活動推廣策略執行階段*
