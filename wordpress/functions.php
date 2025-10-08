@@ -1760,9 +1760,9 @@ function byob_generate_recommender_notification_html($recommender_name, $restaur
             </div>
 
             <h3>💡 繼續推薦</h3>
-            <p>知道其他可以自帶酒的餐廳嗎？歡迎繼續推薦,每成功推薦1家即增加1次抽獎機會！：</p>
+            <p>知道其他可以自帶酒的餐廳嗎？歡迎繼續推薦，每成功推薦1家即增加1次抽獎機會！</p>
             <div style="text-align: center; margin: 30px 0;">
-                <a href="https://forms.gle/[顧客推薦表單連結]" 
+                <a href="https://reurl.cc/qYEmDR" 
                    style="display: inline-block; background-color: rgba(139, 38, 53, 0.8); color: #f8f9fa; text-decoration: none; padding: 16px 32px; border-radius: 6px; font-size: 16px; font-weight: 500; transition: background-color 0.3s ease;">
                     📝 推薦更多餐廳
                 </a>
