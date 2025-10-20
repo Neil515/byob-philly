@@ -116,6 +116,75 @@ add_action('rest_api_init', function () {
         'callback' => 'byob_test_endpoint',
         'permission_callback' => '__return_true',
     ));
+    
+    // 費城 BYOB 餐廳 API 端點
+    register_rest_route('byob/v1', '/philly-restaurant', array(
+        'methods' => 'POST',
+        'callback' => 'byob_create_philly_restaurant_post',
+        'permission_callback' => 'byob_verify_api_key',
+        'args' => array(
+            'restaurant_name' => array(
+                'required' => true,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'address' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'phone' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'website' => array(
+                'required' => false,
+                'sanitize_callback' => 'esc_url_raw',
+            ),
+            'philly_corkage_fee' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'corkage_fee_amount' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'other_corkage_policy' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_textarea_field',
+            ),
+            'wine_service_equipment' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'wine_service_equipment_other_note' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'byob_service_level' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'philly_restaurant_type' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'philly_restaurant_type_other_note' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'philly_dining_experience' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_textarea_field',
+            ),
+            'philly_reddit_username' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
+            'philly_contact_email' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_email',
+            ),
+        ),
+    ));
 });
 
 // 自訂數值清理函數
@@ -641,6 +710,352 @@ function byob_create_restaurant_post($request) {
         byob_log_api_call(0, $request->get_params(), 'error: ' . $e->getMessage());
         return new WP_Error('restaurant_creation_failed', $e->getMessage(), array('status' => 500));
     }
+}
+
+/**
+ * 建立費城 BYOB 餐廳文章（費城專用 API 端點）
+ * 
+ * 此函數專門處理費城 BYOB 餐廳的社群推薦：
+ * - 接收 Reddit 社群推薦的費城餐廳資料
+ * - 建立英文文章草稿
+ * - 設定費城專用的分類和標籤
+ * - 文章狀態：草稿（需要審核）
+ * 
+ * @param WP_REST_Request $request REST API請求物件
+ * @return array|WP_Error 成功返回文章資訊，失敗返回錯誤
+ */
+function byob_create_philly_restaurant_post($request) {
+    try {
+        // 除錯：記錄接收到的所有參數
+        $received_params = $request->get_params();
+        error_log('Philadelphia BYOB API: 接收到的參數: ' . print_r($received_params, true));
+        
+        // 取得費城專用參數
+        $restaurant_name = $request->get_param('restaurant_name');
+        $address = $request->get_param('address');
+        $phone = $request->get_param('phone');
+        $website = $request->get_param('website');
+        $philly_corkage_fee = $request->get_param('philly_corkage_fee');
+        $corkage_fee_amount = $request->get_param('corkage_fee_amount');
+        $other_corkage_policy = $request->get_param('other_corkage_policy');
+        $wine_service_equipment = $request->get_param('wine_service_equipment');
+        $wine_service_equipment_other_note = $request->get_param('wine_service_equipment_other_note');
+        $byob_service_level = $request->get_param('byob_service_level');
+        $philly_restaurant_type = $request->get_param('philly_restaurant_type');
+        $philly_restaurant_type_other_note = $request->get_param('philly_restaurant_type_other_note');
+        $philly_dining_experience = $request->get_param('philly_dining_experience');
+        $philly_reddit_username = $request->get_param('philly_reddit_username');
+        $philly_contact_email = $request->get_param('philly_contact_email');
+        
+        // 基本驗證（只有餐廳名稱是必填）
+        if (empty($restaurant_name)) {
+            return new WP_Error('missing_required_fields', 'Missing required field: restaurant_name', array('status' => 400));
+        }
+        
+        // 準備費城餐廳資料
+        $philly_restaurant_data = array(
+            'restaurant_name' => $restaurant_name,
+            'address' => $address ?: '',
+            'phone' => $phone ?: '',
+            'website' => $website ?: '',
+            'philly_corkage_fee' => $philly_corkage_fee ?: '',
+            'corkage_fee_amount' => $corkage_fee_amount ?: '',
+            'other_corkage_policy' => $other_corkage_policy ?: '',
+            'wine_service_equipment' => $wine_service_equipment ?: '',
+            'wine_service_equipment_other_note' => $wine_service_equipment_other_note ?: '',
+            'byob_service_level' => $byob_service_level ?: '',
+            'philly_restaurant_type' => $philly_restaurant_type ?: '',
+            'philly_restaurant_type_other_note' => $philly_restaurant_type_other_note ?: '',
+            'philly_dining_experience' => $philly_dining_experience ?: '',
+            'philly_reddit_username' => $philly_reddit_username ?: '',
+            'philly_contact_email' => $philly_contact_email ?: '',
+            'city' => 'Philadelphia',
+            'state' => 'PA',
+            'country' => 'USA',
+            'source' => 'philly_community_recommendation',
+            'language' => 'en'
+        );
+        
+        // 建立費城餐廳文章
+        $result = byob_create_philly_restaurant_article($philly_restaurant_data);
+        
+        if (is_wp_error($result)) {
+            return $result;
+        }
+        
+        // 記錄 API 呼叫
+        byob_log_api_call($result['post_id'], $request->get_params(), 'philly_draft_created');
+        
+        return $result;
+        
+    } catch (Exception $e) {
+        byob_log_api_call(0, $request->get_params(), 'philly_error: ' . $e->getMessage());
+        return new WP_Error('philly_restaurant_creation_failed', $e->getMessage(), array('status' => 500));
+    }
+}
+
+/**
+ * 建立費城 BYOB 餐廳文章（共用函數）
+ * 
+ * @param array $restaurant_data 費城餐廳資料陣列
+ * @return array|WP_Error 成功返回文章資訊，失敗返回錯誤
+ */
+function byob_create_philly_restaurant_article($restaurant_data) {
+    try {
+        // 檢查核心必填欄位（只有餐廳名稱是必填）
+        $required_fields = array('restaurant_name');
+        $missing_fields = array();
+        
+        foreach ($required_fields as $field) {
+            if (empty($restaurant_data[$field])) {
+                $missing_fields[] = $field;
+            }
+        }
+        
+        if (!empty($missing_fields)) {
+            return new WP_Error('missing_required_fields', '缺少核心必填欄位: ' . implode(', ', $missing_fields), array('status' => 400));
+        }
+        
+        // 費城專用：直接設為草稿狀態（不需要重複檢查）
+        $post_status = 'draft';
+        $review_status = 'pending_general_review';
+        
+        // 建立餐廳文章（高度參照現有模式）
+        $post_data = array(
+            'post_title' => sanitize_text_field($restaurant_data['restaurant_name']),
+            'post_content' => sanitize_textarea_field($restaurant_data['philly_dining_experience'] ?? ''),
+            'post_status' => $post_status,
+            'post_type' => 'restaurant',
+            'post_author' => 1, // 設為管理員
+        );
+        
+        $post_id = wp_insert_post($post_data);
+        if (is_wp_error($post_id)) {
+            throw new Exception('Failed to create post: ' . $post_id->get_error_message());
+        }
+        
+        // 處理餐廳類型（高度參照現有邏輯）
+        $types = $restaurant_data['philly_restaurant_type'] ?? '';
+        $other_note = $restaurant_data['philly_restaurant_type_other_note'] ?? '';
+        
+        if (!empty($types)) {
+            if (!is_array($types)) {
+                if (strpos($types, ',') !== false) {
+                    $types = array_map('trim', explode(',', $types));
+                } else {
+                    $types = array(trim($types));
+                }
+            }
+            
+            // 確保「其他」選項存在（如果沒有「其他」但有說明文字，自動添加）
+            if (!empty($other_note) && !in_array('其他', $types)) {
+                $types[] = '其他';
+            }
+            
+            // 清理空值
+            $types = array_filter($types, function($type) {
+                return !empty(trim($type));
+            });
+        } else {
+            $types = array();
+        }
+        
+        // 處理酒器設備（高度參照現有邏輯）
+        $equipment = $restaurant_data['wine_service_equipment'] ?? '';
+        $equipmentOtherNote = $restaurant_data['wine_service_equipment_other_note'] ?? '';
+        
+        if (!empty($equipmentOtherNote)) {
+            // 如果有其他說明，確保 equipment 包含「其他」選項
+            if (empty($equipment)) {
+                $equipment = array('其他');
+            } elseif (is_array($equipment)) {
+                if (!in_array('其他', $equipment)) {
+                    $equipment[] = '其他';
+                }
+            } else {
+                if (strpos($equipment, '其他') === false) {
+                    $equipment = $equipment . ', 其他';
+                }
+            }
+        }
+        
+        if (!empty($equipment) && !is_array($equipment)) {
+            $equipment = array_map('trim', explode(',', $equipment));
+        }
+        
+        // 更新 ACF 欄位（使用費城專用欄位名稱）
+        if (function_exists('update_field')) {
+            // 正規化開瓶費金額：擷取數字(與小數點)，非數字則為空
+            $amount_raw = (string)($restaurant_data['corkage_fee_amount'] ?? '');
+            if (preg_match('/\d+(?:\.\d+)?/', $amount_raw, $m)) {
+                $corkage_amount_normalized = $m[0];
+            } else {
+                $corkage_amount_normalized = '';
+            }
+
+            $acf_updates = array(
+                'restaurant_name' => sanitize_text_field($restaurant_data['restaurant_name']),
+                'address' => sanitize_text_field($restaurant_data['address'] ?? ''),
+                'phone' => sanitize_text_field($restaurant_data['phone'] ?? ''),
+                'website' => esc_url_raw($restaurant_data['website'] ?? ''),
+                'philly_corkage_fee' => sanitize_text_field($restaurant_data['philly_corkage_fee'] ?? ''),
+                'corkage_fee_amount' => $corkage_amount_normalized,
+                'other_corkage_policy' => sanitize_textarea_field($restaurant_data['other_corkage_policy'] ?? ''),
+                'wine_service_equipment' => $equipment ?: array(),
+                'wine_service_equipment_other_note' => sanitize_text_field($equipmentOtherNote),
+                'byob_service_level' => sanitize_text_field($restaurant_data['byob_service_level'] ?? ''),
+                'philly_restaurant_type' => $types ?: array(),
+                'philly_restaurant_type_other_note' => sanitize_text_field($other_note),
+                'philly_dining_experience' => sanitize_textarea_field($restaurant_data['philly_dining_experience'] ?? ''),
+                'philly_reddit_username' => sanitize_text_field($restaurant_data['philly_reddit_username'] ?? ''),
+                'philly_contact_email' => sanitize_email($restaurant_data['philly_contact_email'] ?? ''),
+                'last_updated' => current_time('Y-m-d'),
+                'source' => 'philly_community_recommendation',
+                'review_status' => $review_status,
+                'submitted_date' => current_time('mysql'),
+                'review_date' => '',
+                'review_notes' => ''
+            );
+            
+            foreach ($acf_updates as $field_name => $field_value) {
+                update_field($field_name, $field_value, $post_id);
+            }
+
+            // 雙軌寫入舊欄位（相容現有前台樣板與舊報表）
+            // 1) is_charged 值轉換：Free -> no, Corkage Fee -> yes, Other -> other
+            $is_charged_legacy = '';
+            $philly_fee_raw = strtolower(trim($restaurant_data['philly_corkage_fee'] ?? ''));
+            if ($philly_fee_raw === 'free') {
+                $is_charged_legacy = 'no';
+            } elseif ($philly_fee_raw === 'corkage fee') {
+                $is_charged_legacy = 'yes';
+            } elseif ($philly_fee_raw === 'other') {
+                $is_charged_legacy = 'other';
+            }
+
+            // 2) 舊欄位映射
+            $legacy_updates = array(
+                'restaurant_name' => sanitize_text_field($restaurant_data['restaurant_name']),
+                'address' => sanitize_text_field($restaurant_data['address'] ?? ''),
+                'phone' => sanitize_text_field($restaurant_data['phone'] ?? ''),
+                'website' => esc_url_raw($restaurant_data['website'] ?? ''),
+                'is_charged' => $is_charged_legacy,
+                'corkage_fee_amount' => $is_charged_legacy === 'yes' ? $corkage_amount_normalized : '',
+                'corkage_fee_note' => sanitize_text_field($restaurant_data['other_corkage_policy'] ?? ''),
+                'equipment' => $equipment ?: array(),
+                'equipment_other_note' => sanitize_text_field($equipmentOtherNote),
+                'open_bottle_service' => sanitize_text_field($restaurant_data['byob_service_level'] ?? ''),
+                'restaurant_type' => $types ?: array(),
+                'restaurant_type_other_note' => sanitize_text_field($other_note),
+                'notes' => sanitize_textarea_field($restaurant_data['philly_dining_experience'] ?? ''),
+            );
+
+            foreach ($legacy_updates as $field_name => $field_value) {
+                update_field($field_name, $field_value, $post_id);
+            }
+        }
+        
+        // 設定費城專用分類和標籤
+        wp_set_post_terms($post_id, array('philly-byob-restaurants'), 'restaurant_category');
+        wp_set_post_tags($post_id, array('Philadelphia', 'BYOB', 'Restaurant Guide', 'Community Recommendation'));
+        
+        return array(
+            'success' => true,
+            'post_id' => $post_id,
+            'post_url' => get_edit_post_link($post_id, ''),
+            'post_status' => $post_status,
+            'review_status' => $review_status,
+            'message' => 'Philadelphia BYOB restaurant draft created successfully'
+        );
+        
+    } catch (Exception $e) {
+        return new WP_Error('philly_article_creation_failed', $e->getMessage(), array('status' => 500));
+    }
+}
+
+/**
+ * 生成費城餐廳英文文章內容
+ * 
+ * @param array $restaurant_data 餐廳資料
+ * @return string 文章內容
+ */
+function byob_generate_philly_article_content($restaurant_data) {
+    $content = '';
+    
+    // 文章開頭
+    $content .= '<h2>Restaurant Overview</h2>' . "\n";
+    $content .= '<p><strong>Restaurant Name:</strong> ' . esc_html($restaurant_data['restaurant_name']) . '</p>' . "\n";
+    
+    if (!empty($restaurant_data['address'])) {
+        $content .= '<p><strong>Address:</strong> ' . esc_html($restaurant_data['address']) . '</p>' . "\n";
+    }
+    
+    if (!empty($restaurant_data['phone'])) {
+        $content .= '<p><strong>Phone:</strong> ' . esc_html($restaurant_data['phone']) . '</p>' . "\n";
+    }
+    
+    if (!empty($restaurant_data['website'])) {
+        $content .= '<p><strong>Website:</strong> <a href="' . esc_url($restaurant_data['website']) . '" target="_blank">' . esc_html($restaurant_data['website']) . '</a></p>' . "\n";
+    }
+    
+    if (!empty($restaurant_data['philly_restaurant_type'])) {
+        $content .= '<p><strong>Cuisine Type:</strong> ' . esc_html($restaurant_data['philly_restaurant_type']) . '</p>' . "\n";
+    }
+    
+    $content .= "\n";
+    
+    // BYOB 政策區塊
+    $content .= '<h2>BYOB Policy</h2>' . "\n";
+    
+    if (!empty($restaurant_data['philly_corkage_fee'])) {
+        $content .= '<p><strong>Corkage Policy:</strong> ' . esc_html($restaurant_data['philly_corkage_fee']) . '</p>' . "\n";
+    }
+    
+    if (!empty($restaurant_data['corkage_fee_amount'])) {
+        $content .= '<p><strong>Corkage Fee Amount:</strong> ' . esc_html($restaurant_data['corkage_fee_amount']) . '</p>' . "\n";
+    }
+    
+    if (!empty($restaurant_data['other_corkage_policy'])) {
+        $content .= '<p><strong>Other Corkage Policy:</strong> ' . esc_html($restaurant_data['other_corkage_policy']) . '</p>' . "\n";
+    }
+    
+    $content .= "\n";
+    
+    // BYOB 設備和服務區塊
+    $content .= '<h2>BYOB Equipment & Service</h2>' . "\n";
+    
+    if (!empty($restaurant_data['wine_service_equipment'])) {
+        $content .= '<p><strong>Equipment Provided:</strong> ' . esc_html($restaurant_data['wine_service_equipment']) . '</p>' . "\n";
+    }
+    
+    if (!empty($restaurant_data['wine_service_equipment_other_note'])) {
+        $content .= '<p><strong>Equipment Other Note:</strong> ' . esc_html($restaurant_data['wine_service_equipment_other_note']) . '</p>' . "\n";
+    }
+    
+    if (!empty($restaurant_data['byob_service_level'])) {
+        $content .= '<p><strong>Service Level:</strong> ' . esc_html($restaurant_data['byob_service_level']) . '</p>' . "\n";
+    }
+    
+    $content .= "\n";
+    
+    // 用餐體驗區塊
+    if (!empty($restaurant_data['philly_dining_experience'])) {
+        $content .= '<h2>Dining Experience</h2>' . "\n";
+        $content .= '<p>' . esc_html($restaurant_data['philly_dining_experience']) . '</p>' . "\n";
+        $content .= "\n";
+    }
+    
+    // 貢獻者資訊區塊
+    $content .= '<h2>Community Contribution</h2>' . "\n";
+    $content .= '<p><em>This restaurant information was contributed by the Philadelphia BYOB community.</em></p>' . "\n";
+    
+    if (!empty($restaurant_data['philly_reddit_username'])) {
+        $content .= '<p><strong>Contributor:</strong> u/' . esc_html($restaurant_data['philly_reddit_username']) . '</p>' . "\n";
+    }
+    
+    $content .= '<p><strong>Last Updated:</strong> ' . current_time('F j, Y') . '</p>' . "\n";
+    
+    return $content;
 }
 
 // =============================================================================
