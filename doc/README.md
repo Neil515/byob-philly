@@ -1,5 +1,23 @@
 # 🍷 BYOB 專案文檔
 
+## 2025-10-20 小結（Philadelphia BYOB 自動化）
+
+完成事項
+- 新增 WordPress 端點 `/byob/v1/philly-restaurant`，以費城專用函式 `byob_create_philly_restaurant_article` 建立餐廳草稿
+- 實作「雙軌寫入」：費城 `philly_` 欄位同時映射寫入舊欄位（`is_charged`, `equipment`, `open_bottle_service`, `restaurant_type`, `notes` 等）以維持前台相容
+- 開瓶費金額正規化：從字串抽取數字/小數，且僅在 `philly_corkage_fee = Corkage Fee` 時寫入舊欄位 `corkage_fee_amount`
+- Apps Script（費城版）沿用「欄位設定表」解析並送出至 `/philly-restaurant`，修正同名欄位造成的覆蓋（表單改為 `Corkage Fee` + `Corkage Fee Amount`）
+- 觸發器控管：僅保留單一 on form submit，避免重複草稿；測試時不與 `testPhillyCompleteFlow` 並行
+
+建議設定
+- ACF 位置規則：費城群組加「文章標籤＝Philadelphia」，舊群組加「≠Philadelphia」，避免欄位混在一起
+
+驗證狀態
+- 手動送單與正式流程皆可產生草稿；除金額外欄位先前已正常，金額修正後可正確顯示（例：299）
+
+明日重點
+- Reddit 發問與導流：模板、UTM、追蹤表、第一波發文與指標（詳見 `doc/Next Task Prompt Byob.md`）
+
 ## 📋 專案概述
 
 BYOB (Bring Your Own Bottle) 是一個自帶酒水餐廳推薦平台，目前運營兩個獨立專案：
