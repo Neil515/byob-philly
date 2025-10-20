@@ -1,5 +1,34 @@
 # BYOB 專案開發進度記錄
 
+## 2025-10-20 進度（Philadelphia BYOB 自動化）
+
+已完成
+- 新增並註冊費城專用 API 端點 `/byob/v1/philly-restaurant`（WordPress）
+- 建立獨立後端函式 `byob_create_philly_restaurant_article`（不共用台北函式）
+  - 解析/寫入費城專用 ACF 欄位（`philly_` 系列）
+  - 實作「雙軌寫入」：同步映射到舊欄位（`is_charged`, `equipment`, `open_bottle_service`, `restaurant_type`, `notes` 等），維持現有前台相容
+  - 「其他」選項處理：餐廳類型、酒器設備皆採用排除法並補「其他」＋備註
+  - 金額欄位正規化：從字串抽取數字/小數，並僅在 `philly_corkage_fee = Corkage Fee` 時寫入舊欄位金額
+- Apps Script（費城版）
+  - 沿用「欄位設定表」解析與送出邏輯；API URL 指向 `/philly-restaurant`
+  - 調整表單命名：`Corkage Fee`（選項）＋ `Corkage Fee Amount`（金額），避免同名覆蓋
+- 觸發與重複草稿問題
+  - 說明並處理：僅保留單一 on form submit 觸發器；測試時不要同時跑 `testPhillyCompleteFlow` 與表單送出
+- 實測結果
+  - 手動送單可產生草稿，欄位（除開瓶費金額前）皆正常
+  - 修正後「299」金額能正確寫入新/舊欄位，前台可讀取顯示
+
+問題與修正摘要
+- API 404（rest_no_route）：未註冊端點 → 已在 `rest_api_init` 註冊 `/philly-restaurant`
+- 表單標題行被當成資料：表單需有實際資料列；測試指引改為先送真單
+- 兩筆草稿：重複觸發/同時測試 → 僅保留單一觸發器並避免並行測試
+- ACF 混在一起：建議 ACF 位置規則以「文章標籤＝Philadelphia」顯示費城群組；舊群組加「≠Philadelphia」
+
+待辦 / 下一步
+- Reddit 發問與導流（已寫入 `Next Task Prompt Byob.md`，含模板、UTM、追蹤表與指標）
+- 加入後端去重保護（同名＋地址 24h 內重複 → 標記或忽略）
+- 觀察費城表單實際回覆，微調設備/類型對照與話術
+
 ## 📅 專案概覽
 
 ### **台北 BYOB 專案**（主要專案）
