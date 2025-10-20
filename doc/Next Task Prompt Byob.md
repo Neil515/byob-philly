@@ -1,5 +1,47 @@
 # 🍷 BYOB 專案工作規劃與進度追蹤
 
+## 2025-10-21 工作規劃（Reddit 發問訊息／互動與導流）
+
+目標：在 r/philadelphia、美食與餐飲相關社群發起 BYOB 專案的發問貼文與互動回覆，獲得有效回覆（餐廳與政策資訊），並將回覆者導流到 Google 表單，觸發自動產生費城餐廳草稿。
+
+重點里程碑（當日完成）
+- 發問模板與回覆話術定稿（中英雙語，優先英文）
+- 建立「Reddit 任務面板」Google Sheet（追蹤貼文連結、回覆數、導流表單數）
+- 完成第一波發文（至少 3 則不同社群/時段）與 24 小時內回覆 SLA
+- 新表單來源追蹤參數 utm_source=reddit、utm_campaign=philly_byob 啟用（Apps Script 直接寫入 `source` 與 `philly_reddit_username`）
+
+執行清單（分工/技術）
+1) 策略與內容
+   - 發問主題版位與時段清單（子版：r/philadelphia、r/askphilly、r/FoodPhiladelphia 等）
+   - 標題與內文模板（3 種角度）：
+     - 專案介紹＋徵求 BYOB 推薦（提供表單連結）
+     - 針對特定餐類/地區徵詢（如 Italian in Center City）
+     - 問答型：費城 BYOB 的 corkage policy 與店家經驗分享
+   - 回覆話術：感謝＋導流表單（可私訊提供更完整資訊）
+
+2) 追蹤與資料
+   - 在 Google 表單新增/確認隱藏欄位：`utm_source`、`utm_campaign`（預設由連結帶入）
+   - Apps Script 解析：寫入 `source=reddit`、`philly_reddit_username`（若貼文或私訊提供）
+   - 建立追蹤表（Sheet 欄位）：日期、子版、貼文連結、貼文類型、互動數、表單數、產生草稿數
+
+3) 自動化與風險控管
+   - 觸發器只保留單一 onFormSubmit，避免重複草稿
+   - 去重規則：同名＋地址在 24 小時內重複則忽略或標記 pending_duplicate_review
+   - 失敗備援：API 失敗時 Apps Script 寫入錯誤日誌並寄信通知
+
+交付物
+- Reddit 發問與回覆模板（Doc）
+- 追蹤表（Google Sheet）
+- 帶 UTM 的表單連結（短網址）
+- 更新後 Apps Script（僅來源寫入，不改雙軌）
+
+時程（估）
+- AM：模板與清單定稿（1.5h）→ 追蹤表建立（0.5h）→ 連結與 UTM 測試（0.5h）
+- PM：第一波發文與互動（1h）→ 監控與回覆（持續）→ 成效回填（0.5h）
+
+成功指標（Day 1）
+- 發文 ≥ 3 則、互動回覆 ≥ 10、有效表單 ≥ 3、產生草稿 ≥ 2
+
 ## 📅 當前日期：2025年1月18日
 
 ---
