@@ -42,7 +42,7 @@
 成功指標（Day 1）
 - 發文 ≥ 3 則、互動回覆 ≥ 10、有效表單 ≥ 3、產生草稿 ≥ 2
 
-## 📅 當前日期：2025年1月18日
+## 📅 當前日期：2025年1月20日
 
 ---
 
@@ -87,6 +87,26 @@
 
 ## ✅ 1月19日完成工作：Google 表單建立
 
+**1月20日完成工作：** ⭐ Reddit 社群互動系統建立完成
+
+* [x] **Reddit 互動追蹤系統建立** ⭐ 管理工具完成
+  * 建立完整的 Reddit 互動追蹤 Excel 檔案
+  * 包含 7 個工作表：貼文總覽、用戶互動記錄、回覆詳細記錄、餐廳資訊收集、每日統計、週度分析、關鍵指標追蹤
+  * 設計貼文記錄 Markdown 檔案，分為一般貼文和 BYOB 貼文兩類
+  * 建立結構化的數據收集和分析系統
+
+* [x] **Google Apps Script 開發完成** ⭐ 自動化整合完成
+  * 完成費城專用 Google Apps Script 開發
+  * 建立費城專用 WordPress API 端點
+  * 實作自動化文章生成系統
+  * 測試完整的表單提交到文章生成流程
+
+* [x] **Reddit 貼文策略準備** ⭐ 社群互動準備就緒
+  * 準備酒類文化討論貼文（建立信譽）
+  * 準備 BBQ 餐廳詢問貼文（建立美食愛好者形象）
+  * 準備 BYOB 餐廳詢問貼文（收集目標資訊）
+  * 建立貼文內容記錄和追蹤系統
+
 **1月19日完成工作：** ⭐ 費城 BYOB Google 表單建立完成
 
 * [x] **Google 表單設計與建立** ⭐ 資料收集系統完成
@@ -110,10 +130,10 @@
 
 ---
 
-## 🔴 明日工作重點（1月20日）→ Google Apps Script + WordPress 整合
+## 🔴 明日工作重點（1月21日）→ WordPress 英文介面改造
 
 ### 🎯 核心目標
-建立費城專用的 Google Apps Script 和 WordPress 自動化整合，實現表單提交自動生成文章草稿
+將 WordPress 網站的中文介面逐步改為英文介面，為費城 BYOB 專案建立專業的英文網站
 
 **預估總時間：** 6-8 小時
 
@@ -121,153 +141,163 @@
 
 ## 📝 工作三大重點
 
-### 🚨 第一部分：費城專用 Google Apps Script 開發（3-4 小時）
+### 🚨 第一部分：網站結構英文化（3-4 小時）
 
-#### **任務 1.1：建立費城專用 Apps Script 檔案（90 分鐘）**
+#### **任務 1.1：頁面標題和導航英文化（90 分鐘）**
 
-* [ ] **複製並修改現有 Apps Script**
-  * 複製 `Apps script - 顧客推薦版.js` 為 `Apps script - 費城推薦版.js`
-  * 修改 API 端點為費城專用：`/byob/v1/philly-restaurant`
-  * 調整常數設定（API URL、通知 Email 等）
-  * 修改函數名稱避免衝突
+* [ ] **首頁英文化**
+  * 修改網站標題：`Philadelphia BYOB Restaurant Guide`
+  * 更新網站描述：`Discover the best BYOB restaurants in Philadelphia`
+  * 修改導航選單：Home, Restaurants, About, Contact
+  * 更新頁腳資訊和版權聲明
 
-* [ ] **設計費城欄位映射系統**
-  * 建立費城表單欄位到 WordPress ACF 欄位的映射
-  * 處理英文資料的特殊邏輯
-  * 設定費城專用的資料來源標記：`philly_community_recommendation`
-  * 處理開瓶費選項：Free / Corkage Fee / Other
+* [ ] **餐廳列表頁面英文化**
+  * 修改頁面標題：`Philadelphia BYOB Restaurants`
+  * 更新篩選選項：Cuisine Type, Neighborhood, Corkage Fee
+  * 修改排序選項：Name, Rating, Date Added
+  * 更新搜尋框提示文字
 
-* [ ] **實作費城專用解析邏輯**
-  * 修改 `parseCustomerFormData` 為 `parsePhillyFormData`
-  * 處理費城特有的欄位結構
-  * 實作英文料理類型的處理邏輯
-  * 設定費城專用的必填欄位驗證
+* [ ] **單一餐廳頁面英文化**
+  * 修改頁面標題格式：`[Restaurant Name] - BYOB Restaurant Guide`
+  * 更新欄位標籤：Restaurant Name, Address, Phone, Website
+  * 修改 BYOB 政策區塊：Corkage Fee, Special Policies
+  * 更新用餐體驗區塊：Atmosphere, Signature Dishes, Service
 
-#### **任務 1.2：WordPress API 整合（90 分鐘）**
+#### **任務 1.2：表單和互動元素英文化（90 分鐘）**
 
-* [ ] **修改 WordPress functions.php**
-  * 新增費城專用 REST API 端點：`/byob/v1/philly-restaurant`
-  * 建立 `byob_create_philly_restaurant_post` 函數
-  * 設定費城專用的 ACF 欄位映射
-  * 處理費城餐廳的文章分類和標籤
+* [ ] **餐廳推薦表單英文化**
+  * 修改表單標題：`Recommend a BYOB Restaurant`
+  * 更新表單欄位標籤和提示文字
+  * 修改提交按鈕：`Submit Recommendation`
+  * 更新成功/錯誤訊息
 
-* [ ] **實作費城文章生成邏輯**
-  * 設定費城餐廳的文章模板
-  * 處理英文內容的 SEO 優化
-  * 設定費城專用的文章分類：`philly-byob-restaurants`
-  * 加入費城相關的標籤和關鍵字
+* [ ] **搜尋和篩選功能英文化**
+  * 修改搜尋框：`Search BYOB restaurants...`
+  * 更新篩選標籤：`Filter by Cuisine`, `Filter by Area`
+  * 修改排序選項：`Sort by Name`, `Sort by Rating`
+  * 更新「無結果」訊息
 
-* [ ] **測試 API 整合**
-  * 測試費城專用 API 端點
-  * 驗證 ACF 欄位正確映射
-  * 確認文章草稿正確生成
-  * 測試錯誤處理和通知機制
+* [ ] **用戶互動元素英文化**
+  * 修改評論區塊：`Reviews`, `Write a Review`
+  * 更新評分系統：`Rate this restaurant`
+  * 修改分享按鈕：`Share`, `Bookmark`
+  * 更新聯絡表單和回饋系統
 
----
+#### **任務 1.3：內容和文案英文化（60 分鐘）**
 
-### 🚨 第二部分：自動化文章生成系統（2-3 小時）
+* [ ] **靜態內容英文化**
+  * 修改關於我們頁面：`About Philadelphia BYOB Guide`
+  * 更新使用說明：`How to Use This Guide`
+  * 修改隱私政策：`Privacy Policy`
+  * 更新服務條款：`Terms of Service`
 
-#### **任務 2.1：文章模板設計（60 分鐘）**
-
-* [ ] **設計費城餐廳文章模板**
-  * **標題格式**：`[Restaurant Name] - Philadelphia BYOB Restaurant Guide`
-  * **基本資訊區塊**：
-    * Restaurant Name, Address, Phone
-    * Cuisine Type, Corkage Policy
-    * Website and Contact Information
-
-  * **BYOB 政策區塊**：
-    * Corkage Fee Information
-    * Special BYOB Policies
-    * Wine Recommendations
-    * Best Times to Visit
-
-  * **用餐體驗區塊**：
-    * Atmosphere Description
-    * Signature Dishes
-    * Service Quality
-    * Community Reviews
-
-  * **實用資訊區塊**：
-    * Parking Information
-    * Public Transportation
-    * Reservation Recommendations
-    * Nearby Wine Shops
-
-* [ ] **實作英文內容生成**
-  * 建立英文文章模板
-  * 設計費城專用的 SEO 關鍵字
-  * 設定英文標籤和分類
-  * 準備社群媒體分享內容
-
-#### **任務 2.2：自動化流程整合（60 分鐘）**
-
-* [ ] **設定 Google Apps Script 觸發器**
-  * 建立費城表單提交觸發器
-  * 設定自動處理流程
-  * 實作錯誤處理和重試機制
-  * 設定處理狀態追蹤
-
-* [ ] **實作通知系統**
-  * 設計費城專用的成功通知 Email
-  * 設定管理員通知機制
-  * 實作錯誤通知和除錯資訊
-  * 準備創始成員回饋通知
-
-* [ ] **測試完整自動化流程**
-  * 測試表單提交到文章生成的完整流程
-  * 驗證所有欄位正確處理
-  * 確認文章草稿品質
-  * 測試通知系統運作
+* [ ] **動態內容英文化**
+  * 修改文章分類：`Italian BYOB`, `French BYOB`, `Asian BYOB`
+  * 更新標籤系統：`Center City`, `Rittenhouse`, `Old City`
+  * 修改相關文章推薦：`Related Restaurants`
+  * 更新最新文章區塊：`Latest Reviews`
 
 ---
 
-### 🚨 第三部分：系統優化與部署（1-2 小時）
+### 🚨 第二部分：資料庫和後台英文化（2-3 小時）
 
-#### **任務 3.1：系統測試與除錯（45 分鐘）**
+#### **任務 2.1：ACF 欄位英文化（90 分鐘）**
 
-* [ ] **完整功能測試**
-  * 測試各種表單填寫情況
-  * 驗證邊界條件處理
-  * 測試錯誤情況的處理
-  * 確認資料完整性
+* [ ] **餐廳基本資訊欄位英文化**
+  * `restaurant_name` → `Restaurant Name`
+  * `restaurant_address` → `Address`
+  * `restaurant_phone` → `Phone Number`
+  * `restaurant_website` → `Website`
+  * `restaurant_cuisine` → `Cuisine Type`
 
-* [ ] **效能優化**
-  * 優化 Google Apps Script 執行效率
-  * 減少 API 呼叫次數
-  * 實作資料快取機制
-  * 設定執行時間限制
+* [ ] **BYOB 政策欄位英文化**
+  * `corkage_fee` → `Corkage Fee`
+  * `corkage_policy` → `Corkage Policy`
+  * `byob_equipment` → `BYOB Equipment`
+  * `special_policies` → `Special Policies`
+  * `wine_recommendations` → `Wine Recommendations`
 
-* [ ] **除錯和日誌系統**
-  * 實作詳細的除錯日誌
-  * 設定錯誤追蹤機制
-  * 準備問題排除指南
-  * 建立監控和警報系統
+* [ ] **用餐體驗欄位英文化**
+  * `atmosphere` → `Atmosphere`
+  * `signature_dishes` → `Signature Dishes`
+  * `service_quality` → `Service Quality`
+  * `dining_experience` → `Dining Experience`
+  * `best_times_to_visit` → `Best Times to Visit`
 
-#### **任務 3.2：部署準備（30 分鐘）**
+#### **任務 2.2：後台管理介面英文化（90 分鐘）**
 
-* [ ] **生產環境設定**
-  * 設定生產環境的 API 端點
-  * 配置生產環境的通知設定
-  * 設定資料備份機制
-  * 準備回滾計畫
+* [ ] **WordPress 後台英文化**
+  * 修改餐廳管理頁面標題
+  * 更新欄位標籤和說明文字
+  * 修改分類和標籤管理介面
+  * 更新媒體庫和檔案管理
 
-* [ ] **文件和使用指南**
-  * 撰寫系統操作手冊
-  * 準備故障排除指南
-  * 建立維護檢查清單
-  * 準備用戶使用說明
+* [ ] **自訂欄位群組英文化**
+  * 修改 ACF 欄位群組名稱
+  * 更新欄位說明和提示文字
+  * 修改選項值和預設文字
+  * 更新條件邏輯和驗證規則
+
+* [ ] **管理員通知和訊息英文化**
+  * 修改成功/錯誤通知訊息
+  * 更新 Email 通知模板
+  * 修改系統狀態訊息
+  * 更新除錯和日誌訊息
 
 ---
 
-## 🎯 明日成功標準（1月20日）
+### 🚨 第三部分：SEO 和內容優化（1-2 小時）
 
-* [ ] ✅ 完成費城專用 Google Apps Script 開發
-* [ ] ✅ 建立費城專用 WordPress API 端點
-* [ ] ✅ 實作自動化文章生成系統
-* [ ] ✅ 測試完整的表單提交到文章生成流程
-* [ ] ✅ 建立費城專用的通知和錯誤處理機制
-* [ ] ✅ 準備系統部署和維護文件
+#### **任務 3.1：SEO 設定英文化（60 分鐘）**
+
+* [ ] **頁面 SEO 設定**
+  * 修改頁面標題（Title Tags）
+  * 更新頁面描述（Meta Descriptions）
+  * 修改關鍵字設定
+  * 更新 Open Graph 標籤
+
+* [ ] **內容 SEO 優化**
+  * 修改標題結構（H1, H2, H3）
+  * 更新圖片 Alt 文字
+  * 修改內部連結文字
+  * 更新麵包屑導航
+
+* [ ] **技術 SEO 設定**
+  * 修改 sitemap 設定
+  * 更新 robots.txt
+  * 修改 URL 結構
+  * 更新快取和效能設定
+
+#### **任務 3.2：內容品質檢查（60 分鐘）**
+
+* [ ] **內容一致性檢查**
+  * 檢查所有頁面的英文內容
+  * 確認術語使用一致性
+  * 檢查語法和拼字錯誤
+  * 更新過時或錯誤的資訊
+
+* [ ] **用戶體驗測試**
+  * 測試英文介面的易用性
+  * 檢查響應式設計
+  * 測試載入速度和效能
+  * 確認跨瀏覽器相容性
+
+* [ ] **內容本地化**
+  * 確認費城地區資訊正確
+  * 更新聯絡資訊和地址
+  * 修改時區和日期格式
+  * 更新貨幣和單位顯示
+
+---
+
+## 🎯 明日成功標準（1月21日）
+
+* [ ] ✅ 完成網站主要頁面英文化
+* [ ] ✅ 更新所有表單和互動元素
+* [ ] ✅ 完成 ACF 欄位和後台英文化
+* [ ] ✅ 優化 SEO 設定和內容
+* [ ] ✅ 完成內容品質檢查和測試
+* [ ] ✅ 準備英文網站上線
 
 ---
 
@@ -278,8 +308,10 @@
 - ✅ **Reddit 帳號建立**：u/findingBYOB 準備就緒
 - ✅ **互動追蹤系統**：完整的管理工具建立
 - ✅ **Google 表單建立**：費城 BYOB 餐廳驗證表單完成
-- 🔄 **自動化整合階段**：Google Apps Script + WordPress API 整合
-- ⏳ **待執行**：Reddit 社群互動、網站建設、用戶招募、榮譽系統實作
+- ✅ **自動化整合完成**：Google Apps Script + WordPress API 整合
+- ✅ **Reddit 貼文策略準備**：社群互動內容和追蹤系統完成
+- 🔄 **網站英文化階段**：WordPress 介面逐步改為英文
+- ⏳ **待執行**：Reddit 社群互動、英文網站上線、用戶招募、榮譽系統實作
 
 ### 🍷 台北 BYOB 專案（既有專案）
 - ✅ **核心系統完成**：餐廳表單、推薦通知、重複檢查、抽獎系統
@@ -291,29 +323,23 @@
 
 ## 💡 明日工作提醒
 
-### **Google Apps Script 開發重點**
-- **API 整合**：確保費城專用端點正確設定
-- **欄位映射**：仔細對應費城表單欄位到 WordPress ACF
-- **錯誤處理**：實作完整的錯誤處理和重試機制
-- **測試驗證**：每個功能都要完整測試
+### **WordPress 英文化重點**
+- **介面一致性**：確保所有頁面和元素使用一致的英文術語
+- **用戶體驗**：保持英文介面的直觀性和易用性
+- **內容品質**：檢查語法、拼字和術語使用
+- **本地化**：確保費城地區資訊和格式正確
 
-### **WordPress 整合重點**
-- **ACF 欄位**：確認所有費城專用欄位正確設定
-- **文章模板**：設計專業的英文文章模板
-- **SEO 優化**：設定費城專用的關鍵字和標籤
-- **分類系統**：建立費城餐廳專用分類
-
-### **自動化流程重點**
-- **觸發器設定**：確保表單提交正確觸發處理
-- **通知系統**：設計用戶友好的成功和錯誤通知
-- **資料驗證**：實作完整的資料驗證和清理
-- **效能優化**：確保系統穩定高效運作
+### **SEO 優化重點**
+- **關鍵字策略**：使用費城 BYOB 相關的英文關鍵字
+- **內容結構**：優化標題結構和內容層次
+- **技術 SEO**：確保網站技術設定符合英文網站標準
+- **本地 SEO**：優化費城地區的搜尋可見性
 
 ### **進度追蹤**
 - 每完成一個任務就更新此檔案
-- 記錄 Google Apps Script 開發進度
-- 追蹤 WordPress API 整合狀態
-- 監控自動化流程測試結果
+- 記錄 WordPress 英文化進度
+- 追蹤 ACF 欄位更新狀態
+- 監控 SEO 優化效果
 - 為 Reddit 社群互動階段做準備
 
 ---
@@ -327,11 +353,18 @@
 - **Reddit 互動追蹤系統**：完整的管理和分析工具
 - **Google 表單系統**：費城 BYOB 餐廳驗證表單
 
-### **費城專案工具（明日開發）**
+### **費城專案工具（已完成）**
 - **費城專用 Google Apps Script**：處理費城表單提交
 - **費城專用 WordPress API**：自動生成文章草稿
 - **自動化文章生成系統**：英文內容模板和 SEO 優化
 - **費城專用通知系統**：成功和錯誤通知機制
+- **Reddit 互動追蹤系統**：Excel 檔案和 Markdown 記錄
+
+### **費城專案工具（明日開發）**
+- **英文網站介面**：WordPress 前台和後台英文化
+- **ACF 欄位英文化**：所有自訂欄位和標籤
+- **SEO 優化系統**：英文關鍵字和內容優化
+- **內容品質檢查**：英文內容一致性和本地化
 
 ### **台北專案工具（已完成）**
 - **葡萄酒展參展商爬蟲**：酒商名單收集
@@ -375,5 +408,5 @@
 
 ---
 
-*最後更新：2025年1月19日*
-*版本：v11.0*
+*最後更新：2025年1月20日*
+*版本：v12.0*
