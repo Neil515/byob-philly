@@ -16,9 +16,9 @@ if (!defined('ABSPATH')) {
 $user_id = get_current_user_id();
 if (!$user_id) {
     echo '<div style="text-align: center; padding: 50px;">';
-    echo '<h2>請先登入</h2>';
-    echo '<p>您需要登入才能編輯餐廳資料。</p>';
-    echo '<a href="' . wp_login_url(get_permalink()) . '" class="button">登入</a>';
+    echo '<h2>Please Login First</h2>';
+    echo '<p>You need to login to edit restaurant information.</p>';
+    echo '<a href="' . wp_login_url(get_permalink()) . '" class="button">Login</a>';
     echo '</div>';
     return;
 }
@@ -26,8 +26,8 @@ if (!$user_id) {
 $user = get_user_by('id', $user_id);
 if (!in_array('restaurant_owner', $user->roles)) {
     echo '<div style="text-align: center; padding: 50px;">';
-    echo '<h2>權限不足</h2>';
-    echo '<p>只有餐廳業者才能存取此頁面。</p>';
+    echo '<h2>Insufficient Permissions</h2>';
+    echo '<p>Only restaurant owners can access this page.</p>';
     echo '</div>';
     return;
 }
@@ -36,15 +36,15 @@ if (!in_array('restaurant_owner', $user->roles)) {
 $user_restaurants = byob_get_user_restaurants($user_id);
 if (empty($user_restaurants)) {
     echo '<div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 30px; border-radius: 8px; text-align: center;">';
-    echo '<h3>⚠️ 注意</h3>';
-    echo '<p>您目前沒有關聯的餐廳。</p>';
-    echo '<p>這可能是因為：</p>';
+    echo '<h3>⚠️ Notice</h3>';
+    echo '<p>You currently have no associated restaurants.</p>';
+    echo '<p>This could be because:</p>';
     echo '<ul style="text-align: left; display: inline-block; margin: 20px 0;">';
-    echo '<li>餐廳資料尚未建立</li>';
-    echo '<li>餐廳與您的帳號尚未關聯</li>';
-    echo '<li>餐廳狀態不是「已上架」</li>';
+    echo '<li>Restaurant information has not been created</li>';
+    echo '<li>Restaurant is not yet linked to your account</li>';
+    echo '<li>Restaurant status is not "Published"</li>';
     echo '</ul>';
-    echo '<p>請聯絡管理員協助處理。</p>';
+    echo '<p>Please contact the administrator for assistance.</p>';
     echo '</div>';
     return;
 }
@@ -67,18 +67,18 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
         
         // 檢查各個 ACF 欄位的資料
         $debug_fields = array(
-            'restaurant_type' => '餐廳類型',
-            'is_charged' => '是否收開瓶費',
-            'corkage_fee_amount' => '開瓶費金額',
-            'corkage_fee_note' => '開瓶費其他說明',
-            'equipment' => '酒器設備',
-            'open_bottle_service' => '開酒服務',
-            'open_bottle_service_other_note' => '開酒服務其他說明',
-            'website' => '官方網站',
-            'social_links' => '社群連結',
-            'phone' => '聯絡電話',
-            'address' => '地址',
-            'business_hours' => '營業時間'
+            'restaurant_type' => 'Restaurant Type',
+            'is_charged' => 'Corkage Fee',
+            'corkage_fee_amount' => 'Corkage Fee Amount',
+            'corkage_fee_note' => 'Corkage Fee Other Note',
+            'equipment' => 'Wine Equipment',
+            'open_bottle_service' => 'Wine Service',
+            'open_bottle_service_other_note' => 'Wine Service Other Note',
+            'website' => 'Official Website',
+            'social_links' => 'Social Media Links',
+            'phone' => 'Phone Number',
+            'address' => 'Address',
+            'business_hours' => 'Business Hours'
         );
         
         foreach ($debug_fields as $field_name => $field_label) {
@@ -90,22 +90,22 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
                     echo '<p style="color: #28a745; margin: 5px 0;">✅ ' . $field_label . ': ' . esc_html($field_value) . '</p>';
                 }
             } else {
-                echo '<p style="color: #dc3545; margin: 5px 0;">❌ ' . $field_label . ': 無資料或欄位不存在</p>';
+                echo '<p style="color: #dc3545; margin: 5px 0;">❌ ' . $field_label . ': No data or field does not exist</p>';
             }
         }
     } else {
-        echo '<p style="color: #dc3545; margin: 5px 0;">❌ ACF 外掛未啟用</p>';
+        echo '<p style="color: #dc3545; margin: 5px 0;">❌ ACF Plugin Not Enabled</p>';
     }
     
-    echo '<p style="color: #6c757d; margin: 5px 0;">餐廳 ID: ' . $restaurant_id . '</p>';
-    echo '<p style="color: #6c757d; margin: 5px 0;">餐廳標題: ' . esc_html($restaurant->post_title) . '</p>';
+    echo '<p style="color: #6c757d; margin: 5px 0;">Restaurant ID: ' . $restaurant_id . '</p>';
+    echo '<p style="color: #6c757d; margin: 5px 0;">Restaurant Title: ' . esc_html($restaurant->post_title) . '</p>';
     
     // 添加權限檢查除錯資訊
     $restaurant_owner_id = get_post_meta($restaurant_id, '_restaurant_owner_id', true);
-    echo '<p style="color: #6c757d; margin: 5px 0;">餐廳擁有者 ID: ' . $restaurant_owner_id . '</p>';
-    echo '<p style="color: #6c757d; margin: 5px 0;">當前使用者 ID: ' . $user_id . '</p>';
-    echo '<p style="color: #6c757d; margin: 5px 0;">使用者角色: ' . implode(', ', $user->roles) . '</p>';
-    echo '<p style="color: ' . ($restaurant_owner_id == $user_id ? '#28a745' : '#dc3545') . '; margin: 5px 0;">權限檢查: ' . ($restaurant_owner_id == $user_id ? '✅ 有權限' : '❌ 無權限') . '</p>';
+    echo '<p style="color: #6c757d; margin: 5px 0;">Restaurant Owner ID: ' . $restaurant_owner_id . '</p>';
+    echo '<p style="color: #6c757d; margin: 5px 0;">Current User ID: ' . $user_id . '</p>';
+    echo '<p style="color: #6c757d; margin: 5px 0;">User Roles: ' . implode(', ', $user->roles) . '</p>';
+    echo '<p style="color: ' . ($restaurant_owner_id == $user_id ? '#28a745' : '#dc3545') . '; margin: 5px 0;">Permission Check: ' . ($restaurant_owner_id == $user_id ? '✅ Has Permission' : '❌ No Permission') . '</p>';
     
     echo '</div>';
 }
@@ -227,43 +227,43 @@ if (isset($logo_delete_message)) {
 if ($message_to_show) {
     if ($message_to_show === 'success') {
         echo '<div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 20px; border-radius: 8px; margin-bottom: 30px; text-align: center;">';
-        echo '<h3 style="margin: 0 0 10px 0;">✅ 更新成功！</h3>';
-        echo '<p style="margin: 0;">餐廳資料已成功更新。</p>';
+        echo '<h3 style="margin: 0 0 10px 0;">✅ Update Successful!</h3>';
+        echo '<p style="margin: 0;">Restaurant information has been successfully updated.</p>';
         echo '</div>';
     } elseif ($message_to_show === 'error') {
         echo '<div style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 20px; border-radius: 8px; margin-bottom: 30px; text-align: center;">';
-        echo '<h3 style="margin: 0 0 10px 0;">❌ 更新失敗</h3>';
-        echo '<p style="margin: 0;">請檢查輸入資料是否正確。</p>';
+        echo '<h3 style="margin: 0 0 10px 0;">❌ Update Failed</h3>';
+        echo '<p style="margin: 0;">Please check if the input data is correct.</p>';
         echo '</div>';
     } elseif ($message_to_show === 'partial_success') {
         echo '<div style="background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 20px; border-radius: 8px; margin-bottom: 30px; text-align: center;">';
-        echo '<h3 style="margin: 0 0 10px 0;">⚠️ 部分更新成功</h3>';
-        echo '<p style="margin: 0;">基本資料已更新，但 LOGO 上傳失敗。</p>';
+        echo '<h3 style="margin: 0 0 10px 0;">⚠️ Partial Update Success</h3>';
+        echo '<p style="margin: 0;">Basic information updated, but LOGO upload failed.</p>';
         echo '</div>';
     } elseif ($message_to_show === 'logo_deleted') {
         echo '<div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 20px; border-radius: 8px; margin-bottom: 30px; text-align: center;">';
-        echo '<h3 style="margin: 0 0 10px 0;">✅ LOGO 已刪除</h3>';
-        echo '<p style="margin: 0;">餐廳 LOGO 已成功刪除。</p>';
+        echo '<h3 style="margin: 0 0 10px 0;">✅ LOGO Deleted</h3>';
+        echo '<p style="margin: 0;">Restaurant LOGO has been successfully deleted.</p>';
         echo '</div>';
     } elseif ($message_to_show === 'logo_delete_error') {
         echo '<div style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 20px; border-radius: 8px; margin-bottom: 30px; text-align: center;">';
-        echo '<h3 style="margin: 0 0 10px 0;">❌ LOGO 刪除失敗</h3>';
-        echo '<p style="margin: 0;">刪除 LOGO 時發生錯誤，請稍後再試。</p>';
+        echo '<h3 style="margin: 0 0 10px 0;">❌ LOGO Delete Failed</h3>';
+        echo '<p style="margin: 0;">An error occurred while deleting LOGO, please try again later.</p>';
         echo '</div>';
     } elseif ($message_to_show === 'no_logo') {
         echo '<div style="background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 20px; border-radius: 8px; margin-bottom: 30px; text-align: center;">';
-        echo '<h3 style="margin: 0 0 10px 0;">⚠️ 沒有 LOGO 可刪除</h3>';
-        echo '<p style="margin: 0;">目前沒有設定 LOGO。</p>';
+        echo '<h3 style="margin: 0 0 10px 0;">⚠️ No LOGO to Delete</h3>';
+        echo '<p style="margin: 0;">No LOGO is currently set.</p>';
         echo '</div>';
     } elseif ($message_to_show === 'permission_denied') {
         echo '<div style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 20px; border-radius: 8px; margin-bottom: 30px; text-align: center;">';
-        echo '<h3 style="margin: 0 0 10px 0;">❌ 權限不足</h3>';
-        echo '<p style="margin: 0;">您沒有權限執行此操作。</p>';
+        echo '<h3 style="margin: 0 0 10px 0;">❌ Insufficient Permissions</h3>';
+        echo '<p style="margin: 0;">You do not have permission to perform this operation.</p>';
         echo '</div>';
     } elseif ($message_to_show === 'address_validation_error') {
         $address_errors = isset($_GET['address_errors']) ? explode('|', urldecode($_GET['address_errors'])) : array();
         echo '<div style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 20px; border-radius: 8px; margin-bottom: 30px;">';
-        echo '<h3 style="margin: 0 0 10px 0;">❌ 地址格式不完整</h3>';
+        echo '<h3 style="margin: 0 0 10px 0;">❌ Incomplete Address Format</h3>';
         if (!empty($address_errors)) {
             echo '<ul style="margin: 10px 0 0 0; padding-left: 20px;">';
             foreach ($address_errors as $error) {
@@ -271,19 +271,19 @@ if ($message_to_show) {
             }
             echo '</ul>';
         }
-        echo '<p style="margin: 10px 0 0 0; font-size: 14px;">請參考地址欄位下方的驗證規則，確保地址包含完整的縣市、行政區、路街和門牌資訊。</p>';
+        echo '<p style="margin: 10px 0 0 0; font-size: 14px;">Please refer to the validation rules below the address field to ensure the address includes complete city, district, street and house number information.</p>';
         echo '</div>';
     }
 }
 
 // 頁面標題和說明
 echo '<div class="restaurant-profile-header" style="margin-bottom: 30px;">';
-echo '<h1 style="color: #333; margin-bottom: 10px; text-align: center;">餐廳資料編輯</h1>';
-echo '<p style="color: #666; font-size: 16px; text-align: left;">編輯您的餐廳基本資料和 LOGO</p>';
+echo '<h1 style="color: #333; margin-bottom: 10px; text-align: center;">Restaurant Information Edit</h1>';
+echo '<p style="color: #666; font-size: 16px; text-align: left;">Edit your restaurant basic information and LOGO</p>';
 
 // 預覽餐廳按鈕
 echo '<div style="text-align: right; margin-top: 15px;">';
-echo '<a href="' . get_permalink($restaurant_id) . '" class="button" target="_blank" style="background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 10px 20px; font-size: 14px; display: inline-block; text-decoration: none; color: white; border: none;">👁️ 預覽餐廳</a>';
+echo '<a href="' . get_permalink($restaurant_id) . '" class="button" target="_blank" style="background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 10px 20px; font-size: 14px; display: inline-block; text-decoration: none; color: white; border: none;">👁️ Preview Restaurant</a>';
 echo '</div>';
 
 echo '</div>';
@@ -296,43 +296,43 @@ echo '<input type="hidden" name="restaurant_id" value="' . esc_attr($restaurant_
 
 // 餐廳基本資料區塊
 echo '<div class="form-section" style="margin-bottom: 35px;">';
-echo '<h3 style="color: #333; border-bottom: 3px solid rgba(139, 38, 53, 0.8); padding-bottom: 15px; margin-bottom: 25px;">基本資料</h3>';
+echo '<h3 style="color: #333; border-bottom: 3px solid rgba(139, 38, 53, 0.8); padding-bottom: 15px; margin-bottom: 25px;">Basic Information</h3>';
 
 // 必填欄位說明
 echo '<div style="background: rgba(212, 237, 218, 0.7); border: 1px solid #ffeaa7; padding: 15px; border-radius: 8px; margin-bottom: 25px;">';
-echo '<p style="margin: 0; color: #856404; font-size: 14px;"><strong>📋 重要提醒：</strong>標示 <span style="color: #dc3545; font-weight: bold;">*</span> 的欄位為必填項目，完成後餐廳才會顯示於前台頁面供顧客瀏覽。</p>';
+echo '<p style="margin: 0; color: #856404; font-size: 14px;"><strong>📋 Important Notice:</strong> Fields marked with <span style="color: #dc3545; font-weight: bold;">*</span> are required. Only after completion will the restaurant be displayed on the front-end page for customers to browse.</p>';
 echo '</div>';
 
 // 餐廳名稱
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label for="restaurant_name" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">餐廳名稱 *</label>';
+echo '<label for="restaurant_name" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Restaurant Name *</label>';
 echo '<input type="text" id="restaurant_name" name="restaurant_name" value="' . esc_attr($restaurant->post_title) . '" required style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">餐廳名稱是必填欄位</p>';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Restaurant name is a required field</p>';
 echo '</div>';
 
 // 餐廳類型
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">餐廳類型 *</label>';
+echo '<label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Restaurant Type *</label>';
 echo '<div class="checkbox-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">';
 
 $restaurant_types = array(
-    '台式' => '台式',
-    '法式' => '法式',
-    '義式' => '義式',
-    '日式' => '日式',
-    '美式' => '美式',
-    '熱炒' => '熱炒',
-    '小酒館' => '小酒館',
-    '咖啡廳' => '咖啡廳',
-    '私廚' => '私廚',
-    '異國料理' => '異國料理',
-    '燒烤' => '燒烤',
-    '火鍋' => '火鍋',
-    '牛排' => '牛排',
+    '台式' => 'Taiwanese',
+    '法式' => 'French',
+    '義式' => 'Italian',
+    '日式' => 'Japanese',
+    '美式' => 'American',
+    '熱炒' => 'Stir-fry',
+    '小酒館' => 'Bistro',
+    '咖啡廳' => 'Cafe',
+    '私廚' => 'Private Kitchen',
+    '異國料理' => 'International',
+    '燒烤' => 'BBQ',
+    '火鍋' => 'Hot Pot',
+    '牛排' => 'Steakhouse',
     'Lounge Bar' => 'Lounge Bar',
     'Buffet' => 'Buffet',
     'Fine dining' => 'Fine dining',
-    '其他' => '其他'
+    '其他' => 'Other'
 );
 
 
@@ -367,37 +367,37 @@ foreach ($restaurant_types as $value => $label) {
 }
 
 echo '</div>';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">請選擇您的餐廳類型（最多3個）</p>';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please select your restaurant type (maximum 3)</p>';
 echo '</div>';
 
 // 其他類型說明（條件式顯示）
 echo '<div id="other_type_note_field" class="form-group" style="margin-bottom: 25px; display: none;">';
-echo '<label for="restaurant_type_other_note" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">其他類型說明</label>';
-echo '<input type="text" id="restaurant_type_other_note" name="restaurant_type_other_note" value="' . esc_attr(get_field('restaurant_type_other_note', $restaurant_id)) . '" placeholder="請說明您的餐廳類型..." style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">請說明您的餐廳類型（選填）</p>';
+echo '<label for="restaurant_type_other_note" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Other Type Description</label>';
+echo '<input type="text" id="restaurant_type_other_note" name="restaurant_type_other_note" value="' . esc_attr(get_field('restaurant_type_other_note', $restaurant_id)) . '" placeholder="Please describe your restaurant type..." style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please describe your restaurant type (optional)</p>';
 echo '</div>';
 
 
 
 // 聯絡電話
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label for="restaurant_phone" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">聯絡電話 *</label>';
-echo '<input type="tel" id="restaurant_phone" name="restaurant_phone" value="' . esc_attr(get_field('phone', $restaurant_id)) . '" placeholder="例：02-1234-5678" required style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
+echo '<label for="restaurant_phone" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Phone Number *</label>';
+echo '<input type="tel" id="restaurant_phone" name="restaurant_phone" value="' . esc_attr(get_field('phone', $restaurant_id)) . '" placeholder="e.g.: 02-1234-5678" required style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
 echo '</div>';
 
 // 聯絡人姓名
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label for="contact_person" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">用戶名稱 *</label>';
+echo '<label for="contact_person" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">User Name *</label>';
 $current_user = wp_get_current_user();
 echo '<input type="text" id="contact_person" name="contact_person" value="' . esc_attr($current_user->display_name) . '" readonly style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; background-color: #f8f9fa; color: #6c757d; cursor: not-allowed;">';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">用戶名稱為註冊時所填名稱，無法自行修改，如需修改請聯絡<a href="https://byobmap.com/contact/" target="_blank" style="color: rgba(139, 38, 53, 0.8); text-decoration: none;">網站管理員</a></p>';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">User name is the name filled during registration and cannot be modified by yourself. If you need to modify, please contact the <a href="https://byobmap.com/contact/" target="_blank" style="color: rgba(139, 38, 53, 0.8); text-decoration: none;">website administrator</a></p>';
 echo '</div>';
 
 // 行政區
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label for="district" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">行政區 *</label>';
+echo '<label for="district" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">District *</label>';
 echo '<select id="district" name="district" required style="width: 100%; height: 50px; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; line-height: 20px; transition: border-color 0.3s; display: flex; align-items: center;">';
-echo '<option value="">請選擇行政區</option>';
+echo '<option value="">Please select district</option>';
 echo '<option value="中正區" ' . (get_field('district', $restaurant_id) === '中正區' ? 'selected' : '') . '>中正區</option>';
 echo '<option value="大同區" ' . (get_field('district', $restaurant_id) === '大同區' ? 'selected' : '') . '>大同區</option>';
 echo '<option value="中山區" ' . (get_field('district', $restaurant_id) === '中山區' ? 'selected' : '') . '>中山區</option>';
@@ -411,74 +411,74 @@ echo '<option value="內湖區" ' . (get_field('district', $restaurant_id) === '
 echo '<option value="南港區" ' . (get_field('district', $restaurant_id) === '南港區' ? 'selected' : '') . '>南港區</option>';
 echo '<option value="文山區" ' . (get_field('district', $restaurant_id) === '文山區' ? 'selected' : '') . '>文山區</option>';
 echo '</select>';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">請選擇餐廳所在的行政區</p>';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please select the district where the restaurant is located</p>';
 echo '</div>';
 
 // 地址
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label for="restaurant_address" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">地址 *</label>';
-echo '<textarea id="restaurant_address" name="restaurant_address" rows="3" placeholder="請輸入完整地址..." required style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical; transition: border-color 0.3s;" oninput="validateAddress(this.value)">' . esc_textarea(get_field('address', $restaurant_id)) . '</textarea>';
+echo '<label for="restaurant_address" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Address *</label>';
+echo '<textarea id="restaurant_address" name="restaurant_address" rows="3" placeholder="Please enter complete address..." required style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical; transition: border-color 0.3s;" oninput="validateAddress(this.value)">' . esc_textarea(get_field('address', $restaurant_id)) . '</textarea>';
 echo '<div id="address_validation_result" style="margin-top: 10px;"></div>';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">請填完整地址，包括縣市及行政區，才可顯示於前台，並且方便被顧客搜尋</p>';
-echo '<p style="font-size: 13px; color: #666; margin-top: 5px;"><strong>範例格式</strong>：台北市信義區信義路五段7號</p>';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please fill in the complete address, including city and district, so it can be displayed on the front-end and be easily searched by customers</p>';
+echo '<p style="font-size: 13px; color: #666; margin-top: 5px;"><strong>Example format</strong>: No. 7, Section 5, Xinyi Road, Xinyi District, Taipei City</p>';
 echo '</div>';
 
 // 營業時間
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label for="business_hours" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">營業時間</label>';
-echo '<textarea id="business_hours" name="business_hours" rows="3" placeholder="例：週一至週五 11:00-22:00，週六日 10:00-23:00" style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical; transition: border-color 0.3s;">' . esc_textarea(get_field('business_hours', $restaurant_id)) . '</textarea>';
+echo '<label for="business_hours" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Business Hours</label>';
+echo '<textarea id="business_hours" name="business_hours" rows="3" placeholder="e.g.: Monday to Friday 11:00-22:00, Saturday and Sunday 10:00-23:00" style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical; transition: border-color 0.3s;">' . esc_textarea(get_field('business_hours', $restaurant_id)) . '</textarea>';
 echo '</div>';
 
 // 是否收開瓶費
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label for="is_charged" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">是否收開瓶費 *</label>';
+echo '<label for="is_charged" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Corkage Fee *</label>';
 echo '<div class="radio-group" style="display: flex; gap: 20px; align-items: center; flex-wrap: nowrap;">';
 echo '<label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; white-space: nowrap; writing-mode: horizontal-tb; text-orientation: mixed;">';
 echo '<input type="radio" name="is_charged" value="yes" ' . (get_field('is_charged', $restaurant_id) === 'yes' ? 'checked' : '') . ' style="margin-right: 8px;">';
-echo '<span style="display: inline-block; white-space: nowrap;">酌收</span>';
+echo '<span style="display: inline-block; white-space: nowrap;">Charged</span>';
 echo '</label>';
 echo '<label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; white-space: nowrap; writing-mode: horizontal-tb; text-orientation: mixed;">';
 echo '<input type="radio" name="is_charged" value="no" ' . (get_field('is_charged', $restaurant_id) === 'no' ? 'checked' : '') . ' style="margin-right: 8px;">';
-echo '<span style="display: inline-block; white-space: nowrap;">不收費</span>';
+echo '<span style="display: inline-block; white-space: nowrap;">Free</span>';
 echo '</label>';
 echo '<label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; white-space: nowrap; writing-mode: horizontal-tb; text-orientation: mixed;">';
 echo '<input type="radio" name="is_charged" value="other" ' . (get_field('is_charged', $restaurant_id) === 'other' ? 'checked' : '') . ' style="margin-right: 8px;">';
-echo '<span style="display: inline-block; white-space: nowrap;">其他</span>';
+echo '<span style="display: inline-block; white-space: nowrap;">Other</span>';
 echo '</label>';
 echo '</div>';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">請選擇您的開瓶費政策</p>';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please select your corkage fee policy</p>';
 echo '</div>';
 
 // 開瓶費金額欄位（當選擇「酌收」時顯示）
 echo '<div id="corkage_amount_field" class="form-group" style="margin-bottom: 25px; display: none;">';
-echo '<label for="corkage_fee_amount" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">開瓶費金額 *</label>';
-echo '<input type="number" id="corkage_fee_amount" name="corkage_fee_amount" value="' . esc_attr(get_field('corkage_fee_amount', $restaurant_id)) . '" placeholder="例：100" min="0" step="1" style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">請輸入開瓶費金額（元）</p>';
+echo '<label for="corkage_fee_amount" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Corkage Fee Amount *</label>';
+echo '<input type="number" id="corkage_fee_amount" name="corkage_fee_amount" value="' . esc_attr(get_field('corkage_fee_amount', $restaurant_id)) . '" placeholder="e.g.: 100" min="0" step="1" style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please enter the corkage fee amount (NTD)</p>';
 echo '</div>';
 
 // 開瓶費其他說明欄位（當選擇「其他」時顯示）
 echo '<div id="corkage_note_field" class="form-group" style="margin-bottom: 25px; display: none;">';
-echo '<label for="corkage_fee_note" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">其他說明 *</label>';
-echo '<input type="text" id="corkage_fee_note" name="corkage_fee_note" value="' . esc_attr(get_field('corkage_fee_note', $restaurant_id)) . '" placeholder="例：按酒杯收費，或每桌xxx元" style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">請說明您的開瓶費政策</p>';
+echo '<label for="corkage_fee_note" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Other Description *</label>';
+echo '<input type="text" id="corkage_fee_note" name="corkage_fee_note" value="' . esc_attr(get_field('corkage_fee_note', $restaurant_id)) . '" placeholder="e.g.: Charged per glass, or xxx NTD per table" style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please describe your corkage fee policy</p>';
 echo '</div>';
 
 // 酒器設備
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">酒器設備</label>';
+echo '<label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Wine Equipment</label>';
 echo '<div class="checkbox-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">';
 
 $equipment_options = array(
-    '酒杯' => '酒杯',
-    '開瓶器' => '開瓶器',
-    '冰桶' => '冰桶',
-    '醒酒器' => '醒酒器',
-    '酒塞/瓶塞' => '酒塞/瓶塞',
-    '酒架/酒櫃' => '酒架/酒櫃',
-    '溫度計' => '溫度計',
-    '濾酒器' => '濾酒器',
-    '其他' => '其他',
-    '無提供' => '無提供'
+    '酒杯' => 'Wine Glasses',
+    '開瓶器' => 'Corkscrew',
+    '冰桶' => 'Ice Bucket',
+    '醒酒器' => 'Decanter',
+    '酒塞/瓶塞' => 'Wine Stopper',
+    '酒架/酒櫃' => 'Wine Rack',
+    '溫度計' => 'Thermometer',
+    '濾酒器' => 'Wine Filter',
+    '其他' => 'Other',
+    '無提供' => 'Not Provided'
 );
 
 $current_equipment = get_field('equipment', $restaurant_id);
@@ -493,88 +493,88 @@ foreach ($equipment_options as $value => $label) {
 }
 
 echo '</div>';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">請選擇您提供的酒器設備</p>';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please select the wine equipment you provide</p>';
 echo '</div>';
 
 // 開酒服務
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label for="open_bottle_service" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">開酒服務</label>';
+echo '<label for="open_bottle_service" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Wine Service</label>';
 
 // 除錯：顯示 ACF 欄位的實際值
 $open_bottle_service_value = get_field('open_bottle_service', $restaurant_id);
 if (defined('WP_DEBUG') && WP_DEBUG) {
-    echo '<p style="font-size: 12px; color: #666; margin-bottom: 5px;">🔍 除錯：ACF 欄位值 = "' . esc_html($open_bottle_service_value) . '"</p>';
+    echo '<p style="font-size: 12px; color: #666; margin-bottom: 5px;">🔍 Debug: ACF field value = "' . esc_html($open_bottle_service_value) . '"</p>';
 }
 
 echo '<select id="open_bottle_service" name="open_bottle_service" onchange="toggleOtherNote()" style="width: 100%; height: 50px; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; line-height: 20px; transition: border-color 0.3s; min-width: 200px; text-overflow: clip; white-space: nowrap; display: flex; align-items: center;">';
-echo '<option value="">請選擇</option>';
-echo '<option value="有" ' . ($open_bottle_service_value === '有' ? 'selected' : '') . '>有</option>';
-echo '<option value="無" ' . ($open_bottle_service_value === '無' ? 'selected' : '') . '>無</option>';
-echo '<option value="其他" ' . ($open_bottle_service_value === '其他' ? 'selected' : '') . '>其他</option>';
+echo '<option value="">Please select</option>';
+echo '<option value="有" ' . ($open_bottle_service_value === '有' ? 'selected' : '') . '>Yes</option>';
+echo '<option value="無" ' . ($open_bottle_service_value === '無' ? 'selected' : '') . '>No</option>';
+echo '<option value="其他" ' . ($open_bottle_service_value === '其他' ? 'selected' : '') . '>Other</option>';
 echo '</select>';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">請選擇是否提供開酒服務</p>';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please select whether you provide wine service</p>';
 echo '</div>';
 
 // 開酒服務說明文字（有/無選項）
 echo '<div id="service_status_text" class="form-group" style="margin-bottom: 25px; display: ' . (in_array($open_bottle_service_value, array('有', '無')) ? 'block' : 'none') . ';">';
 echo '<div style="background: #e8f5e8; border: 1px solid #c3e6cb; padding: 15px; border-radius: 8px; text-align: center;">';
 if ($open_bottle_service_value === '有') {
-    echo '<p style="margin: 0; color: #155724; font-weight: bold; font-size: 16px;">✅ 提供開酒服務</p>';
+    echo '<p style="margin: 0; color: #155724; font-weight: bold; font-size: 16px;">✅ Wine service provided</p>';
 } elseif ($open_bottle_service_value === '無') {
-    echo '<p style="margin: 0; color: #721c24; font-weight: bold; font-size: 16px;">未提供開酒服務</p>';
+    echo '<p style="margin: 0; color: #721c24; font-weight: bold; font-size: 16px;">No wine service provided</p>';
 }
 echo '</div>';
 echo '</div>';
 
 // 開酒服務其他說明
 echo '<div id="other_note_field" class="form-group" style="margin-bottom: 25px; display: ' . ($open_bottle_service_value === '其他' ? 'block' : 'none') . ';">';
-echo '<label for="open_bottle_service_other_note" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">其他說明</label>';
-echo '<input type="text" id="open_bottle_service_other_note" name="open_bottle_service_other_note" value="' . esc_attr(get_field('open_bottle_service_other_note', $restaurant_id)) . '" placeholder="請說明您提供的開酒服務內容..." style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
-echo '<p style="font-size: 14px; color: 666; margin-top: 5px;">請詳細說明您提供的開酒服務內容（選填）</p>';
+echo '<label for="open_bottle_service_other_note" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Other Description</label>';
+echo '<input type="text" id="open_bottle_service_other_note" name="open_bottle_service_other_note" value="' . esc_attr(get_field('open_bottle_service_other_note', $restaurant_id)) . '" placeholder="Please describe the wine service content you provide..." style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
+echo '<p style="font-size: 14px; color: 666; margin-top: 5px;">Please describe in detail the wine service content you provide (optional)</p>';
 echo '</div>';
 
 // 其他BYOB規定或備註
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label for="notes" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">其他BYOB規定或備註</label>';
-echo '<textarea id="notes" name="notes" rows="5" placeholder="其他BYOB policy,或您的餐廳特色、風格、服務等..." style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical; transition: border-color 0.3s;">' . esc_textarea(get_field('notes', $restaurant_id)) . '</textarea>';
+echo '<label for="notes" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Other BYOB Policies or Notes</label>';
+echo '<textarea id="notes" name="notes" rows="5" placeholder="Other BYOB policies, or your restaurant features, style, service, etc..." style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical; transition: border-color 0.3s;">' . esc_textarea(get_field('notes', $restaurant_id)) . '</textarea>';
 echo '</div>';
 
 // 官方網站/社群連結
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">官方網站/社群連結</label>';
+echo '<label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Official Website/Social Media Links</label>';
 echo '<div style="display: flex; gap: 15px;">';
 echo '<div style="flex: 1;">';
-echo '<label for="website" style="display: block; margin-bottom: 8px; font-weight: normal; color: #666; font-size: 14px;">官網或訂位網址</label>';
-echo '<input type="url" id="website" name="website" value="' . esc_attr(get_field('website', $restaurant_id)) . '" placeholder="例：https://www.example.com" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s;">';
+echo '<label for="website" style="display: block; margin-bottom: 8px; font-weight: normal; color: #666; font-size: 14px;">Official website or reservation URL</label>';
+echo '<input type="url" id="website" name="website" value="' . esc_attr(get_field('website', $restaurant_id)) . '" placeholder="e.g.: https://www.example.com" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s;">';
 echo '</div>';
 echo '<div style="flex: 1;">';
-echo '<label for="social_links" style="display: block; margin-bottom: 8px; font-weight: normal; color: #666; font-size: 14px;">社群連結</label>';
-echo '<input type="url" id="social_links" name="social_links" value="' . esc_attr(get_field('social_links', $restaurant_id)) . '" placeholder="例：Facebook、Instagram 等" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s;">';
+echo '<label for="social_links" style="display: block; margin-bottom: 8px; font-weight: normal; color: #666; font-size: 14px;">Social media links</label>';
+echo '<input type="url" id="social_links" name="social_links" value="' . esc_attr(get_field('social_links', $restaurant_id)) . '" placeholder="e.g.: Facebook, Instagram, etc." style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s;">';
 echo '</div>';
 echo '</div>';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">請輸入您的官方網站和社群媒體連結（選填）</p>';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please enter your official website and social media links (optional)</p>';
 echo '</div>';
 
 // 聯絡人Email
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label for="contact_email" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">餐廳Email *</label>';
+echo '<label for="contact_email" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Restaurant Email *</label>';
 $current_user_email = wp_get_current_user()->user_email;
 echo '<input type="email" id="contact_email" name="contact_email" value="' . esc_attr($current_user_email) . '" readonly style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; background-color: #f8f9fa; color: #6c757d; cursor: not-allowed;">';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">此Email與登入帳號同步</p>';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">This email is synchronized with the login account</p>';
 echo '</div>';
 
 echo '</div>';
 
 // LOGO 上傳區塊
 echo '<div class="form-section" style="margin-bottom: 35px;">';
-echo '<h3 style="color: #333; border-bottom: 3px solid rgba(139, 38, 53, 0.8); padding-bottom: 15px; margin-bottom: 25px;">餐廳 LOGO</h3>';
+echo '<h3 style="color: #333; border-bottom: 3px solid rgba(139, 38, 53, 0.8); padding-bottom: 15px; margin-bottom: 25px;">Restaurant LOGO</h3>';
 
 // 顯示當前 LOGO
 if ($current_logo_url) {
     echo '<div class="current-logo" style="margin-bottom: 25px;">';
-    echo '<p style="font-weight: bold; margin-bottom: 15px; color: #333;">當前 LOGO：</p>';
+    echo '<p style="font-weight: bold; margin-bottom: 15px; color: #333;">Current LOGO:</p>';
     echo '<div class="logo-display-area" style="width: 300px; height: 300px; border: 3px solid #ddd; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); overflow: hidden; display: flex; align-items: center; justify-content: center;">';
-    echo '<img src="' . esc_url($current_logo_url) . '" alt="當前 LOGO" class="logo-image" style="max-width: 100%; max-height: 100%; object-fit: contain; transition: all 0.3s;">';
+    echo '<img src="' . esc_url($current_logo_url) . '" alt="Current LOGO" class="logo-image" style="max-width: 100%; max-height: 100%; object-fit: contain; transition: all 0.3s;">';
     echo '</div>';
     
     // 簡化的說明文字
@@ -582,32 +582,32 @@ if ($current_logo_url) {
     
     // 刪除 LOGO 按鈕
     echo '<div class="logo-actions" style="border-top: 1px solid #e9ecef; padding-top: 15px;">';
-    echo '<button type="button" onclick="deleteLogo()" style="background-color: #dc3545; color: white; padding: 8px 16px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: normal; transition: all 0.3s;">🗑️ 刪除 LOGO</button>';
-    echo '<p style="font-size: 12px; color: #999; margin-top: 8px;">點擊後會永久刪除當前 LOGO</p>';
+    echo '<button type="button" onclick="deleteLogo()" style="background-color: #dc3545; color: white; padding: 8px 16px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: normal; transition: all 0.3s;">🗑️ Delete LOGO</button>';
+    echo '<p style="font-size: 12px; color: #999; margin-top: 8px;">Click to permanently delete current LOGO</p>';
     echo '</div>';
     echo '</div>';
     echo '</div>';
 } else {
     echo '<div class="no-logo" style="margin-bottom: 25px;">';
-    echo '<p style="font-weight: bold; margin-bottom: 15px; color: #333;">目前沒有設定 LOGO</p>';
+    echo '<p style="font-weight: bold; margin-bottom: 15px; color: #333;">No LOGO currently set</p>';
     echo '<div class="logo-display-area" style="width: 300px; height: 300px; border: 2px dashed #dee2e6; border-radius: 10px; background: #f8f9fa; display: flex; align-items: center; justify-content: center;">';
-    echo '<p style="color: #6c757d; margin: 0;">請上傳 LOGO 或餐廳照片</p>';
+    echo '<p style="color: #6c757d; margin: 0;">Please upload LOGO or restaurant photo</p>';
     echo '</div>';
     echo '</div>';
 }
 
 // LOGO 上傳欄位
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-    echo '<label for="restaurant_logo" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">上傳 LOGO或具代表性的餐廳照片(選擇檔案之後按更新餐廳資料)</label>';
+    echo '<label for="restaurant_logo" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Upload LOGO or representative restaurant photo (select file then click update restaurant information)</label>';
 echo '<input type="file" id="restaurant_logo" name="restaurant_logo" accept="image/jpeg,image/png,image/webp,image/svg+xml" style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; background: white; transition: border-color 0.3s;">';
       echo '<div style="margin-top: 10px; padding: 15px; background: #e9ecef; border-radius: 8px;">';
-      echo '<p style="font-size: 14px; color: #495057; margin: 0 0 8px 0;"><strong>📋 上傳須知：</strong></p>';
+      echo '<p style="font-size: 14px; color: #495057; margin: 0 0 8px 0;"><strong>📋 Upload Guidelines:</strong></p>';
       echo '<ul style="font-size: 14px; color: #495057; margin: 0; padding-left: 20px;">';
-      echo '<li><strong>建議上傳正方形或接近正方形的圖片檔案，以達到最佳顯示效果</strong></li>';
-      echo '<li>支援格式：JPG/JPEG、PNG、WebP、SVG</li>';
-      echo '<li>檔案大小限制：1MB</li>';
-      echo '<li>建議尺寸：300x300 像素以上</li>';
-      echo '<li>上傳後會自動替換現有 LOGO</li>';
+      echo '<li><strong>It is recommended to upload square or near-square image files for the best display effect</strong></li>';
+      echo '<li>Supported formats: JPG/JPEG, PNG, WebP, SVG</li>';
+      echo '<li>File size limit: 1MB</li>';
+      echo '<li>Recommended size: 300x300 pixels or above</li>';
+      echo '<li>Upload will automatically replace existing LOGO</li>';
       echo '</ul>';
       echo '</div>';
 echo '</div>';
@@ -616,7 +616,7 @@ echo '</div>';
 
 // 提交按鈕
 echo '<div class="form-submit" style="text-align: center; padding-top: 20px; border-top: 2px solid #e9ecef;">';
-echo '<button type="submit" style="background-color: rgba(139, 38, 53, 0.8); color: white; padding: 18px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 8px rgba(139, 38, 53, 0.3);">💾 更新餐廳資料</button>';
+echo '<button type="submit" style="background-color: rgba(139, 38, 53, 0.8); color: white; padding: 18px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 8px rgba(139, 38, 53, 0.3);">💾 Update Restaurant Information</button>';
 echo '</div>';
 
 echo '</form>';
@@ -676,7 +676,7 @@ function limitCheckboxes(checkbox, maxCount, groupName) {
     // 如果超過限制，取消選中
     if (checkedCount > maxCount) {
         checkbox.checked = false;
-        alert("餐廳類型最多只能選擇 " + maxCount + " 個選項");
+        alert("Restaurant type can only select up to " + maxCount + " options");
         return false;
     }
     
@@ -707,11 +707,11 @@ function toggleOtherNote() {
     if (openBottleService.value === \'有\') {
         serviceStatusText.style.display = \'block\';
         // 更新說明文字
-        serviceStatusText.innerHTML = \'<div style="background: #e8f5e8; border: 1px solid #c3e6cb; padding: 15px; border-radius: 8px; text-align: center;"><p style="margin: 0; color: #155724; font-weight: bold; font-size: 16px;">✅ 提供開酒服務</p></div>\';
+        serviceStatusText.innerHTML = \'<div style="background: #e8f5e8; border: 1px solid #c3e6cb; padding: 15px; border-radius: 8px; text-align: center;"><p style="margin: 0; color: #155724; font-weight: bold; font-size: 16px;">✅ Wine service provided</p></div>\';
     } else if (openBottleService.value === \'無\') {
         serviceStatusText.style.display = \'block\';
         // 更新說明文字
-        serviceStatusText.innerHTML = \'<div style="background: #e8f5e8; border: 1px solid #c3e6cb; padding: 15px; border-radius: 8px; text-align: center;"><p style="margin: 0; color: #721c24; font-weight: bold; font-size: 16px;">❌ 未提供開酒服務</p></div>\';
+        serviceStatusText.innerHTML = \'<div style="background: #e8f5e8; border: 1px solid #c3e6cb; padding: 15px; border-radius: 8px; text-align: center;"><p style="margin: 0; color: #721c24; font-weight: bold; font-size: 16px;">❌ No wine service provided</p></div>\';
     } else if (openBottleService.value === \'其他\') {
         otherNoteField.style.display = \'block\';
     }
@@ -781,16 +781,16 @@ document.addEventListener(\'DOMContentLoaded\', function() {
     
     if (openBottleService && openBottleService.value === \'其他\') {
         otherNoteField.style.display = \'block\';
-        console.log(\'DEBUG: 顯示開酒服務其他說明欄位\');
+        console.log(\'DEBUG: Show wine service other description field\');
         
         // 填入 ACF 中儲存的說明文字
         var otherNoteValue = \'' . esc_js(get_field('open_bottle_service_other_note', $restaurant_id)) . '\';
         if (otherNoteValue && otherNoteValue !== \'\') {
             otherNoteField.value = otherNoteValue;
-            console.log(\'DEBUG: 填入開酒服務其他說明: "\' + otherNoteValue + \'"\');
+            console.log(\'DEBUG: Fill wine service other description: "\' + otherNoteValue + \'"\');
         }
     } else {
-        console.log(\'DEBUG: 隱藏開酒服務其他說明欄位\');
+        console.log(\'DEBUG: Hide wine service other description field\');
     }
     
     // 初始化其他類型說明欄位的顯示狀態
@@ -804,7 +804,7 @@ document.addEventListener(\'DOMContentLoaded\', function() {
     
     if (otherCheckbox && otherCheckbox.checked) {
         otherTypeNoteField.style.display = \'block\';
-        console.log(\'DEBUG: 顯示其他類型說明欄位\');
+        console.log(\'DEBUG: Show other type description field\');
         
         // 填入 ACF 中儲存的說明文字
         var otherNoteField = document.getElementById(\'restaurant_type_other_note\');
@@ -813,11 +813,11 @@ document.addEventListener(\'DOMContentLoaded\', function() {
             var otherNoteValue = \'' . esc_js($other_note) . '\';
             if (otherNoteValue && otherNoteValue !== \'\') {
                 otherNoteField.value = otherNoteValue;
-                console.log(\'DEBUG: 填入其他類型說明: "\' + otherNoteValue + \'"\');
+                console.log(\'DEBUG: Fill other type description: "\' + otherNoteValue + \'"\');
             }
         }
     } else {
-        console.log(\'DEBUG: 隱藏其他類型說明欄位\');
+        console.log(\'DEBUG: Hide other type description field\');
     }
     
     // 初始化地址驗證
@@ -831,7 +831,7 @@ document.addEventListener(\'DOMContentLoaded\', function() {
 
 // 刪除 LOGO 功能
 function deleteLogo() {
-    if (confirm(\'確定要刪除這個 LOGO 嗎？刪除後將無法恢復。\')) {
+    if (confirm(\'Are you sure you want to delete this LOGO? It cannot be recovered after deletion.\')) {
         // 創建一個隱藏的表單來提交刪除請求
         var form = document.createElement(\'form\');
         form.method = \'POST\';
@@ -872,30 +872,30 @@ function validateAddress(address) {
     
     // 縣市驗證：必須包含「市」、「縣」等關鍵字
     if (!/(市|縣)/.test(address)) {
-        errors.push(\'缺少縣市資訊（如：台北市、新北市、桃園市等）\');
+        errors.push(\'Missing city information (e.g.: Taipei City, New Taipei City, Taoyuan City, etc.)\');
     }
     
     // 行政區驗證：必須包含「區」等關鍵字
     if (!/區/.test(address)) {
-        errors.push(\'缺少行政區資訊（如：信義區、大安區等）\');
+        errors.push(\'Missing district information (e.g.: Xinyi District, Daan District, etc.)\');
     }
     
     // 路街驗證：必須包含「路」、「街」、「道」等關鍵字
     if (!/(路|街|道)/.test(address)) {
-        errors.push(\'缺少路街資訊（如：信義路、忠孝東路等）\');
+        errors.push(\'Missing street information (e.g.: Xinyi Road, Zhongxiao East Road, etc.)\');
     }
     
     // 門牌驗證：必須包含數字
     if (!/\\d/.test(address)) {
-        errors.push(\'缺少門牌號碼\');
+        errors.push(\'Missing house number\');
     }
     
     // 顯示驗證結果
     if (errors.length > 0) {
-        resultDiv.innerHTML = \'<div style="padding: 10px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; font-size: 14px;"><strong>⚠️ 地址格式不完整：</strong><ul style="margin: 10px 0 0 0; padding-left: 20px;"><li>\' + errors.join(\'</li><li>\') + \'</li></ul></div>\';
+        resultDiv.innerHTML = \'<div style="padding: 10px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; font-size: 14px;"><strong>⚠️ Incomplete address format:</strong><ul style="margin: 10px 0 0 0; padding-left: 20px;"><li>\' + errors.join(\'</li><li>\') + \'</li></ul></div>\';
         textarea.style.borderColor = \'#dc3545\';
     } else {
-        resultDiv.innerHTML = \'<div style="padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724; font-size: 14px;"><strong>✅ 地址格式正確</strong></div>\';
+        resultDiv.innerHTML = \'<div style="padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724; font-size: 14px;"><strong>✅ Address format is correct</strong></div>\';
         textarea.style.borderColor = \'#28a745\';
     }
 }
