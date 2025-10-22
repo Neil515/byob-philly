@@ -130,119 +130,108 @@
 
 ---
 
-## 🔴 明日工作重點（1月21日）→ WordPress 英文介面改造
+## 🔴 明日工作重點（10月23日）→ 手動建立內容英文化
 
 ### 🎯 核心目標
-將 WordPress 網站的中文介面逐步改為英文介面，為費城 BYOB 專案建立專業的英文網站
+將 WordPress 網站中手動建立的靜態內容改為英文，包括首頁、About Us、餐廳直接加入頁面等
 
-**預估總時間：** 6-8 小時
+**預估總時間：** 4-6 小時
+
+### 📋 今日（10月22日）已完成工作
+- ✅ **WordPress 程式碼英文化完成**：所有 PHP 檔案的前台顯示文字已改為英文
+  - `archive-restaurant.php` - 餐廳列表頁面
+  - `single_restaurant.php` - 單一餐廳頁面  
+  - `restaurant-profile.php` - 餐廳資料編輯頁面
+  - `restaurant-member-functions.php` - 後台管理功能
+  - `functions.php` - 核心功能檔案
+- ✅ **保留中文註解**：所有程式碼註解保持中文，僅修改用戶可見的介面文字
+- ✅ **確認 Apps Script 不需要英文化**：後端處理腳本保持中文註解
 
 ---
 
-## 📝 工作三大重點
+## 📝 明日工作三大重點
 
-### 🚨 第一部分：網站結構英文化（3-4 小時）
+### 🚨 第一部分：靜態頁面內容英文化（2-3 小時）
 
-#### **任務 1.1：頁面標題和導航英文化（90 分鐘）**
+#### **任務 1.1：首頁內容英文化（90 分鐘）**
 
-* [ ] **首頁英文化**
+* [ ] **首頁標題和描述英文化**
   * 修改網站標題：`Philadelphia BYOB Restaurant Guide`
   * 更新網站描述：`Discover the best BYOB restaurants in Philadelphia`
+  * 修改首頁主標題和副標題
+  * 更新首頁介紹文字和價值主張
+
+* [ ] **首頁功能區塊英文化**
+  * 修改「搜尋餐廳」區塊：`Find BYOB Restaurants`
+  * 更新「推薦餐廳」區塊：`Recommend a Restaurant`
+  * 修改「最新餐廳」區塊：`Latest Additions`
+  * 更新「熱門餐廳」區塊：`Popular Restaurants`
+
+* [ ] **首頁導航和頁腳英文化**
   * 修改導航選單：Home, Restaurants, About, Contact
   * 更新頁腳資訊和版權聲明
+  * 修改聯絡資訊和社群連結
+  * 更新網站地圖和相關連結
 
-* [ ] **餐廳列表頁面英文化**
-  * 修改頁面標題：`Philadelphia BYOB Restaurants`
-  * 更新篩選選項：Cuisine Type, Neighborhood, Corkage Fee
-  * 修改排序選項：Name, Rating, Date Added
-  * 更新搜尋框提示文字
+#### **任務 1.2：About Us 頁面英文化（60 分鐘）**
 
-* [ ] **單一餐廳頁面英文化**
-  * 修改頁面標題格式：`[Restaurant Name] - BYOB Restaurant Guide`
-  * 更新欄位標籤：Restaurant Name, Address, Phone, Website
-  * 修改 BYOB 政策區塊：Corkage Fee, Special Policies
-  * 更新用餐體驗區塊：Atmosphere, Signature Dishes, Service
+* [ ] **關於我們頁面內容英文化**
+  * 修改頁面標題：`About Philadelphia BYOB Guide`
+  * 更新專案介紹和目標說明
+  * 修改團隊介紹和背景故事
+  * 更新使命和願景陳述
 
-#### **任務 1.2：表單和互動元素英文化（90 分鐘）**
+* [ ] **使用說明和指南英文化**
+  * 修改「如何使用本指南」：`How to Use This Guide`
+  * 更新「BYOB 政策說明」：`Understanding BYOB Policies`
+  * 修改「餐廳評分標準」：`Restaurant Rating Criteria`
+  * 更新「貢獻指南」：`How to Contribute`
 
-* [ ] **餐廳推薦表單英文化**
-  * 修改表單標題：`Recommend a BYOB Restaurant`
-  * 更新表單欄位標籤和提示文字
-  * 修改提交按鈕：`Submit Recommendation`
-  * 更新成功/錯誤訊息
+#### **任務 1.3：餐廳直接加入頁面英文化（30 分鐘）**
 
-* [ ] **搜尋和篩選功能英文化**
-  * 修改搜尋框：`Search BYOB restaurants...`
-  * 更新篩選標籤：`Filter by Cuisine`, `Filter by Area`
-  * 修改排序選項：`Sort by Name`, `Sort by Rating`
-  * 更新「無結果」訊息
+* [ ] **餐廳加入表單英文化**
+  * 修改頁面標題：`Join Our BYOB Restaurant Network`
+  * 更新表單說明和指引文字
+  * 修改表單欄位標籤和提示文字
+  * 更新提交按鈕和成功訊息
 
-* [ ] **用戶互動元素英文化**
-  * 修改評論區塊：`Reviews`, `Write a Review`
-  * 更新評分系統：`Rate this restaurant`
-  * 修改分享按鈕：`Share`, `Bookmark`
-  * 更新聯絡表單和回饋系統
-
-#### **任務 1.3：內容和文案英文化（60 分鐘）**
-
-* [ ] **靜態內容英文化**
-  * 修改關於我們頁面：`About Philadelphia BYOB Guide`
-  * 更新使用說明：`How to Use This Guide`
-  * 修改隱私政策：`Privacy Policy`
-  * 更新服務條款：`Terms of Service`
-
-* [ ] **動態內容英文化**
-  * 修改文章分類：`Italian BYOB`, `French BYOB`, `Asian BYOB`
-  * 更新標籤系統：`Center City`, `Rittenhouse`, `Old City`
-  * 修改相關文章推薦：`Related Restaurants`
-  * 更新最新文章區塊：`Latest Reviews`
+* [ ] **餐廳加入流程英文化**
+  * 修改「加入流程」：`How to Join`
+  * 更新「審核標準」：`Review Criteria`
+  * 修改「聯絡方式」：`Contact Information`
+  * 更新「常見問題」：`Frequently Asked Questions`
 
 ---
 
-### 🚨 第二部分：資料庫和後台英文化（2-3 小時）
+### 🚨 第二部分：WordPress 後台內容英文化（1-2 小時）
 
-#### **任務 2.1：ACF 欄位英文化（90 分鐘）**
+#### **任務 2.1：WordPress 後台頁面英文化（60 分鐘）**
 
-* [ ] **餐廳基本資訊欄位英文化**
-  * `restaurant_name` → `Restaurant Name`
-  * `restaurant_address` → `Address`
-  * `restaurant_phone` → `Phone Number`
-  * `restaurant_website` → `Website`
-  * `restaurant_cuisine` → `Cuisine Type`
+* [ ] **WordPress 後台頁面內容英文化**
+  * 修改「餐廳管理」頁面標題和說明
+  * 更新「會員管理」頁面內容
+  * 修改「系統設定」頁面說明
+  * 更新「統計報表」頁面標題
 
-* [ ] **BYOB 政策欄位英文化**
-  * `corkage_fee` → `Corkage Fee`
-  * `corkage_policy` → `Corkage Policy`
-  * `byob_equipment` → `BYOB Equipment`
-  * `special_policies` → `Special Policies`
-  * `wine_recommendations` → `Wine Recommendations`
-
-* [ ] **用餐體驗欄位英文化**
-  * `atmosphere` → `Atmosphere`
-  * `signature_dishes` → `Signature Dishes`
-  * `service_quality` → `Service Quality`
-  * `dining_experience` → `Dining Experience`
-  * `best_times_to_visit` → `Best Times to Visit`
-
-#### **任務 2.2：後台管理介面英文化（90 分鐘）**
-
-* [ ] **WordPress 後台英文化**
-  * 修改餐廳管理頁面標題
-  * 更新欄位標籤和說明文字
-  * 修改分類和標籤管理介面
-  * 更新媒體庫和檔案管理
-
-* [ ] **自訂欄位群組英文化**
-  * 修改 ACF 欄位群組名稱
-  * 更新欄位說明和提示文字
-  * 修改選項值和預設文字
-  * 更新條件邏輯和驗證規則
-
-* [ ] **管理員通知和訊息英文化**
+* [ ] **WordPress 後台通知和訊息英文化**
   * 修改成功/錯誤通知訊息
   * 更新 Email 通知模板
   * 修改系統狀態訊息
   * 更新除錯和日誌訊息
+
+#### **任務 2.2：WordPress 後台選單和標籤英文化（30 分鐘）**
+
+* [ ] **WordPress 後台選單英文化**
+  * 修改自訂選單名稱和標籤
+  * 更新頁面標題和描述
+  * 修改分類和標籤名稱
+  * 更新媒體庫和檔案管理標籤
+
+* [ ] **WordPress 後台設定英文化**
+  * 修改主題設定頁面標題
+  * 更新外掛設定頁面內容
+  * 修改使用者角色和權限標籤
+  * 更新系統維護和備份設定
 
 ---
 
@@ -250,54 +239,49 @@
 
 #### **任務 3.1：SEO 設定英文化（60 分鐘）**
 
-* [ ] **頁面 SEO 設定**
-  * 修改頁面標題（Title Tags）
-  * 更新頁面描述（Meta Descriptions）
-  * 修改關鍵字設定
-  * 更新 Open Graph 標籤
+* [ ] **頁面 SEO 設定英文化**
+  * 修改頁面標題（Title Tags）：`Philadelphia BYOB Restaurant Guide`
+  * 更新頁面描述（Meta Descriptions）：`Discover the best BYOB restaurants in Philadelphia`
+  * 修改關鍵字設定：`Philadelphia BYOB`, `BYOB restaurants`, `corkage fee`
+  * 更新 Open Graph 標籤和社群分享設定
 
 * [ ] **內容 SEO 優化**
-  * 修改標題結構（H1, H2, H3）
-  * 更新圖片 Alt 文字
-  * 修改內部連結文字
-  * 更新麵包屑導航
+  * 修改標題結構（H1, H2, H3）：使用英文標題
+  * 更新圖片 Alt 文字：英文描述
+  * 修改內部連結文字：英文錨點文字
+  * 更新麵包屑導航：英文路徑
 
-* [ ] **技術 SEO 設定**
-  * 修改 sitemap 設定
-  * 更新 robots.txt
-  * 修改 URL 結構
-  * 更新快取和效能設定
-
-#### **任務 3.2：內容品質檢查（60 分鐘）**
+#### **任務 3.2：內容品質檢查和測試（60 分鐘）**
 
 * [ ] **內容一致性檢查**
   * 檢查所有頁面的英文內容
-  * 確認術語使用一致性
+  * 確認術語使用一致性（BYOB, corkage fee, restaurant 等）
   * 檢查語法和拼字錯誤
   * 更新過時或錯誤的資訊
 
 * [ ] **用戶體驗測試**
   * 測試英文介面的易用性
-  * 檢查響應式設計
+  * 檢查響應式設計在不同裝置上的表現
   * 測試載入速度和效能
   * 確認跨瀏覽器相容性
 
-* [ ] **內容本地化**
+* [ ] **費城本地化檢查**
   * 確認費城地區資訊正確
-  * 更新聯絡資訊和地址
-  * 修改時區和日期格式
-  * 更新貨幣和單位顯示
+  * 更新聯絡資訊和地址格式
+  * 修改時區和日期格式（美式格式）
+  * 更新貨幣和單位顯示（美元、英制單位）
 
 ---
 
-## 🎯 明日成功標準（1月21日）
+## 🎯 明日成功標準（10月23日）
 
-* [ ] ✅ 完成網站主要頁面英文化
-* [ ] ✅ 更新所有表單和互動元素
-* [ ] ✅ 完成 ACF 欄位和後台英文化
-* [ ] ✅ 優化 SEO 設定和內容
+* [ ] ✅ 完成首頁內容英文化
+* [ ] ✅ 完成 About Us 頁面英文化
+* [ ] ✅ 完成餐廳直接加入頁面英文化
+* [ ] ✅ 完成 WordPress 後台內容英文化
+* [ ] ✅ 完成 SEO 設定和內容優化
 * [ ] ✅ 完成內容品質檢查和測試
-* [ ] ✅ 準備英文網站上線
+* [ ] ✅ 準備英文網站正式上線
 
 ---
 
@@ -310,7 +294,8 @@
 - ✅ **Google 表單建立**：費城 BYOB 餐廳驗證表單完成
 - ✅ **自動化整合完成**：Google Apps Script + WordPress API 整合
 - ✅ **Reddit 貼文策略準備**：社群互動內容和追蹤系統完成
-- 🔄 **網站英文化階段**：WordPress 介面逐步改為英文
+- ✅ **WordPress 程式碼英文化完成**：所有 PHP 檔案前台顯示文字已改為英文
+- 🔄 **手動內容英文化階段**：首頁、About Us、餐廳加入頁面等靜態內容英文化
 - ⏳ **待執行**：Reddit 社群互動、英文網站上線、用戶招募、榮譽系統實作
 
 ### 🍷 台北 BYOB 專案（既有專案）
@@ -323,8 +308,8 @@
 
 ## 💡 明日工作提醒
 
-### **WordPress 英文化重點**
-- **介面一致性**：確保所有頁面和元素使用一致的英文術語
+### **手動內容英文化重點**
+- **內容一致性**：確保所有靜態頁面使用一致的英文術語和風格
 - **用戶體驗**：保持英文介面的直觀性和易用性
 - **內容品質**：檢查語法、拼字和術語使用
 - **本地化**：確保費城地區資訊和格式正確
@@ -337,9 +322,9 @@
 
 ### **進度追蹤**
 - 每完成一個任務就更新此檔案
-- 記錄 WordPress 英文化進度
-- 追蹤 ACF 欄位更新狀態
-- 監控 SEO 優化效果
+- 記錄手動內容英文化進度
+- 追蹤 SEO 優化效果
+- 監控內容品質檢查結果
 - 為 Reddit 社群互動階段做準備
 
 ---
@@ -361,8 +346,8 @@
 - **Reddit 互動追蹤系統**：Excel 檔案和 Markdown 記錄
 
 ### **費城專案工具（明日開發）**
-- **英文網站介面**：WordPress 前台和後台英文化
-- **ACF 欄位英文化**：所有自訂欄位和標籤
+- **手動內容英文化**：首頁、About Us、餐廳加入頁面等靜態內容
+- **WordPress 後台英文化**：後台頁面、選單、設定等內容
 - **SEO 優化系統**：英文關鍵字和內容優化
 - **內容品質檢查**：英文內容一致性和本地化
 
@@ -408,5 +393,5 @@
 
 ---
 
-*最後更新：2025年1月20日*
-*版本：v12.0*
+*最後更新：2025年10月22日*
+*版本：v13.0*
