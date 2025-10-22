@@ -109,7 +109,7 @@
 
       <?php if($address): ?>
         <div class="field">
-          <strong>地址：</strong>
+          <strong>Address:</strong>
           <?php if($map_link): ?>
             <a href="<?php echo esc_url($map_link); ?>" target="_blank" rel="noopener">
               <?php echo esc_html($address); ?> &#128205;
@@ -119,7 +119,7 @@
           <?php endif; ?>
         </div>
       <?php else: ?>
-        <div class="field"><strong>地址：</strong></div>
+        <div class="field"><strong>Address:</strong></div>
       <?php endif; ?>
 
       <?php 
@@ -140,11 +140,11 @@
         }
       ?>
         <div class="field">
-          <strong>餐廳聯絡電話：</strong>
+          <strong>Phone:</strong>
           <a href="tel:<?php echo esc_attr($tel_link); ?>"><?php echo esc_html($phone); ?> &#128222;</a>
         </div>
       <?php else: ?>
-        <div class="field"><strong>餐廳聯絡電話：</strong></div>
+        <div class="field"><strong>Phone:</strong></div>
       <?php endif; ?>
 
       <?php 
@@ -159,7 +159,7 @@
               // 獲取其他類型說明
               $other_note = get_field('restaurant_type_other_note');
               if (!empty($other_note)) {
-                $processed_types[] = '其他: ' . $other_note;
+                $processed_types[] = 'Other: ' . $other_note;
               } else {
                 $processed_types[] = $type;
               }
@@ -173,7 +173,7 @@
           if (strpos($types, '其他') !== false) {
             $other_note = get_field('restaurant_type_other_note');
             if (!empty($other_note)) {
-              $type_output = str_replace('其他', '其他: ' . $other_note, $types);
+              $type_output = str_replace('Other', 'Other: ' . $other_note, $types);
             } else {
               $type_output = $types;
             }
@@ -182,9 +182,9 @@
           }
         }
       ?>
-        <div class="field"><strong>餐廳類型：</strong><?php echo esc_html($type_output); ?></div>
+        <div class="field"><strong>Cuisine Type:</strong><?php echo esc_html($type_output); ?></div>
       <?php else: ?>
-        <div class="field"><strong>餐廳類型：</strong></div>
+        <div class="field"><strong>Cuisine Type:</strong></div>
       <?php endif; ?>
     </div>
 
@@ -204,9 +204,9 @@
           $charged_output = $is_charged;
         }
       ?>
-        <div class="field"><strong>是否收開瓶費：</strong><?php echo esc_html($charged_output); ?> &#127864;</div>
+        <div class="field"><strong>Corkage Fee:</strong><?php echo esc_html($charged_output); ?> 🥂</div>
       <?php else: ?>
-        <div class="field"><strong>是否收開瓶費：</strong></div>
+        <div class="field"><strong>Corkage Fee:</strong></div>
       <?php endif; ?>
 
       <?php 
@@ -231,18 +231,18 @@
         } elseif (($charged_value === '其他' || $charged_value === 'other') && $corkage_fee_note) {
           $fee_output = $corkage_fee_note;
         } elseif ($charged_value === '酌收' || $charged_value === 'yes') {
-          $fee_output = '酌收（金額未設定）';
+          $fee_output = 'Charged (amount not set)';
         } elseif ($charged_value === '其他' || $charged_value === 'other') {
-          $fee_output = '其他（說明未設定）';
+          $fee_output = 'Other (description not set)';
         } elseif ($charged_value === 'no') {
-          $fee_output = '不收開瓶費';
+          $fee_output = 'No corkage fee';
         } else {
           $fee_output = $charged_value;
         }
       ?>
-        <div class="field"><strong>開瓶費說明：</strong><?php echo esc_html($fee_output); ?> &#127881;</div>
+        <div class="field"><strong>Corkage Details:</strong><?php echo esc_html($fee_output); ?> 🪙</div>
       <?php else: ?>
-        <div class="field"><strong>開瓶費說明：</strong></div>
+        <div class="field"><strong>Corkage Details:</strong></div>
       <?php endif; ?>
 
       <?php 
@@ -256,7 +256,7 @@
           foreach ($equipment as $item) {
             if ($item === '其他') {
               if (!empty($equipment_other_note)) {
-                $equipment_display[] = '其他: ' . $equipment_other_note;
+                $equipment_display[] = 'Other: ' . $equipment_other_note;
               } else {
                 $equipment_display[] = $item;
               }
@@ -269,7 +269,7 @@
           // 處理字串情況（防備）
           if (strpos($equipment, '其他') !== false) {
             if (!empty($equipment_other_note)) {
-              $equipment_output = str_replace('其他', '其他: ' . $equipment_other_note, $equipment);
+              $equipment_output = str_replace('Other', 'Other: ' . $equipment_other_note, $equipment);
             } else {
               $equipment_output = $equipment;
             }
@@ -278,9 +278,9 @@
           }
         }
       ?>
-        <div class="field"><strong>提供酒器設備：</strong><?php echo esc_html($equipment_output); ?></div>
+        <div class="field"><strong>Wine Equipment:</strong><?php echo esc_html($equipment_output); ?></div>
       <?php else: ?>
-        <div class="field"><strong>提供酒器設備：</strong></div>
+        <div class="field"><strong>Wine Equipment:</strong></div>
       <?php endif; ?>
 
                     <?php 
@@ -295,23 +295,23 @@
 
                if ($open_bottle_service): 
           if ($open_bottle_service === '有') {
-            $service_output = '有';
+            $service_output = 'Yes';
           } elseif ($open_bottle_service === '無') {
-            $service_output = '無';
+            $service_output = 'No';
           } elseif ($open_bottle_service === '其他') {
             // 當選擇"其他"時，直接顯示說明文字，不顯示"其他"兩字
             if ($open_bottle_service_other_note && !empty(trim($open_bottle_service_other_note))) {
               $service_output = $open_bottle_service_other_note;
             } else {
-              $service_output = '其他';
+              $service_output = 'Other';
             }
           } else {
             $service_output = $open_bottle_service;
           }
        ?>
-         <div class="field"><strong>是否提供開酒服務：</strong><?php echo esc_html($service_output); ?></div>
+         <div class="field"><strong>Wine Service:</strong><?php echo esc_html($service_output); ?></div>
        <?php else: ?>
-         <div class="field"><strong>是否提供開酒服務：</strong></div>
+         <div class="field"><strong>Wine Service:</strong></div>
        <?php endif; ?>
     </div>
 
@@ -323,20 +323,20 @@
 		  $links = [];
 
 		  if ($website) {
-			$links[] = '<a href="'.esc_url($website).'" target="_blank" rel="noopener">官網連結</a>';
+			$links[] = '<a href="'.esc_url($website).'" target="_blank" rel="noopener">Website</a>';
 		  }
 		  if ($social_links) {
-			$links[] = '<a href="'.esc_url($social_links).'" target="_blank" rel="noopener">社群連結</a>';
+			$links[] = '<a href="'.esc_url($social_links).'" target="_blank" rel="noopener">Social Media</a>';
 		  }
 		?>
 
 		<?php if (!empty($links)): ?>
 		  <div class="field">
-			<strong>官方網站/社群連結：</strong>
+			<strong>Website/Social Links:</strong>
 			<?php echo implode(' | ', $links); ?>
 		  </div>
 		<?php else: ?>
-		  <div class="field"><strong>官方網站/社群連結：</strong></div>
+		  <div class="field"><strong>Website/Social Links:</strong></div>
 		<?php endif; ?>
 	</div>
 
@@ -344,9 +344,9 @@
     <!-- 其他資訊 -->
     <div class="info-group other-info">
       <?php if(get_field('notes')): ?>
-        <div class="field"><strong>備註說明：</strong><?php the_field('notes'); ?> &#128221;</div>
+        <div class="field"><strong>Notes:</strong><?php the_field('notes'); ?> 📝</div>
       <?php else: ?>
-        <div class="field"><strong>備註說明：</strong></div>
+        <div class="field"><strong>Notes:</strong></div>
       <?php endif; ?>
     </div>
   </div>
@@ -375,7 +375,7 @@
   if (!empty($photos)): ?>
     <div class="restaurant-photos-section">
       <h3 style="color: #333; margin: 0 0 20px 0;">
-        🏠 餐廳照片
+        🏠 Restaurant Photos
       </h3>
       
       <div class="restaurant-photos-grid">
@@ -412,10 +412,10 @@
           if ($photo_url): ?>
             <div class="restaurant-photo-item" data-photo-index="<?php echo $index; ?>">
               <img src="<?php echo esc_url($photo_url); ?>" 
-                   alt="<?php echo esc_attr($photo_description ?: '餐廳照片'); ?>"
+                   alt="<?php echo esc_attr($photo_description ?: 'Restaurant Photo'); ?>"
                    class="restaurant-photo-image"
                    loading="lazy"
-                   title="<?php echo esc_attr($photo_description ?: '點擊放大查看'); ?>"
+                   title="<?php echo esc_attr($photo_description ?: 'Click to enlarge'); ?>"
                    data-description="<?php echo esc_attr($photo_description); ?>">
             </div>
           <?php endif;
@@ -433,7 +433,7 @@
        ?>
        
        <a href="<?php echo esc_url($archive_url); ?>" class="back-link" id="back-to-list-link">
-         << 返回餐廳列表
+         << Back to Restaurant List
        </a>
     </div>
     
@@ -456,7 +456,7 @@
         }
       ?>
         <a href="tel:<?php echo esc_attr($tel_link); ?>" class="contact-link">
-        撥打電話 &#128222;
+         Call Restaurant 📞
         </a>
       <?php endif; ?>
     </div>
@@ -466,9 +466,9 @@
 <!-- 照片放大覆蓋層 -->
 <div id="photo-overlay" class="photo-overlay">
   <div class="photo-overlay-content">
-    <img id="overlay-image" src="" alt="餐廳照片">
+    <img id="overlay-image" src="" alt="Restaurant Photo">
     <div id="overlay-description" class="overlay-description"></div>
-    <button class="close-overlay" aria-label="關閉">×</button>
+    <button class="close-overlay" aria-label="Close">×</button>
   </div>
 </div>
 
@@ -575,7 +575,7 @@ document.addEventListener('DOMContentLoaded', function() {
            // 更新連結的href
            this.href = url.toString();
          } catch (error) {
-           console.log('篩選條件解析失敗，使用預設返回');
+           console.log('Filter parsing failed, using default return');
          }
        }
      });
