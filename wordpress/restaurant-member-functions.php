@@ -85,7 +85,7 @@ function byob_init_restaurant_member_system() {
 function byob_register_restaurant_owner_role() {
     // 檢查角色是否已存在
     if (!get_role('restaurant_owner')) {
-        add_role('restaurant_owner', '餐廳業者', array(
+        add_role('restaurant_owner', 'Restaurant Owner', array(
             'read' => true,
             'edit_posts' => false,
             'delete_posts' => false,
@@ -853,9 +853,9 @@ function byob_display_restaurant_registration_page() {
             
             <?php if ($restaurant_info && !$success_message): ?>
                 <div style="background-color: #e7f3ff; border: 1px solid #b3d9ff; padding: 25px; margin-bottom: 30px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <h3 style="font-family: 'Microsoft JhengHei', Arial, sans-serif; font-size: 20px; font-weight: 600; color: #2c3e50; margin: 0 0 20px 0; text-align: center;">餐廳資訊</h3>
-                    <p style="font-family: 'Microsoft JhengHei', Arial, sans-serif; font-size: 16px; margin: 10px 0; color: #34495e;"><strong>餐廳名稱：</strong><?php echo esc_html($restaurant_info['restaurant_name']); ?></p>
-                    <p style="font-family: 'Microsoft JhengHei', Arial, sans-serif; font-size: 16px; margin: 10px 0; color: #34495e;"><strong>邀請碼：</strong><?php echo esc_html($restaurant_info['invitation_code']); ?></p>
+                    <h3 style="font-family: 'Microsoft JhengHei', Arial, sans-serif; font-size: 20px; font-weight: 600; color: #2c3e50; margin: 0 0 20px 0; text-align: center;">Restaurant Information</h3>
+                    <p style="font-family: 'Microsoft JhengHei', Arial, sans-serif; font-size: 16px; margin: 10px 0; color: #34495e;"><strong>Restaurant Name:</strong><?php echo esc_html($restaurant_info['restaurant_name']); ?></p>
+                    <p style="font-family: 'Microsoft JhengHei', Arial, sans-serif; font-size: 16px; margin: 10px 0; color: #34495e;"><strong>Invitation Code:</strong><?php echo esc_html($restaurant_info['invitation_code']); ?></p>
                 </div>
                 
                 <form method="post" style="margin-top: 20px;">
@@ -1139,7 +1139,7 @@ function byob_review_management_page() {
         }
         
         if (is_wp_error($result)) {
-            echo '<div class="notice notice-error"><p>操作失敗：' . $result->get_error_message() . '</p></div>';
+            echo '<div class="notice notice-error"><p>Operation failed: ' . $result->get_error_message() . '</p></div>';
         } else {
             echo '<div class="notice notice-success"><p>' . $result['message'] . '</p></div>';
         }
@@ -1177,7 +1177,7 @@ function byob_review_management_page() {
                 ));
                 
                 if (empty($pending_restaurants)) {
-                    echo '<tr><td colspan="6">目前沒有待審核的餐廳</td></tr>';
+                    echo '<tr><td colspan="6">No restaurants pending review</td></tr>';
                 } else {
                     foreach ($pending_restaurants as $restaurant) {
                         $contact_person = get_field('contact_person', $restaurant->ID);
@@ -1186,23 +1186,23 @@ function byob_review_management_page() {
                         
                         echo '<tr>';
                         echo '<td><a href="' . get_edit_post_link($restaurant->ID) . '">' . $restaurant->post_title . '</a></td>';
-                        echo '<td>' . ($contact_person ?: '未填寫') . '</td>';
-                        echo '<td>' . ($email ?: '未填寫') . '</td>';
-                        echo '<td>' . ($submitted_date ? date('Y-m-d H:i', strtotime($submitted_date)) : '未知') . '</td>';
-                        echo '<td><span style="color: orange;">待審核</span></td>';
+                        echo '<td>' . ($contact_person ?: 'Not filled') . '</td>';
+                        echo '<td>' . ($email ?: 'Not filled') . '</td>';
+                        echo '<td>' . ($submitted_date ? date('Y-m-d H:i', strtotime($submitted_date)) : 'Unknown') . '</td>';
+                        echo '<td><span style="color: orange;">Pending Review</span></td>';
                         echo '<td>';
                         echo '<form method="post" style="display: inline;">';
                         echo '<input type="hidden" name="restaurant_id" value="' . $restaurant->ID . '">';
                         echo '<input type="hidden" name="action" value="approve">';
-                        echo '<textarea name="review_notes" placeholder="審核意見（可選）" style="width: 200px; height: 60px;"></textarea><br>';
-                        echo '<button type="submit" class="button button-primary" onclick="return confirm(\'確定要通過審核嗎？\')">通過審核</button> ';
+                        echo '<textarea name="review_notes" placeholder="Review notes (optional)" style="width: 200px; height: 60px;"></textarea><br>';
+                        echo '<button type="submit" class="button button-primary" onclick="return confirm(\'Are you sure you want to approve?\')">Approve</button> ';
                         echo '</form>';
                         
                         echo '<form method="post" style="display: inline;">';
                         echo '<input type="hidden" name="restaurant_id" value="' . $restaurant->ID . '">';
                         echo '<input type="hidden" name="action" value="reject">';
-                        echo '<textarea name="review_notes" placeholder="拒絕原因（必填）" style="width: 200px; height: 60px;" required></textarea><br>';
-                        echo '<button type="submit" class="button button-secondary" onclick="return confirm(\'確定要拒絕審核嗎？\')">拒絕審核</button>';
+                        echo '<textarea name="review_notes" placeholder="Rejection reason (required)" style="width: 200px; height: 60px;" required></textarea><br>';
+                        echo '<button type="submit" class="button button-secondary" onclick="return confirm(\'Are you sure you want to reject?\')">Reject</button>';
                         echo '</form>';
                         echo '</td>';
                         echo '</tr>';
@@ -1258,8 +1258,8 @@ function byob_member_management_page() {
                     
                     echo '<tr>';
                     echo '<td>' . $restaurant->post_title . '</td>';
-                    echo '<td>' . ($contact_person ?: '未填寫') . '</td>';
-                    echo '<td>' . ($email ?: '未填寫') . '</td>';
+                    echo '<td>' . ($contact_person ?: 'Not filled') . '</td>';
+                    echo '<td>' . ($email ?: 'Not filled') . '</td>';
                     echo '<td>' . $member_status . '</td>';
                     echo '<td>' . $action . '</td>';
                     echo '</tr>';
@@ -1349,29 +1349,29 @@ function byob_restaurant_owner_dashboard() {
     
     if (empty($user_restaurants)) {
         echo '<div class="wrap">';
-        echo '<h1>餐廳業者儀表板</h1>';
-        echo '<p>您目前沒有關聯的餐廳。請聯絡管理員。</p>';
+        echo '<h1>Restaurant Owner Dashboard</h1>';
+        echo '<p>You currently have no associated restaurants. Please contact the administrator.</p>';
         echo '</div>';
         return;
     }
     
     echo '<div class="wrap">';
-    echo '<h1>餐廳業者儀表板</h1>';
-    echo '<p>歡迎，' . esc_html($user->display_name) . '！</p>';
+    echo '<h1>Restaurant Owner Dashboard</h1>';
+    echo '<p>Welcome, ' . esc_html($user->display_name) . '!</p>';
     
-    echo '<h2>您的餐廳</h2>';
+    echo '<h2>Your Restaurants</h2>';
     echo '<div class="restaurant-list">';
     
     foreach ($user_restaurants as $restaurant) {
         echo '<div class="restaurant-item" style="border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px;">';
         echo '<h3>' . esc_html($restaurant->post_title) . '</h3>';
-        echo '<p><strong>地址：</strong>' . esc_html(get_field('address', $restaurant->ID)) . '</p>';
-        echo '<p><strong>電話：</strong>' . esc_html(get_field('phone', $restaurant->ID)) . '</p>';
-        echo '<p><strong>狀態：</strong>已上架</p>';
+        echo '<p><strong>Address:</strong>' . esc_html(get_field('address', $restaurant->ID)) . '</p>';
+        echo '<p><strong>Phone:</strong>' . esc_html(get_field('phone', $restaurant->ID)) . '</p>';
+        echo '<p><strong>Status:</strong>Published</p>';
         echo '<div class="restaurant-actions">';
-        echo '<a href="' . admin_url('post.php?post=' . $restaurant->ID . '&action=edit') . '" class="button">編輯餐廳資料</a> ';
-        echo '<a href="' . get_permalink($restaurant->ID) . '" class="button" target="_blank">查看餐廳頁面</a> ';
-        echo '<a href="' . get_permalink($restaurant->ID) . '" class="button" target="_blank" style="background-color: rgba(139, 38, 53, 0.8); color: white;">👁️ 預覽餐廳</a>';
+        echo '<a href="' . admin_url('post.php?post=' . $restaurant->ID . '&action=edit') . '" class="button">Edit Restaurant Information</a> ';
+        echo '<a href="' . get_permalink($restaurant->ID) . '" class="button" target="_blank">View Restaurant Page</a> ';
+        echo '<a href="' . get_permalink($restaurant->ID) . '" class="button" target="_blank" style="background-color: rgba(139, 38, 53, 0.8); color: white;">👁️ Preview Restaurant</a>';
         echo '</div>';
         echo '</div>';
     }
@@ -1389,13 +1389,13 @@ function byob_restaurant_profile_content() {
     // 檢查使用者是否為餐廳業者
     $user_id = get_current_user_id();
     if (!$user_id) {
-        echo '<p>請先登入。</p>';
+        echo '<p>Please login first.</p>';
         return;
     }
     
     $user = get_user_by('id', $user_id);
     if (!in_array('restaurant_owner', $user->roles)) {
-        echo '<p>權限不足，只有餐廳業者才能存取此頁面。</p>';
+        echo '<p>Insufficient permissions, only restaurant owners can access this page.</p>';
         return;
     }
     
@@ -1403,8 +1403,8 @@ function byob_restaurant_profile_content() {
     $user_restaurants = byob_get_user_restaurants($user_id);
     if (empty($user_restaurants)) {
         echo '<div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 20px; border-radius: 5px;">';
-        echo '<h3>⚠️ 注意</h3>';
-        echo '<p>您目前沒有關聯的餐廳。請聯絡管理員。</p>';
+        echo '<h3>⚠️ Notice</h3>';
+        echo '<p>You currently have no associated restaurants. Please contact the administrator.</p>';
         echo '</div>';
         return;
     }
@@ -1412,9 +1412,9 @@ function byob_restaurant_profile_content() {
     $restaurant = $user_restaurants[0]; // 取第一個餐廳
     $restaurant_id = $restaurant->ID;
     
-    // 預覽餐廳按鈕
+    // Preview Restaurant按鈕
     echo '<div style="text-align: right; margin-bottom: 20px;">';
-    echo '<a href="' . get_permalink($restaurant_id) . '" class="button" target="_blank" style="background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 10px 20px; font-size: 14px; display: inline-block; text-decoration: none; color: white; border: none;">👁️ 預覽餐廳</a>';
+    echo '<a href="' . get_permalink($restaurant_id) . '" class="button" target="_blank" style="background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 10px 20px; font-size: 14px; display: inline-block; text-decoration: none; color: white; border: none;">👁️ Preview Restaurant</a>';
     echo '</div>';
     
     // 獲取當前餐廳資料
@@ -1430,9 +1430,9 @@ function byob_restaurant_profile_content() {
     echo '<h2>餐廳資料編輯</h2>';
     echo '<p>編輯您的餐廳基本資料和 LOGO。</p>';
     
-    // 預覽餐廳按鈕
+    // Preview Restaurant按鈕
     echo '<div style="text-align: right; margin-bottom: 20px;">';
-    echo '<a href="' . get_permalink($restaurant_id) . '" class="button" target="_blank" style="background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 10px 20px; font-size: 14px; display: inline-block; text-decoration: none; color: white; border: none;">👁️ 預覽餐廳</a>';
+    echo '<a href="' . get_permalink($restaurant_id) . '" class="button" target="_blank" style="background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 10px 20px; font-size: 14px; display: inline-block; text-decoration: none; color: white; border: none;">👁️ Preview Restaurant</a>';
     echo '</div>';
     
     // 顯示成功/失敗訊息
@@ -1440,11 +1440,11 @@ function byob_restaurant_profile_content() {
         $message = sanitize_text_field($_GET['message']);
         if ($message === 'success') {
             echo '<div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 15px; border-radius: 5px; margin-bottom: 20px;">';
-            echo '✅ 餐廳資料更新成功！';
+            echo '✅ Restaurant information updated successfully!';
             echo '</div>';
         } elseif ($message === 'error') {
             echo '<div style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 15px; border-radius: 5px; margin-bottom: 20px;">';
-            echo '❌ 更新失敗，請檢查輸入資料。';
+            echo '❌ Update failed, please check input data.';
             echo '</div>';
         }
     }
@@ -1455,64 +1455,64 @@ function byob_restaurant_profile_content() {
     
     // 餐廳基本資料
     echo '<div style="margin-bottom: 25px;">';
-    echo '<h3 style="color: #333; border-bottom: 2px solid #8b2635; padding-bottom: 10px;">基本資料</h3>';
+    echo '<h3 style="color: #333; border-bottom: 2px solid #8b2635; padding-bottom: 10px;">Basic Information</h3>';
     
     // 餐廳名稱
     echo '<div style="margin-bottom: 20px;">';
-    echo '<label for="restaurant_name" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">餐廳名稱 *</label>';
+    echo '<label for="restaurant_name" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Restaurant Name *</label>';
     echo '<input type="text" id="restaurant_name" name="restaurant_name" value="' . esc_attr($restaurant->post_title) . '" required style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">';
     echo '</div>';
     
     // 餐廳描述
     echo '<div style="margin-bottom: 20px;">';
-    echo '<label for="restaurant_description" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">餐廳描述</label>';
+    echo '<label for="restaurant_description" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Restaurant Description</label>';
     echo '<textarea id="restaurant_description" name="restaurant_description" rows="4" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">' . esc_textarea($restaurant->post_content) . '</textarea>';
     echo '</div>';
     
     // 聯絡電話
     echo '<div style="margin-bottom: 20px;">';
-    echo '<label for="restaurant_phone" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">聯絡電話</label>';
+    echo '<label for="restaurant_phone" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Phone Number</label>';
     echo '<input type="tel" id="restaurant_phone" name="restaurant_phone" value="' . esc_attr(get_field('phone', $restaurant_id)) . '" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">';
     echo '</div>';
     
     // 地址
     echo '<div style="margin-bottom: 20px;">';
-    echo '<label for="restaurant_address" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">地址</label>';
+    echo '<label for="restaurant_address" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Address</label>';
     echo '<textarea id="restaurant_address" name="restaurant_address" rows="3" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">' . esc_textarea(get_field('address', $restaurant_id)) . '</textarea>';
     echo '</div>';
     
     // 營業時間
     echo '<div style="margin-bottom: 20px;">';
-    echo '<label for="business_hours" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">營業時間</label>';
-    echo '<textarea id="business_hours" name="business_hours" rows="3" placeholder="例：週一至週五 11:00-22:00，週六日 10:00-23:00" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">' . esc_textarea(get_field('business_hours', $restaurant_id)) . '</textarea>';
+    echo '<label for="business_hours" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Business Hours</label>';
+    echo '<textarea id="business_hours" name="business_hours" rows="3" placeholder="e.g.: Monday to Friday 11:00-22:00, Saturday and Sunday 10:00-23:00" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">' . esc_textarea(get_field('business_hours', $restaurant_id)) . '</textarea>';
     echo '</div>';
     
     echo '</div>';
     
     // LOGO 上傳
     echo '<div style="margin-bottom: 25px;">';
-    echo '<h3 style="color: #333; border-bottom: 2px solid #8b2635; padding-bottom: 10px;">餐廳 LOGO</h3>';
+    echo '<h3 style="color: #333; border-bottom: 2px solid #8b2635; padding-bottom: 10px;">Restaurant LOGO</h3>';
     
     // 顯示當前 LOGO
     if ($current_logo_url) {
         echo '<div style="margin-bottom: 20px;">';
-        echo '<p style="font-weight: bold; margin-bottom: 10px;">當前 LOGO：</p>';
-        echo '<img src="' . esc_url($current_logo_url) . '" alt="當前 LOGO" style="max-width: 150px; max-height: 150px; border: 2px solid #ddd; border-radius: 5px;">';
+        echo '<p style="font-weight: bold; margin-bottom: 10px;">Current LOGO:</p>';
+        echo '<img src="' . esc_url($current_logo_url) . '" alt="Current LOGO" style="max-width: 150px; max-height: 150px; border: 2px solid #ddd; border-radius: 5px;">';
         echo '</div>';
     }
     
     // LOGO 上傳欄位
     echo '<div style="margin-bottom: 20px;">';
-    echo '<label for="restaurant_logo" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">上傳新 LOGO</label>';
+    echo '<label for="restaurant_logo" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Upload New LOGO</label>';
     echo '<input type="file" id="restaurant_logo" name="restaurant_logo" accept="image/jpeg,image/png,image/gif" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; font-size: 16px;">';
-    echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">支援格式：JPG、PNG、GIF，檔案大小限制 2MB</p>';
+    echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Supported formats: JPG, PNG, GIF, file size limit 2MB</p>';
     echo '</div>';
     
     echo '</div>';
     
     // 提交按鈕
     echo '<div style="text-align: center;">';
-    echo '<button type="submit" style="background-color: rgba(139, 38, 53, 0.8); color: white; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold;">更新餐廳資料</button>';
+    echo '<button type="submit" style="background-color: rgba(139, 38, 53, 0.8); color: white; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold;">Update Restaurant Information</button>';
     echo '</div>';
     
     echo '</form>';
@@ -1526,13 +1526,13 @@ function byob_restaurant_photos_content() {
     // 檢查使用者是否為餐廳業者
     $user_id = get_current_user_id();
     if (!$user_id) {
-        echo '<p>請先登入。</p>';
+        echo '<p>Please login first.</p>';
         return;
     }
     
     $user = get_user_by('id', $user_id);
     if (!in_array('restaurant_owner', $user->roles)) {
-        echo '<p>權限不足，只有餐廳業者才能存取此頁面。</p>';
+        echo '<p>Insufficient permissions, only restaurant owners can access this page.</p>';
         return;
     }
     
@@ -1540,8 +1540,8 @@ function byob_restaurant_photos_content() {
     $user_restaurants = byob_get_user_restaurants($user_id);
     if (empty($user_restaurants)) {
         echo '<div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 20px; border-radius: 5px;">';
-        echo '<h3>⚠️ 注意</h3>';
-        echo '<p>您目前沒有關聯的餐廳。請聯絡管理員。</p>';
+        echo '<h3>⚠️ Notice</h3>';
+        echo '<p>You currently have no associated restaurants. Please contact the administrator.</p>';
         echo '</div>';
         return;
     }
@@ -1661,9 +1661,9 @@ function byob_restaurant_photos_content() {
     echo '<div class="restaurant-photos-management" style="max-width: 800px;">';
     echo '<h2>餐廳照片管理</h2>';
     
-    // 預覽餐廳按鈕
+    // Preview Restaurant按鈕
     echo '<div style="text-align: center; margin: 20px 0; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;">';
-    echo '<a href="' . get_permalink($restaurant_id) . '" target="_blank" style="background-color: #8b2635; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">👁️ 預覽餐廳</a>';
+    echo '<a href="' . get_permalink($restaurant_id) . '" target="_blank" style="background-color: #8b2635; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">👁️ Preview Restaurant</a>';
     echo '<p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">點擊按鈕在新分頁中預覽您的餐廳前台頁面</p>';
     echo '</div>';
     
@@ -1891,42 +1891,42 @@ function byob_override_dashboard_content() {
     $user_restaurants = byob_get_user_restaurants($user_id);
     
     echo '<div class="restaurant-dashboard-main">';
-    echo '<h2>餐廳業者控制台</h2>';
-    echo '<p>歡迎，' . esc_html($user->display_name) . '！</p>';
+    echo '<h2>Restaurant Owner Console</h2>';
+    echo '<p>Welcome, ' . esc_html($user->display_name) . '!</p>';
     
     if (!empty($user_restaurants)) {
         $restaurant = $user_restaurants[0]; // 取第一個餐廳
         echo '<div class="restaurant-overview-main" style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin: 20px 0;">';
-        echo '<h3>餐廳概覽</h3>';
-        echo '<p><strong>餐廳名稱：</strong>' . esc_html($restaurant->post_title) . '</p>';
-        echo '<p><strong>狀態：</strong>已上架</p>';
-        echo '<p><strong>最後更新：</strong>' . get_the_modified_date('Y-m-d H:i', $restaurant->ID) . '</p>';
+        echo '<h3>Restaurant Overview</h3>';
+        echo '<p><strong>Restaurant Name:</strong>' . esc_html($restaurant->post_title) . '</p>';
+        echo '<p><strong>Status:</strong>Published</p>';
+        echo '<p><strong>Last Updated:</strong>' . get_the_modified_date('Y-m-d H:i', $restaurant->ID) . '</p>';
         echo '</div>';
         
         echo '<div class="quick-actions-main" style="margin: 20px 0;">';
-        echo '<h3>快速操作</h3>';
-        echo '<a href="' . wc_get_account_endpoint_url('restaurant-profile') . '" class="button" style="margin-right: 10px; background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">編輯餐廳資料</a> ';
-        echo '<a href="' . wc_get_account_endpoint_url('restaurant-photos') . '" class="button" style="margin-right: 10px; background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">管理照片</a> ';
-        echo '<a href="' . wc_get_account_endpoint_url('restaurant-menu') . '" class="button" style="margin-right: 10px; background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">管理菜單</a> ';
-        echo '<a href="' . get_permalink($restaurant->ID) . '" class="button" target="_blank" style="background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">預覽餐廳</a>';
+        echo '<h3>Quick Actions</h3>';
+        echo '<a href="' . wc_get_account_endpoint_url('restaurant-profile') . '" class="button" style="margin-right: 10px; background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">Edit Restaurant Information</a> ';
+        echo '<a href="' . wc_get_account_endpoint_url('restaurant-photos') . '" class="button" style="margin-right: 10px; background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">Manage Photos</a> ';
+        echo '<a href="' . wc_get_account_endpoint_url('restaurant-menu') . '" class="button" style="margin-right: 10px; background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">Manage Menu</a> ';
+        echo '<a href="' . get_permalink($restaurant->ID) . '" class="button" target="_blank" style="background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">Preview Restaurant</a>';
         echo '</div>';
         
         echo '<div class="restaurant-stats-main" style="background: #f9f9f9; padding: 20px; border-radius: 5px;">';
-        echo '<h3>統計資訊</h3>';
-        echo '<p><strong>餐廳頁面訪問次數：</strong>統計中...</p>';
-        echo '<p><strong>評論數量：</strong>0</p>';
-        echo '<p><strong>照片數量：</strong>0</p>';
+        echo '<h3>Statistics</h3>';
+        echo '<p><strong>Restaurant Page Views:</strong>Counting...</p>';
+        echo '<p><strong>Review Count:</strong>0</p>';
+        echo '<p><strong>Photo Count:</strong>0</p>';
         echo '</div>';
     } else {
         echo '<div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 20px; border-radius: 5px; margin: 20px 0;">';
-        echo '<h3>⚠️ 注意</h3>';
-        echo '<p>您目前沒有關聯的餐廳。這可能是因為：</p>';
+        echo '<h3>⚠️ Notice</h3>';
+        echo '<p>You currently have no associated restaurants. This could be because:</p>';
         echo '<ul style="margin-left: 20px;">';
-        echo '<li>餐廳資料尚未建立</li>';
-        echo '<li>餐廳與您的帳號尚未關聯</li>';
-        echo '<li>餐廳狀態不是「已上架」</li>';
+        echo '<li>Restaurant information has not been created</li>';
+        echo '<li>Restaurant is not yet linked to your account</li>';
+        echo '<li>Restaurant status is not "Published"</li>';
         echo '</ul>';
-        echo '<p>請聯絡管理員協助處理。</p>';
+        echo '<p>Please contact the administrator for assistance.</p>';
         echo '</div>';
     }
     echo '</div>';
