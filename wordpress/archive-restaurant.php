@@ -146,7 +146,7 @@
 }
 </style>
 <div class="page-header">
-  <h1 class="page-title">所有餐廳列表</h1>
+  <h1 class="page-title">All BYOB Restaurants</h1>
 </div>
 
 <!-- 篩選條件記憶功能 + 懶載入優化 -->
@@ -159,9 +159,9 @@ document.addEventListener('DOMContentLoaded', function() {
   function saveFilters(filters) {
     try {
       sessionStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(filters));
-      console.log('篩選條件已儲存:', filters);
+      console.log('Filters saved:', filters);
     } catch (error) {
-      console.error('儲存篩選條件失敗:', error);
+      console.error('Failed to save filters:', error);
     }
   }
   
@@ -171,11 +171,11 @@ document.addEventListener('DOMContentLoaded', function() {
       const savedFilters = sessionStorage.getItem(FILTER_STORAGE_KEY);
       if (savedFilters) {
         const filters = JSON.parse(savedFilters);
-        console.log('恢復篩選條件:', filters);
+        console.log('Restored filters:', filters);
         return filters;
       }
     } catch (error) {
-      console.error('恢復篩選條件失敗:', error);
+      console.error('Failed to restore filters:', error);
     }
     return null;
   }
@@ -184,17 +184,17 @@ document.addEventListener('DOMContentLoaded', function() {
   function clearFilters() {
     try {
       sessionStorage.removeItem(FILTER_STORAGE_KEY);
-      console.log('篩選條件已清除');
+      console.log('Filters cleared');
     } catch (error) {
-      console.error('清除篩選條件失敗:', error);
+      console.error('Failed to clear filters:', error);
     }
   }
   
   // 頁面載入時嘗試恢復篩選條件
   const savedFilters = restoreFilters();
   if (savedFilters) {
-    console.log('發現儲存的篩選條件，等待外掛整合...');
-    // 這裡未來會與您購買的篩選外掛整合
+    console.log('Found saved filters, waiting for plugin integration...');
+            // Future integration with filter plugin
   }
   
   // 懶載入功能
@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // 初始化懶載入
   initLazyLoading();
   
-  // 將函數暴露到全域，供未來的外掛整合使用
+  // Expose functions globally for future plugin integration
   window.RestaurantFilterMemory = {
     saveFilters: saveFilters,
     restoreFilters: restoreFilters,
@@ -290,16 +290,16 @@ document.addEventListener('DOMContentLoaded', function() {
         <?php
           $types = get_field('restaurant_type');
           if ($types):
-            // 處理餐廳類型，將「其他」替換為「其他: [說明文字]」
+            // Process restaurant types, replace 'Other' with 'Other: [description]'
             $type_output = '';
             if (is_array($types)) {
               $processed_types = array();
               foreach ($types as $type) {
                 if ($type === '其他') {
-                  // 獲取其他類型說明
+                  // Get other type description
                   $other_note = get_field('restaurant_type_other_note');
                   if (!empty($other_note)) {
-                    $processed_types[] = '其他: ' . $other_note;
+                    $processed_types[] = 'Other: ' . $other_note;
                   } else {
                     $processed_types[] = $type;
                   }
@@ -309,11 +309,11 @@ document.addEventListener('DOMContentLoaded', function() {
               }
               $type_output = implode(' / ', $processed_types);
             } else {
-              // 如果是字串，檢查是否包含「其他」
+              // If string, check if contains 'Other'
               if (strpos($types, '其他') !== false) {
                 $other_note = get_field('restaurant_type_other_note');
                 if (!empty($other_note)) {
-                  $type_output = str_replace('其他', '其他: ' . $other_note, $types);
+                  $type_output = str_replace('Other', 'Other: ' . $other_note, $types);
                 } else {
                   $type_output = $types;
                 }
@@ -321,7 +321,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 $type_output = $types;
               }
             }
-            echo '<span class="restaurant-type">（' . esc_html($type_output) . '）</span>';
+            echo '<span class="restaurant-type">(' . esc_html($type_output) . ')</span>';
           endif;
         ?>
       </h2>
@@ -333,9 +333,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		  $address = get_field('address');
 		  $map_link = get_field('map_link');
 
-		  // fallback：若沒填 map_link，就用地址產生 Google Maps 搜尋網址
+			  // Fallback: if no map_link, generate Google Maps search URL from address
 		  if (!$map_link && $address) {
-			// 清理地址：移除樓層資訊用於Google Maps搜尋
+				// Clean address: remove floor info for Google Maps search
 			$clean_address = preg_replace('/(\d+樓|\d+[Ff]|\d+樓層|地下\d+樓|[Bb]\d+)/u', '', $address);
 			$clean_address = trim($clean_address);
 			
@@ -344,8 +344,8 @@ document.addEventListener('DOMContentLoaded', function() {
 		?>
 
 		<?php if($address): ?>
-		  <div class="field">
-			<strong>地址：</strong>
+			  <div class="field">
+				<strong>Address:</strong>
 			<?php if($map_link): ?>
 			  <a href="<?php echo esc_url($map_link); ?>" target="_blank" rel="noopener">
 				<?php echo esc_html($address); ?> 📍
@@ -355,33 +355,33 @@ document.addEventListener('DOMContentLoaded', function() {
 			<?php endif; ?>
 		  </div>
 		<?php else: ?>
-		  <div class="field"><strong>地址：</strong></div>
+			  <div class="field"><strong>Address:</strong></div>
 		<?php endif; ?>
 
 
           <?php 
           $phone = get_field('phone');
           if ($phone): 
-            // 檢查是否包含連字號，如果沒有則加入
+            // Check if contains hyphen, add if not present
             $tel_link = $phone;
             if (strpos($phone, '-') === false) {
-              // 根據長度自動加入連字號
+              // Automatically add hyphen based on length
               $clean_phone = preg_replace('/[^0-9]/', '', $phone);
               if (strlen($clean_phone) == 8) {
-                // 市話格式：02-12345678
+                // Landline format: 02-12345678
                 $tel_link = substr($clean_phone, 0, 2) . '-' . substr($clean_phone, 2);
               } elseif (strlen($clean_phone) == 10 && substr($clean_phone, 0, 2) == '09') {
-                // 手機格式：0932-123456
+                // Mobile format: 0932-123456
                 $tel_link = substr($clean_phone, 0, 4) . '-' . substr($clean_phone, 4);
               }
             }
           ?>
             <div class="field">
-              <strong>餐廳聯絡電話：</strong>
+              <strong>Phone:</strong>
               <a href="tel:<?php echo esc_attr($tel_link); ?>"><?php echo esc_html($phone); ?> 📞</a>
             </div>
           <?php else: ?>
-            <div class="field"><strong>餐廳聯絡電話：</strong></div>
+            <div class="field"><strong>Phone:</strong></div>
           <?php endif; ?>
 
           <?php /*
@@ -404,17 +404,17 @@ document.addEventListener('DOMContentLoaded', function() {
               $charged_output = $is_charged;
             }
           ?>
-            <div class="field"><strong>是否收開瓶費：</strong><?php echo esc_html($charged_output); ?> 🥂</div>
+            <div class="field"><strong>Corkage Fee:</strong><?php echo esc_html($charged_output); ?> 🥂</div>
           <?php else: ?>
-            <div class="field"><strong>是否收開瓶費：</strong></div>
+            <div class="field"><strong>Corkage Fee:</strong></div>
           <?php endif; ?>
           <?php 
-          // 根據 is_charged 選項顯示對應的開瓶費資訊
-          // 注意：這裡不重新獲取 $is_charged，使用上面已經獲取的值
+          // Display corresponding corkage fee info based on is_charged option
+          // Note: Do not re-fetch $is_charged, use the value already obtained above
           $corkage_fee_amount = get_field('corkage_fee_amount');
           $corkage_fee_note = get_field('corkage_fee_note');
           
-          // 除錯：顯示開瓶費相關欄位的值
+          // Debug: display corkage fee related field values
           if (current_user_can('administrator')) {
             echo '<!-- DEBUG: is_charged = ' . var_export($is_charged, true) . ' -->';
             echo '<!-- DEBUG: corkage_fee_amount = ' . var_export($corkage_fee_amount, true) . ' -->';
@@ -422,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function() {
           }
           
           if ($is_charged): 
-            // 處理陣列情況
+            // Handle array case
             $charged_value = is_array($is_charged) ? $is_charged[0] : $is_charged;
             
             if (($charged_value === '酌收' || $charged_value === 'yes') && $corkage_fee_amount) {
@@ -430,18 +430,18 @@ document.addEventListener('DOMContentLoaded', function() {
             } elseif (($charged_value === '其他' || $charged_value === 'other') && $corkage_fee_note) {
               $fee_output = $corkage_fee_note;
             } elseif ($charged_value === '酌收' || $charged_value === 'yes') {
-              $fee_output = '酌收（金額未設定）';
+              $fee_output = 'Charged (amount not set)';
             } elseif ($charged_value === '其他' || $charged_value === 'other') {
-              $fee_output = '其他（說明未設定）';
+              $fee_output = 'Other (description not set)';
             } elseif ($charged_value === 'no') {
-              $fee_output = '不收開瓶費';
+              $fee_output = 'No corkage fee';
             } else {
               $fee_output = $charged_value;
             }
           ?>
-            <div class="field"><strong>開瓶費說明：</strong><?php echo esc_html($fee_output); ?> 🪙</div>
+            <div class="field"><strong>Corkage Details:</strong><?php echo esc_html($fee_output); ?> 🪙</div>
           <?php else: ?>
-            <div class="field"><strong>開瓶費說明：</strong></div>
+            <div class="field"><strong>Corkage Details:</strong></div>
           <?php endif; ?>
           <?php 
           $equipment = get_field('equipment');
@@ -449,12 +449,12 @@ document.addEventListener('DOMContentLoaded', function() {
           
           if ($equipment): 
             if (is_array($equipment)) {
-              // 將「其他」替換為實際說明文字（類似餐廳類型的顯示方式）
+              // Replace 'Other' with actual description text (similar to restaurant type display)
               $equipment_display = array();
               foreach ($equipment as $item) {
                 if ($item === '其他') {
                   if (!empty($equipment_other_note)) {
-                    $equipment_display[] = '其他: ' . $equipment_other_note;
+                    $equipment_display[] = 'Other: ' . $equipment_other_note;
                   } else {
                     $equipment_display[] = $item;
                   }
@@ -464,10 +464,10 @@ document.addEventListener('DOMContentLoaded', function() {
               }
               $equipment_output = implode(' | ', $equipment_display);
             } else {
-              // 處理字串情況（防備）
+              // Handle string case (precaution)
               if (strpos($equipment, '其他') !== false) {
                 if (!empty($equipment_other_note)) {
-                  $equipment_output = str_replace('其他', '其他: ' . $equipment_other_note, $equipment);
+                  $equipment_output = str_replace('Other', 'Other: ' . $equipment_other_note, $equipment);
                 } else {
                   $equipment_output = $equipment;
                 }
@@ -476,9 +476,9 @@ document.addEventListener('DOMContentLoaded', function() {
               }
             }
           ?>
-            <div class="field"><strong>提供酒器設備：</strong><?php echo esc_html($equipment_output); ?></div>
+            <div class="field"><strong>Wine Equipment:</strong><?php echo esc_html($equipment_output); ?></div>
           <?php else: ?>
-            <div class="field"><strong>提供酒器設備：</strong></div>
+            <div class="field"><strong>Wine Equipment:</strong></div>
           <?php endif; ?>
 
           <?php /*
@@ -504,12 +504,12 @@ document.addEventListener('DOMContentLoaded', function() {
           <?php 
           $notes = get_field('notes');
           if($notes): 
-            // 限制備註說明在列表頁面只顯示前100個字元
+            // Limit notes to first 100 characters in list view
             $truncated_notes = mb_strlen($notes) > 100 ? mb_substr($notes, 0, 100) . '...' : $notes;
           ?>
-            <div class="field"><strong>備註說明：</strong><?php echo esc_html($truncated_notes); ?> 📝</div>
+            <div class="field"><strong>Notes:</strong><?php echo esc_html($truncated_notes); ?> 📝</div>
           <?php else: ?>
-            <div class="field"><strong>備註說明：</strong></div>
+            <div class="field"><strong>Notes:</strong></div>
           <?php endif; ?>
         </div>
       </div>
@@ -517,12 +517,12 @@ document.addEventListener('DOMContentLoaded', function() {
       <!-- 更多詳情按鈕 -->
       <div class="more-details-btn">
         <a href="<?php the_permalink(); ?>" class="details-link">
-          更多詳情 >>
+          More Details >>
         </a>
       </div>
     </div>
   <?php endwhile; else: ?>
-    <p>目前沒有餐廳資料。</p>
+    <p>No restaurants found.</p>
   <?php endif; ?>
 </div>
 
@@ -530,11 +530,11 @@ document.addEventListener('DOMContentLoaded', function() {
 <?php
 // WordPress 預設分頁導航
 the_posts_pagination(array(
-    'prev_text' => '← 上一頁',
-    'next_text' => '下一頁 →',
+    'prev_text' => '← Previous',
+    'next_text' => 'Next →',
     'mid_size' => 2,
-    'before_page_number' => '<span class="meta-nav screen-reader-text">第 </span>',
-    'after_page_number' => '<span class="meta-nav screen-reader-text"> 頁</span>',
+    'before_page_number' => '<span class="meta-nav screen-reader-text">Page </span>',
+    'after_page_number' => '</span>',
 ));
 ?>
 
