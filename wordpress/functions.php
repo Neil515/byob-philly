@@ -1395,18 +1395,18 @@ function byob_api_settings_page() {
     
     if (isset($_POST['submit'])) {
         update_option('byob_api_key', sanitize_text_field($_POST['api_key']));
-        echo '<div class="notice notice-success"><p>設定已儲存！</p></div>';
+        echo '<div class="notice notice-success"><p>Settings saved!</p></div>';
     }
     
     $api_key = get_option('byob_api_key', 'byob-secret-key-2025');
     
     echo '<div class="wrap">';
-    echo '<h1>BYOB API 設定</h1>';
+    echo '<h1>BYOB API Settings</h1>';
     echo '<form method="post">';
     echo '<table class="form-table">';
-    echo '<tr><th scope="row">API 金鑰</th><td><input type="text" name="api_key" value="' . esc_attr($api_key) . '" class="regular-text" /></td></tr>';
+    echo '<tr><th scope="row">API Key</th><td><input type="text" name="api_key" value="' . esc_attr($api_key) . '" class="regular-text" /></td></tr>';
     echo '</table>';
-    echo '<p class="submit"><input type="submit" name="submit" class="button-primary" value="儲存設定" /></p>';
+    echo '<p class="submit"><input type="submit" name="submit" class="button-primary" value="Save Settings" /></p>';
     echo '</form>';
     echo '</div>';
 }
@@ -1583,60 +1583,60 @@ function byob_system_status_page() {
     $customers = get_users(array('role' => 'customer'));
     
     echo '<div class="wrap">';
-    echo '<h1>BYOB 系統狀態檢查</h1>';
+    echo '<h1>BYOB System Status Check</h1>';
     
-    echo '<h2>📁 檔案狀態</h2>';
+    echo '<h2>📁 File Status</h2>';
     echo '<table class="widefat">';
-    echo '<tr><th>檔案</th><th>狀態</th><th>路徑</th></tr>';
-    echo '<tr><td>餐廳業者會員系統</td><td>' . ($restaurant_member_file ? '✅ 存在' : '❌ 不存在') . '</td><td>' . ($restaurant_member_file ?: '未找到') . '</td></tr>';
-    echo '<tr><td>一般客人會員系統</td><td>' . ($customer_member_file ? '✅ 存在' : '❌ 不存在') . '</td><td>' . ($customer_member_file ?: '未找到') . '</td></tr>';
+    echo '<tr><th>File</th><th>Status</th><th>Path</th></tr>';
+    echo '<tr><td>Restaurant Owner Member System</td><td>' . ($restaurant_member_file ? '✅ Exists' : '❌ Not Found') . '</td><td>' . ($restaurant_member_file ?: 'Not Found') . '</td></tr>';
+    echo '<tr><td>Customer Member System</td><td>' . ($customer_member_file ? '✅ Exists' : '❌ Not Found') . '</td><td>' . ($customer_member_file ?: 'Not Found') . '</td></tr>';
     echo '</table>';
     
-    echo '<h2>👥 角色狀態</h2>';
+    echo '<h2>👥 Role Status</h2>';
     echo '<table class="widefat">';
-    echo '<tr><th>角色</th><th>狀態</th><th>使用者數量</th></tr>';
-    echo '<tr><td>餐廳業者 (restaurant_owner)</td><td>' . ($restaurant_owner_role ? '✅ 已建立' : '❌ 未建立') . '</td><td>' . count($restaurant_owners) . '</td></tr>';
-    echo '<tr><td>一般客人 (customer)</td><td>' . ($customer_role ? '✅ 已建立' : '❌ 未建立') . '</td><td>' . count($customers) . '</td></tr>';
+    echo '<tr><th>Role</th><th>Status</th><th>User Count</th></tr>';
+    echo '<tr><td>Restaurant Owner (restaurant_owner)</td><td>' . ($restaurant_owner_role ? '✅ Created' : '❌ Not Created') . '</td><td>' . count($restaurant_owners) . '</td></tr>';
+    echo '<tr><td>Customer (customer)</td><td>' . ($customer_role ? '✅ Created' : '❌ Not Created') . '</td><td>' . count($customers) . '</td></tr>';
     echo '</table>';
     
-    echo '<h2>🔧 功能狀態</h2>';
+    echo '<h2>🔧 Feature Status</h2>';
     echo '<table class="widefat">';
-    echo '<tr><th>功能</th><th>設定狀態</th><th>實際狀態</th></tr>';
+    echo '<tr><th>Feature</th><th>Setting Status</th><th>Actual Status</th></tr>';
     
     $features = byob_get_feature_settings();
     
-    echo '<tr><td>餐廳業者會員系統</td><td>' . ($features['restaurant_member_system'] ? '✅ 啟用' : '❌ 停用') . '</td><td>' . (function_exists('byob_init_restaurant_member_system') ? '✅ 已載入' : '❌ 未載入') . '</td></tr>';
-    echo '<tr><td>一般客人會員系統</td><td>' . ($features['customer_member_system'] ? '✅ 啟用' : '❌ 停用') . '</td><td>' . (function_exists('byob_init_customer_member_system') ? '✅ 已載入' : '❌ 未載入') . '</td></tr>';
-    echo '<tr><td>邀請碼系統</td><td>' . ($features['invitation_system'] ? '✅ 啟用' : '❌ 停用') . '</td><td>' . (function_exists('byob_generate_restaurant_invitation') ? '✅ 可用' : '❌ 不可用') . '</td></tr>';
-    echo '<tr><td>收藏系統</td><td>' . ($features['favorite_system'] ? '✅ 啟用' : '❌ 停用') . '</td><td>' . (function_exists('byob_toggle_favorite') ? '✅ 可用' : '❌ 不可用') . '</td></tr>';
-    echo '<tr><td>評論系統</td><td>' . ($features['review_system'] ? '✅ 啟用' : '❌ 停用') . '</td><td>' . (function_exists('byob_add_review') ? '✅ 可用' : '❌ 不可用') . '</td></tr>';
-    echo '<tr><td>積分系統</td><td>' . ($features['points_system'] ? '✅ 啟用' : '❌ 停用') . '</td><td>' . (function_exists('byob_add_points') ? '✅ 可用' : '❌ 不可用') . '</td></tr>';
-    echo '<tr><td>REST API 端點</td><td>' . ($features['api_endpoints'] ? '✅ 啟用' : '❌ 停用') . '</td><td>✅ 已註冊</td></tr>';
+    echo '<tr><td>Restaurant Owner Member System</td><td>' . ($features['restaurant_member_system'] ? '✅ Enabled' : '❌ Disabled') . '</td><td>' . (function_exists('byob_init_restaurant_member_system') ? '✅ Loaded' : '❌ Not Loaded') . '</td></tr>';
+    echo '<tr><td>Customer Member System</td><td>' . ($features['customer_member_system'] ? '✅ Enabled' : '❌ Disabled') . '</td><td>' . (function_exists('byob_init_customer_member_system') ? '✅ Loaded' : '❌ Not Loaded') . '</td></tr>';
+    echo '<tr><td>Invitation System</td><td>' . ($features['invitation_system'] ? '✅ Enabled' : '❌ Disabled') . '</td><td>' . (function_exists('byob_generate_restaurant_invitation') ? '✅ Available' : '❌ Not Available') . '</td></tr>';
+    echo '<tr><td>Favorite System</td><td>' . ($features['favorite_system'] ? '✅ Enabled' : '❌ Disabled') . '</td><td>' . (function_exists('byob_toggle_favorite') ? '✅ Available' : '❌ Not Available') . '</td></tr>';
+    echo '<tr><td>Review System</td><td>' . ($features['review_system'] ? '✅ Enabled' : '❌ Disabled') . '</td><td>' . (function_exists('byob_add_review') ? '✅ Available' : '❌ Not Available') . '</td></tr>';
+    echo '<tr><td>Points System</td><td>' . ($features['points_system'] ? '✅ Enabled' : '❌ Disabled') . '</td><td>' . (function_exists('byob_add_points') ? '✅ Available' : '❌ Not Available') . '</td></tr>';
+    echo '<tr><td>REST API Endpoints</td><td>' . ($features['api_endpoints'] ? '✅ Enabled' : '❌ Disabled') . '</td><td>✅ Registered</td></tr>';
     echo '</table>';
     
-    echo '<h2>📊 統計資訊</h2>';
+    echo '<h2>📊 Statistics</h2>';
     echo '<table class="widefat">';
-    echo '<tr><th>項目</th><th>數量</th></tr>';
-    echo '<tr><td>餐廳文章總數</td><td>' . wp_count_posts('restaurant')->publish . '</td></tr>';
-    echo '<tr><td>待審核餐廳</td><td>' . wp_count_posts('restaurant')->draft . '</td></tr>';
-    echo '<tr><td>餐廳業者會員</td><td>' . count($restaurant_owners) . '</td></tr>';
-    echo '<tr><td>一般客人會員</td><td>' . count($customers) . '</td></tr>';
+    echo '<tr><th>Item</th><th>Count</th></tr>';
+    echo '<tr><td>Total Restaurant Posts</td><td>' . wp_count_posts('restaurant')->publish . '</td></tr>';
+    echo '<tr><td>Pending Review Restaurants</td><td>' . wp_count_posts('restaurant')->draft . '</td></tr>';
+    echo '<tr><td>Restaurant Owner Members</td><td>' . count($restaurant_owners) . '</td></tr>';
+    echo '<tr><td>Customer Members</td><td>' . count($customers) . '</td></tr>';
     echo '</table>';
     
-    echo '<h2>📋 手動部署說明</h2>';
+    echo '<h2>📋 Manual Deployment Instructions</h2>';
     echo '<div class="notice notice-info">';
-    echo '<p><strong>如果檔案狀態顯示「不存在」，請手動上傳以下檔案到主題目錄：</strong></p>';
+    echo '<p><strong>If file status shows "Not Found", please manually upload the following files to the theme directory:</strong></p>';
     echo '<ul>';
     echo '<li><code>restaurant-member-functions.php</code></li>';
     echo '<li><code>customer-member-functions.php</code></li>';
     echo '</ul>';
-    echo '<p><strong>上傳路徑：</strong> <code>' . get_template_directory() . '/</code></p>';
-    echo '<p><strong>當前檢查路徑：</strong></p>';
+    echo '<p><strong>Upload Path:</strong> <code>' . get_template_directory() . '/</code></p>';
+    echo '<p><strong>Current Check Paths:</strong></p>';
     echo '<ul>';
-    echo '<li>餐廳業者檔案：<code>' . ($restaurant_member_file ?: '未找到') . '</code></li>';
-    echo '<li>一般客人檔案：<code>' . ($customer_member_file ?: '未找到') . '</code></li>';
+    echo '<li>Restaurant Owner File: <code>' . ($restaurant_member_file ?: 'Not Found') . '</code></li>';
+    echo '<li>Customer File: <code>' . ($customer_member_file ?: 'Not Found') . '</code></li>';
     echo '</ul>';
-    echo '<p><strong>系統會檢查以下路徑：</strong></p>';
+    echo '<p><strong>The system checks the following paths:</strong></p>';
     echo '<ul>';
     foreach ($possible_paths as $path) {
         echo '<li><code>' . $path . '/</code></li>';
@@ -1724,7 +1724,7 @@ function byob_feature_toggle_page() {
     echo '</td></tr>';
     
     echo '</table>';
-    echo '<p class="submit"><input type="submit" name="submit" class="button-primary" value="儲存設定" /></p>';
+    echo '<p class="submit"><input type="submit" name="submit" class="button-primary" value="Save Settings" /></p>';
     echo '</form>';
     
     echo '<h2>📋 功能說明</h2>';
