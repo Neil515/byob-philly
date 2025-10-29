@@ -183,6 +183,10 @@ add_action('rest_api_init', function () {
                 'required' => false,
                 'sanitize_callback' => 'sanitize_email',
             ),
+            'show_reddit_username' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
         ),
     ));
 });
@@ -746,6 +750,7 @@ function byob_create_philly_restaurant_post($request) {
         $philly_dining_experience = $request->get_param('philly_dining_experience');
         $philly_reddit_username = $request->get_param('philly_reddit_username');
         $philly_contact_email = $request->get_param('philly_contact_email');
+        $show_reddit_username = $request->get_param('show_reddit_username');
         
         // 基本驗證（只有餐廳名稱是必填）
         if (empty($restaurant_name)) {
@@ -769,6 +774,7 @@ function byob_create_philly_restaurant_post($request) {
             'philly_dining_experience' => $philly_dining_experience ?: '',
             'philly_reddit_username' => $philly_reddit_username ?: '',
             'philly_contact_email' => $philly_contact_email ?: '',
+            'show_reddit_username' => $show_reddit_username ?: '',
             'city' => 'Philadelphia',
             'state' => 'PA',
             'country' => 'USA',
@@ -893,22 +899,34 @@ function byob_create_philly_restaurant_article($restaurant_data) {
                 $corkage_amount_normalized = '';
             }
 
+            // 處理選擇題欄位的空值：當值為空時，設定為空字串以對應 ACF 空白選項
+            $philly_corkage_fee_value = !empty(trim($restaurant_data['philly_corkage_fee'] ?? '')) 
+                ? sanitize_text_field($restaurant_data['philly_corkage_fee']) 
+                : '';
+            $byob_service_level_value = !empty(trim($restaurant_data['byob_service_level'] ?? '')) 
+                ? sanitize_text_field($restaurant_data['byob_service_level']) 
+                : '';
+            $show_reddit_username_value = !empty(trim($restaurant_data['show_reddit_username'] ?? '')) 
+                ? sanitize_text_field($restaurant_data['show_reddit_username']) 
+                : '';
+            
             $acf_updates = array(
                 'restaurant_name' => sanitize_text_field($restaurant_data['restaurant_name']),
                 'address' => sanitize_text_field($restaurant_data['address'] ?? ''),
                 'phone' => sanitize_text_field($restaurant_data['phone'] ?? ''),
                 'website' => esc_url_raw($restaurant_data['website'] ?? ''),
-                'philly_corkage_fee' => sanitize_text_field($restaurant_data['philly_corkage_fee'] ?? ''),
+                'philly_corkage_fee' => $philly_corkage_fee_value,
                 'corkage_fee_amount' => $corkage_amount_normalized,
                 'other_corkage_policy' => sanitize_textarea_field($restaurant_data['other_corkage_policy'] ?? ''),
                 'wine_service_equipment' => $equipment ?: array(),
                 'wine_service_equipment_other_note' => sanitize_text_field($equipmentOtherNote),
-                'byob_service_level' => sanitize_text_field($restaurant_data['byob_service_level'] ?? ''),
+                'byob_service_level' => $byob_service_level_value,
                 'philly_restaurant_type' => $types ?: array(),
                 'philly_restaurant_type_other_note' => sanitize_text_field($other_note),
                 'philly_dining_experience' => sanitize_textarea_field($restaurant_data['philly_dining_experience'] ?? ''),
                 'philly_reddit_username' => sanitize_text_field($restaurant_data['philly_reddit_username'] ?? ''),
                 'philly_contact_email' => sanitize_email($restaurant_data['philly_contact_email'] ?? ''),
+                'show_reddit_username' => $show_reddit_username_value,
                 'last_updated' => current_time('Y-m-d'),
                 'source' => 'philly_community_recommendation',
                 'review_status' => $review_status,
