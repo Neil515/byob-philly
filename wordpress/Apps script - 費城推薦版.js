@@ -373,6 +373,7 @@ function sendPhillyNotificationEmail(data, result) {
       '<p><strong>Restaurant Type Other Note:</strong> ' + (data.philly_restaurant_type_other_note || 'None') + '</p>' +
       '<p><strong>Dining Experience:</strong> ' + (data.philly_dining_experience || 'None') + '</p>' +
       '<p><strong>Reddit Username:</strong> ' + (data.philly_reddit_username || 'Not provided') + '</p>' +
+      '<p><strong>Show Reddit Username:</strong> ' + (data.show_reddit_username || 'Not provided') + '</p>' +
       '<p><strong>Contributor Email:</strong> ' + (data.philly_contact_email || 'Not provided') + '</p>' +
       '<p><strong>Processing Status:</strong> ' + (result.success ? 'Success' : 'Failed') + '</p>' +
       '<p><strong>Message:</strong> ' + (result.message || result.toString()) + '</p>' +
