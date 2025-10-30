@@ -113,7 +113,7 @@ function parsePhillyFormData() {
           Logger.log('✅ 開瓶費政策: "' + parsedData[wordpressField] + '"');
           
         } else if (wordpressField === 'philly_restaurant_type') {
-          // 特殊處理餐廳類型，使用「排除法」識別「其他」內容
+          // 特殊處理餐廳類型，使用「排除法」識別 other 內容
           var restaurantTypes = String(value || '');
           Logger.log('🔍 處理餐廳類型: "' + restaurantTypes + '"');
           
@@ -153,9 +153,9 @@ function parsePhillyFormData() {
           for (var j = 0; j < typesArray.length; j++) {
             var type = typesArray[j];
             
-            if (knownTypes.includes(type) || type === '其他') {
+            if (knownTypes.includes(type) || type.toLowerCase() === 'other') {
               validTypes.push(type);
-              if (type === '其他') {
+              if (type.toLowerCase() === 'other') {
                 hasOther = true;
               }
               Logger.log('✅ 識別到已知類型: "' + type + '"');
@@ -171,7 +171,7 @@ function parsePhillyFormData() {
             parsedData['philly_restaurant_type_other_note'] = otherNote;
             Logger.log('✅ 已設定 philly_restaurant_type_other_note = "' + otherNote + '"');
           } else if (otherNote && !hasOther) {
-            validTypes.push('其他');
+            validTypes.push('other');
             parsedData[wordpressField] = validTypes.join(', ');
             parsedData['philly_restaurant_type_other_note'] = otherNote;
             Logger.log('✅ 已設定 philly_restaurant_type_other_note = "' + otherNote + '"');
@@ -187,7 +187,7 @@ function parsePhillyFormData() {
           continue;
           
         } else if (wordpressField === 'wine_service_equipment') {
-          // 特殊處理酒器設備，使用「排除法」識別「其他」內容
+          // 特殊處理酒器設備，使用「排除法」識別 other 內容
           var equipmentValue = String(value || '');
           Logger.log('🔍 處理酒器設備: "' + equipmentValue + '"');
           
@@ -229,9 +229,9 @@ function parsePhillyFormData() {
           for (var j = 0; j < equipmentArray.length; j++) {
             var item = equipmentArray[j];
             
-            if (knownEquipment.includes(item) || item === '其他') {
+            if (knownEquipment.includes(item) || item.toLowerCase() === 'other') {
               validEquipment.push(item);
-              if (item === '其他') {
+              if (item.toLowerCase() === 'other') {
                 hasOther = true;
               }
               Logger.log('✅ 識別到已知設備: "' + item + '"');
@@ -245,25 +245,28 @@ function parsePhillyFormData() {
           
           // 處理結果
           if (otherNotes.length > 0) {
-            // 如果有未知項目，確保包含「其他」選項
-            if (!validEquipment.includes('其他')) {
-              validEquipment.push('其他');
+            // 如果有未知項目，確保包含 other 選項
+            if (!validEquipment.map(function(i){return i.toLowerCase();}).includes('other')) {
+              validEquipment.push('other');
             }
             parsedData[wordpressField] = validEquipment.join(', ');
-            parsedData['wine_service_equipment_other_note'] = otherNotes.join(', ');
-            Logger.log('✅ 自動加入「其他」選項，說明: "' + parsedData['wine_service_equipment_other_note'] + '"');
+            var otherJoin = otherNotes.join(', ');
+            parsedData['philly_equipment_other_note'] = otherJoin;
+            // 兼容舊鍵（台北版邏輯）：同時寫入 equipment_other_note，避免映射表殘留造成覆蓋
+            parsedData['equipment_other_note'] = otherJoin;
+            Logger.log('✅ 自動加入 other 選項，說明: "' + parsedData['philly_equipment_other_note'] + '"');
           } else {
             parsedData[wordpressField] = validEquipment.join(', ');
           }
           
           Logger.log('🏷️ 最終酒器設備: "' + parsedData[wordpressField] + '"');
-          if (parsedData['wine_service_equipment_other_note']) {
-            Logger.log('📝 酒器設備其他說明: "' + parsedData['wine_service_equipment_other_note'] + '"');
+          if (parsedData['philly_equipment_other_note']) {
+            Logger.log('📝 酒器設備其他說明: "' + parsedData['philly_equipment_other_note'] + '"');
           }
           
-        } else if (wordpressField === 'wine_service_equipment_other_note') {
-          // 跳過 wine_service_equipment_other_note 的欄位映射，因為它由酒器設備邏輯自動生成
-          Logger.log('⏭️ 跳過 wine_service_equipment_other_note 的欄位映射，因為它由酒器設備邏輯自動生成');
+        } else if (wordpressField === 'philly_equipment_other_note' || wordpressField === 'equipment_other_note') {
+          // 跳過「其他說明」兩個鍵的映射，統一由設備邏輯自動生成
+          Logger.log('⏭️ 跳過設備其他說明鍵 (' + wordpressField + ') 的映射，改由邏輯自動生成');
           continue;
           
         } else {
@@ -367,7 +370,7 @@ function sendPhillyNotificationEmail(data, result) {
       '<p><strong>Corkage Fee Amount:</strong> ' + (data.corkage_fee_amount || 'Not applicable') + '</p>' +
       '<p><strong>Other Corkage Policy:</strong> ' + (data.other_corkage_policy || 'Not applicable') + '</p>' +
       '<p><strong>Wine Service Equipment:</strong> ' + (data.wine_service_equipment || 'Not provided') + '</p>' +
-      '<p><strong>Equipment Other Note:</strong> ' + (data.wine_service_equipment_other_note || 'None') + '</p>' +
+      '<p><strong>Equipment Other Note:</strong> ' + (data.philly_equipment_other_note || 'None') + '</p>' +
       '<p><strong>BYOB Service Level:</strong> ' + (data.byob_service_level || 'Not provided') + '</p>' +
       '<p><strong>Restaurant Type:</strong> ' + (data.philly_restaurant_type || 'Not provided') + '</p>' +
       '<p><strong>Restaurant Type Other Note:</strong> ' + (data.philly_restaurant_type_other_note || 'None') + '</p>' +
