@@ -16,36 +16,35 @@ BYOB (Bring Your Own Bottle) 是一個自帶酒水餐廳推薦平台，目前運
 
 ---
 
-## 🚀 最新進度（2025年10月29日）
+## 🚀 最新進度（2025年10月30日）
 
-### 今日完成：Google 表單新欄位整合與 ACF 系統優化
+### 今日完成：表單 ↔ ACF 對齊與前台一致化
 
-**🎯 系統整合與優化**
-* ✅ Google 表單新增欄位處理
-  * 新增「Reddit 用戶名顯示偏好」選擇題
-  * 完成 Google Sheets「欄位設定表」映射
-  * 更新 Google Apps Script 和 WordPress API 端點
-  * 完整端到端資料流處理
+**🎯 關鍵修復**
+* ✅ 單選題 placeholder 回退問題：
+  * 原因：表單「顯示文字」直接寫入 ACF，未對應值鍵
+  * 修復：在 `wordpress/functions.php` 實作安全映射（就地 if/elseif），空值寫 ''
+    - `philly_corkage_fee`：Free→free、Corkage Fee→corkage_fee、Other→other
+    - `byob_service_level`：對應 full_service/basic_service/self_service/no_service
+    - `show_reddit_username`：以 Yes/No 前綴判斷，容錯撇號與空白
 
-* ✅ ACF 欄位群組顯示問題修復
-  * 調整欄位群組位置規則
-  * 解決費城餐廳重複顯示欄位群組問題
-  * 提升後台編輯體驗
+* ✅ Other 與備註一致化：
+  * 有 note 時強制加入 'other' 勾選並寫入 other_note（equipment/type）
+  * 前台 `single_restaurant.php` 將 'other' 轉為 `Other: [note]`
 
-* ✅ ACF 欄位空值處理優化
-  * 為選填選擇題新增空白選項
-  * 優化空值判斷邏輯
-  * 確保資料準確性
+* ✅ 欄位鍵一致：
+  * 設備其他說明統一使用 `equipment_other_note`，Apps Script 跳過直寫，改由解析邏輯產生
 
-**🔧 技術成果**
-- 新欄位完整整合：Google 表單 → Apps Script → WordPress API → ACF 欄位
-- ACF 欄位管理優化：透過位置規則精確控制欄位群組顯示
-- 空值處理機制：避免系統自動選擇預設值，保持資料品質
+**🔧 修改檔案**
+- `wordpress/functions.php`、`wordpress/single_restaurant.php`、`wordpress/Apps script - 費城推薦版.js`
 
-**🎯 近期重點（10月30日）**
-- 發布 Reddit 費城 BYOB 餐廳詢問貼文
-- 收集餐廳資訊並導流到 Google 表單
-- 監控表單提交和 WordPress 草稿生成
+**✅ 驗證**
+- 後台 ACF：三個單選與 other 類欄位均正確顯示
+- 前台：`Cuisine Type`、`Wine Equipment` 中的 Other 以 `Other: note` 顯示
+
+**🗓️ 明日（10/31）**
+- 建立「餐廳資料確認」Google 表單（端到端寫入）
+- 修復餐廳列表頁顯示（查詢/輸出/空值與 other 顯示）
 
 ---
 
@@ -208,5 +207,5 @@ WordPress 核心
 
 ---
 
-*最後更新：2025年10月29日*
-*版本：v5.0*
+*最後更新：2025年10月30日*
+*版本：v6.0*
