@@ -42,7 +42,77 @@
 成功指標（Day 1）
 - 發文 ≥ 3 則、互動回覆 ≥ 10、有效表單 ≥ 3、產生草稿 ≥ 2
 
-## 📅 當前日期：2025年10月29日
+## 📅 當前日期：2025年10月30日
+
+---
+
+## 🗓️ 2025-10-31 工作規劃（兩大任務）
+
+### 1) 設計「餐廳資料確認」Google 表單（Philly）
+- 目的：請餐廳業者核對/補齊其在網站上的資料，並授權公開顯示。
+- 表單內容（暫定）：
+  - 基本：Restaurant name、Address（可編輯/建議）、Phone、Website
+  - BYOB：Corkage Fee（Free/Corkage Fee/Other + note）、BYOB Service Level（4 選 1）、Wine service equipment（checkbox + other note）
+  - 授權與聯絡：Contact email、是否同意公開（yes/no）、備註
+- 技術要點：
+  - 加上追蹤參數：`?utm_source=restaurant&utm_campaign=philly_byob_verification`
+  - 建立欄位映射表（Sheet）→ Apps Script 解析 → WordPress API 寫入 ACF
+  - 治理規則：
+    - 單選題「未選擇」存空字串 '' 對應 ACF placeholder
+    - 多選題未選擇存空陣列 []
+    - 「Other」選項：若 note 有值則強制包含 'other' 並寫入 other_note（equipment/type）
+  - 驗證流程：送單 → WP 生成/更新草稿 → 後台 ACF 檢查 → 前台檢視
+
+### 2) 修復「餐廳列表頁」顯示問題
+- 範圍：`wordpress/archive-restaurant.php`、查詢條件、分頁、ACF 欄位輸出、一致的英文顯示。
+- 檢查清單：
+  - 查詢是否僅取 `post_type=restaurant` 且正確狀態（publish/draft 過濾）
+  - ACF 欄位輸出：地址、電話、Cuisine Type、BYOB 服務、設備，other 顯示一致
+  - 排序與分頁：預設最新、可切換（如需）
+  - 空值顯示：不顯示 placeholder「: -- 請選擇 --」，以空白或省略顯示
+- 交付：
+  - 修正過的 `archive-restaurant.php`，與必要的輔助函式
+  - 範例截圖與驗證步驟
+
+---
+
+## 🧭 今日踩雷與解法（Google 表單 ↔ ACF）
+
+1) 單選題加上 placeholder「: -- 請選擇 --」後，ACF 一律回退為 placeholder
+- 根因：WP 端把表單「顯示文字」直接寫入 ACF；ACF 期望的是「值鍵」（key）。
+- 解法：在 WP `functions.php` 寫入安全映射（就地 if/elseif），將顯示文字 → 值鍵：
+  - `philly_corkage_fee`：Free → `free`、Corkage Fee → `corkage_fee`、Other → `other`、未選擇 → ''
+  - `byob_service_level`：四個長句對應 `full_service`/`basic_service`/`self_service`/`no_service`、未選擇 → ''
+  - `show_reddit_username`：以 Yes/No 前綴判斷，並規一撇號與空白；Yes → `yes`、No → `no`、未選擇 → ''
+
+2) 「餐廳類型/酒器設備」的 other 與備註
+- 根因：Apps Script/ACF 欄位鍵不一致，以及將中文「其他」存入導致條件顯示不觸發。
+- 解法：
+  - ACF 勾選鍵一律使用英文 `'other'`
+  - 若有說明文字，確保陣列包含 `'other'`，並寫入對應 other_note
+  - 前台顯示：把字串中的 `'other'` 替換為 `Other: [note]`（`single_restaurant.php` 已處理）
+
+3) 欄位鍵名稱不一致
+- 現象：設備其他說明顯示為鍵名 `philly_equipment_other_note`
+- 解法：統一寫入/讀取 `equipment_other_note`（保留 philly 鍵做相容），Apps Script 跳過這兩鍵的直接映射，由設備解析邏輯自動生成
+
+4) 函式重複宣告導致致命錯誤
+- 現象：在同一請求重複宣告 mapping 函式導致 500
+- 解法：改為就地 if/elseif 版本，完全移除函式/閉包宣告
+
+5) 前台與後台資料不一致
+- 現象：前台直接用原始字串顯示，後台 ACF 顯示未勾選
+- 解法：前台也加入一致化的替換/顯示邏輯；後台改以值鍵寫入
+
+變更檔案（重點）
+- `wordpress/functions.php`：單選映射、安全寫入、設備/類型 other 規則、legacy 欄位同步
+- `wordpress/single_restaurant.php`：other → `Other: note` 顯示邏輯
+- `wordpress/Apps script - 費城推薦版.js`：設備/餐廳類型的 other 與 note 自動產生；跳過 other_note 的直寫
+
+明日驗收標準（10/31）
+- 完成餐廳資料確認表單（欄位、試算表、Apps Script、端到端測試）
+- 列表頁顯示正確（含 other 顯示、空值處理、分頁/排序）
+- 新測試提交不再出現 placeholder 回退問題
 
 ---
 
@@ -152,138 +222,7 @@
 
 ---
 
-## 🔴 明日工作重點（10月30日）→ Reddit 費城 BYOB 餐廳詢問貼文發布
-
-### 🎯 核心目標
-在 Reddit 費城相關社群發布詢問 BYOB 餐廳推薦的貼文，收集餐廳資訊並導流到 Google 表單，觸發自動產生費城餐廳草稿。
-
-**預估總時間：** 2-3 小時
-
-### 📋 準備工作（已完成）
-- ✅ **Reddit 帳號建立**：u/findingBYOB 已準備就緒
-- ✅ **Reddit 互動追蹤系統**：Excel 檔案和追蹤工具已完成
-- ✅ **Google 表單系統**：費城 BYOB 餐廳驗證表單已建立並測試完成
-- ✅ **自動化整合**：表單提交 → 自動生成 WordPress 草稿流程已測試
-- ✅ **表單新欄位處理**：Reddit 用戶名顯示偏好欄位已整合完成
-
----
-
-## 📝 明日工作重點
-
-### 🚨 第一部分：Reddit 貼文內容準備（60-90 分鐘）
-
-#### **任務 1.1：貼文內容撰寫（45 分鐘）**
-
-* [ ] **主要詢問貼文撰寫**
-  * 參考 `doc/philly_byob_complete_plan.md` 中的貼文模板
-  * 撰寫友善且專業的費城 BYOB 餐廳詢問貼文
-  * 強調社群價值和專業性
-  * 說明與 Yelp 的互補定位
-  * 預告榮譽系統和創始成員身份
-  * 包含 Google 表單連結（帶 UTM 參數）
-
-* [ ] **貼文標題優化**
-  * 撰寫吸引人且符合 Reddit 文化的標題
-  * 避免過於推廣性的標題
-  * 使用「詢問」、「推薦」等社群友善用語
-  * 加入費城本地化元素
-
-* [ ] **表單連結準備**
-  * 確認 Google 表單連結正確
-  * 在連結中加入 UTM 參數：`?utm_source=reddit&utm_campaign=philly_byob`
-  * 測試表單連結可正常開啟
-  * 確認表單所有欄位都正常運作
-
-#### **任務 1.2：回覆話術準備（15 分鐘）**
-
-* [ ] **感謝回覆模板**
-  * 準備個人化感謝回覆模板
-  * 詢問更多細節（開瓶費、特殊政策等）
-  * 邀請填寫表單獲得更完整資訊
-  * 提供 Reddit 用戶名顯示選項說明
-
-* [ ] **導流話術**
-  * 友善引導用戶填寫 Google 表單
-  * 說明表單填寫的額外價值（創始成員身份等）
-  * 提供私訊管道作為替代選項
-
----
-
-### 🚨 第二部分：Reddit 貼文發布與追蹤（60-90 分鐘）
-
-#### **任務 2.1：選擇發布子版塊（15 分鐘）**
-
-* [ ] **主要目標子版塊**
-  * r/philadelphia（費城主版，流量最大）
-  * r/askphilly（詢問類型貼文專用）
-  * r/FoodPhiladelphia（美食社群）
-
-* [ ] **發文時機考慮**
-  * 查看各子版的活躍時間
-  * 選擇最佳發布時段（通常為美東時間晚上或週末）
-  * 避免同時在多個子版發布（可能被視為 spam）
-
-#### **任務 2.2：發布第一則貼文（30 分鐘）**
-
-* [ ] **在 r/philadelphia 或 r/askphilly 發布**
-  * 使用 u/findingBYOB 帳號登入
-  * 複製準備好的貼文內容
-  * 檢查格式和連結正確
-  * 發布貼文
-  * 記錄貼文連結到 Reddit 互動追蹤 Excel
-
-* [ ] **貼文發布後設定**
-  * 開啟貼文通知（追蹤回覆）
-  * 準備即時回覆有用戶評論
-  * 監控貼文熱度（upvotes、comments）
-
-#### **任務 2.3：互動與追蹤（60 分鐘）**
-
-* [ ] **即時互動（發布後 2-4 小時）**
-  * 及時回覆前 10 個評論（24 小時內 SLA）
-  * 個人化感謝每位提供建議的用戶
-  * 引導有價值的回覆者填寫表單
-  * 記錄所有互動到 Reddit 互動追蹤 Excel
-
-* [ ] **資料收集與記錄**
-  * 記錄貼文連結、回覆數、upvotes 到追蹤表
-  * 記錄提供的餐廳資訊到「餐廳資訊收集」工作表
-  * 識別有價值用戶（專家、活躍貢獻者）
-  * 更新每日統計資料
-
----
-
-### 🚨 第三部分：後續追蹤與優化（30 分鐘）
-
-#### **任務 3.1：數據分析（15 分鐘）**
-
-* [ ] **成效評估**
-  * 檢查貼文互動情況（upvotes、comments、表單提交數）
-  * 評估貼文內容效果
-  * 記錄學習洞察（哪些內容更受歡迎、哪些時間效果更好）
-
-* [ ] **WordPress 後台檢查**
-  * 確認表單提交後自動生成的文章草稿
-  * 檢查資料是否正確保存到 ACF 欄位
-  * 驗證新欄位（show_reddit_username）是否正確處理
-
-#### **任務 3.2：策略調整準備（15 分鐘）**
-
-* [ ] **根據首波結果調整策略**
-  * 評估是否需要調整貼文內容或標題
-  * 記錄哪些子版塊效果更好
-  * 準備下一波貼文內容（如需）
-
----
-
-## 🎯 明日成功標準（1月21日）
-
-* [ ] ✅ 發布至少 1 則 Reddit 詢問貼文
-* [ ] ✅ 獲得至少 5 個回覆或建議
-* [ ] ✅ 至少有 1 位用戶填寫 Google 表單
-* [ ] ✅ 確認表單提交後自動生成 WordPress 草稿
-* [ ] ✅ 完成所有互動記錄到 Reddit 追蹤 Excel
-* [ ] ✅ 及時回覆所有評論（24 小時內 SLA）
+<!-- 過時的 Reddit 發文「明日工作重點（10/30）」區塊已移除，改以 10/31 的兩大任務為主。 -->
 
 ---
 
