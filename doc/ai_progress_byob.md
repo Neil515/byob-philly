@@ -525,3 +525,54 @@
 
 *最後更新：2025年10月29日*
 *版本：v15.0*
+
+---
+
+## ✅ 2025年10月30日 — 表單 ↔ ACF 對齊與前台一致化
+
+### 🎯 今日目標
+修復 Google 表單提交到 WordPress/ACF 的值鍵對應問題、Other 與備註顯示邏輯，並確保前台/後台一致。
+
+### 已完成項目
+
+* [x] 單選題 placeholder 回退問題修復
+  - 問題：ACF 新增「: -- 請選擇 --」後，WP 端直接用顯示文字寫入，ACF 對不上值鍵導致一律回到 placeholder
+  - 修復：在 `wordpress/functions.php` 實作安全的 label→key 映射（就地 if/elseif，無函式宣告），空值一律寫 ''
+    - `philly_corkage_fee`：Free→free、Corkage Fee→corkage_fee、Other→other
+    - `byob_service_level`：對應 full_service/basic_service/self_service/no_service
+    - `show_reddit_username`：以 Yes/No 前綴判斷，規一撇號與空白
+
+* [x] Other 與備註（equipment/type）一致化
+  - 若填寫其他說明，確保陣列包含 'other' 並寫入對應 other_note
+  - 前台 `single_restaurant.php` 顯示將 'other' 轉為 `Other: [note]`
+  - 修正設備其他說明鍵名相容：以 `equipment_other_note` 為主；Apps Script 跳過直寫，交由解析邏輯產生
+
+* [x] 前台/通知顯示一致
+  - 前台已正確顯示：`Cuisine Type: ... / Other: xxxx`、`Wine Equipment: ... | Other: yyyy`
+  - 通知 Email 讀取對應鍵，避免顯示鍵名
+
+* [x] 嚴重錯誤排除
+  - 一度因重複宣告小函式造成致命錯誤，已改為就地 if/elseif 版本，消除風險
+
+### 修改的檔案
+* `wordpress/functions.php`：
+  - 實作 label→key 安全映射與空值策略
+  - equipment/type 的 other 與 note 寫入一致
+  - legacy `open_bottle_service` 用映射後 key
+* `wordpress/single_restaurant.php`：
+  - 將 'other' 顯示轉為 `Other: note`（支援字串/陣列情境）
+* `wordpress/Apps script - 費城推薦版.js`：
+  - 設備/餐廳類型 other 與 note 自動產生；跳過 other_note 的直寫
+
+### 驗證結果
+* ACF 後台：
+  - 開瓶費、BYOB 服務正確選取；`show_reddit_username` 正確對應 yes/no
+  - 設備/餐廳類型 other 勾選且其他說明顯示正確
+* 前台頁面：
+  - 顯示 `Other: <note>`（不再出現字面 other 或 placeholder）
+
+### 明日計畫（10/31）
+1. 建立「餐廳資料確認」Google 表單（含欄位映射、Apps Script、端到端寫入）
+2. 修復餐廳列表頁顯示（ACF 輸出、空值/other 展示、查詢與分頁）
+
+---
