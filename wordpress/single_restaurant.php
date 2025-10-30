@@ -155,7 +155,7 @@
         if (is_array($types)) {
           $processed_types = array();
           foreach ($types as $type) {
-            if ($type === '其他') {
+            if ($type === '其他' || strtolower($type) === 'other') {
               // 獲取其他類型說明
               $other_note = get_field('restaurant_type_other_note');
               if (!empty($other_note)) {
@@ -170,10 +170,10 @@
           $type_output = implode(' / ', $processed_types);
         } else {
           // 如果是字串，檢查是否包含「其他」
-          if (strpos($types, '其他') !== false) {
+          if (strpos($types, '其他') !== false || stripos($types, 'other') !== false) {
             $other_note = get_field('restaurant_type_other_note');
             if (!empty($other_note)) {
-              $type_output = str_replace('Other', 'Other: ' . $other_note, $types);
+              $type_output = preg_replace('/\bother\b/i', 'Other: ' . $other_note, $types);
             } else {
               $type_output = $types;
             }
@@ -254,7 +254,7 @@
           // 將「其他」替換為實際說明文字（類似餐廳類型的顯示方式）
           $equipment_display = array();
           foreach ($equipment as $item) {
-            if ($item === '其他') {
+            if ($item === '其他' || strtolower($item) === 'other') {
               if (!empty($equipment_other_note)) {
                 $equipment_display[] = 'Other: ' . $equipment_other_note;
               } else {
@@ -267,9 +267,9 @@
           $equipment_output = implode(' | ', $equipment_display);
         } else {
           // 處理字串情況（防備）
-          if (strpos($equipment, '其他') !== false) {
+          if (strpos($equipment, '其他') !== false || stripos($equipment, 'other') !== false) {
             if (!empty($equipment_other_note)) {
-              $equipment_output = str_replace('Other', 'Other: ' . $equipment_other_note, $equipment);
+              $equipment_output = preg_replace('/\bother\b/i', 'Other: ' . $equipment_other_note, $equipment);
             } else {
               $equipment_output = $equipment;
             }
