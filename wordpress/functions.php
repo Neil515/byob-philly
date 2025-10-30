@@ -906,16 +906,51 @@ function byob_create_philly_restaurant_article($restaurant_data) {
                 $corkage_amount_normalized = '';
             }
 
-            // 處理選擇題欄位的空值：當值為空時，設定為空字串以對應 ACF 空白選項
-            $philly_corkage_fee_value = !empty(trim($restaurant_data['philly_corkage_fee'] ?? '')) 
-                ? sanitize_text_field($restaurant_data['philly_corkage_fee']) 
-                : '';
-            $byob_service_level_value = !empty(trim($restaurant_data['byob_service_level'] ?? '')) 
-                ? sanitize_text_field($restaurant_data['byob_service_level']) 
-                : '';
-            $show_reddit_username_value = !empty(trim($restaurant_data['show_reddit_username'] ?? '')) 
-                ? sanitize_text_field($restaurant_data['show_reddit_username']) 
-                : '';
+            // 顯示文字 → ACF 值鍵（安全版，改為就地 if/elseif 避免函式宣告造成衝突）
+            $pcf_raw = isset($restaurant_data['philly_corkage_fee']) ? trim($restaurant_data['philly_corkage_fee']) : '';
+            $pcf = strtolower($pcf_raw);
+            if ($pcf === '' || $pcf === ': -- 請選擇 --') {
+                $philly_corkage_fee_value = '';
+            } elseif ($pcf === 'free') {
+                $philly_corkage_fee_value = 'free';
+            } elseif ($pcf === 'corkage fee') {
+                $philly_corkage_fee_value = 'corkage_fee';
+            } elseif ($pcf === 'other') {
+                $philly_corkage_fee_value = 'other';
+            } else {
+                $philly_corkage_fee_value = '';
+            }
+
+            $service_raw = isset($restaurant_data['byob_service_level']) ? trim($restaurant_data['byob_service_level']) : '';
+            $svc = strtolower($service_raw);
+            if ($svc === '' || $svc === ': -- 請選擇 --') {
+                $byob_service_level_value = '';
+            } elseif ($svc === 'full service (opening, pouring, decanting, chilling)' || $svc === 'full service') {
+                $byob_service_level_value = 'full_service';
+            } elseif ($svc === 'basic service (opening and pouring)' || $svc === 'basic service') {
+                $byob_service_level_value = 'basic_service';
+            } elseif ($svc === 'self-service (equipment provided)' || $svc === 'self service (equipment provided)' || $svc === 'self-service') {
+                $byob_service_level_value = 'self_service';
+            } elseif ($svc === 'no service (byob only, bring your own equipment)' || $svc === 'no service') {
+                $byob_service_level_value = 'no_service';
+            } else {
+                $byob_service_level_value = '';
+            }
+
+            $show_raw = isset($restaurant_data['show_reddit_username']) ? trim($restaurant_data['show_reddit_username']) : '';
+            $sr = strtolower($show_raw);
+            // 標準化不同撇號與多餘空白
+            $sr = str_replace(['’','`','´'], "'", $sr);
+            $sr = preg_replace('/\s+/', ' ', $sr);
+            if ($sr === '' || strpos($sr, ': --') === 0) {
+                $show_reddit_username_value = '';
+            } elseif (strpos($sr, 'yes') === 0) {
+                $show_reddit_username_value = 'yes';
+            } elseif (strpos($sr, 'no') === 0) {
+                $show_reddit_username_value = 'no';
+            } else {
+                $show_reddit_username_value = '';
+            }
             
             $acf_updates = array(
                 'restaurant_name' => sanitize_text_field($restaurant_data['restaurant_name']),
@@ -969,7 +1004,7 @@ function byob_create_philly_restaurant_article($restaurant_data) {
                 'corkage_fee_note' => sanitize_text_field($restaurant_data['other_corkage_policy'] ?? ''),
                 'equipment' => $equipment ?: array(),
                 'equipment_other_note' => sanitize_text_field($equipmentOtherNote),
-                'open_bottle_service' => sanitize_text_field($restaurant_data['byob_service_level'] ?? ''),
+                'open_bottle_service' => $byob_service_level_value,
                 'restaurant_type' => $types ?: array(),
                 'restaurant_type_other_note' => sanitize_text_field($other_note),
                 'notes' => sanitize_textarea_field($restaurant_data['philly_dining_experience'] ?? ''),
