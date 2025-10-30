@@ -155,7 +155,7 @@ add_action('rest_api_init', function () {
                 'required' => false,
                 'sanitize_callback' => 'sanitize_text_field',
             ),
-            'wine_service_equipment_other_note' => array(
+            'philly_equipment_other_note' => array(
                 'required' => false,
                 'sanitize_callback' => 'sanitize_text_field',
             ),
@@ -743,7 +743,7 @@ function byob_create_philly_restaurant_post($request) {
         $corkage_fee_amount = $request->get_param('corkage_fee_amount');
         $other_corkage_policy = $request->get_param('other_corkage_policy');
         $wine_service_equipment = $request->get_param('wine_service_equipment');
-        $wine_service_equipment_other_note = $request->get_param('wine_service_equipment_other_note');
+        $philly_equipment_other_note = $request->get_param('philly_equipment_other_note');
         $byob_service_level = $request->get_param('byob_service_level');
         $philly_restaurant_type = $request->get_param('philly_restaurant_type');
         $philly_restaurant_type_other_note = $request->get_param('philly_restaurant_type_other_note');
@@ -767,7 +767,7 @@ function byob_create_philly_restaurant_post($request) {
             'corkage_fee_amount' => $corkage_fee_amount ?: '',
             'other_corkage_policy' => $other_corkage_policy ?: '',
             'wine_service_equipment' => $wine_service_equipment ?: '',
-            'wine_service_equipment_other_note' => $wine_service_equipment_other_note ?: '',
+            'philly_equipment_other_note' => $philly_equipment_other_note ?: '',
             'byob_service_level' => $byob_service_level ?: '',
             'philly_restaurant_type' => $philly_restaurant_type ?: '',
             'philly_restaurant_type_other_note' => $philly_restaurant_type_other_note ?: '',
@@ -853,9 +853,11 @@ function byob_create_philly_restaurant_article($restaurant_data) {
                 }
             }
             
-            // 確保「其他」選項存在（如果沒有「其他」但有說明文字，自動添加）
-            if (!empty($other_note) && !in_array('其他', $types)) {
-                $types[] = '其他';
+            // 確保 other 選項存在（如果沒有 other 但有說明文字，自動添加）
+            // 同時正規化大小寫："Other" → "other"
+            $types = array_map(function($t) { return $t === 'Other' ? 'other' : $t; }, $types);
+            if (!empty($other_note) && !in_array('other', $types)) {
+                $types[] = 'other';
             }
             
             // 清理空值
@@ -868,25 +870,30 @@ function byob_create_philly_restaurant_article($restaurant_data) {
         
         // 處理酒器設備（高度參照現有邏輯）
         $equipment = $restaurant_data['wine_service_equipment'] ?? '';
-        $equipmentOtherNote = $restaurant_data['wine_service_equipment_other_note'] ?? '';
+        $equipmentOtherNote = $restaurant_data['philly_equipment_other_note'] ?? '';
         
         if (!empty($equipmentOtherNote)) {
-            // 如果有其他說明，確保 equipment 包含「其他」選項
+            // 如果有其他說明，確保 equipment 包含 other 選項
             if (empty($equipment)) {
-                $equipment = array('其他');
+                $equipment = array('other');
             } elseif (is_array($equipment)) {
-                if (!in_array('其他', $equipment)) {
-                    $equipment[] = '其他';
+                // 正規化大小寫
+                $equipment = array_map(function($e) { return $e === 'Other' ? 'other' : $e; }, $equipment);
+                if (!in_array('other', $equipment)) {
+                    $equipment[] = 'other';
                 }
             } else {
-                if (strpos($equipment, '其他') === false) {
-                    $equipment = $equipment . ', 其他';
+                // 字串情況：若沒有包含 other/Other，則添加
+                if (stripos($equipment, 'other') === false) {
+                    $equipment = $equipment . ', other';
                 }
             }
         }
         
         if (!empty($equipment) && !is_array($equipment)) {
             $equipment = array_map('trim', explode(',', $equipment));
+            // 正規化大小寫
+            $equipment = array_map(function($e) { return $e === 'Other' ? 'other' : $e; }, $equipment);
         }
         
         // 更新 ACF 欄位（使用費城專用欄位名稱）
@@ -919,7 +926,7 @@ function byob_create_philly_restaurant_article($restaurant_data) {
                 'corkage_fee_amount' => $corkage_amount_normalized,
                 'other_corkage_policy' => sanitize_textarea_field($restaurant_data['other_corkage_policy'] ?? ''),
                 'wine_service_equipment' => $equipment ?: array(),
-                'wine_service_equipment_other_note' => sanitize_text_field($equipmentOtherNote),
+                'philly_equipment_other_note' => sanitize_text_field($equipmentOtherNote),
                 'byob_service_level' => $byob_service_level_value,
                 'philly_restaurant_type' => $types ?: array(),
                 'philly_restaurant_type_other_note' => sanitize_text_field($other_note),
@@ -1017,7 +1024,11 @@ function byob_generate_philly_article_content($restaurant_data) {
     }
     
     if (!empty($restaurant_data['philly_restaurant_type'])) {
-        $content .= '<p><strong>Cuisine Type:</strong> ' . esc_html($restaurant_data['philly_restaurant_type']) . '</p>' . "\n";
+        $type_display = $restaurant_data['philly_restaurant_type'];
+        if (!empty($restaurant_data['philly_restaurant_type_other_note'])) {
+            $type_display = preg_replace('/\bother\b/i', $restaurant_data['philly_restaurant_type_other_note'], $type_display);
+        }
+        $content .= '<p><strong>Cuisine Type:</strong> ' . esc_html($type_display) . '</p>' . "\n";
     }
     
     $content .= "\n";
@@ -1043,11 +1054,15 @@ function byob_generate_philly_article_content($restaurant_data) {
     $content .= '<h2>BYOB Equipment & Service</h2>' . "\n";
     
     if (!empty($restaurant_data['wine_service_equipment'])) {
-        $content .= '<p><strong>Equipment Provided:</strong> ' . esc_html($restaurant_data['wine_service_equipment']) . '</p>' . "\n";
+        $equip_display = $restaurant_data['wine_service_equipment'];
+        if (!empty($restaurant_data['philly_equipment_other_note'])) {
+            $equip_display = preg_replace('/\bother\b/i', $restaurant_data['philly_equipment_other_note'], $equip_display);
+        }
+        $content .= '<p><strong>Equipment Provided:</strong> ' . esc_html($equip_display) . '</p>' . "\n";
     }
     
-    if (!empty($restaurant_data['wine_service_equipment_other_note'])) {
-        $content .= '<p><strong>Equipment Other Note:</strong> ' . esc_html($restaurant_data['wine_service_equipment_other_note']) . '</p>' . "\n";
+    if (!empty($restaurant_data['philly_equipment_other_note'])) {
+        $content .= '<p><strong>Equipment Other Note:</strong> ' . esc_html($restaurant_data['philly_equipment_other_note']) . '</p>' . "\n";
     }
     
     if (!empty($restaurant_data['byob_service_level'])) {
