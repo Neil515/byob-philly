@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (is_array($types)) {
               $processed_types = array();
               foreach ($types as $type) {
-                if ($type === '其他') {
+                if ($type === '其他' || strtolower($type) === 'other') {
                   // Get other type description
                   $other_note = get_field('restaurant_type_other_note');
                   if (!empty($other_note)) {
@@ -310,10 +310,10 @@ document.addEventListener('DOMContentLoaded', function() {
               $type_output = implode(' / ', $processed_types);
             } else {
               // If string, check if contains 'Other'
-              if (strpos($types, '其他') !== false) {
+              if (strpos($types, '其他') !== false || stripos($types, 'other') !== false) {
                 $other_note = get_field('restaurant_type_other_note');
                 if (!empty($other_note)) {
-                  $type_output = str_replace('Other', 'Other: ' . $other_note, $types);
+                  $type_output = preg_replace('/\bother\b/i', 'Other: ' . $other_note, $types);
                 } else {
                   $type_output = $types;
                 }
@@ -452,7 +452,7 @@ document.addEventListener('DOMContentLoaded', function() {
               // Replace 'Other' with actual description text (similar to restaurant type display)
               $equipment_display = array();
               foreach ($equipment as $item) {
-                if ($item === '其他') {
+                if ($item === '其他' || strtolower($item) === 'other') {
                   if (!empty($equipment_other_note)) {
                     $equipment_display[] = 'Other: ' . $equipment_other_note;
                   } else {
@@ -465,9 +465,9 @@ document.addEventListener('DOMContentLoaded', function() {
               $equipment_output = implode(' | ', $equipment_display);
             } else {
               // Handle string case (precaution)
-              if (strpos($equipment, '其他') !== false) {
+              if (strpos($equipment, '其他') !== false || stripos($equipment, 'other') !== false) {
                 if (!empty($equipment_other_note)) {
-                  $equipment_output = str_replace('Other', 'Other: ' . $equipment_other_note, $equipment);
+                  $equipment_output = preg_replace('/\bother\b/i', 'Other: ' . $equipment_other_note, $equipment);
                 } else {
                   $equipment_output = $equipment;
                 }
