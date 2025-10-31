@@ -374,7 +374,7 @@ function sendPhillyNotificationEmail(data, result) {
       '<p><strong>BYOB Service Level:</strong> ' + (data.byob_service_level || 'Not provided') + '</p>' +
       '<p><strong>Restaurant Type:</strong> ' + (data.philly_restaurant_type || 'Not provided') + '</p>' +
       '<p><strong>Restaurant Type Other Note:</strong> ' + (data.philly_restaurant_type_other_note || 'None') + '</p>' +
-      '<p><strong>Dining Experience:</strong> ' + (data.philly_dining_experience || 'None') + '</p>' +
+      '<p><strong>Notes:</strong> ' + (data.philly_dining_experience || 'None') + '</p>' +
       '<p><strong>Reddit Username:</strong> ' + (data.philly_reddit_username || 'Not provided') + '</p>' +
       '<p><strong>Show Reddit Username:</strong> ' + (data.show_reddit_username || 'Not provided') + '</p>' +
       '<p><strong>Contributor Email:</strong> ' + (data.philly_contact_email || 'Not provided') + '</p>' +
