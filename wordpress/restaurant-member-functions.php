@@ -2574,12 +2574,11 @@ add_action('wp_loaded', 'byob_check_rewrite_rules');
  * @return bool 是否完整
  */
 function byob_is_restaurant_complete($restaurant_id) {
-    // 檢查 6 個必填欄位
+    // 檢查 5 個必填欄位（移除 district 限制）
     $post = get_post($restaurant_id);
     $restaurant_name = $post ? $post->post_title : '';
     $phone = function_exists('get_field') ? get_field('phone', $restaurant_id) : '';
     $address = function_exists('get_field') ? get_field('address', $restaurant_id) : '';
-    $district = function_exists('get_field') ? get_field('district', $restaurant_id) : '';
     $restaurant_type = function_exists('get_field') ? get_field('restaurant_type', $restaurant_id) : '';
     $corkage_fee = function_exists('get_field') ? get_field('is_charged', $restaurant_id) : '';
     
@@ -2587,7 +2586,6 @@ function byob_is_restaurant_complete($restaurant_id) {
     return !empty(trim($restaurant_name)) && 
            !empty(trim($phone)) && 
            !empty(trim($address)) && 
-           !empty(trim($district)) &&
            !empty($restaurant_type) &&
            !empty($corkage_fee);
 }
