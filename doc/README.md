@@ -18,33 +18,47 @@ BYOB (Bring Your Own Bottle) 是一個自帶酒水餐廳推薦平台，目前運
 
 ## 🚀 最新進度（2025年10月30日）
 
-### 今日完成：表單 ↔ ACF 對齊與前台一致化
+### 今日完成：餐廳列表頁顯示邏輯與統一性修復
 
 **🎯 關鍵修復**
-* ✅ 單選題 placeholder 回退問題：
-  * 原因：表單「顯示文字」直接寫入 ACF，未對應值鍵
-  * 修復：在 `wordpress/functions.php` 實作安全映射（就地 if/elseif），空值寫 ''
-    - `philly_corkage_fee`：Free→free、Corkage Fee→corkage_fee、Other→other
-    - `byob_service_level`：對應 full_service/basic_service/self_service/no_service
-    - `show_reddit_username`：以 Yes/No 前綴判斷，容錯撇號與空白
 
-* ✅ Other 與備註一致化：
-  * 有 note 時強制加入 'other' 勾選並寫入 other_note（equipment/type）
-  * 前台 `single_restaurant.php` 將 'other' 轉為 `Other: [note]`
+* ✅ **移除 district 必填限制**
+  * 問題：費城餐廳沒有 `district` 欄位，導致列表頁被隱藏
+  * 修復：在 `restaurant-member-functions.php` 移除 district 必填檢查
+  * 影響：費城餐廳現在可正常顯示在列表頁
 
-* ✅ 欄位鍵一致：
-  * 設備其他說明統一使用 `equipment_other_note`，Apps Script 跳過直寫，改由解析邏輯產生
+* ✅ **修復 other 類型顯示邏輯**
+  * 問題：列表頁只顯示 `other` 而非 `Other: [description]`
+  * 修復：在 `archive-restaurant.php` 增加英文 'other' 支援（`strtolower($type) === 'other'`）
+  * 影響：餐廳類型與設備正確顯示 `Other: [note]` 格式
+
+* ✅ **Notes 欄位命名統一**
+  * 修改：將 "Dining Experience" 改為 "Notes"
+  * 修改檔案：`functions.php`（文章內容）、`Apps script - 費城推薦版.js`（Email）
+  * 建議說明：**"Anything you'd like other BYOB diners to know"**
+  * 需要手動：Google 表單、Google Sheets 欄位設定表、ACF 欄位標籤
+
+* ✅ **表單 ↔ ACF 對齊修復**
+  * 單選題映射：實作 label→key 安全映射，空值寫 ''
+  * Other 與備註：equipment/type 的 'other' 正確寫入 other_note
+  * 前台一致：單一餐廳頁與列表頁顯示格式統一
 
 **🔧 修改檔案**
-- `wordpress/functions.php`、`wordpress/single_restaurant.php`、`wordpress/Apps script - 費城推薦版.js`
+- `restaurant-member-functions.php`：移除 district 檢查
+- `archive-restaurant.php`：增加 other 類型英文支援
+- `functions.php`：Notes 顯示、label→key 映射
+- `single_restaurant.php`：other 顯示格式
+- `Apps script - 費城推薦版.js`：Notes Email、other 處理
 
-**✅ 驗證**
-- 後台 ACF：三個單選與 other 類欄位均正確顯示
-- 前台：`Cuisine Type`、`Wine Equipment` 中的 Other 以 `Other: note` 顯示
+**✅ 驗證結果**
+- 列表頁：費城餐廳正確顯示
+- ACF 後台：單選題值鍵正確、other 類型描述完整
+- 前台頁面：Other 顯示為 `Other: [description]` 格式
 
 **🗓️ 明日（10/31）**
-- 建立「餐廳資料確認」Google 表單（端到端寫入）
-- 修復餐廳列表頁顯示（查詢/輸出/空值與 other 顯示）
+- 設計「餐廳資料確認」Google 表單（費城）
+- 建立欄位映射與 Apps Script 解析邏輯
+- 實作端到端寫入流程
 
 ---
 
@@ -90,8 +104,8 @@ WordPress 核心
     ↓
 網站展示層（進行中）
 ├── WordPress 程式碼英文化（已完成）
-├── 手動內容英文化（明日開發）
-└── SEO 優化（英文關鍵字）
+├── 列表頁顯示邏輯修復（已完成）
+└── 手動內容英文化（待執行）
 ```
 
 ---
@@ -112,8 +126,10 @@ WordPress 核心
 - ✅ **自動化整合完成**：Google Apps Script + WordPress API 整合
 - ✅ **WordPress 程式碼英文化完成**：所有 PHP 檔案前台顯示文字已改為英文
 - ✅ **ACF 系統優化完成**：欄位群組顯示問題修復，空值處理優化
-- 🔄 **Reddit 社群互動階段**：準備發布費城 BYOB 餐廳詢問貼文
-- ⏳ **待執行**：手動內容英文化、英文網站上線、用戶招募、榮譽系統實作
+- ✅ **列表頁顯示修復完成**：district 限制移除，other 類型顯示修復
+- ✅ **表單 ↔ ACF 對齊完成**：label→key 映射、空值策略、資料一致性
+- 🔄 **餐廳資料確認表單設計**：準備建立費城專用確認表單
+- ⏳ **待執行**：Reddit 社群互動、手動內容英文化、英文網站上線、用戶招募、榮譽系統實作
 
 ---
 
@@ -139,9 +155,11 @@ WordPress 核心
 
 ### 短期（本週）
 1. **費城專案**：
-   - ✅ ACF 系統優化完成（欄位群組顯示、空值處理）
-   - ✅ Google 表單新欄位整合完成
-   - 🔄 Reddit 社群互動（發布第一則詢問貼文）
+   - ✅ 列表頁顯示邏輯修復完成（district 移除、other 支援）
+   - ✅ Notes 欄位命名統一完成
+   - ✅ 表單 ↔ ACF 對齊修復完成
+   - 🔄 設計餐廳資料確認表單（費城）
+   - ⏳ Reddit 社群互動（發布第一則詢問貼文）
    - ⏳ 手動內容英文化（首頁、About Us、餐廳加入頁面）
 
 2. **台北專案**：
@@ -208,4 +226,4 @@ WordPress 核心
 ---
 
 *最後更新：2025年10月30日*
-*版本：v6.0*
+*版本：v7.0*
