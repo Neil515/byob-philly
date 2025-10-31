@@ -1108,7 +1108,7 @@ function byob_generate_philly_article_content($restaurant_data) {
     
     // 用餐體驗區塊
     if (!empty($restaurant_data['philly_dining_experience'])) {
-        $content .= '<h2>Dining Experience</h2>' . "\n";
+        $content .= '<h2>Notes</h2>' . "\n";
         $content .= '<p>' . esc_html($restaurant_data['philly_dining_experience']) . '</p>' . "\n";
         $content .= "\n";
     }
