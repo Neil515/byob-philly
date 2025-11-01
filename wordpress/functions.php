@@ -187,6 +187,10 @@ add_action('rest_api_init', function () {
                 'required' => false,
                 'sanitize_callback' => 'sanitize_text_field',
             ),
+            'source' => array(
+                'required' => false,
+                'sanitize_callback' => 'sanitize_text_field',
+            ),
         ),
     ));
 });
@@ -757,6 +761,9 @@ function byob_create_philly_restaurant_post($request) {
             return new WP_Error('missing_required_fields', 'Missing required field: restaurant_name', array('status' => 400));
         }
         
+        // 取得 source 參數
+        $source = $request->get_param('source');
+        
         // 準備費城餐廳資料
         $philly_restaurant_data = array(
             'restaurant_name' => $restaurant_name,
@@ -778,7 +785,7 @@ function byob_create_philly_restaurant_post($request) {
             'city' => 'Philadelphia',
             'state' => 'PA',
             'country' => 'USA',
-            'source' => 'philly_community_recommendation',
+            'source' => $source ?: 'philly_community_recommendation', // 預設為社群推薦
             'language' => 'en'
         );
         
@@ -970,7 +977,7 @@ function byob_create_philly_restaurant_article($restaurant_data) {
                 'philly_contact_email' => sanitize_email($restaurant_data['philly_contact_email'] ?? ''),
                 'show_reddit_username' => $show_reddit_username_value,
                 'last_updated' => current_time('Y-m-d'),
-                'source' => 'philly_community_recommendation',
+                'source' => sanitize_text_field($restaurant_data['source'] ?? 'philly_community_recommendation'),
                 'review_status' => $review_status,
                 'submitted_date' => current_time('mysql'),
                 'review_date' => '',
