@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			<?php endif; ?>
 		  </div>
 		<?php else: ?>
-			  <div class="field"><strong>Address:</strong></div>
+			  <div class="field"><strong>Address:</strong> </div>
 		<?php endif; ?>
 
 
@@ -438,7 +438,7 @@ document.addEventListener('DOMContentLoaded', function() {
               <a href="tel:<?php echo esc_attr($tel_link); ?>"><?php echo esc_html($phone); ?> 📞</a>
             </div>
           <?php else: ?>
-            <div class="field"><strong>Phone:</strong></div>
+            <div class="field"><strong>Phone:</strong> </div>
           <?php endif; ?>
 
           <?php /*
@@ -461,9 +461,9 @@ document.addEventListener('DOMContentLoaded', function() {
               $charged_output = $is_charged;
             }
           ?>
-            <div class="field"><strong>Corkage Fee:</strong><?php echo esc_html($charged_output); ?> 🥂</div>
+            <div class="field"><strong>Corkage Fee:</strong> <?php echo esc_html($charged_output); ?> 🥂</div>
           <?php else: ?>
-            <div class="field"><strong>Corkage Fee:</strong></div>
+            <div class="field"><strong>Corkage Fee:</strong> </div>
           <?php endif; ?>
           <?php 
           // Display corresponding corkage fee info based on is_charged option
@@ -496,9 +496,9 @@ document.addEventListener('DOMContentLoaded', function() {
               $fee_output = $charged_value;
             }
           ?>
-            <div class="field"><strong>Corkage Details:</strong><?php echo esc_html($fee_output); ?> 🪙</div>
+            <div class="field"><strong>Corkage Details:</strong> <?php echo esc_html($fee_output); ?> 🪙</div>
           <?php else: ?>
-            <div class="field"><strong>Corkage Details:</strong></div>
+            <div class="field"><strong>Corkage Details:</strong> </div>
           <?php endif; ?>
           <?php 
           $equipment = get_field('equipment');
@@ -533,9 +533,9 @@ document.addEventListener('DOMContentLoaded', function() {
               }
             }
           ?>
-            <div class="field"><strong>Wine Equipment:</strong><?php echo esc_html($equipment_output); ?></div>
+            <div class="field"><strong>Wine Equipment:</strong> <?php echo esc_html($equipment_output); ?></div>
           <?php else: ?>
-            <div class="field"><strong>Wine Equipment:</strong></div>
+            <div class="field"><strong>Wine Equipment:</strong> </div>
           <?php endif; ?>
 
           <?php /*
@@ -580,9 +580,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Limit notes to first 100 characters in list view
             $truncated_notes = mb_strlen($notes) > 100 ? mb_substr($notes, 0, 100) . '...' : $notes;
           ?>
-            <div class="field"><strong>Notes:</strong><?php echo esc_html($truncated_notes); ?> 📝</div>
+            <div class="field"><strong>Notes:</strong> <?php echo esc_html($truncated_notes); ?> 📝</div>
           <?php else: ?>
-            <div class="field"><strong>Notes:</strong></div>
+            <div class="field"><strong>Notes:</strong> </div>
           <?php endif; ?>
         </div>
       </div>
