@@ -80,6 +80,13 @@
   padding-right: 140px !important;
 }
 
+/* 驗證徽章容器不受右邊距限制 */
+.verification-badge-container {
+  padding-right: 0 !important;
+  max-width: 100%;
+  width: 100%;
+}
+
 /* 圖片懶載入樣式 */
 .restaurant-image {
   opacity: 0;
@@ -143,6 +150,51 @@
   margin-top: 20px !important;
   padding-top: 15px !important;
   border-top: 1px solid #eee !important;
+}
+
+/* 驗證徽章樣式 */
+.verification-badge-container {
+  margin-bottom: 8px;
+  padding-right: 0 !important;
+  max-width: 100%;
+  width: 100%;
+  display: block;
+}
+
+.verification-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  vertical-align: middle;
+  white-space: nowrap;
+  line-height: 1.4;
+  width: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.verification-badge.badge-small {
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
+.verification-badge.badge-verified {
+  background-color: #e3f2fd;
+  color: #424242;
+  border: 1px solid #90caf9;
+}
+
+.verification-badge.badge-community {
+  background-color: #fff3e0;
+  color: #424242;
+  border: 1px solid #ffcc80;
+}
+
+.verification-badge:hover {
+  opacity: 0.9;
+  cursor: help;
 }
 </style>
 <div class="page-header">
@@ -284,6 +336,11 @@ document.addEventListener('DOMContentLoaded', function() {
           </div>
         <?php endif;
       endif; ?>
+      
+      <!-- 驗證徽章顯示（在餐廳名稱上方） -->
+      <div class="verification-badge-container">
+        <?php echo byob_display_verification_badge(get_the_ID(), 'small'); ?>
+      </div>
       
       <h2 class="restaurant-title-line">
         <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
