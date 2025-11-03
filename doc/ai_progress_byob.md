@@ -10,9 +10,92 @@
 
 ### **費城 BYOB 專案**（新專案）
 * **專案名稱**：Philadelphia BYOB Restaurant Guide
-* **目前階段**：雙表單系統完成，準備實作多層次驗證策略
+* **目前階段**：驗證徽章系統完成，準備實作餐廳聯絡機制
 * **核心策略**：多平台資料收集 + 雙向表單驗證 + 自動化文章生成 + Reddit 社群互動
 * **定位**：成為 Yelp 的 BYOB 專業補充平台
+
+---
+
+## ✅ 2025年11月3日 — 驗證徽章系統與 Yelp 連結整合完成
+
+### 🎯 今日目標
+建立完整的驗證徽章顯示系統，整合 Yelp 連結欄位，優化餐廳業者後台，統一前端顯示格式。
+
+### 已完成項目
+
+* [x] **驗證徽章系統實作** ⭐⭐ 前台顯示與後台管理
+  * 前台顯示系統：
+    - 餐廳列表頁和單一餐廳頁新增驗證徽章
+    - 徽章顯示在餐廳名稱上方一行
+    - 兩種狀態設計：
+      - `Verified by Restaurant`：藍色背景，🔒 圖示，表示餐廳老闆驗證
+      - `Community Recommended`：橙色背景，👥 圖示，表示社群推薦
+  * 後台管理機制：
+    - 新增 `verification_override` ACF 欄位（管理員可手動覆蓋驗證狀態）
+    - 優先順序：`verification_override` > `source` 欄位
+    - 修改檔案：`wordpress/functions.php`（新增 ACF 欄位定義和 `byob_display_verification_badge()` 函數）
+  * 前端顯示檔案：
+    - `wordpress/archive-restaurant.php`：列表頁徽章顯示（small 尺寸）
+    - `wordpress/single_restaurant.php`：單一餐廳頁徽章顯示（medium 尺寸）
+
+* [x] **Yelp 連結欄位整合** ⭐⭐ 端到端整合
+  * Google 表單更新：
+    - 將「Website or Reservation Link」改為「Yelp Link」
+    - 更新欄位映射邏輯
+  * Apps Script 修改：
+    - `wordpress/Apps script - 費城推薦版.js`：更新通知郵件顯示 Yelp Link
+    - `wordpress/Apps script - 費城餐廳確認版.js`：更新通知郵件顯示 Yelp Link
+  * WordPress 後端：
+    - `wordpress/functions.php`：修改 API 端點處理 `yelp_link` 參數
+    - 更新 `byob_create_philly_restaurant_post` 和 `byob_create_philly_restaurant_article` 函數
+    - 將原本的 `website` 相關程式碼註解保留
+  * 前台顯示：
+    - 餐廳列表頁：Yelp 欄位已註解（不顯示）
+    - 單一餐廳頁：顯示 Yelp 連結
+    - 原本的 Website/Social Links 相關程式碼已註解保留
+
+* [x] **餐廳業者後台優化** ⭐ 用戶體驗提升
+  * Yelp 連結欄位：
+    - 在餐廳業者編輯頁面加入 Yelp Link 欄位
+    - 欄位位置：在「Yelp Link / Official Website/Social Media Links」區塊內的第一個位置
+    - 修改檔案：`wordpress/woocommerce/myaccount/restaurant-profile.php`
+  * 表單提交處理：
+    - `wordpress/restaurant-member-functions.php`：新增 `yelp_link` 的保存邏輯
+
+* [x] **前端格式統一** ⭐ 顯示一致性
+  * 欄位冒號後空格統一：
+    - 檢查並修正餐廳列表頁和單一餐廳頁所有欄位的冒號後空格
+    - 統一格式：所有欄位標籤冒號後都加上空格
+  * 修改檔案：
+    - `wordpress/archive-restaurant.php`：修正 Corkage Fee, Corkage Details, Wine Equipment, Notes, Address, Phone
+    - `wordpress/single_restaurant.php`：修正 Cuisine Type, Corkage Fee, Corkage Details, Wine Equipment, Wine Service, Yelp, Notes, Address, Phone
+
+### 技術成果
+
+**驗證系統架構：**
+- 視覺化驗證狀態展示，提升用戶信任度
+- 管理員可手動覆蓋驗證狀態，保持管理彈性
+- 基於 `source` 欄位的自動驗證狀態判斷
+
+**Yelp 整合策略：**
+- 聚焦單一外部平台連結（Yelp），簡化用戶選擇
+- 保留原有 Website/Social Links 程式碼供未來使用
+- 完整的端到端整合：表單 → 後端 → 前台
+
+**格式統一成果：**
+- 所有欄位顯示格式一致，提升專業度
+- 改善用戶閱讀體驗
+
+### 修改的檔案
+
+**程式碼檔案：**
+- `wordpress/functions.php`：驗證徽章系統、Yelp 欄位處理
+- `wordpress/archive-restaurant.php`：徽章顯示、格式統一
+- `wordpress/single_restaurant.php`：徽章顯示、格式統一
+- `wordpress/woocommerce/myaccount/restaurant-profile.php`：Yelp 欄位加入
+- `wordpress/restaurant-member-functions.php`：Yelp 保存邏輯
+- `wordpress/Apps script - 費城推薦版.js`：Yelp 通知更新
+- `wordpress/Apps script - 費城餐廳確認版.js`：Yelp 通知更新
 
 ---
 
@@ -50,10 +133,6 @@
   * 理由：程式碼已自動寫入 source，後台可手動新增作為視覺辨識
   * 狀態：系統功能完整，保持彈性
 
-* [x] **表單提交後確認訊息設計** ⭐ 用戶體驗
-  * 網友推薦版：強調貢獻價值，提醒檢查網站而非等待 email
-  * 老闆確認版：強調精確驗證，提供聯絡管道並承諾 email 確認
-
 ### 技術成果
 
 **雙表單系統架構：**
@@ -73,78 +152,6 @@
 - `wordpress/Apps script - 費城餐廳確認版.js`：新建完整處理邏輯
 - `wordpress/functions.php`：4處修改（API 參數、動態 source）
 - Google Sheets 欄位映射表：新建並測試驗證
-
----
-
-## ✅ 2025年10月30日 — 餐廳列表頁顯示邏輯與統一性修復
-
-### 已完成項目
-
-* [x] **移除 district 必填限制** ⭐ 顯示邏輯優化
-  * 問題：費城餐廳沒有 `district` 欄位，導致列表頁被隱藏
-  * 修復：移除 `district` 的必填檢查，改為檢查 5 個必填欄位
-  * 修改檔案：`wordpress/restaurant-member-functions.php`（2576-2591 行）
-
-* [x] **修復 other 類型顯示邏輯** ⭐ 顯示一致性
-  * 問題：列表頁只檢查中文「其他」，未檢查英文 'other'
-  * 修復：增加英文 'other' 支援，顯示 `Other: [description]`
-  * 修改檔案：`wordpress/archive-restaurant.php`（餐廳類型：298, 313, 316 行；設備：455, 468, 470 行）
-
-* [x] **Notes 欄位命名統一** ⭐ 命名一致性
-  * 修改：將 "Dining Experience" 改為 "Notes"
-  * 修改檔案：`wordpress/functions.php`（1111 行）、`wordpress/Apps script - 費城推薦版.js`（377 行）
-
-* [x] **表單 ↔ ACF 對齊修復** ⭐ 資料一致性
-  * 單選題 label→key 安全映射：就地 if/elseif 處理
-  * Other 選項與備註自動產生機制
-  * 前台顯示一致性處理
-
-### 技術成果
-
-- 餐廳列表頁正確顯示費城餐廳
-- other 類型中英文正確處理與顯示
-- 表單到 ACF 的映射穩定可靠
-
----
-
-## ✅ 2025年10月29日 — Google 表單新欄位整合與 ACF 系統優化
-
-### 已完成項目
-
-* [x] **Google 表單新增欄位處理** ⭐ 系統整合完成
-  * 新增「Reddit 用戶名顯示偏好」選擇題
-  * 完成端到端整合：表單 → Sheets → Apps Script → API → ACF
-
-* [x] **ACF 欄位群組顯示問題修復** ⭐ 後台管理優化
-  * 費城餐廳只顯示專用欄位群組
-  * 透過位置規則精確控制
-
-* [x] **ACF 欄位空值處理優化** ⭐ 資料品質提升
-  * 選填選擇題正確處理空值
-  * 避免自動選擇第一個選項
-
-### 修改的檔案
-- `wordpress/functions.php`：4處修改
-- `wordpress/Apps script - 費城推薦版.js`：Email 更新
-
----
-
-## ✅ 2025年10月22日 — WordPress 程式碼英文化完成
-
-### 已完成項目
-
-* [x] **WordPress 前台英文化完成** ⭐ 介面英文化
-  * 餐廳列表頁、單一餐廳頁、資料編輯頁全英文化
-  * 保留中文註解，用戶可見文字改為英文
-
-* [x] **Apps Script 評估** ⭐ 技術決策
-  * 確認不需要英文化
-  * 保持中文註解和 Logger 訊息
-
-### 技術成果
-- 專業英文網站介面
-- 符合美國用戶習慣
-- 開發者友善維護
 
 ---
 
@@ -176,16 +183,20 @@
 * ✅ **自動化整合**：雙 Apps Script + WordPress API
 * ✅ **Reddit 準備**：帳號建立、貼文策略、追蹤系統
 * ✅ **系統優化**：英文化、ACF 修復、顯示邏輯優化
+* ✅ **驗證徽章系統**：前台顯示與後台管理機制
+* ✅ **Yelp 連結整合**：表單、後端、前台完整整合
 
 **當前狀態：**
 * ✅ 兩套完整表單系統運作中
 * ✅ 資料來源自動辨識與追蹤
-* 🔄 準備實作多層次驗證策略（11/2）
+* ✅ 驗證狀態視覺化展示
+* 🔄 準備實作餐廳聯絡機制（11/4）
 
 **下一步重點：**
-* 🚀 多層次驗證回覆率處理策略（見 Next Task Prompt）
-* 🚀 Reddit 社群互動啟動
-* ⏳ 手動內容英文化、網站上線、用戶招募、榮譽系統
+* 🚀 餐廳 Email 搜尋系統
+* 🚀 寄給餐廳的 Email 模板設計
+* 🚀 多名網友資料衝突處理邏輯
+* ⏳ Reddit 社群互動啟動、手動內容英文化、網站上線、用戶招募、榮譽系統
 
 ---
 
@@ -201,6 +212,8 @@
 * **WordPress API 整合**：動態 source 處理、自動生成草稿
 * **自動化文章生成系統**：英文內容模板和 SEO 優化
 * **雙重通知系統**：成功和錯誤通知機制
+* **驗證徽章系統**：前台顯示與後台管理
+* **Yelp 連結整合**：表單、後端、前台完整整合
 
 ### **台北專案工具**
 * `wine_exhibitor_crawler.py`：葡萄酒展參展商爬蟲
@@ -229,6 +242,7 @@
 * `wordpress/archive-restaurant.php`：餐廳列表頁模板
 * `wordpress/single_restaurant.php`：單一餐廳頁模板
 * `wordpress/restaurant-member-functions.php`：餐廳會員相關功能
+* `wordpress/woocommerce/myaccount/restaurant-profile.php`：餐廳業者後台編輯頁面
 
 ---
 
@@ -263,11 +277,18 @@
 3. 獨立但共享：避免重複開發
 4. 信任度分層：老闆驗證 > 社群推薦
 
+**驗證徽章系統設計：**
+1. 視覺化狀態展示：提升用戶信任度
+2. 管理員覆蓋機制：保持管理彈性
+3. 優先順序邏輯：覆蓋欄位 > 來源欄位
+4. 一致的顯示格式：列表頁與單一頁統一
+
 **資料對齊與一致性：**
 1. label→key 映射：避免顯示文字與值鍵不匹配
 2. 空值策略：一致的空值處理邏輯
 3. 跨語言支援：中英文欄位都正確處理
 4. 前後台對齊：確保顯示與儲存一致
+5. 格式統一：所有欄位標籤格式一致
 
 **API 參數硬編碼教訓：**
 1. 避免硬編碼關鍵識別欄位
@@ -275,14 +296,25 @@
 3. 提供合理的預設值作為後備
 4. 完整的參數定義和驗證
 
+**ACF URL 欄位行為：**
+1. ACF URL 欄位會自動添加協議前綴
+2. 預設添加 `http://` 而非 `https://`，可能導致連結錯誤
+3. 建議在表單說明中提醒用戶輸入完整 URL
+4. 可考慮加入 URL 處理過濾器強制使用 https
+
 ---
 
 ## 🚨 當前挑戰與風險
 
-### **驗證回覆率過低風險** ⚠️
-- **風險**：餐廳老闆回覆率可能僅 20-30%
-- **影響**：資料品質失衡、信心度不足、用戶信任下降
-- **緩解策略**：多層次處理系統（見 Next Task Prompt 詳述）
+### **餐廳聯絡與驗證** ⚠️
+- **風險**：餐廳 email 難以取得、餐廳老闆回覆率可能較低
+- **影響**：資料驗證困難、大量資料停滯待驗證
+- **緩解策略**：建立友善的 email 模板、設計多階段提醒機制、建立社群驗證備案
+
+### **資料衝突處理** ⚠️
+- **風險**：多名網友提供不同資訊，難以判斷正確性
+- **影響**：資料準確性下降、用戶信任度降低
+- **緩解策略**：建立衝突檢測與解決機制、優先採用餐廳老闆驗證、保留多版本供人工審核
 
 ### **Reddit 社群接受度**
 - **風險**：新帳號可能被視為推廣或 spam
@@ -296,6 +328,6 @@
 
 ---
 
-*最後更新：2025年11月1日*
-*版本：v17.0*
-*明日重點：多層次驗證回覆率處理策略實作*
+*最後更新：2025年11月3日*
+*版本：v18.0*
+*明日重點：餐廳聯絡機制與資料驗證系統實作*
