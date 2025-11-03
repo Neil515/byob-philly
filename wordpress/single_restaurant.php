@@ -167,7 +167,7 @@
           <?php endif; ?>
         </div>
       <?php else: ?>
-        <div class="field"><strong>Address:</strong></div>
+        <div class="field"><strong>Address:</strong> </div>
       <?php endif; ?>
 
       <?php 
@@ -192,7 +192,7 @@
           <a href="tel:<?php echo esc_attr($tel_link); ?>"><?php echo esc_html($phone); ?> &#128222;</a>
         </div>
       <?php else: ?>
-        <div class="field"><strong>Phone:</strong></div>
+        <div class="field"><strong>Phone:</strong> </div>
       <?php endif; ?>
 
       <?php 
@@ -230,9 +230,9 @@
           }
         }
       ?>
-        <div class="field"><strong>Cuisine Type:</strong><?php echo esc_html($type_output); ?></div>
+        <div class="field"><strong>Cuisine Type:</strong> <?php echo esc_html($type_output); ?></div>
       <?php else: ?>
-        <div class="field"><strong>Cuisine Type:</strong></div>
+        <div class="field"><strong>Cuisine Type:</strong> </div>
       <?php endif; ?>
     </div>
 
@@ -252,9 +252,9 @@
           $charged_output = $is_charged;
         }
       ?>
-        <div class="field"><strong>Corkage Fee:</strong><?php echo esc_html($charged_output); ?> 🥂</div>
+        <div class="field"><strong>Corkage Fee:</strong> <?php echo esc_html($charged_output); ?> 🥂</div>
       <?php else: ?>
-        <div class="field"><strong>Corkage Fee:</strong></div>
+        <div class="field"><strong>Corkage Fee:</strong> </div>
       <?php endif; ?>
 
       <?php 
@@ -288,9 +288,9 @@
           $fee_output = $charged_value;
         }
       ?>
-        <div class="field"><strong>Corkage Details:</strong><?php echo esc_html($fee_output); ?> 🪙</div>
+        <div class="field"><strong>Corkage Details:</strong> <?php echo esc_html($fee_output); ?> 🪙</div>
       <?php else: ?>
-        <div class="field"><strong>Corkage Details:</strong></div>
+        <div class="field"><strong>Corkage Details:</strong> </div>
       <?php endif; ?>
 
       <?php 
@@ -326,9 +326,9 @@
           }
         }
       ?>
-        <div class="field"><strong>Wine Equipment:</strong><?php echo esc_html($equipment_output); ?></div>
+        <div class="field"><strong>Wine Equipment:</strong> <?php echo esc_html($equipment_output); ?></div>
       <?php else: ?>
-        <div class="field"><strong>Wine Equipment:</strong></div>
+        <div class="field"><strong>Wine Equipment:</strong> </div>
       <?php endif; ?>
 
                     <?php 
@@ -357,9 +357,9 @@
             $service_output = $open_bottle_service;
           }
        ?>
-         <div class="field"><strong>Wine Service:</strong><?php echo esc_html($service_output); ?></div>
+         <div class="field"><strong>Wine Service:</strong> <?php echo esc_html($service_output); ?></div>
        <?php else: ?>
-         <div class="field"><strong>Wine Service:</strong></div>
+         <div class="field"><strong>Wine Service:</strong> </div>
        <?php endif; ?>
     </div>
 
@@ -390,7 +390,7 @@
 			<a href="<?php echo esc_url($yelp_link); ?>" target="_blank" rel="noopener"><?php echo esc_html($yelp_link); ?></a>
 		  </div>
 		<?php else: ?>
-		  <div class="field"><strong>Yelp:</strong></div>
+		  <div class="field"><strong>Yelp:</strong> </div>
 		<?php endif; ?>
 
 		<?php 
@@ -412,9 +412,9 @@
     <!-- 其他資訊 -->
     <div class="info-group other-info">
       <?php if(get_field('notes')): ?>
-        <div class="field"><strong>Notes:</strong><?php the_field('notes'); ?> 📝</div>
+        <div class="field"><strong>Notes:</strong> <?php the_field('notes'); ?> 📝</div>
       <?php else: ?>
-        <div class="field"><strong>Notes:</strong></div>
+        <div class="field"><strong>Notes:</strong> </div>
       <?php endif; ?>
     </div>
   </div>
