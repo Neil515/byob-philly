@@ -548,13 +548,29 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
 
         <div class="info-group link-info">
-          <?php /*
-          <?php if(get_field('social_links')): ?>
-            <div class="field"><strong>官方網站/社群連結：</strong><a href="<?php the_field('social_links'); ?>" target="_blank" rel="noopener"><?php the_field('social_links'); ?></a></div>
-          <?php else: ?>
-            <div class="field"><strong>官方網站/社群連結：</strong>暫無資料</div>
-          <?php endif; ?>
-          */ ?>
+          <?php 
+            // 原本的 Website/Social Links 顯示（已註解）
+            /*
+            if (get_field('social_links')) {
+              echo '<div class="field"><strong>官方網站/社群連結：</strong><a href="' . esc_url(get_field('social_links')) . '" target="_blank" rel="noopener">' . esc_html(get_field('social_links')) . '</a></div>';
+            } else {
+              echo '<div class="field"><strong>官方網站/社群連結：</strong>暫無資料</div>';
+            }
+            */
+            
+            // Yelp 連結顯示（暫時註解，未來如需顯示可啟用）
+            /*
+            $yelp_link = get_field('yelp_link');
+            if ($yelp_link) {
+              echo '<div class="field">';
+              echo '<strong>Yelp:</strong>';
+              echo '<a href="' . esc_url($yelp_link) . '" target="_blank" rel="noopener">' . esc_html($yelp_link) . '</a>';
+              echo '</div>';
+            } else {
+              echo '<div class="field"><strong>Yelp:</strong></div>';
+            }
+            */
+          ?>
         </div>
 
         <div class="info-group other-info">
