@@ -50,6 +50,49 @@
   padding-top: 20px !important;
   border-top: 2px solid #eee !important;
 }
+
+/* 驗證徽章樣式 */
+.verification-badge-container {
+  margin-bottom: 12px;
+}
+
+.verification-badge {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  vertical-align: middle;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.verification-badge.badge-medium {
+  font-size: 14px;
+  padding: 6px 12px;
+}
+
+.verification-badge.badge-small {
+  font-size: 12px;
+  padding: 4px 10px;
+}
+
+.verification-badge.badge-verified {
+  background-color: #e3f2fd;
+  color: #424242;
+  border: 1px solid #90caf9;
+}
+
+.verification-badge.badge-community {
+  background-color: #fff3e0;
+  color: #424242;
+  border: 1px solid #ffcc80;
+}
+
+.verification-badge:hover {
+  opacity: 0.9;
+  cursor: help;
+}
 </style>
 
 <div class="restaurant-card" style="max-width: 800px; margin: auto; padding: 2em; font-family: sans-serif; position: relative;">
@@ -88,6 +131,11 @@
       </div>
     <?php endif;
   endif; ?>
+  
+  <!-- 驗證徽章顯示（在餐廳名稱上方） -->
+  <div class="verification-badge-container">
+    <?php echo byob_display_verification_badge(get_the_ID(), 'medium'); ?>
+  </div>
   
   <h1><?php the_title(); ?></h1>
 
