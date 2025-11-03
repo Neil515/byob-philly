@@ -365,7 +365,9 @@ function sendPhillyNotificationEmail(data, result) {
       '<p><strong>Restaurant Name:</strong> ' + (data.restaurant_name || '') + '</p>' +
       '<p><strong>Address:</strong> ' + (data.address || 'Not provided') + '</p>' +
       '<p><strong>Phone:</strong> ' + (data.phone || 'Not provided') + '</p>' +
-      '<p><strong>Website:</strong> ' + (data.website || 'Not provided') + '</p>' +
+      // 原本的 Website 顯示已改為 Yelp Link
+      // '<p><strong>Website:</strong> ' + (data.website || 'Not provided') + '</p>' +
+      '<p><strong>Yelp Link:</strong> ' + (data.yelp_link || 'Not provided') + '</p>' +
       '<p><strong>Corkage Fee Policy:</strong> ' + (data.philly_corkage_fee || 'Not provided') + '</p>' +
       '<p><strong>Corkage Fee Amount:</strong> ' + (data.corkage_fee_amount || 'Not applicable') + '</p>' +
       '<p><strong>Other Corkage Policy:</strong> ' + (data.other_corkage_policy || 'Not applicable') + '</p>' +
