@@ -363,9 +363,11 @@
        <?php endif; ?>
     </div>
 
-	<!-- 連結資訊（合併官網與社群連結） -->
+	<!-- 連結資訊（原本的 Website/Social Links 已註解，改為顯示 Yelp） -->
 	<div class="info-group link-info">
 		<?php 
+		  // 原本的 Website/Social Links 顯示邏輯已註解，改為只顯示 Yelp
+		  /*
 		  $website = get_field('website');
 		  $social_links = get_field('social_links');
 		  $links = [];
@@ -376,16 +378,34 @@
 		  if ($social_links) {
 			$links[] = '<a href="'.esc_url($social_links).'" target="_blank" rel="noopener">Social Media</a>';
 		  }
+		  */
+
+		  // 新增 Yelp 連結顯示
+		  $yelp_link = get_field('yelp_link');
 		?>
 
-		<?php if (!empty($links)): ?>
+		<?php if ($yelp_link): ?>
 		  <div class="field">
-			<strong>Website/Social Links:</strong>
-			<?php echo implode(' | ', $links); ?>
+			<strong>Yelp:</strong>
+			<a href="<?php echo esc_url($yelp_link); ?>" target="_blank" rel="noopener"><?php echo esc_html($yelp_link); ?></a>
 		  </div>
 		<?php else: ?>
-		  <div class="field"><strong>Website/Social Links:</strong></div>
+		  <div class="field"><strong>Yelp:</strong></div>
 		<?php endif; ?>
+
+		<?php 
+		  // 原本的 Website/Social Links 顯示（已註解）
+		  /*
+		  if (!empty($links)) {
+			echo '<div class="field">';
+			echo '<strong>Website/Social Links:</strong>';
+			echo implode(' | ', $links);
+			echo '</div>';
+		  } else {
+			echo '<div class="field"><strong>Website/Social Links:</strong></div>';
+		  }
+		  */
+		?>
 	</div>
 
 
