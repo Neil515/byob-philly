@@ -2074,6 +2074,11 @@ function byob_handle_restaurant_profile_submit($restaurant_id) {
             update_field('open_bottle_service_other_note', sanitize_text_field($_POST['open_bottle_service_other_note']), $restaurant_id);
         }
         
+        // 新增欄位：Yelp 連結（URL）
+        if (isset($_POST['yelp_link'])) {
+            update_field('yelp_link', esc_url_raw($_POST['yelp_link']), $restaurant_id);
+        }
+        
         // 新增欄位：官方網站（URL）
         if (isset($_POST['website'])) {
             update_field('website', esc_url_raw($_POST['website']), $restaurant_id);
