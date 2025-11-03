@@ -539,15 +539,20 @@ echo '<label for="notes" style="display: block; margin-bottom: 10px; font-weight
 echo '<textarea id="notes" name="notes" rows="5" placeholder="Other BYOB policies, or your restaurant features, style, service, etc..." style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical; transition: border-color 0.3s;">' . esc_textarea(get_field('notes', $restaurant_id)) . '</textarea>';
 echo '</div>';
 
-// 官方網站/社群連結
+// 官方網站/社群連結（包含 Yelp Link）
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Official Website/Social Media Links</label>';
-echo '<div style="display: flex; gap: 15px;">';
-echo '<div style="flex: 1;">';
+echo '<label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Yelp Link / Official Website / Social Media Links</label>';
+echo '<div style="display: flex; gap: 15px; flex-wrap: wrap;">';
+// Yelp Link (第一個欄位)
+echo '<div style="flex: 1; min-width: 200px;">';
+echo '<label for="yelp_link" style="display: block; margin-bottom: 8px; font-weight: normal; color: #666; font-size: 14px;">Yelp Link</label>';
+echo '<input type="url" id="yelp_link" name="yelp_link" value="' . esc_attr(get_field('yelp_link', $restaurant_id)) . '" placeholder="e.g.: https://www.yelp.com/biz/restaurant-name" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s;">';
+echo '</div>';
+echo '<div style="flex: 1; min-width: 200px;">';
 echo '<label for="website" style="display: block; margin-bottom: 8px; font-weight: normal; color: #666; font-size: 14px;">Official website or reservation URL</label>';
 echo '<input type="url" id="website" name="website" value="' . esc_attr(get_field('website', $restaurant_id)) . '" placeholder="e.g.: https://www.example.com" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s;">';
 echo '</div>';
-echo '<div style="flex: 1;">';
+echo '<div style="flex: 1; min-width: 200px;">';
 echo '<label for="social_links" style="display: block; margin-bottom: 8px; font-weight: normal; color: #666; font-size: 14px;">Social media links</label>';
 echo '<input type="url" id="social_links" name="social_links" value="' . esc_attr(get_field('social_links', $restaurant_id)) . '" placeholder="e.g.: Facebook, Instagram, etc." style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 14px; transition: border-color 0.3s;">';
 echo '</div>';
