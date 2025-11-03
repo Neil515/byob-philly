@@ -742,7 +742,9 @@ function byob_create_philly_restaurant_post($request) {
         $restaurant_name = $request->get_param('restaurant_name');
         $address = $request->get_param('address');
         $phone = $request->get_param('phone');
-        $website = $request->get_param('website');
+        // 原本的 website 參數已改為 yelp_link
+        // $website = $request->get_param('website');
+        $yelp_link = $request->get_param('yelp_link');
         $philly_corkage_fee = $request->get_param('philly_corkage_fee');
         $corkage_fee_amount = $request->get_param('corkage_fee_amount');
         $other_corkage_policy = $request->get_param('other_corkage_policy');
@@ -769,7 +771,9 @@ function byob_create_philly_restaurant_post($request) {
             'restaurant_name' => $restaurant_name,
             'address' => $address ?: '',
             'phone' => $phone ?: '',
-            'website' => $website ?: '',
+            // 原本的 website 已改為 yelp_link
+            // 'website' => $website ?: '',
+            'yelp_link' => $yelp_link ?: '',
             'philly_corkage_fee' => $philly_corkage_fee ?: '',
             'corkage_fee_amount' => $corkage_fee_amount ?: '',
             'other_corkage_policy' => $other_corkage_policy ?: '',
@@ -963,7 +967,9 @@ function byob_create_philly_restaurant_article($restaurant_data) {
                 'restaurant_name' => sanitize_text_field($restaurant_data['restaurant_name']),
                 'address' => sanitize_text_field($restaurant_data['address'] ?? ''),
                 'phone' => sanitize_text_field($restaurant_data['phone'] ?? ''),
-                'website' => esc_url_raw($restaurant_data['website'] ?? ''),
+                // 原本的 website 已改為 yelp_link
+                // 'website' => esc_url_raw($restaurant_data['website'] ?? ''),
+                'yelp_link' => esc_url_raw($restaurant_data['yelp_link'] ?? ''),
                 'philly_corkage_fee' => $philly_corkage_fee_value,
                 'corkage_fee_amount' => $corkage_amount_normalized,
                 'other_corkage_policy' => sanitize_textarea_field($restaurant_data['other_corkage_policy'] ?? ''),
@@ -1001,11 +1007,13 @@ function byob_create_philly_restaurant_article($restaurant_data) {
             }
 
             // 2) 舊欄位映射
+            // 原本的 website 已改為 yelp_link，但保留 website 欄位以備未來使用
             $legacy_updates = array(
                 'restaurant_name' => sanitize_text_field($restaurant_data['restaurant_name']),
                 'address' => sanitize_text_field($restaurant_data['address'] ?? ''),
                 'phone' => sanitize_text_field($restaurant_data['phone'] ?? ''),
-                'website' => esc_url_raw($restaurant_data['website'] ?? ''),
+                // 'website' => esc_url_raw($restaurant_data['website'] ?? ''),
+                // 不再更新舊欄位，如需可在此處加入 yelp_link -> website 的映射
                 'is_charged' => $is_charged_legacy,
                 'corkage_fee_amount' => $is_charged_legacy === 'yes' ? $corkage_amount_normalized : '',
                 'corkage_fee_note' => sanitize_text_field($restaurant_data['other_corkage_policy'] ?? ''),
@@ -1061,8 +1069,12 @@ function byob_generate_philly_article_content($restaurant_data) {
         $content .= '<p><strong>Phone:</strong> ' . esc_html($restaurant_data['phone']) . '</p>' . "\n";
     }
     
-    if (!empty($restaurant_data['website'])) {
-        $content .= '<p><strong>Website:</strong> <a href="' . esc_url($restaurant_data['website']) . '" target="_blank">' . esc_html($restaurant_data['website']) . '</a></p>' . "\n";
+    // 原本的 Website 顯示已改為 Yelp Link
+    // if (!empty($restaurant_data['website'])) {
+    //     $content .= '<p><strong>Website:</strong> <a href="' . esc_url($restaurant_data['website']) . '" target="_blank">' . esc_html($restaurant_data['website']) . '</a></p>' . "\n";
+    // }
+    if (!empty($restaurant_data['yelp_link'])) {
+        $content .= '<p><strong>Yelp Link:</strong> <a href="' . esc_url($restaurant_data['yelp_link']) . '" target="_blank">' . esc_html($restaurant_data['yelp_link']) . '</a></p>' . "\n";
     }
     
     if (!empty($restaurant_data['philly_restaurant_type'])) {
@@ -2336,7 +2348,146 @@ add_action('init', 'byob_register_lottery_post_types');
 // 確保 Post Type 在 ACF 初始化前註冊
 add_action('acf/init', function() {
     byob_register_lottery_post_types();
+    
+    // 新增驗證覆蓋欄位（管理員可編輯）
+    if (function_exists('acf_add_local_field_group')) {
+        acf_add_local_field_group(array(
+            'key' => 'group_verification_override',
+            'title' => 'Verification Override',
+            'fields' => array(
+                array(
+                    'key' => 'field_verification_override',
+                    'label' => 'Verification Override',
+                    'name' => 'verification_override',
+                    'type' => 'select',
+                    'instructions' => '管理員可手動覆蓋驗證狀態。留空則使用自動設定的 source 欄位值。',
+                    'required' => 0,
+                    'conditional_logic' => 0,
+                    'wrapper' => array(
+                        'width' => '',
+                        'class' => '',
+                        'id' => '',
+                    ),
+                    'choices' => array(
+                        '' => '使用預設 source 值',
+                        'philly_owner_verification' => 'Verified by Owner',
+                        'philly_community_recommendation' => 'Community Recommended',
+                    ),
+                    'default_value' => '',
+                    'allow_null' => 1,
+                    'multiple' => 0,
+                    'ui' => 1,
+                    'ajax' => 0,
+                    'return_format' => 'value',
+                    'placeholder' => '選擇驗證狀態（選填）',
+                ),
+            ),
+            'location' => array(
+                array(
+                    array(
+                        'param' => 'post_type',
+                        'operator' => '==',
+                        'value' => 'restaurant',
+                    ),
+                ),
+            ),
+            'menu_order' => 100,
+            'position' => 'normal',
+            'style' => 'default',
+            'label_placement' => 'top',
+            'instruction_placement' => 'label',
+            'hide_on_screen' => '',
+            'active' => true,
+            'description' => '',
+        ));
+    }
 });
+
+// =============================================================================
+// 驗證徽章系統
+// =============================================================================
+
+/**
+ * 取得驗證徽章資訊
+ * 
+ * @param int $post_id 餐廳文章ID
+ * @return array 包含 status, label, class, icon, description 的陣列
+ */
+function byob_get_verification_badge_info($post_id) {
+    // 優先檢查覆蓋欄位
+    $override = get_field('verification_override', $post_id);
+    $source = !empty($override) ? $override : get_field('source', $post_id);
+    
+    // 預設值（無 source 或未知 source）
+    $default = array(
+        'status' => 'community',
+        'label' => 'Community Recommended',
+        'class' => 'badge-community',
+        'icon' => '👥',
+        'description' => 'Information provided by community members'
+    );
+    
+    if (empty($source)) {
+        return $default;
+    }
+    
+    // 根據 source 值判斷驗證狀態
+    switch ($source) {
+        case 'philly_owner_verification':
+            return array(
+                'status' => 'verified',
+                'label' => 'Verified by Restaurant',
+                'class' => 'badge-verified',
+                'icon' => '🔒',
+                'description' => 'Information verified by restaurant'
+            );
+            
+        case 'philly_community_recommendation':
+            return array(
+                'status' => 'community',
+                'label' => 'Community Recommended',
+                'class' => 'badge-community',
+                'icon' => '👥',
+                'description' => 'Information provided by community members'
+            );
+            
+        default:
+            // 其他來源（如 customer_recommendation 等）
+            return $default;
+    }
+}
+
+/**
+ * 顯示驗證徽章
+ * 
+ * @param int|null $post_id 餐廳文章ID（預設為當前文章）
+ * @param string $size 徽章大小：'small' 或 'medium'
+ * @return string 徽章 HTML
+ */
+function byob_display_verification_badge($post_id = null, $size = 'small') {
+    if ($post_id === null) {
+        $post_id = get_the_ID();
+    }
+    
+    if (!$post_id) {
+        return '';
+    }
+    
+    $badge_info = byob_get_verification_badge_info($post_id);
+    
+    $size_class = ($size === 'medium') ? 'badge-medium' : 'badge-small';
+    
+    $badge_html = sprintf(
+        '<span class="verification-badge %s %s" title="%s">%s %s</span>',
+        esc_attr($badge_info['class']),
+        esc_attr($size_class),
+        esc_attr($badge_info['description']),
+        esc_html($badge_info['icon']),
+        esc_html($badge_info['label'])
+    );
+    
+    return $badge_html;
+}
 
 /**
  * 記錄推薦者參與抽獎
