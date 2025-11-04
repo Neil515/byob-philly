@@ -300,3 +300,419 @@
 2025-11-04 15:02:51,601 - INFO - 處理失敗: 0
 2025-11-04 15:02:51,602 - INFO - 成功率: 80.0%
 2025-11-04 15:02:51,603 - INFO - ============================================================
+2025-11-04 19:09:57,069 - INFO - 讀取 Excel 檔案: data\Philly BYOB Restaurant google form_with_websites_20251104_190915.xlsx
+2025-11-04 19:09:57,938 - INFO - 開始處理 20 家餐廳
+2025-11-04 19:09:57,939 - INFO - 
+處理進度: 1/20
+2025-11-04 19:09:57,940 - INFO - 餐廳名稱: Kung Fu Hot Pot
+2025-11-04 19:09:57,941 - INFO - 
+處理進度: 2/20
+2025-11-04 19:09:57,942 - INFO - 餐廳名稱: Scampi
+2025-11-04 19:09:57,942 - INFO - 處理餐廳: Scampi | Website: https://www.scampiphilly.com/menu
+2025-11-04 19:09:57,943 - INFO - 搜尋頁面: https://www.scampiphilly.com/menu
+2025-11-04 19:10:09,815 - INFO - 搜尋頁面: https://www.scampiphilly.com/contact
+2025-11-04 19:10:23,750 - INFO - 搜尋頁面: https://www.scampiphilly.com/contact-us
+2025-11-04 19:10:31,360 - INFO - 搜尋頁面: https://www.scampiphilly.com/contact.html
+2025-11-04 19:10:37,852 - INFO - 搜尋頁面: https://www.scampiphilly.com/contact.php
+2025-11-04 19:10:44,178 - INFO - 搜尋頁面: https://www.scampiphilly.com/about
+2025-11-04 19:10:59,506 - WARNING - 請求超時: https://www.scampiphilly.com/about
+2025-11-04 19:11:01,543 - INFO - 搜尋頁面: https://www.scampiphilly.com/about-us
+2025-11-04 19:11:24,047 - INFO - 搜尋頁面: https://www.scampiphilly.com/about.html
+2025-11-04 19:11:34,054 - INFO - 搜尋頁面: https://www.scampiphilly.com/contactinfo
+2025-11-04 19:11:41,914 - INFO - 搜尋頁面: https://www.scampiphilly.com/contact-info
+2025-11-04 19:11:48,786 - INFO - 搜尋頁面: https://www.scampiphilly.com/get-in-touch
+2025-11-04 19:11:56,307 - INFO - 搜尋頁面: https://www.scampiphilly.com/reach-us
+2025-11-04 19:12:03,155 - INFO - 搜尋頁面: https://www.scampiphilly.com/reachout
+2025-11-04 19:12:09,271 - INFO - 搜尋頁面: https://www.scampiphilly.com/info
+2025-11-04 19:12:15,908 - INFO - 搜尋頁面: https://www.scampiphilly.com/information
+2025-11-04 19:12:23,960 - WARNING - ⚠️ 未找到 email
+2025-11-04 19:12:24,112 - INFO - 
+處理進度: 3/20
+2025-11-04 19:12:24,113 - INFO - 餐廳名稱: June BYOB
+2025-11-04 19:12:24,114 - INFO - 處理餐廳: June BYOB | Website: http://www.junebyob.com/
+2025-11-04 19:12:24,115 - INFO - 搜尋頁面: http://www.junebyob.com/
+2025-11-04 19:12:34,911 - INFO - 在 http://www.junebyob.com/ 找到 1 個 email
+2025-11-04 19:12:34,912 - INFO - 搜尋頁面: http://www.junebyob.com/contact
+2025-11-04 19:12:42,087 - INFO - 在 http://www.junebyob.com/contact 找到 1 個 email
+2025-11-04 19:12:42,094 - INFO - ✅ 找到 email: info@junebyob.com
+2025-11-04 19:12:42,096 - INFO - 
+處理進度: 4/20
+2025-11-04 19:12:42,097 - INFO - 餐廳名稱: Zeppoli
+2025-11-04 19:12:42,098 - INFO - 處理餐廳: Zeppoli | Website: http://www.zeppolirestaurant.com/
+2025-11-04 19:12:42,098 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/
+2025-11-04 19:12:55,879 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/contact
+2025-11-04 19:13:03,336 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/contact-us
+2025-11-04 19:13:11,732 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/contact.html
+2025-11-04 19:13:20,657 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/contact.php
+2025-11-04 19:13:23,348 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/about
+2025-11-04 19:13:30,767 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/about-us
+2025-11-04 19:13:37,694 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/about.html
+2025-11-04 19:13:44,799 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/contactinfo
+2025-11-04 19:13:52,060 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/contact-info
+2025-11-04 19:13:59,884 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/get-in-touch
+2025-11-04 19:14:06,620 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/reach-us
+2025-11-04 19:14:14,207 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/reachout
+2025-11-04 19:14:21,650 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/info
+2025-11-04 19:14:28,489 - INFO - 搜尋頁面: http://www.zeppolirestaurant.com/information
+2025-11-04 19:14:35,872 - WARNING - ⚠️ 未找到 email
+2025-11-04 19:14:35,878 - INFO - 
+處理進度: 5/20
+2025-11-04 19:14:35,879 - INFO - 餐廳名稱: Alyan’s Middle Eastern & Mediterranean Restaurant
+2025-11-04 19:14:35,883 - INFO - 
+處理進度: 6/20
+2025-11-04 19:14:35,891 - INFO - 餐廳名稱: Casablanca Mediterranean Grill
+2025-11-04 19:14:35,893 - INFO - 處理餐廳: Casablanca Mediterranean Grill | Website: http://www.casablanca-grill.com/
+2025-11-04 19:14:35,895 - INFO - 搜尋頁面: http://www.casablanca-grill.com/
+2025-11-04 19:14:43,046 - INFO - 搜尋頁面: http://www.casablanca-grill.com/contact
+2025-11-04 19:14:47,527 - INFO - 搜尋頁面: http://www.casablanca-grill.com/contact-us
+2025-11-04 19:14:50,131 - INFO - 在 http://www.casablanca-grill.com/contact-us 找到 1 個 email
+2025-11-04 19:14:50,137 - INFO - ✅ 找到 email: casablancamg947@gmail.com
+2025-11-04 19:14:50,139 - INFO - 
+處理進度: 7/20
+2025-11-04 19:14:50,140 - INFO - 餐廳名稱: Fiorino
+2025-11-04 19:14:50,140 - INFO - 處理餐廳: Fiorino | Website: https://www.fiorino.us/
+2025-11-04 19:14:50,141 - INFO - 搜尋頁面: https://www.fiorino.us/
+2025-11-04 19:14:59,935 - INFO - 搜尋頁面: https://www.fiorino.us/contact
+2025-11-04 19:15:08,720 - INFO - 搜尋頁面: https://www.fiorino.us/contact-us
+2025-11-04 19:15:13,319 - INFO - 搜尋頁面: https://www.fiorino.us/contact.html
+2025-11-04 19:15:17,880 - INFO - 搜尋頁面: https://www.fiorino.us/contact.php
+2025-11-04 19:15:25,886 - INFO - 搜尋頁面: https://www.fiorino.us/about
+2025-11-04 19:15:30,681 - INFO - 搜尋頁面: https://www.fiorino.us/about-us
+2025-11-04 19:15:40,574 - INFO - 搜尋頁面: https://www.fiorino.us/about.html
+2025-11-04 19:15:46,347 - INFO - 搜尋頁面: https://www.fiorino.us/contactinfo
+2025-11-04 19:15:51,096 - INFO - 搜尋頁面: https://www.fiorino.us/contact-info
+2025-11-04 19:15:56,475 - INFO - 搜尋頁面: https://www.fiorino.us/get-in-touch
+2025-11-04 19:16:01,404 - INFO - 搜尋頁面: https://www.fiorino.us/reach-us
+2025-11-04 19:16:06,559 - INFO - 搜尋頁面: https://www.fiorino.us/reachout
+2025-11-04 19:16:10,808 - INFO - 搜尋頁面: https://www.fiorino.us/info
+2025-11-04 19:16:15,278 - INFO - 搜尋頁面: https://www.fiorino.us/information
+2025-11-04 19:16:19,363 - WARNING - ⚠️ 未找到 email
+2025-11-04 19:16:19,370 - INFO - 
+處理進度: 8/20
+2025-11-04 19:16:19,371 - INFO - 餐廳名稱: Han dynasty (manayunk)
+2025-11-04 19:16:19,372 - INFO - 處理餐廳: Han dynasty (manayunk) | Website: http://www.handynasty.net/
+2025-11-04 19:16:19,374 - INFO - 搜尋頁面: http://www.handynasty.net/
+2025-11-04 19:16:25,927 - INFO - 搜尋頁面: http://www.handynasty.net/contact
+2025-11-04 19:16:33,236 - INFO - 搜尋頁面: http://www.handynasty.net/contact-us
+2025-11-04 19:16:38,184 - INFO - 搜尋頁面: http://www.handynasty.net/contact.html
+2025-11-04 19:16:43,477 - INFO - 搜尋頁面: http://www.handynasty.net/contact.php
+2025-11-04 19:16:48,652 - INFO - 搜尋頁面: http://www.handynasty.net/about
+2025-11-04 19:16:53,499 - INFO - 搜尋頁面: http://www.handynasty.net/about-us
+2025-11-04 19:17:01,347 - INFO - 搜尋頁面: http://www.handynasty.net/about.html
+2025-11-04 19:17:06,461 - INFO - 搜尋頁面: http://www.handynasty.net/contactinfo
+2025-11-04 19:17:11,543 - INFO - 搜尋頁面: http://www.handynasty.net/contact-info
+2025-11-04 19:17:16,785 - INFO - 搜尋頁面: http://www.handynasty.net/get-in-touch
+2025-11-04 19:17:22,090 - INFO - 搜尋頁面: http://www.handynasty.net/reach-us
+2025-11-04 19:17:27,240 - INFO - 搜尋頁面: http://www.handynasty.net/reachout
+2025-11-04 19:17:32,366 - INFO - 搜尋頁面: http://www.handynasty.net/info
+2025-11-04 19:17:37,670 - INFO - 搜尋頁面: http://www.handynasty.net/information
+2025-11-04 19:17:42,859 - WARNING - ⚠️ 未找到 email
+2025-11-04 19:17:42,862 - INFO - 
+處理進度: 9/20
+2025-11-04 19:17:42,863 - INFO - 餐廳名稱: White yak
+2025-11-04 19:17:42,864 - INFO - 處理餐廳: White yak | Website: https://whiteyakrestaurant.com/?utm_source=google
+2025-11-04 19:17:42,865 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/?utm_source=google
+2025-11-04 19:17:49,583 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/contact
+2025-11-04 19:17:55,987 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/contact-us
+2025-11-04 19:18:02,794 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/contact.html
+2025-11-04 19:18:09,481 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/contact.php
+2025-11-04 19:18:16,583 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/about
+2025-11-04 19:18:23,461 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/about-us
+2025-11-04 19:18:30,374 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/about.html
+2025-11-04 19:18:37,528 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/contactinfo
+2025-11-04 19:18:44,513 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/contact-info
+2025-11-04 19:18:51,469 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/get-in-touch
+2025-11-04 19:18:59,026 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/reach-us
+2025-11-04 19:19:06,084 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/reachout
+2025-11-04 19:19:13,969 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/info
+2025-11-04 19:19:21,156 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/information
+2025-11-04 19:19:29,590 - WARNING - ⚠️ 未找到 email
+2025-11-04 19:19:29,638 - INFO - 
+處理進度: 10/20
+2025-11-04 19:19:29,639 - INFO - 餐廳名稱: Vientiane Bistro
+2025-11-04 19:19:29,639 - INFO - 處理餐廳: Vientiane Bistro | Website: https://www.vientianebistro.com/
+2025-11-04 19:19:29,641 - INFO - 搜尋頁面: https://www.vientianebistro.com/
+2025-11-04 19:19:35,299 - INFO - 在 https://www.vientianebistro.com/ 找到 1 個 email
+2025-11-04 19:19:35,300 - INFO - 搜尋頁面: https://www.vientianebistro.com/contact
+2025-11-04 19:19:41,888 - INFO - 搜尋頁面: https://www.vientianebistro.com/contact-us
+2025-11-04 19:19:46,424 - INFO - 在 https://www.vientianebistro.com/contact-us 找到 1 個 email
+2025-11-04 19:19:46,436 - INFO - ✅ 找到 email: astigma@astigmatic.com
+2025-11-04 19:19:46,437 - INFO - 
+進度摘要: 成功 3, 無 email 5, 無 website 2, 錯誤 0
+2025-11-04 19:19:46,441 - INFO - 
+處理進度: 11/20
+2025-11-04 19:19:46,442 - INFO - 餐廳名稱: Fiorino
+2025-11-04 19:19:46,442 - INFO - 處理餐廳: Fiorino | Website: https://www.fiorino.us/
+2025-11-04 19:19:46,443 - INFO - 搜尋頁面: https://www.fiorino.us/
+2025-11-04 19:19:55,843 - INFO - 搜尋頁面: https://www.fiorino.us/contact
+2025-11-04 19:20:03,916 - INFO - 搜尋頁面: https://www.fiorino.us/contact-us
+2025-11-04 19:20:08,814 - INFO - 搜尋頁面: https://www.fiorino.us/contact.html
+2025-11-04 19:20:13,122 - INFO - 搜尋頁面: https://www.fiorino.us/contact.php
+2025-11-04 19:20:21,203 - INFO - 搜尋頁面: https://www.fiorino.us/about
+2025-11-04 19:20:25,370 - INFO - 搜尋頁面: https://www.fiorino.us/about-us
+2025-11-04 19:20:31,070 - INFO - 搜尋頁面: https://www.fiorino.us/about.html
+2025-11-04 19:20:35,927 - INFO - 搜尋頁面: https://www.fiorino.us/contactinfo
+2025-11-04 19:20:40,434 - INFO - 搜尋頁面: https://www.fiorino.us/contact-info
+2025-11-04 19:20:44,576 - INFO - 搜尋頁面: https://www.fiorino.us/get-in-touch
+2025-11-04 19:20:48,930 - INFO - 搜尋頁面: https://www.fiorino.us/reach-us
+2025-11-04 19:20:53,040 - INFO - 搜尋頁面: https://www.fiorino.us/reachout
+2025-11-04 19:20:57,448 - INFO - 搜尋頁面: https://www.fiorino.us/info
+2025-11-04 19:21:02,478 - INFO - 搜尋頁面: https://www.fiorino.us/information
+2025-11-04 19:21:07,131 - WARNING - ⚠️ 未找到 email
+2025-11-04 19:21:07,134 - INFO - 
+處理進度: 12/20
+2025-11-04 19:21:07,135 - INFO - 餐廳名稱: Core de roma
+2025-11-04 19:21:07,136 - INFO - 處理餐廳: Core de roma | Website: https://www.corederomabelmont.com/
+2025-11-04 19:21:07,136 - INFO - 搜尋頁面: https://www.corederomabelmont.com/
+2025-11-04 19:21:10,940 - INFO - 在 https://www.corederomabelmont.com/ 找到 13 個 email
+2025-11-04 19:21:10,941 - INFO - 搜尋頁面: https://www.corederomabelmont.com/contact
+2025-11-04 19:21:15,040 - INFO - 搜尋頁面: https://www.corederomabelmont.com/contact-us
+2025-11-04 19:21:19,135 - INFO - 搜尋頁面: https://www.corederomabelmont.com/contact.html
+2025-11-04 19:21:26,763 - INFO - 搜尋頁面: https://www.corederomabelmont.com/contact.php
+2025-11-04 19:21:34,473 - INFO - 搜尋頁面: https://www.corederomabelmont.com/about
+2025-11-04 19:21:38,826 - INFO - 搜尋頁面: https://www.corederomabelmont.com/about-us
+2025-11-04 19:21:43,363 - INFO - 搜尋頁面: https://www.corederomabelmont.com/about.html
+2025-11-04 19:21:50,776 - INFO - 搜尋頁面: https://www.corederomabelmont.com/contactinfo
+2025-11-04 19:21:55,057 - INFO - 搜尋頁面: https://www.corederomabelmont.com/contact-info
+2025-11-04 19:22:00,275 - INFO - 搜尋頁面: https://www.corederomabelmont.com/get-in-touch
+2025-11-04 19:22:05,170 - INFO - 搜尋頁面: https://www.corederomabelmont.com/reach-us
+2025-11-04 19:22:09,884 - INFO - 搜尋頁面: https://www.corederomabelmont.com/reachout
+2025-11-04 19:22:13,841 - INFO - 搜尋頁面: https://www.corederomabelmont.com/info
+2025-11-04 19:22:19,774 - INFO - 搜尋頁面: https://www.corederomabelmont.com/information
+2025-11-04 19:22:23,768 - INFO - ✅ 找到 email: 271e9fa3230b4eec94b02bf95780f5f2@sentry.wixpress.com
+2025-11-04 19:22:23,782 - INFO - 
+處理進度: 13/20
+2025-11-04 19:22:23,784 - INFO - 餐廳名稱: Yanoko restaurant
+2025-11-04 19:22:23,785 - INFO - 處理餐廳: Yanoko restaurant | Website: https://theyanako.com/
+2025-11-04 19:22:23,786 - INFO - 搜尋頁面: https://theyanako.com/
+2025-11-04 19:22:27,576 - WARNING - 請求錯誤 https://theyanako.com/: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:22:31,416 - WARNING - 請求錯誤 https://theyanako.com/: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:22:32,874 - INFO - 搜尋頁面: https://theyanako.com/contact
+2025-11-04 19:22:35,659 - WARNING - 請求錯誤 https://theyanako.com/contact: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:22:40,448 - WARNING - 請求錯誤 https://theyanako.com/contact: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:22:41,506 - INFO - 搜尋頁面: https://theyanako.com/contact-us
+2025-11-04 19:22:45,142 - WARNING - 請求錯誤 https://theyanako.com/contact-us: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:22:50,008 - WARNING - 請求錯誤 https://theyanako.com/contact-us: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:22:51,416 - INFO - 搜尋頁面: https://theyanako.com/contact.html
+2025-11-04 19:22:54,783 - WARNING - 請求錯誤 https://theyanako.com/contact.html: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:01,644 - WARNING - 請求錯誤 https://theyanako.com/contact.html: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:03,252 - INFO - 搜尋頁面: https://theyanako.com/contact.php
+2025-11-04 19:23:07,892 - WARNING - 請求錯誤 https://theyanako.com/contact.php: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:11,837 - WARNING - 請求錯誤 https://theyanako.com/contact.php: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:13,617 - INFO - 搜尋頁面: https://theyanako.com/about
+2025-11-04 19:23:16,478 - WARNING - 請求錯誤 https://theyanako.com/about: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:20,880 - WARNING - 請求錯誤 https://theyanako.com/about: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:21,945 - INFO - 搜尋頁面: https://theyanako.com/about-us
+2025-11-04 19:23:24,868 - WARNING - 請求錯誤 https://theyanako.com/about-us: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:28,772 - WARNING - 請求錯誤 https://theyanako.com/about-us: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:30,207 - INFO - 搜尋頁面: https://theyanako.com/about.html
+2025-11-04 19:23:33,173 - WARNING - 請求錯誤 https://theyanako.com/about.html: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:36,983 - WARNING - 請求錯誤 https://theyanako.com/about.html: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:38,891 - INFO - 搜尋頁面: https://theyanako.com/contactinfo
+2025-11-04 19:23:41,949 - WARNING - 請求錯誤 https://theyanako.com/contactinfo: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:45,968 - WARNING - 請求錯誤 https://theyanako.com/contactinfo: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:47,118 - INFO - 搜尋頁面: https://theyanako.com/contact-info
+2025-11-04 19:23:50,086 - WARNING - 請求錯誤 https://theyanako.com/contact-info: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:54,318 - WARNING - 請求錯誤 https://theyanako.com/contact-info: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:23:55,811 - INFO - 搜尋頁面: https://theyanako.com/get-in-touch
+2025-11-04 19:23:59,416 - WARNING - 請求錯誤 https://theyanako.com/get-in-touch: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:24:03,757 - WARNING - 請求錯誤 https://theyanako.com/get-in-touch: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:24:05,308 - INFO - 搜尋頁面: https://theyanako.com/reach-us
+2025-11-04 19:24:08,976 - WARNING - 請求錯誤 https://theyanako.com/reach-us: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:24:12,829 - WARNING - 請求錯誤 https://theyanako.com/reach-us: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:24:13,986 - INFO - 搜尋頁面: https://theyanako.com/reachout
+2025-11-04 19:24:17,013 - WARNING - 請求錯誤 https://theyanako.com/reachout: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:24:20,901 - WARNING - 請求錯誤 https://theyanako.com/reachout: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:24:22,849 - INFO - 搜尋頁面: https://theyanako.com/info
+2025-11-04 19:24:25,856 - WARNING - 請求錯誤 https://theyanako.com/info: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:24:29,710 - WARNING - 請求錯誤 https://theyanako.com/info: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:24:31,683 - INFO - 搜尋頁面: https://theyanako.com/information
+2025-11-04 19:24:34,624 - WARNING - 請求錯誤 https://theyanako.com/information: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:24:38,463 - WARNING - 請求錯誤 https://theyanako.com/information: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:24:40,273 - WARNING - ⚠️ 未找到 email
+2025-11-04 19:24:40,276 - INFO - 
+處理進度: 14/20
+2025-11-04 19:24:40,277 - INFO - 餐廳名稱: Chabba Thai bistro
+2025-11-04 19:24:40,278 - INFO - 處理餐廳: Chabba Thai bistro | Website: https://chabaathai.com/
+2025-11-04 19:24:40,280 - INFO - 搜尋頁面: https://chabaathai.com/
+2025-11-04 19:24:44,243 - WARNING - 請求錯誤 https://chabaathai.com/: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:24:49,432 - WARNING - 請求錯誤 https://chabaathai.com/: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:24:51,017 - INFO - 搜尋頁面: https://chabaathai.com/contact
+2025-11-04 19:24:55,585 - WARNING - 請求錯誤 https://chabaathai.com/contact: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:00,121 - WARNING - 請求錯誤 https://chabaathai.com/contact: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:01,164 - INFO - 搜尋頁面: https://chabaathai.com/contact-us
+2025-11-04 19:25:04,201 - WARNING - 請求錯誤 https://chabaathai.com/contact-us: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:09,890 - WARNING - 請求錯誤 https://chabaathai.com/contact-us: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:11,178 - INFO - 搜尋頁面: https://chabaathai.com/contact.html
+2025-11-04 19:25:14,930 - WARNING - 請求錯誤 https://chabaathai.com/contact.html: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:19,208 - WARNING - 請求錯誤 https://chabaathai.com/contact.html: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:20,806 - INFO - 搜尋頁面: https://chabaathai.com/contact.php
+2025-11-04 19:25:24,067 - WARNING - 請求錯誤 https://chabaathai.com/contact.php: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:29,120 - WARNING - 請求錯誤 https://chabaathai.com/contact.php: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:30,598 - INFO - 搜尋頁面: https://chabaathai.com/about
+2025-11-04 19:25:33,915 - WARNING - 請求錯誤 https://chabaathai.com/about: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:38,114 - WARNING - 請求錯誤 https://chabaathai.com/about: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:39,318 - INFO - 搜尋頁面: https://chabaathai.com/about-us
+2025-11-04 19:25:42,766 - WARNING - 請求錯誤 https://chabaathai.com/about-us: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:47,082 - WARNING - 請求錯誤 https://chabaathai.com/about-us: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:48,581 - INFO - 搜尋頁面: https://chabaathai.com/about.html
+2025-11-04 19:25:51,872 - WARNING - 請求錯誤 https://chabaathai.com/about.html: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:55,828 - WARNING - 請求錯誤 https://chabaathai.com/about.html: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:25:57,294 - INFO - 搜尋頁面: https://chabaathai.com/contactinfo
+2025-11-04 19:26:05,876 - WARNING - 請求錯誤 https://chabaathai.com/contactinfo: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:26:09,990 - WARNING - 請求錯誤 https://chabaathai.com/contactinfo: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:26:11,208 - INFO - 搜尋頁面: https://chabaathai.com/contact-info
+2025-11-04 19:26:17,944 - WARNING - 請求錯誤 https://chabaathai.com/contact-info: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:26:22,892 - WARNING - 請求錯誤 https://chabaathai.com/contact-info: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:26:24,839 - INFO - 搜尋頁面: https://chabaathai.com/get-in-touch
+2025-11-04 19:26:27,981 - WARNING - 請求錯誤 https://chabaathai.com/get-in-touch: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:26:33,677 - WARNING - 請求錯誤 https://chabaathai.com/get-in-touch: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:26:35,030 - INFO - 搜尋頁面: https://chabaathai.com/reach-us
+2025-11-04 19:26:37,994 - WARNING - 請求錯誤 https://chabaathai.com/reach-us: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:26:44,173 - WARNING - 請求錯誤 https://chabaathai.com/reach-us: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:26:45,285 - INFO - 搜尋頁面: https://chabaathai.com/reachout
+2025-11-04 19:26:51,954 - WARNING - 請求錯誤 https://chabaathai.com/reachout: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:26:57,587 - WARNING - 請求錯誤 https://chabaathai.com/reachout: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:26:59,483 - INFO - 搜尋頁面: https://chabaathai.com/info
+2025-11-04 19:27:03,309 - WARNING - 請求錯誤 https://chabaathai.com/info: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:27:07,717 - WARNING - 請求錯誤 https://chabaathai.com/info: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:27:08,795 - INFO - 搜尋頁面: https://chabaathai.com/information
+2025-11-04 19:27:12,015 - WARNING - 請求錯誤 https://chabaathai.com/information: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:27:16,377 - WARNING - 請求錯誤 https://chabaathai.com/information: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:27:18,171 - WARNING - ⚠️ 未找到 email
+2025-11-04 19:27:18,201 - INFO - 
+處理進度: 15/20
+2025-11-04 19:27:18,202 - INFO - 餐廳名稱: Apricot Stone
+2025-11-04 19:27:18,203 - INFO - 處理餐廳: Apricot Stone | Website: http://www.apricotstonephilly.com/
+2025-11-04 19:27:18,204 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/
+2025-11-04 19:27:28,714 - INFO - 在 http://www.apricotstonephilly.com/ 找到 1 個 email
+2025-11-04 19:27:28,716 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/contact
+2025-11-04 19:27:37,392 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/contact-us
+2025-11-04 19:27:46,139 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/contact.html
+2025-11-04 19:27:58,789 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/contact.php
+2025-11-04 19:28:10,802 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/about
+2025-11-04 19:28:21,056 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/about-us
+2025-11-04 19:28:31,322 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/about.html
+2025-11-04 19:28:39,917 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/contactinfo
+2025-11-04 19:28:49,462 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/contact-info
+2025-11-04 19:28:59,427 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/get-in-touch
+2025-11-04 19:29:09,168 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/reach-us
+2025-11-04 19:29:18,490 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/reachout
+2025-11-04 19:29:27,135 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/info
+2025-11-04 19:29:41,979 - INFO - 搜尋頁面: http://www.apricotstonephilly.com/information
+2025-11-04 19:29:51,411 - INFO - ✅ 找到 email: info@apricotstonephilly.com
+2025-11-04 19:29:51,500 - INFO - 
+處理進度: 16/20
+2025-11-04 19:29:51,501 - INFO - 餐廳名稱: Sakartvelo
+2025-11-04 19:29:51,501 - INFO - 處理餐廳: Sakartvelo | Website: https://sakartvelopa.com/
+2025-11-04 19:29:51,502 - INFO - 搜尋頁面: https://sakartvelopa.com/
+2025-11-04 19:29:59,081 - INFO - 在 https://sakartvelopa.com/ 找到 1 個 email
+2025-11-04 19:29:59,082 - INFO - 搜尋頁面: https://sakartvelopa.com/contact
+2025-11-04 19:30:09,535 - INFO - 搜尋頁面: https://sakartvelopa.com/contact-us
+2025-11-04 19:30:15,067 - INFO - 搜尋頁面: https://sakartvelopa.com/contact.html
+2025-11-04 19:30:20,818 - INFO - 搜尋頁面: https://sakartvelopa.com/contact.php
+2025-11-04 19:30:28,599 - INFO - 搜尋頁面: https://sakartvelopa.com/about
+2025-11-04 19:30:37,962 - INFO - 搜尋頁面: https://sakartvelopa.com/about-us
+2025-11-04 19:30:43,180 - INFO - 搜尋頁面: https://sakartvelopa.com/about.html
+2025-11-04 19:30:49,025 - INFO - 搜尋頁面: https://sakartvelopa.com/contactinfo
+2025-11-04 19:30:54,846 - INFO - 搜尋頁面: https://sakartvelopa.com/contact-info
+2025-11-04 19:31:01,338 - WARNING - 請求錯誤 https://sakartvelopa.com/contact-info: ('Connection aborted.', RemoteDisconnected('Remote
+2025-11-04 19:31:07,912 - INFO - 搜尋頁面: https://sakartvelopa.com/get-in-touch
+2025-11-04 19:31:17,879 - INFO - 搜尋頁面: https://sakartvelopa.com/reach-us
+2025-11-04 19:31:24,601 - INFO - 搜尋頁面: https://sakartvelopa.com/reachout
+2025-11-04 19:31:30,214 - INFO - 搜尋頁面: https://sakartvelopa.com/info
+2025-11-04 19:31:35,549 - INFO - 搜尋頁面: https://sakartvelopa.com/information
+2025-11-04 19:31:40,552 - INFO - ✅ 找到 email: test@email.com
+2025-11-04 19:31:40,570 - INFO - 
+處理進度: 17/20
+2025-11-04 19:31:40,571 - INFO - 餐廳名稱: Yamitsuki
+2025-11-04 19:31:40,572 - INFO - 處理餐廳: Yamitsuki | Website: https://yamitsuki1028.wixsite.com/yamitsukiramen
+2025-11-04 19:31:40,574 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/yamitsukiramen
+2025-11-04 19:31:43,266 - INFO - 在 https://yamitsuki1028.wixsite.com/yamitsukiramen 找到 2 個 email
+2025-11-04 19:31:43,267 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/contact
+2025-11-04 19:31:47,442 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/contact-us
+2025-11-04 19:31:51,358 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/contact.html
+2025-11-04 19:31:55,390 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/contact.php
+2025-11-04 19:31:59,308 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/about
+2025-11-04 19:32:04,699 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/about-us
+2025-11-04 19:32:10,348 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/about.html
+2025-11-04 19:32:14,085 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/contactinfo
+2025-11-04 19:32:19,106 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/contact-info
+2025-11-04 19:32:22,586 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/get-in-touch
+2025-11-04 19:32:26,092 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/reach-us
+2025-11-04 19:32:29,733 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/reachout
+2025-11-04 19:32:33,235 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/info
+2025-11-04 19:32:37,326 - INFO - 搜尋頁面: https://yamitsuki1028.wixsite.com/information
+2025-11-04 19:32:41,309 - INFO - ✅ 找到 email: yamitsuki1028@gmail.com
+2025-11-04 19:32:41,311 - INFO - 
+處理進度: 18/20
+2025-11-04 19:32:41,312 - INFO - 餐廳名稱: La Nonna
+2025-11-04 19:32:41,312 - INFO - 處理餐廳: La Nonna | Website: http://ristorantelanonna.com/
+2025-11-04 19:32:41,313 - INFO - 搜尋頁面: http://ristorantelanonna.com/
+2025-11-04 19:32:46,645 - INFO - 在 http://ristorantelanonna.com/ 找到 2 個 email
+2025-11-04 19:32:46,646 - INFO - 搜尋頁面: http://ristorantelanonna.com/contact
+2025-11-04 19:32:52,735 - INFO - 在 http://ristorantelanonna.com/contact 找到 2 個 email
+2025-11-04 19:32:52,742 - INFO - ✅ 找到 email: 8eb368c655b84e029ed79ad7a5c1718e@sentry.wixpress.com
+2025-11-04 19:32:52,746 - INFO - 
+處理進度: 19/20
+2025-11-04 19:32:52,747 - INFO - 餐廳名稱: White Yak
+2025-11-04 19:32:52,747 - INFO - 處理餐廳: White Yak | Website: https://whiteyakrestaurant.com/?utm_source=google
+2025-11-04 19:32:52,748 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/?utm_source=google
+2025-11-04 19:33:01,135 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/contact
+2025-11-04 19:33:08,670 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/contact-us
+2025-11-04 19:33:16,048 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/contact.html
+2025-11-04 19:33:22,855 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/contact.php
+2025-11-04 19:33:29,468 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/about
+2025-11-04 19:33:36,136 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/about-us
+2025-11-04 19:33:43,248 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/about.html
+2025-11-04 19:33:50,166 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/contactinfo
+2025-11-04 19:33:57,317 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/contact-info
+2025-11-04 19:34:03,910 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/get-in-touch
+2025-11-04 19:34:10,631 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/reach-us
+2025-11-04 19:34:17,337 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/reachout
+2025-11-04 19:34:24,342 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/info
+2025-11-04 19:34:31,606 - INFO - 搜尋頁面: https://whiteyakrestaurant.com/information
+2025-11-04 19:34:38,949 - WARNING - ⚠️ 未找到 email
+2025-11-04 19:34:38,954 - INFO - 
+處理進度: 20/20
+2025-11-04 19:34:38,955 - INFO - 餐廳名稱: Burrata
+2025-11-04 19:34:38,959 - INFO - 處理餐廳: Burrata | Website: http://www.burrataphilly.com/
+2025-11-04 19:34:38,961 - INFO - 搜尋頁面: http://www.burrataphilly.com/
+2025-11-04 19:34:42,050 - INFO - 在 http://www.burrataphilly.com/ 找到 2 個 email
+2025-11-04 19:34:42,052 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact
+2025-11-04 19:34:45,965 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact-us
+2025-11-04 19:34:50,350 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact.html
+2025-11-04 19:34:53,884 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact.php
+2025-11-04 19:34:57,400 - INFO - 搜尋頁面: http://www.burrataphilly.com/about
+2025-11-04 19:35:01,047 - INFO - 搜尋頁面: http://www.burrataphilly.com/about-us
+2025-11-04 19:35:05,423 - INFO - 搜尋頁面: http://www.burrataphilly.com/about.html
+2025-11-04 19:35:09,570 - INFO - 搜尋頁面: http://www.burrataphilly.com/contactinfo
+2025-11-04 19:35:13,316 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact-info
+2025-11-04 19:35:17,852 - INFO - 搜尋頁面: http://www.burrataphilly.com/get-in-touch
+2025-11-04 19:35:21,988 - INFO - 搜尋頁面: http://www.burrataphilly.com/reach-us
+2025-11-04 19:35:26,103 - INFO - 搜尋頁面: http://www.burrataphilly.com/reachout
+2025-11-04 19:35:29,689 - INFO - 搜尋頁面: http://www.burrataphilly.com/info
+2025-11-04 19:35:34,596 - INFO - 搜尋頁面: http://www.burrataphilly.com/information
+2025-11-04 19:35:38,119 - INFO - ✅ 找到 email: burrataphilly@gmail.com
+2025-11-04 19:35:38,121 - INFO - 
+進度摘要: 成功 9, 無 email 9, 無 website 2, 錯誤 0
+2025-11-04 19:35:38,125 - INFO - 
+展開多個 email 的餐廳資料...
+2025-11-04 19:35:38,190 - INFO - 展開餐廳 'Core de roma': 13 個 email
+2025-11-04 19:35:38,193 - INFO - 展開餐廳 'Yamitsuki': 2 個 email
+2025-11-04 19:35:38,194 - INFO - 展開餐廳 'La Nonna': 2 個 email
+2025-11-04 19:35:38,196 - INFO - 展開餐廳 'Burrata': 2 個 email
+2025-11-04 19:35:38,315 - INFO - 新增 15 行（多個 email 的餐廳）
+2025-11-04 19:35:38,608 - INFO - 
+結果已儲存至: data\Philly BYOB Restaurant google form_with_websites_20251104_190915_with_emails_20251104_193538.xlsx
+2025-11-04 19:35:38,609 - INFO - 
+============================================================
+2025-11-04 19:35:38,610 - INFO - 處理完成統計
+2025-11-04 19:35:38,611 - INFO - ============================================================
+2025-11-04 19:35:38,611 - INFO - 總處理數: 20
+2025-11-04 19:35:38,612 - INFO - 成功取得 email: 9
+2025-11-04 19:35:38,612 - INFO - 有 website 但無 email: 9
+2025-11-04 19:35:38,613 - INFO - 無 website: 2
+2025-11-04 19:35:38,613 - INFO - 處理失敗: 0
+2025-11-04 19:35:38,614 - INFO - 成功率: 45.0%
+2025-11-04 19:35:38,614 - INFO - ============================================================
