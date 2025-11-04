@@ -1,10 +1,43 @@
 # 🍷 BYOB 專案工作規劃與進度追蹤
 
-## 📅 當前日期：2025年11月3日
+## 📅 當前日期：2025年11月4日
 
 ---
 
-## ✅ 今日（2025-11-03）完成工作總結
+## ✅ 今日（2025-11-04）完成工作總結
+
+### 1) 餐廳 Email 搜尋系統建立完成 ⭐⭐⭐
+- **兩階段 Email 搜尋系統**：
+  - **步驟 1**：`philly_email_searcher.py` - 使用 Google Places API 搜尋餐廳並取得 website
+    - 輸入：Excel 檔案（Name, Add, Phone 欄位）
+    - 處理：使用「餐廳名稱 + Philadelphia」搜尋 Google Places
+    - 輸出：Excel 檔案（新增 Google_Website, Google_Place_ID, Google_Place_Name, Google_Address, Search_Status 欄位）
+    - 功能：自動重試機制、API 限制處理、進度顯示、完整日誌記錄
+  - **步驟 2**：`philly_email_extractor.py` - 從 website 搜尋 email 地址
+    - 輸入：步驟 1 的輸出 Excel（包含 Google_Website 欄位）
+    - 處理：搜尋多個常見頁面（首頁、聯絡頁面等），提取 email
+    - 輸出：Excel 檔案（新增 Email, Email_Status, Email_Message, Email_All_Found 欄位）
+    - 功能：智能 email 選擇、多個 email 自動展開為多行、email 驗證與過濾
+- **檔案清理**：
+  - 刪除不需要的檔案（Yelp、TripAdvisor 爬蟲等）
+  - 保留 Google Places 相關檔案
+  - 建立清晰的資料夾結構
+- **測試結果**：
+  - **檔案 1**：`Philly BYOB Restaurant.xlsx`（42 家餐廳）
+    - 步驟 1：成功取得 website 40 家（95.2%）
+    - 步驟 2：成功取得 email 4 家（測試 5 家，80% 成功率）
+  - **檔案 2**：`Philly BYOB Restaurant google form.xlsx`（20 家餐廳）
+    - 步驟 1：成功取得 website 18 家（90%）
+    - 步驟 2：成功取得 email 9 家（45%），展開後共 35 行（包含多個 email 的餐廳）
+- **修改檔案**：
+  - `philly_yelp_crawler/philly_email_searcher.py`：新建
+  - `philly_yelp_crawler/philly_email_extractor.py`：新建
+  - `philly_yelp_crawler/README.md`：更新使用說明
+  - `philly_yelp_crawler/google_config.py`：保留 API 設定
+
+---
+
+## ✅ 昨日（2025-11-03）完成工作總結
 
 ### 1) 驗證徽章系統實作 ⭐⭐
 - **前台顯示系統**：
@@ -52,38 +85,55 @@
 
 ---
 
-## 🗓️ 明日（2025-11-04）工作規劃
+## 🗓️ 明日（2025-11-05）工作規劃
 
 ### 🎯 核心任務：餐廳聯絡與資料驗證機制
 
-### 1) 搜尋餐廳 Email ⭐⭐
-- **目標**：建立自動化或半自動化系統，收集餐廳聯絡 email
-- **實作方式**：
-  - 檢查現有資料庫中是否已有 email 欄位
-  - 設計餐廳 email 搜尋邏輯（可能來源：餐廳官網、Google Business、Yelp、其他公開資訊）
-  - 考慮使用 API 或爬蟲工具輔助
-  - 建立 email 驗證機制（格式驗證、發送測試郵件）
-- **預期成果**：
-  - 完成 email 搜尋功能或工具
-  - 建立 email 資料庫欄位（如尚未存在）
-
-### 2) 寄給餐廳的 Email 模板 ⭐⭐
+### 1) 寄給餐廳的 Email 模板 ⭐⭐
 - **目標**：設計專業、友善的 email 模板，用於聯絡餐廳老闆驗證資料
 - **實作內容**：
   - **Email 主題設計**：吸引人且專業的標題
+    - 範例：「[Philadelphia BYOB] Verify Your Restaurant Information」或「Your Restaurant is Featured on Philadelphia BYOB Guide」
   - **Email 內容結構**：
-    - 自我介紹與平台說明
-    - 餐廳資料概述（當前顯示的資訊）
-    - 驗證請求（請老闆確認或更新資料）
-    - 聯絡方式與回覆管道
-    - 社群價值說明（強調對餐廳和消費者的雙向價值）
-  - **多語言支援**：考慮是否需要中英文版本
-  - **個性化內容**：根據餐廳類型、資料完整性調整內容
+    - **開頭**：自我介紹與平台說明
+      - 簡述平台定位（成為 Yelp 的 BYOB 專業補充）
+      - 說明平台價值（幫助餐廳接觸 BYOB 愛好者）
+    - **主體**：餐廳資料概述
+      - 顯示當前平台上顯示的餐廳資訊
+      - 列出關鍵欄位（開瓶費、設備、服務等級等）
+      - 提供餐廳頁面連結
+    - **請求**：驗證請求
+      - 請老闆確認資料是否正確
+      - 如有錯誤，請提供正確資訊
+      - 提供簡便的回覆方式（回覆 email 或使用確認表單連結）
+    - **價值說明**：社群價值
+      - 強調對餐廳的價值（增加曝光、吸引目標客群）
+      - 強調對消費者的價值（提供準確資訊）
+      - 說明驗證徽章的好處
+    - **結尾**：聯絡方式與回覆管道
+      - 提供回覆 email
+      - 提供確認表單連結
+      - 提供平台網站連結
+  - **多語言支援**：英文版本（費城專案主要使用英文）
+  - **個性化內容**：
+    - 根據餐廳類型調整內容
+    - 根據資料完整性調整（完整資料 vs 部分資料）
+    - 根據資料來源調整（社群推薦 vs 已驗證）
+  - **模板變體**：
+    - 初次聯絡版本（完整介紹）
+    - 提醒版本（簡短提醒）
+    - 感謝版本（已驗證後的感謝信）
+- **技術實作**：
+  - 建立 email 模板檔案（Markdown 或文字格式）
+  - 考慮整合到 WordPress（使用 WordPress email 功能）
+  - 或整合到 Apps Script（批次發送）
+  - 支援變數替換（餐廳名稱、資料等）
 - **預期成果**：
-  - 完成 email 模板檔案
-  - 建立發送機制（可能整合到 WordPress 或 Apps Script）
+  - 完成 email 模板檔案（至少 1-2 個版本）
+  - 建立發送機制或腳本（可選）
+  - 測試發送（可選）
 
-### 3) 建立多名網友對某家餐廳資訊不一的處理邏輯 ⭐⭐⭐
+### 2) 建立多名網友對某家餐廳資訊不一的處理邏輯 ⭐⭐⭐
 - **問題背景**：
   - 不同網友可能對同一家餐廳提供不同資訊（如開瓶費、設備、服務等）
   - 需要建立衝突解決機制，確保資料準確性
@@ -133,8 +183,12 @@
 - ✅ **Yelp 連結欄位整合完成**：表單、後端、前台顯示
 - ✅ **餐廳業者後台優化完成**：Yelp 欄位加入
 - ✅ **前端格式統一完成**：欄位冒號後空格統一
-- 🔄 **餐廳聯絡機制**：11/4 開始執行
-- 🔄 **資料衝突處理機制**：11/4 開始執行
+- ✅ **餐廳 Email 搜尋系統完成**：兩階段系統（取得 website + 搜尋 email）
+  - 步驟 1：Google Places API 搜尋（philly_email_searcher.py）
+  - 步驟 2：Website email 提取（philly_email_extractor.py）
+  - 測試結果：處理 62 家餐廳（42 + 20），成功取得 email 13 家
+- 🔄 **餐廳 Email 模板設計**：11/5 開始執行
+- 🔄 **資料衝突處理機制**：11/5 開始執行
 - ⏳ **待執行**：Reddit 社群互動階段、手動內容英文化、英文網站上線、用戶招募、榮譽系統實作
 
 ### 🍷 台北 BYOB 專案（既有專案）
@@ -176,6 +230,22 @@
 - **注意事項**：ACF 預設添加 `http://` 而非 `https://`，可能導致連結錯誤
 - **建議處理**：在 Google 表單說明中提醒用戶輸入完整 URL（包含 `https://`），或考慮未來加入 URL 處理過濾器
 
+### 5) Email 搜尋系統設計與實作
+- **兩階段設計**：
+  - 分離取得 website 和搜尋 email 兩個步驟，提高靈活性和可維護性
+  - 步驟 1 可以使用 Google Places API，步驟 2 可以使用網站爬蟲
+- **多個 email 展開邏輯**：
+  - 當 Email_All_Found 包含多個 email（用分號分隔）時，自動展開為多行
+  - 每行對應一個 email，Email 和 Email_All_Found 欄位都更新為單一 email
+- **Email 驗證與過濾**：
+  - 過濾無效 email（範例 email、系統 email 等）
+  - 優先選擇最相關的 email（包含餐廳名稱或常見前綴）
+- **API 限制處理**：
+  - Google Places API：每次請求 0.2-0.5 秒延遲，自動重試機制
+  - Website 爬蟲：每次請求 1-2 秒延遲，避免被封鎖
+- **統計資訊**：
+  - 完整記錄 API 請求次數（目前使用 130 次，遠低於免費額度 100,000 次）
+
 ---
 
 ## 🔍 參考文檔
@@ -185,6 +255,9 @@
 * `philly_yelp_crawler/data/combined_byob_restaurants.csv`：269 家候選餐廳資料
 * `philly_yelp_crawler/data/high_confidence_byob_restaurants.csv`：10 家高信心度餐廳
 * `philly_yelp_crawler/data/crawl_report.json`：詳細爬取統計報告
+* `philly_yelp_crawler/philly_email_searcher.py`：Email 搜尋步驟 1（取得 website）
+* `philly_yelp_crawler/philly_email_extractor.py`：Email 搜尋步驟 2（搜尋 email）
+* `philly_yelp_crawler/README.md`：Email 搜尋工具使用說明
 * `wordpress/Apps script - 費城推薦版.js`：網友推薦表單處理
 * `wordpress/Apps script - 費城餐廳確認版.js`：老闆確認表單處理
 
@@ -233,6 +306,10 @@
 - **雙重通知系統**：成功和錯誤通知機制
 - **驗證徽章系統**：前台顯示與後台管理
 - **Yelp 連結整合**：表單、後端、前台完整整合
+- **餐廳 Email 搜尋系統**：兩階段自動化搜尋工具
+  - Google Places API 搜尋（取得 website）
+  - Website email 提取（搜尋 email）
+  - 支援多個 email 自動展開
 
 ### **台北專案工具（已完成）**
 - **葡萄酒展參展商爬蟲**：酒商名單收集
@@ -242,6 +319,33 @@
 
 ---
 
-*最後更新：2025年11月3日*
-*版本：v17.0*
-*明日重點：餐廳聯絡與資料驗證機制實作*
+## 📈 今日（2025-11-04）成果統計
+
+### Email 搜尋系統測試結果
+- **處理檔案數**：2 個
+- **總餐廳數**：62 家（42 + 20）
+- **步驟 1（取得 Website）**：
+  - 檔案 1：成功 40/42（95.2%）
+  - 檔案 2：成功 18/20（90%）
+  - 合計：成功 58/62（93.5%）
+- **步驟 2（搜尋 Email）**：
+  - 檔案 1：測試 5 家，成功 4 家（80%）
+  - 檔案 2：處理 20 家，成功 9 家（45%）
+  - 合計：成功 13 家
+- **API 使用量**：
+  - Google Places API：130 次請求
+  - 免費額度：100,000 次/月
+  - 使用率：0.13%（遠低於免費額度）
+
+### 產出檔案
+- `philly_yelp_crawler/philly_email_searcher.py`：Website 搜尋工具
+- `philly_yelp_crawler/philly_email_extractor.py`：Email 提取工具
+- `philly_yelp_crawler/README.md`：使用說明文件
+- `philly_yelp_crawler/data/Philly BYOB Restaurant_with_websites_xxx.xlsx`：Website 搜尋結果
+- `philly_yelp_crawler/data/Philly BYOB Restaurant_with_websites_xxx_with_emails_xxx.xlsx`：最終 email 搜尋結果
+
+---
+
+*最後更新：2025年11月4日*
+*版本：v18.0*
+*明日重點：Email 模板設計與資料衝突處理機制實作*
