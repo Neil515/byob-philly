@@ -1,0 +1,302 @@
+2025-11-04 14:36:00,984 - INFO - 讀取 Excel 檔案: data\Philly BYOB Restaurant_with_websites_20251104_142325.xlsx
+2025-11-04 14:36:02,291 - INFO - 限制處理數量: 5/42
+2025-11-04 14:36:02,296 - INFO - 開始處理 5 家餐廳
+2025-11-04 14:36:02,298 - INFO - 
+處理進度: 1/5
+2025-11-04 14:36:02,299 - INFO - 餐廳名稱: A Mano
+2025-11-04 14:36:02,301 - INFO - 處理餐廳: A Mano | Website: http://amanophl.com/
+2025-11-04 14:36:02,303 - INFO - 搜尋頁面: http://amanophl.com/
+2025-11-04 14:36:06,829 - INFO - 在 http://amanophl.com/ 找到 1 個 email
+2025-11-04 14:36:06,830 - INFO - 搜尋頁面: http://amanophl.com/contact
+2025-11-04 14:36:11,085 - INFO - 在 http://amanophl.com/contact 找到 1 個 email
+2025-11-04 14:36:11,094 - INFO - ✅ 找到 email: info@amanophl.com
+2025-11-04 14:36:11,097 - INFO - 
+處理進度: 2/5
+2025-11-04 14:36:11,103 - INFO - 餐廳名稱: Adoro Restaurant
+2025-11-04 14:36:11,103 - INFO - 處理餐廳: Adoro Restaurant | Website: https://www.adorobistro.com/
+2025-11-04 14:36:11,105 - INFO - 搜尋頁面: https://www.adorobistro.com/
+2025-11-04 14:36:14,604 - INFO - 在 https://www.adorobistro.com/ 找到 2 個 email
+2025-11-04 14:36:14,605 - INFO - 搜尋頁面: https://www.adorobistro.com/contact
+2025-11-04 14:36:19,164 - INFO - 搜尋頁面: https://www.adorobistro.com/contact-us
+2025-11-04 14:36:23,318 - INFO - 在 https://www.adorobistro.com/contact-us 找到 2 個 email
+2025-11-04 14:36:23,327 - INFO - ✅ 找到 email: hi@mystore.com
+2025-11-04 14:36:23,329 - INFO - 
+處理進度: 3/5
+2025-11-04 14:36:23,346 - INFO - 餐廳名稱: Ambrosia Ristorante
+2025-11-04 14:36:23,358 - INFO - 處理餐廳: Ambrosia Ristorante | Website: https://www.ambrosiaphilly.com/
+2025-11-04 14:36:23,397 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/
+2025-11-04 14:36:31,336 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact
+2025-11-04 14:36:40,013 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact-us
+2025-11-04 14:36:44,539 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact.html
+2025-11-04 14:36:49,668 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact.php
+2025-11-04 14:36:54,799 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/about
+2025-11-04 14:37:06,353 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/about-us
+2025-11-04 14:37:11,012 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/about.html
+2025-11-04 14:37:15,501 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contactinfo
+2025-11-04 14:37:20,854 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact-info
+2025-11-04 14:37:25,888 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/get-in-touch
+2025-11-04 14:37:31,217 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/reach-us
+2025-11-04 14:37:35,584 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/reachout
+2025-11-04 14:37:40,346 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/info
+2025-11-04 14:37:44,544 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/information
+2025-11-04 14:37:49,485 - WARNING - ⚠️ 未找到 email
+2025-11-04 14:37:49,486 - INFO - 
+處理進度: 4/5
+2025-11-04 14:37:49,487 - INFO - 餐廳名稱: Bistro La Baia BYOB
+2025-11-04 14:37:49,488 - INFO - 處理餐廳: Bistro La Baia BYOB | Website: http://www.bistrolabaia.com/
+2025-11-04 14:37:49,488 - INFO - 搜尋頁面: http://www.bistrolabaia.com/
+2025-11-04 14:37:56,330 - INFO - 在 http://www.bistrolabaia.com/ 找到 1 個 email
+2025-11-04 14:37:56,331 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact
+2025-11-04 14:38:04,700 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact-us
+2025-11-04 14:38:13,522 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact.html
+2025-11-04 14:38:22,202 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact.php
+2025-11-04 14:38:30,841 - INFO - 搜尋頁面: http://www.bistrolabaia.com/about
+2025-11-04 14:38:38,696 - INFO - 在 http://www.bistrolabaia.com/about 找到 1 個 email
+2025-11-04 14:38:40,415 - INFO - 搜尋頁面: http://www.bistrolabaia.com/about-us
+2025-11-04 14:38:51,757 - INFO - 搜尋頁面: http://www.bistrolabaia.com/about.html
+2025-11-04 14:39:00,291 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contactinfo
+2025-11-04 14:39:08,815 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact-info
+2025-11-04 14:39:16,850 - INFO - 搜尋頁面: http://www.bistrolabaia.com/get-in-touch
+2025-11-04 14:39:24,783 - INFO - 搜尋頁面: http://www.bistrolabaia.com/reach-us
+2025-11-04 14:39:32,728 - INFO - 搜尋頁面: http://www.bistrolabaia.com/reachout
+2025-11-04 14:39:41,022 - INFO - 搜尋頁面: http://www.bistrolabaia.com/info
+2025-11-04 14:39:49,181 - INFO - 搜尋頁面: http://www.bistrolabaia.com/information
+2025-11-04 14:39:57,518 - INFO - ✅ 找到 email: 1700bistrolabaia@gmail.com
+2025-11-04 14:39:57,520 - INFO - 
+處理進度: 5/5
+2025-11-04 14:39:57,520 - INFO - 餐廳名稱: Burrata
+2025-11-04 14:39:57,521 - INFO - 處理餐廳: Burrata | Website: http://www.burrataphilly.com/
+2025-11-04 14:39:57,521 - INFO - 搜尋頁面: http://www.burrataphilly.com/
+2025-11-04 14:40:00,510 - INFO - 在 http://www.burrataphilly.com/ 找到 2 個 email
+2025-11-04 14:40:00,511 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact
+2025-11-04 14:40:04,937 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact-us
+2025-11-04 14:40:08,981 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact.html
+2025-11-04 14:40:13,177 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact.php
+2025-11-04 14:40:16,870 - INFO - 搜尋頁面: http://www.burrataphilly.com/about
+2025-11-04 14:40:20,636 - INFO - 搜尋頁面: http://www.burrataphilly.com/about-us
+2025-11-04 14:40:24,793 - INFO - 搜尋頁面: http://www.burrataphilly.com/about.html
+2025-11-04 14:40:29,211 - INFO - 搜尋頁面: http://www.burrataphilly.com/contactinfo
+2025-11-04 14:40:32,784 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact-info
+2025-11-04 14:40:37,277 - INFO - 搜尋頁面: http://www.burrataphilly.com/get-in-touch
+2025-11-04 14:40:41,444 - INFO - 搜尋頁面: http://www.burrataphilly.com/reach-us
+2025-11-04 14:40:45,367 - INFO - 搜尋頁面: http://www.burrataphilly.com/reachout
+2025-11-04 14:40:49,076 - INFO - 搜尋頁面: http://www.burrataphilly.com/info
+2025-11-04 14:40:53,662 - INFO - 搜尋頁面: http://www.burrataphilly.com/information
+2025-11-04 14:40:58,117 - INFO - ✅ 找到 email: burrataphilly@gmail.com
+2025-11-04 14:40:58,469 - INFO - 
+結果已儲存至: data\Philly BYOB Restaurant_with_websites_20251104_142325_with_emails_20251104_144058.xlsx
+2025-11-04 14:40:58,471 - INFO - 
+============================================================
+2025-11-04 14:40:58,472 - INFO - 處理完成統計
+2025-11-04 14:40:58,472 - INFO - ============================================================
+2025-11-04 14:40:58,473 - INFO - 總處理數: 5
+2025-11-04 14:40:58,473 - INFO - 成功取得 email: 4
+2025-11-04 14:40:58,474 - INFO - 有 website 但無 email: 1
+2025-11-04 14:40:58,474 - INFO - 無 website: 0
+2025-11-04 14:40:58,475 - INFO - 處理失敗: 0
+2025-11-04 14:40:58,475 - INFO - 成功率: 80.0%
+2025-11-04 14:40:58,476 - INFO - ============================================================
+2025-11-04 14:50:49,709 - INFO - 讀取 Excel 檔案: data\Philly BYOB Restaurant_with_websites_20251104_142325_with_emails_20251104_144058.xlsx
+2025-11-04 14:50:50,942 - INFO - 開始處理 5 家餐廳
+2025-11-04 14:50:50,943 - INFO - 
+處理進度: 1/5
+2025-11-04 14:50:50,944 - INFO - 餐廳名稱: A Mano
+2025-11-04 14:50:50,944 - INFO - 處理餐廳: A Mano | Website: http://amanophl.com/
+2025-11-04 14:50:50,945 - INFO - 搜尋頁面: http://amanophl.com/
+2025-11-04 14:50:54,859 - INFO - 在 http://amanophl.com/ 找到 1 個 email
+2025-11-04 14:50:54,860 - INFO - 搜尋頁面: http://amanophl.com/contact
+2025-11-04 14:50:57,964 - INFO - 在 http://amanophl.com/contact 找到 1 個 email
+2025-11-04 14:50:57,970 - INFO - ✅ 找到 email: info@amanophl.com
+2025-11-04 14:50:57,973 - INFO - 
+處理進度: 2/5
+2025-11-04 14:50:57,974 - INFO - 餐廳名稱: Adoro Restaurant
+2025-11-04 14:50:57,975 - INFO - 處理餐廳: Adoro Restaurant | Website: https://www.adorobistro.com/
+2025-11-04 14:50:57,975 - INFO - 搜尋頁面: https://www.adorobistro.com/
+2025-11-04 14:51:00,661 - INFO - 在 https://www.adorobistro.com/ 找到 2 個 email
+2025-11-04 14:51:00,665 - INFO - 搜尋頁面: https://www.adorobistro.com/contact
+2025-11-04 14:51:04,381 - INFO - 搜尋頁面: https://www.adorobistro.com/contact-us
+2025-11-04 14:51:06,991 - INFO - 在 https://www.adorobistro.com/contact-us 找到 2 個 email
+2025-11-04 14:51:07,007 - INFO - ✅ 找到 email: hi@mystore.com
+2025-11-04 14:51:07,017 - INFO - 
+處理進度: 3/5
+2025-11-04 14:51:07,020 - INFO - 餐廳名稱: Ambrosia Ristorante
+2025-11-04 14:51:07,022 - INFO - 處理餐廳: Ambrosia Ristorante | Website: https://www.ambrosiaphilly.com/
+2025-11-04 14:51:07,025 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/
+2025-11-04 14:51:12,789 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact
+2025-11-04 14:51:19,765 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact-us
+2025-11-04 14:51:24,368 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact.html
+2025-11-04 14:51:28,813 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact.php
+2025-11-04 14:51:33,446 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/about
+2025-11-04 14:51:40,379 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/about-us
+2025-11-04 14:51:44,624 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/about.html
+2025-11-04 14:51:49,574 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contactinfo
+2025-11-04 14:51:53,516 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact-info
+2025-11-04 14:51:58,386 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/get-in-touch
+2025-11-04 14:52:02,799 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/reach-us
+2025-11-04 14:52:07,471 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/reachout
+2025-11-04 14:52:12,618 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/info
+2025-11-04 14:52:16,789 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/information
+2025-11-04 14:52:21,117 - WARNING - ⚠️ 未找到 email
+2025-11-04 14:52:21,120 - INFO - 
+處理進度: 4/5
+2025-11-04 14:52:21,125 - INFO - 餐廳名稱: Bistro La Baia BYOB
+2025-11-04 14:52:21,127 - INFO - 處理餐廳: Bistro La Baia BYOB | Website: http://www.bistrolabaia.com/
+2025-11-04 14:52:21,128 - INFO - 搜尋頁面: http://www.bistrolabaia.com/
+2025-11-04 14:52:27,774 - INFO - 在 http://www.bistrolabaia.com/ 找到 1 個 email
+2025-11-04 14:52:27,775 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact
+2025-11-04 14:52:35,623 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact-us
+2025-11-04 14:52:44,059 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact.html
+2025-11-04 14:52:51,215 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact.php
+2025-11-04 14:53:01,140 - INFO - 搜尋頁面: http://www.bistrolabaia.com/about
+2025-11-04 14:53:08,159 - INFO - 在 http://www.bistrolabaia.com/about 找到 1 個 email
+2025-11-04 14:53:09,719 - INFO - 搜尋頁面: http://www.bistrolabaia.com/about-us
+2025-11-04 14:53:17,895 - INFO - 搜尋頁面: http://www.bistrolabaia.com/about.html
+2025-11-04 14:53:26,530 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contactinfo
+2025-11-04 14:53:34,139 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact-info
+2025-11-04 14:53:41,328 - INFO - 搜尋頁面: http://www.bistrolabaia.com/get-in-touch
+2025-11-04 14:53:48,661 - INFO - 搜尋頁面: http://www.bistrolabaia.com/reach-us
+2025-11-04 14:53:56,588 - INFO - 搜尋頁面: http://www.bistrolabaia.com/reachout
+2025-11-04 14:54:04,826 - INFO - 搜尋頁面: http://www.bistrolabaia.com/info
+2025-11-04 14:54:11,627 - INFO - 搜尋頁面: http://www.bistrolabaia.com/information
+2025-11-04 14:54:19,631 - INFO - ✅ 找到 email: 1700bistrolabaia@gmail.com
+2025-11-04 14:54:19,634 - INFO - 
+處理進度: 5/5
+2025-11-04 14:54:19,635 - INFO - 餐廳名稱: Burrata
+2025-11-04 14:54:19,637 - INFO - 處理餐廳: Burrata | Website: http://www.burrataphilly.com/
+2025-11-04 14:54:19,639 - INFO - 搜尋頁面: http://www.burrataphilly.com/
+2025-11-04 14:54:22,126 - INFO - 在 http://www.burrataphilly.com/ 找到 2 個 email
+2025-11-04 14:54:22,127 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact
+2025-11-04 14:54:26,258 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact-us
+2025-11-04 14:54:30,660 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact.html
+2025-11-04 14:54:35,288 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact.php
+2025-11-04 14:54:39,157 - INFO - 搜尋頁面: http://www.burrataphilly.com/about
+2025-11-04 14:54:43,235 - INFO - 搜尋頁面: http://www.burrataphilly.com/about-us
+2025-11-04 14:54:47,189 - INFO - 搜尋頁面: http://www.burrataphilly.com/about.html
+2025-11-04 14:54:50,970 - INFO - 搜尋頁面: http://www.burrataphilly.com/contactinfo
+2025-11-04 14:54:55,556 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact-info
+2025-11-04 14:54:59,791 - INFO - 搜尋頁面: http://www.burrataphilly.com/get-in-touch
+2025-11-04 14:55:03,455 - INFO - 搜尋頁面: http://www.burrataphilly.com/reach-us
+2025-11-04 14:55:07,936 - INFO - 搜尋頁面: http://www.burrataphilly.com/reachout
+2025-11-04 14:55:11,553 - INFO - 搜尋頁面: http://www.burrataphilly.com/info
+2025-11-04 14:55:16,000 - INFO - 搜尋頁面: http://www.burrataphilly.com/information
+2025-11-04 14:55:19,637 - INFO - ✅ 找到 email: burrataphilly@gmail.com
+2025-11-04 14:55:19,639 - INFO - 
+展開多個 email 的餐廳資料...
+2025-11-04 14:55:19,642 - INFO - 展開餐廳 'Adoro Restaurant': 2 個 email
+2025-11-04 14:55:19,646 - INFO - 展開餐廳 'Burrata': 2 個 email
+2025-11-04 14:55:19,673 - INFO - 新增 2 行（多個 email 的餐廳）
+2025-11-04 14:55:19,756 - INFO - 
+結果已儲存至: data\Philly BYOB Restaurant_with_websites_20251104_142325_with_emails_20251104_144058_with_emails_20251104_145519.xlsx
+2025-11-04 14:55:19,757 - INFO - 
+============================================================
+2025-11-04 14:55:19,758 - INFO - 處理完成統計
+2025-11-04 14:55:19,759 - INFO - ============================================================
+2025-11-04 14:55:19,760 - INFO - 總處理數: 5
+2025-11-04 14:55:19,761 - INFO - 成功取得 email: 4
+2025-11-04 14:55:19,761 - INFO - 有 website 但無 email: 1
+2025-11-04 14:55:19,762 - INFO - 無 website: 0
+2025-11-04 14:55:19,763 - INFO - 處理失敗: 0
+2025-11-04 14:55:19,764 - INFO - 成功率: 80.0%
+2025-11-04 14:55:19,765 - INFO - ============================================================
+2025-11-04 14:58:10,392 - INFO - 讀取 Excel 檔案: data\Philly BYOB Restaurant_with_websites_20251104_142325_with_emails_20251104_144058.xlsx
+2025-11-04 14:58:11,159 - INFO - 開始處理 5 家餐廳
+2025-11-04 14:58:11,160 - INFO - 
+處理進度: 1/5
+2025-11-04 14:58:11,161 - INFO - 餐廳名稱: A Mano
+2025-11-04 14:58:11,162 - INFO - 處理餐廳: A Mano | Website: http://amanophl.com/
+2025-11-04 14:58:11,162 - INFO - 搜尋頁面: http://amanophl.com/
+2025-11-04 14:58:14,185 - INFO - 在 http://amanophl.com/ 找到 1 個 email
+2025-11-04 14:58:14,187 - INFO - 搜尋頁面: http://amanophl.com/contact
+2025-11-04 14:58:16,879 - INFO - 在 http://amanophl.com/contact 找到 1 個 email
+2025-11-04 14:58:16,894 - INFO - ✅ 找到 email: info@amanophl.com
+2025-11-04 14:58:16,904 - INFO - 
+處理進度: 2/5
+2025-11-04 14:58:16,905 - INFO - 餐廳名稱: Adoro Restaurant
+2025-11-04 14:58:16,907 - INFO - 處理餐廳: Adoro Restaurant | Website: https://www.adorobistro.com/
+2025-11-04 14:58:16,910 - INFO - 搜尋頁面: https://www.adorobistro.com/
+2025-11-04 14:58:20,571 - INFO - 在 https://www.adorobistro.com/ 找到 2 個 email
+2025-11-04 14:58:20,573 - INFO - 搜尋頁面: https://www.adorobistro.com/contact
+2025-11-04 14:58:24,391 - INFO - 搜尋頁面: https://www.adorobistro.com/contact-us
+2025-11-04 14:58:26,904 - INFO - 在 https://www.adorobistro.com/contact-us 找到 2 個 email
+2025-11-04 14:58:26,917 - INFO - ✅ 找到 email: hi@mystore.com
+2025-11-04 14:58:26,920 - INFO - 
+處理進度: 3/5
+2025-11-04 14:58:26,923 - INFO - 餐廳名稱: Ambrosia Ristorante
+2025-11-04 14:58:26,924 - INFO - 處理餐廳: Ambrosia Ristorante | Website: https://www.ambrosiaphilly.com/
+2025-11-04 14:58:26,925 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/
+2025-11-04 14:58:33,112 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact
+2025-11-04 14:58:39,577 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact-us
+2025-11-04 14:58:44,304 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact.html
+2025-11-04 14:58:49,137 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact.php
+2025-11-04 14:58:53,906 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/about
+2025-11-04 14:59:01,405 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/about-us
+2025-11-04 14:59:07,279 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/about.html
+2025-11-04 14:59:11,526 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contactinfo
+2025-11-04 14:59:16,631 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/contact-info
+2025-11-04 14:59:21,677 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/get-in-touch
+2025-11-04 14:59:26,265 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/reach-us
+2025-11-04 14:59:31,182 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/reachout
+2025-11-04 14:59:35,931 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/info
+2025-11-04 14:59:40,632 - INFO - 搜尋頁面: https://www.ambrosiaphilly.com/information
+2025-11-04 14:59:45,067 - WARNING - ⚠️ 未找到 email
+2025-11-04 14:59:45,070 - INFO - 
+處理進度: 4/5
+2025-11-04 14:59:45,071 - INFO - 餐廳名稱: Bistro La Baia BYOB
+2025-11-04 14:59:45,072 - INFO - 處理餐廳: Bistro La Baia BYOB | Website: http://www.bistrolabaia.com/
+2025-11-04 14:59:45,073 - INFO - 搜尋頁面: http://www.bistrolabaia.com/
+2025-11-04 14:59:57,025 - INFO - 在 http://www.bistrolabaia.com/ 找到 1 個 email
+2025-11-04 14:59:57,033 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact
+2025-11-04 15:00:05,388 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact-us
+2025-11-04 15:00:13,514 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact.html
+2025-11-04 15:00:21,113 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact.php
+2025-11-04 15:00:28,818 - INFO - 搜尋頁面: http://www.bistrolabaia.com/about
+2025-11-04 15:00:35,935 - INFO - 在 http://www.bistrolabaia.com/about 找到 1 個 email
+2025-11-04 15:00:37,187 - INFO - 搜尋頁面: http://www.bistrolabaia.com/about-us
+2025-11-04 15:00:44,671 - INFO - 搜尋頁面: http://www.bistrolabaia.com/about.html
+2025-11-04 15:00:55,755 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contactinfo
+2025-11-04 15:01:03,299 - INFO - 搜尋頁面: http://www.bistrolabaia.com/contact-info
+2025-11-04 15:01:12,115 - INFO - 搜尋頁面: http://www.bistrolabaia.com/get-in-touch
+2025-11-04 15:01:19,373 - INFO - 搜尋頁面: http://www.bistrolabaia.com/reach-us
+2025-11-04 15:01:27,341 - INFO - 搜尋頁面: http://www.bistrolabaia.com/reachout
+2025-11-04 15:01:34,915 - INFO - 搜尋頁面: http://www.bistrolabaia.com/info
+2025-11-04 15:01:42,897 - INFO - 搜尋頁面: http://www.bistrolabaia.com/information
+2025-11-04 15:01:51,757 - INFO - ✅ 找到 email: 1700bistrolabaia@gmail.com
+2025-11-04 15:01:51,759 - INFO - 
+處理進度: 5/5
+2025-11-04 15:01:51,761 - INFO - 餐廳名稱: Burrata
+2025-11-04 15:01:51,761 - INFO - 處理餐廳: Burrata | Website: http://www.burrataphilly.com/
+2025-11-04 15:01:51,763 - INFO - 搜尋頁面: http://www.burrataphilly.com/
+2025-11-04 15:01:54,474 - INFO - 在 http://www.burrataphilly.com/ 找到 2 個 email
+2025-11-04 15:01:54,475 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact
+2025-11-04 15:01:57,973 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact-us
+2025-11-04 15:02:02,448 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact.html
+2025-11-04 15:02:06,748 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact.php
+2025-11-04 15:02:10,763 - INFO - 搜尋頁面: http://www.burrataphilly.com/about
+2025-11-04 15:02:14,929 - INFO - 搜尋頁面: http://www.burrataphilly.com/about-us
+2025-11-04 15:02:19,190 - INFO - 搜尋頁面: http://www.burrataphilly.com/about.html
+2025-11-04 15:02:22,949 - INFO - 搜尋頁面: http://www.burrataphilly.com/contactinfo
+2025-11-04 15:02:26,967 - INFO - 搜尋頁面: http://www.burrataphilly.com/contact-info
+2025-11-04 15:02:31,282 - INFO - 搜尋頁面: http://www.burrataphilly.com/get-in-touch
+2025-11-04 15:02:35,495 - INFO - 搜尋頁面: http://www.burrataphilly.com/reach-us
+2025-11-04 15:02:39,129 - INFO - 搜尋頁面: http://www.burrataphilly.com/reachout
+2025-11-04 15:02:43,133 - INFO - 搜尋頁面: http://www.burrataphilly.com/info
+2025-11-04 15:02:47,391 - INFO - 搜尋頁面: http://www.burrataphilly.com/information
+2025-11-04 15:02:51,298 - INFO - ✅ 找到 email: burrataphilly@gmail.com
+2025-11-04 15:02:51,300 - INFO - 
+展開多個 email 的餐廳資料...
+2025-11-04 15:02:51,341 - INFO - 展開餐廳 'Adoro Restaurant': 2 個 email
+2025-11-04 15:02:51,344 - INFO - 展開餐廳 'Burrata': 2 個 email
+2025-11-04 15:02:51,399 - INFO - 新增 2 行（多個 email 的餐廳）
+2025-11-04 15:02:51,591 - INFO - 
+結果已儲存至: data\Philly BYOB Restaurant_with_websites_20251104_142325_with_emails_20251104_144058_with_emails_20251104_150251.xlsx
+2025-11-04 15:02:51,593 - INFO - 
+============================================================
+2025-11-04 15:02:51,595 - INFO - 處理完成統計
+2025-11-04 15:02:51,596 - INFO - ============================================================
+2025-11-04 15:02:51,597 - INFO - 總處理數: 5
+2025-11-04 15:02:51,598 - INFO - 成功取得 email: 4
+2025-11-04 15:02:51,599 - INFO - 有 website 但無 email: 1
+2025-11-04 15:02:51,600 - INFO - 無 website: 0
+2025-11-04 15:02:51,601 - INFO - 處理失敗: 0
+2025-11-04 15:02:51,602 - INFO - 成功率: 80.0%
+2025-11-04 15:02:51,603 - INFO - ============================================================
