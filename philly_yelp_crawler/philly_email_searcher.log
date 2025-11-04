@@ -442,3 +442,202 @@
 2025-11-04 14:23:25,372 - INFO - API 請求總數: 84
 2025-11-04 14:23:25,373 - INFO - 成功率: 95.2%
 2025-11-04 14:23:25,373 - INFO - ============================================================
+2025-11-04 19:07:17,075 - INFO - 讀取 Excel 檔案: data\Philly BYOB Restaurant google form.xlsx
+2025-11-04 19:07:18,552 - INFO - 開始處理 20 家餐廳
+2025-11-04 19:07:18,554 - INFO - 
+處理進度: 1/20
+2025-11-04 19:07:18,555 - INFO - 餐廳名稱: Kung Fu Hot Pot
+2025-11-04 19:07:18,555 - INFO - 處理餐廳: Kung Fu Hot Pot
+2025-11-04 19:07:18,947 - INFO - 搜尋: 'Kung Fu Hot Pot Philadelphia' (嘗試 1/3)
+2025-11-04 19:07:22,573 - INFO - 找到餐廳: Kungfu Hotpot
+2025-11-04 19:07:22,950 - INFO - 獲取 website: ChIJ5ZgRKQTHxokRjyCW2J4pCUw (嘗試 1/3)
+2025-11-04 19:07:26,086 - WARNING - Place Details 中沒有 website
+2025-11-04 19:07:26,100 - WARNING - ❌ 處理失敗: no_website
+2025-11-04 19:07:26,102 - INFO - 
+處理進度: 2/20
+2025-11-04 19:07:26,103 - INFO - 餐廳名稱: Scampi
+2025-11-04 19:07:26,103 - INFO - 處理餐廳: Scampi
+2025-11-04 19:07:26,348 - INFO - 搜尋: 'Scampi Philadelphia' (嘗試 1/3)
+2025-11-04 19:07:30,594 - INFO - 找到餐廳: Scampi
+2025-11-04 19:07:31,054 - INFO - 獲取 website: ChIJ___qQJnIxokRuEeCt5PwGL0 (嘗試 1/3)
+2025-11-04 19:07:33,616 - INFO - 找到 website: https://www.scampiphilly.com/menu
+2025-11-04 19:07:33,624 - INFO - ✅ 成功取得 website: https://www.scampiphilly.com/menu
+2025-11-04 19:07:33,625 - INFO - 
+處理進度: 3/20
+2025-11-04 19:07:33,627 - INFO - 餐廳名稱: June BYOB
+2025-11-04 19:07:33,628 - INFO - 處理餐廳: June BYOB
+2025-11-04 19:07:34,102 - INFO - 搜尋: 'June BYOB Philadelphia' (嘗試 1/3)
+2025-11-04 19:07:36,636 - INFO - 找到餐廳: June BYOB
+2025-11-04 19:07:37,126 - INFO - 獲取 website: ChIJJU7L2zzHxokRH-42qOQSrWo (嘗試 1/3)
+2025-11-04 19:07:39,391 - INFO - 找到 website: http://www.junebyob.com/
+2025-11-04 19:07:39,397 - INFO - ✅ 成功取得 website: http://www.junebyob.com/
+2025-11-04 19:07:39,399 - INFO - 
+處理進度: 4/20
+2025-11-04 19:07:39,400 - INFO - 餐廳名稱: Zeppoli
+2025-11-04 19:07:39,400 - INFO - 處理餐廳: Zeppoli
+2025-11-04 19:07:39,791 - INFO - 搜尋: 'Zeppoli Philadelphia' (嘗試 1/3)
+2025-11-04 19:07:42,772 - INFO - 找到餐廳: Zeppoli
+2025-11-04 19:07:43,163 - INFO - 獲取 website: ChIJmxaEfTXJxokR2-jTHNSGdyk (嘗試 1/3)
+2025-11-04 19:07:45,479 - INFO - 找到 website: http://www.zeppolirestaurant.com/
+2025-11-04 19:07:45,489 - INFO - ✅ 成功取得 website: http://www.zeppolirestaurant.com/
+2025-11-04 19:07:45,490 - INFO - 
+處理進度: 5/20
+2025-11-04 19:07:45,491 - INFO - 餐廳名稱: Alyan’s Middle Eastern & Mediterranean Restaurant
+2025-11-04 19:07:45,492 - INFO - 處理餐廳: Alyan’s Middle Eastern & Mediterranean Restaurant
+2025-11-04 19:07:45,826 - INFO - 搜尋: 'Alyan’s Middle Eastern & Mediterranean Restaurant Philadelphia' (嘗試 1/3)
+2025-11-04 19:07:49,009 - INFO - 找到餐廳: Alyan's Middle Eastern & Mediterranean Restaurant
+2025-11-04 19:07:49,308 - INFO - 獲取 website: ChIJAXiksZ7IxokRWEZ6Pe7BDtw (嘗試 1/3)
+2025-11-04 19:07:51,468 - WARNING - Place Details 中沒有 website
+2025-11-04 19:07:51,474 - WARNING - ❌ 處理失敗: no_website
+2025-11-04 19:07:51,475 - INFO - 
+處理進度: 6/20
+2025-11-04 19:07:51,476 - INFO - 餐廳名稱: Casablanca Mediterranean Grill
+2025-11-04 19:07:51,477 - INFO - 處理餐廳: Casablanca Mediterranean Grill
+2025-11-04 19:07:51,818 - INFO - 搜尋: 'Casablanca Mediterranean Grill Philadelphia' (嘗試 1/3)
+2025-11-04 19:07:54,566 - INFO - 找到餐廳: Casablanca Mediterranean Grill
+2025-11-04 19:07:54,906 - INFO - 獲取 website: ChIJfUvQQWrHxokRB4nd3ehfSbQ (嘗試 1/3)
+2025-11-04 19:07:57,670 - INFO - 找到 website: http://www.casablanca-grill.com/
+2025-11-04 19:07:57,676 - INFO - ✅ 成功取得 website: http://www.casablanca-grill.com/
+2025-11-04 19:07:57,677 - INFO - 
+處理進度: 7/20
+2025-11-04 19:07:57,679 - INFO - 餐廳名稱: Fiorino
+2025-11-04 19:07:57,680 - INFO - 處理餐廳: Fiorino
+2025-11-04 19:07:57,990 - INFO - 搜尋: 'Fiorino Philadelphia' (嘗試 1/3)
+2025-11-04 19:08:02,226 - INFO - 找到餐廳: Fiorino
+2025-11-04 19:08:02,451 - INFO - 獲取 website: ChIJsaeaZXq4xokR1z4KSkIklKs (嘗試 1/3)
+2025-11-04 19:08:04,620 - INFO - 找到 website: https://www.fiorino.us/
+2025-11-04 19:08:04,627 - INFO - ✅ 成功取得 website: https://www.fiorino.us/
+2025-11-04 19:08:04,634 - INFO - 
+處理進度: 8/20
+2025-11-04 19:08:04,635 - INFO - 餐廳名稱: Han dynasty (manayunk)
+2025-11-04 19:08:04,635 - INFO - 處理餐廳: Han dynasty (manayunk)
+2025-11-04 19:08:04,926 - INFO - 搜尋: 'Han dynasty (manayunk) Philadelphia' (嘗試 1/3)
+2025-11-04 19:08:07,675 - INFO - 找到餐廳: Han Dynasty
+2025-11-04 19:08:08,049 - INFO - 獲取 website: ChIJXcO3epW4xokRVmm33O9FboI (嘗試 1/3)
+2025-11-04 19:08:10,186 - INFO - 找到 website: http://www.handynasty.net/
+2025-11-04 19:08:10,199 - INFO - ✅ 成功取得 website: http://www.handynasty.net/
+2025-11-04 19:08:10,202 - INFO - 
+處理進度: 9/20
+2025-11-04 19:08:10,203 - INFO - 餐廳名稱: White yak
+2025-11-04 19:08:10,205 - INFO - 處理餐廳: White yak
+2025-11-04 19:08:10,493 - INFO - 搜尋: 'White yak Philadelphia' (嘗試 1/3)
+2025-11-04 19:08:12,900 - INFO - 找到餐廳: White Yak Restaurant
+2025-11-04 19:08:13,292 - INFO - 獲取 website: ChIJETa_YEe5xokRfUZgcPEs3AQ (嘗試 1/3)
+2025-11-04 19:08:15,369 - INFO - 找到 website: https://whiteyakrestaurant.com/?utm_source=google
+2025-11-04 19:08:15,374 - INFO - ✅ 成功取得 website: https://whiteyakrestaurant.com/?utm_source=google
+2025-11-04 19:08:15,376 - INFO - 
+處理進度: 10/20
+2025-11-04 19:08:15,377 - INFO - 餐廳名稱: Vientiane Bistro
+2025-11-04 19:08:15,378 - INFO - 處理餐廳: Vientiane Bistro
+2025-11-04 19:08:15,812 - INFO - 搜尋: 'Vientiane Bistro Philadelphia' (嘗試 1/3)
+2025-11-04 19:08:18,185 - INFO - 找到餐廳: Vientiane Bistro
+2025-11-04 19:08:18,467 - INFO - 獲取 website: ChIJuzo8Nn_JxokR2Fo3kyonL3g (嘗試 1/3)
+2025-11-04 19:08:20,698 - INFO - 找到 website: https://www.vientianebistro.com/
+2025-11-04 19:08:20,711 - INFO - ✅ 成功取得 website: https://www.vientianebistro.com/
+2025-11-04 19:08:20,715 - INFO - 
+進度摘要: 成功 8, 無 website 0, 錯誤 2
+2025-11-04 19:08:20,718 - INFO - 
+處理進度: 11/20
+2025-11-04 19:08:20,719 - INFO - 餐廳名稱: Fiorino
+2025-11-04 19:08:20,720 - INFO - 處理餐廳: Fiorino
+2025-11-04 19:08:21,091 - INFO - 搜尋: 'Fiorino Philadelphia' (嘗試 1/3)
+2025-11-04 19:08:23,122 - INFO - 找到餐廳: Fiorino
+2025-11-04 19:08:23,622 - INFO - 獲取 website: ChIJsaeaZXq4xokR1z4KSkIklKs (嘗試 1/3)
+2025-11-04 19:08:25,855 - INFO - 找到 website: https://www.fiorino.us/
+2025-11-04 19:08:25,862 - INFO - ✅ 成功取得 website: https://www.fiorino.us/
+2025-11-04 19:08:25,864 - INFO - 
+處理進度: 12/20
+2025-11-04 19:08:25,864 - INFO - 餐廳名稱: Core de roma
+2025-11-04 19:08:25,865 - INFO - 處理餐廳: Core de roma
+2025-11-04 19:08:26,123 - INFO - 搜尋: 'Core de roma Philadelphia' (嘗試 1/3)
+2025-11-04 19:08:28,710 - INFO - 找到餐廳: Core de Roma
+2025-11-04 19:08:29,014 - INFO - 獲取 website: ChIJawvP9fm5xokRIM5TjfNxkRM (嘗試 1/3)
+2025-11-04 19:08:31,228 - INFO - 找到 website: https://www.corederomabelmont.com/
+2025-11-04 19:08:31,234 - INFO - ✅ 成功取得 website: https://www.corederomabelmont.com/
+2025-11-04 19:08:31,235 - INFO - 
+處理進度: 13/20
+2025-11-04 19:08:31,236 - INFO - 餐廳名稱: Yanoko restaurant
+2025-11-04 19:08:31,236 - INFO - 處理餐廳: Yanoko restaurant
+2025-11-04 19:08:31,710 - INFO - 搜尋: 'Yanoko restaurant Philadelphia' (嘗試 1/3)
+2025-11-04 19:08:34,084 - INFO - 找到餐廳: Yanako Restaurant
+2025-11-04 19:08:34,549 - INFO - 獲取 website: ChIJKcXbBZW4xokRJTs1MEk88Zk (嘗試 1/3)
+2025-11-04 19:08:36,666 - INFO - 找到 website: https://theyanako.com/
+2025-11-04 19:08:36,671 - INFO - ✅ 成功取得 website: https://theyanako.com/
+2025-11-04 19:08:36,672 - INFO - 
+處理進度: 14/20
+2025-11-04 19:08:36,673 - INFO - 餐廳名稱: Chabba Thai bistro
+2025-11-04 19:08:36,674 - INFO - 處理餐廳: Chabba Thai bistro
+2025-11-04 19:08:37,015 - INFO - 搜尋: 'Chabba Thai bistro Philadelphia' (嘗試 1/3)
+2025-11-04 19:08:39,316 - INFO - 找到餐廳: Chabaa Thai Bistro
+2025-11-04 19:08:39,687 - INFO - 獲取 website: ChIJ687jpkvwb0AR--WyHBERox0 (嘗試 1/3)
+2025-11-04 19:08:41,792 - INFO - 找到 website: https://chabaathai.com/
+2025-11-04 19:08:41,798 - INFO - ✅ 成功取得 website: https://chabaathai.com/
+2025-11-04 19:08:41,799 - INFO - 
+處理進度: 15/20
+2025-11-04 19:08:41,800 - INFO - 餐廳名稱: Apricot Stone
+2025-11-04 19:08:41,801 - INFO - 處理餐廳: Apricot Stone
+2025-11-04 19:08:42,296 - INFO - 搜尋: 'Apricot Stone Philadelphia' (嘗試 1/3)
+2025-11-04 19:08:44,839 - INFO - 找到餐廳: Apricot Stone BYOB
+2025-11-04 19:08:45,348 - INFO - 獲取 website: ChIJrZDlnm_IxokRbvXj5j5rJKs (嘗試 1/3)
+2025-11-04 19:08:47,511 - INFO - 找到 website: http://www.apricotstonephilly.com/
+2025-11-04 19:08:47,523 - INFO - ✅ 成功取得 website: http://www.apricotstonephilly.com/
+2025-11-04 19:08:47,525 - INFO - 
+處理進度: 16/20
+2025-11-04 19:08:47,528 - INFO - 餐廳名稱: Sakartvelo
+2025-11-04 19:08:47,530 - INFO - 處理餐廳: Sakartvelo
+2025-11-04 19:08:47,798 - INFO - 搜尋: 'Sakartvelo Philadelphia' (嘗試 1/3)
+2025-11-04 19:08:50,144 - INFO - 找到餐廳: Sakartvelo
+2025-11-04 19:08:50,413 - INFO - 獲取 website: ChIJj-OcAoXJxokRKpk5kkXsoCI (嘗試 1/3)
+2025-11-04 19:08:52,520 - INFO - 找到 website: https://sakartvelopa.com/
+2025-11-04 19:08:52,531 - INFO - ✅ 成功取得 website: https://sakartvelopa.com/
+2025-11-04 19:08:52,533 - INFO - 
+處理進度: 17/20
+2025-11-04 19:08:52,534 - INFO - 餐廳名稱: Yamitsuki
+2025-11-04 19:08:52,535 - INFO - 處理餐廳: Yamitsuki
+2025-11-04 19:08:52,858 - INFO - 搜尋: 'Yamitsuki Philadelphia' (嘗試 1/3)
+2025-11-04 19:08:55,599 - INFO - 找到餐廳: Yamitsuki
+2025-11-04 19:08:55,872 - INFO - 獲取 website: ChIJV9HSKirGxokRyE0loG8dYx0 (嘗試 1/3)
+2025-11-04 19:08:58,128 - INFO - 找到 website: https://yamitsuki1028.wixsite.com/yamitsukiramen
+2025-11-04 19:08:58,134 - INFO - ✅ 成功取得 website: https://yamitsuki1028.wixsite.com/yamitsukiramen
+2025-11-04 19:08:58,135 - INFO - 
+處理進度: 18/20
+2025-11-04 19:08:58,136 - INFO - 餐廳名稱: La Nonna
+2025-11-04 19:08:58,136 - INFO - 處理餐廳: La Nonna
+2025-11-04 19:08:58,463 - INFO - 搜尋: 'La Nonna Philadelphia' (嘗試 1/3)
+2025-11-04 19:09:00,941 - INFO - 找到餐廳: La Nonna
+2025-11-04 19:09:01,355 - INFO - 獲取 website: ChIJR_sXcZnIxokRI6dOYPg_CfU (嘗試 1/3)
+2025-11-04 19:09:03,567 - INFO - 找到 website: http://ristorantelanonna.com/
+2025-11-04 19:09:03,573 - INFO - ✅ 成功取得 website: http://ristorantelanonna.com/
+2025-11-04 19:09:03,574 - INFO - 
+處理進度: 19/20
+2025-11-04 19:09:03,575 - INFO - 餐廳名稱: White Yak
+2025-11-04 19:09:03,576 - INFO - 處理餐廳: White Yak
+2025-11-04 19:09:04,058 - INFO - 搜尋: 'White Yak Philadelphia' (嘗試 1/3)
+2025-11-04 19:09:07,459 - INFO - 找到餐廳: White Yak Restaurant
+2025-11-04 19:09:07,851 - INFO - 獲取 website: ChIJETa_YEe5xokRfUZgcPEs3AQ (嘗試 1/3)
+2025-11-04 19:09:09,937 - INFO - 找到 website: https://whiteyakrestaurant.com/?utm_source=google
+2025-11-04 19:09:09,944 - INFO - ✅ 成功取得 website: https://whiteyakrestaurant.com/?utm_source=google
+2025-11-04 19:09:09,945 - INFO - 
+處理進度: 20/20
+2025-11-04 19:09:09,946 - INFO - 餐廳名稱: Burrata
+2025-11-04 19:09:09,946 - INFO - 處理餐廳: Burrata
+2025-11-04 19:09:10,224 - INFO - 搜尋: 'Burrata Philadelphia' (嘗試 1/3)
+2025-11-04 19:09:12,923 - INFO - 找到餐廳: Burrata
+2025-11-04 19:09:13,215 - INFO - 獲取 website: ChIJVVW8GxrGxokRZJ1JaER4I58 (嘗試 1/3)
+2025-11-04 19:09:15,316 - INFO - 找到 website: http://www.burrataphilly.com/
+2025-11-04 19:09:15,324 - INFO - ✅ 成功取得 website: http://www.burrataphilly.com/
+2025-11-04 19:09:15,325 - INFO - 
+進度摘要: 成功 18, 無 website 0, 錯誤 2
+2025-11-04 19:09:15,434 - INFO - 
+結果已儲存至: data\Philly BYOB Restaurant google form_with_websites_20251104_190915.xlsx
+2025-11-04 19:09:15,437 - INFO - 
+============================================================
+2025-11-04 19:09:15,439 - INFO - 處理完成統計
+2025-11-04 19:09:15,442 - INFO - ============================================================
+2025-11-04 19:09:15,443 - INFO - 總處理數: 20
+2025-11-04 19:09:15,446 - INFO - 成功取得 website: 18
+2025-11-04 19:09:15,446 - INFO - 找到餐廳但無 website: 0
+2025-11-04 19:09:15,448 - INFO - 處理失敗: 2
+2025-11-04 19:09:15,450 - INFO - API 請求總數: 40
+2025-11-04 19:09:15,453 - INFO - 成功率: 90.0%
+2025-11-04 19:09:15,454 - INFO - ============================================================
