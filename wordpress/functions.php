@@ -435,12 +435,13 @@ function byob_create_restaurant_article($restaurant_data, $source = 'direct') {
 /**
  * 重複檢查主函數（簡化版）
  * 
- * @param array $new_restaurant 新餐廳資料
+ * @param array $new_restaurant 新餐廳資料陣列（需包含 restaurant_name 和 address）
+ * @param string $project 專案類型（'philly' 或 'taipei' 或空字串代表所有專案）
  * @return array 重複檢查結果
  */
-function byob_check_duplicate_restaurant($new_restaurant) {
+function byob_check_duplicate_restaurant($new_restaurant, $project = '') {
     // 取得現有餐廳資料
-    $existing_restaurants = get_posts([
+    $query_args = [
         'post_type' => 'restaurant',
         'post_status' => ['publish', 'draft', 'pending'],
         'numberposts' => -1,
@@ -450,13 +451,61 @@ function byob_check_duplicate_restaurant($new_restaurant) {
                 'compare' => 'NOT EXISTS'
             ]
         ]
-    ]);
+    ];
+    
+    // 如果指定專案類型，只檢查該專案的餐廳
+    if ($project === 'philly') {
+        // 只檢查費城餐廳（透過 source 欄位篩選）
+        // 注意：分類是在建立文章後才設定的，所以主要依賴 source 欄位
+        // 但如果餐廳還沒有 source 欄位（可能是舊的或測試資料），也納入檢查
+        $query_args['meta_query'][] = [
+            'relation' => 'OR',
+            [
+                'key' => 'source',
+                'value' => ['philly_community_recommendation', 'philly_owner_verification'],
+                'compare' => 'IN'
+            ],
+            // 如果沒有 source 欄位，可能是舊的費城餐廳，也納入檢查
+            [
+                'key' => 'source',
+                'compare' => 'NOT EXISTS'
+            ]
+        ];
+        
+        // 設定 meta_query 的 relation 為 AND（所有條件都要滿足）
+        // 但要注意：第一個條件（_byob_duplicate_status）和費城條件是 AND 關係
+        // 而費城條件內部是 OR 關係
+        $query_args['meta_query']['relation'] = 'AND';
+    } elseif ($project === 'taipei') {
+        // 只檢查台北餐廳（排除費城餐廳）
+        $query_args['meta_query'][] = [
+            'relation' => 'OR',
+            [
+                'key' => 'source',
+                'value' => ['philly_community_recommendation', 'philly_owner_verification'],
+                'compare' => 'NOT IN'
+            ],
+            [
+                'key' => 'source',
+                'compare' => 'NOT EXISTS'
+            ]
+        ];
+        $query_args['meta_query']['relation'] = 'AND';
+    }
+    
+    $existing_restaurants = get_posts($query_args);
+    
+    // 除錯：記錄查詢結果
+    error_log('BYOB 重複檢查查詢：找到 ' . count($existing_restaurants) . ' 個現有餐廳');
     
     foreach ($existing_restaurants as $existing) {
         $existing_data = [
             'name' => get_field('restaurant_name', $existing->ID),
             'address' => get_field('address', $existing->ID)
         ];
+        
+        // 除錯：記錄比對的餐廳
+        error_log('BYOB 重複檢查比對：現有餐廳=' . ($existing_data['name'] ?? '無名稱') . ', 地址=' . ($existing_data['address'] ?? '無地址'));
         
         // 使用簡化的相似度計算
         $similarity = byob_calculate_simple_similarity(
@@ -465,6 +514,8 @@ function byob_check_duplicate_restaurant($new_restaurant) {
             $existing_data['name'],
             $existing_data['address']
         );
+        
+        error_log('BYOB 重複檢查相似度：' . $similarity . '%');
         
         if ($similarity >= 80) {
             return [
@@ -490,14 +541,36 @@ function byob_check_duplicate_restaurant($new_restaurant) {
  * @return float 相似度百分比
  */
 function byob_calculate_simple_similarity($name1, $addr1, $name2, $addr2) {
-    // 標準化所有字串（移除空格、標點、大小寫）
+    // 標準化所有字串（移除空格、標點、大小寫、統一地址縮寫）
     $normalize = function($str) {
-        // 移除所有標點符號、空格、引號
-        $str = preg_replace('/[\s\'"「」『』【】（）()，。、；：！？]/', '', $str);
+        if (empty($str)) {
+            return '';
+        }
         // 轉小寫
         $str = strtolower($str);
-    // 移除常見詞彙
+        
+        // 統一地址縮寫（針對地址字串）
+        $address_abbreviations = [
+            '/\bstreet\b/' => 'st',
+            '/\bavenue\b/' => 'ave',
+            '/\bboulevard\b/' => 'blvd',
+            '/\broad\b/' => 'rd',
+            '/\bdrive\b/' => 'dr',
+            '/\blane\b/' => 'ln',
+            '/\bphiladelphia\b/' => 'philly',
+            '/\bpennsylvania\b/' => 'pa',
+        ];
+        foreach ($address_abbreviations as $pattern => $replacement) {
+            $str = preg_replace($pattern, $replacement, $str);
+        }
+        
+        // 移除所有標點符號、空格、引號、連字符、破折號
+        // 包含：空格、引號、括號、逗號、句號、破折號、連字符、冒號、分號、驚嘆號、問號
+        $str = preg_replace('/[\s\'"「」『』【】（）()，。、；：！？\-–—,\.;:!?]/', '', $str);
+        
+        // 移除中文常見詞彙（保留以支援中文餐廳）
         $str = preg_replace('/[店餐廳有限公司股份有限公司]/', '', $str);
+        
         return $str;
     };
     
@@ -506,13 +579,41 @@ function byob_calculate_simple_similarity($name1, $addr1, $name2, $addr2) {
     $name2_norm = $normalize($name2);
     $addr2_norm = $normalize($addr2);
     
-    // 如果名稱和地址都完全相同，100% 相似
-    if ($name1_norm === $name2_norm && $addr1_norm === $addr2_norm) {
-        return 100;
+    // 處理名稱或地址為空的情況
+    $name1_empty = empty($name1_norm);
+    $name2_empty = empty($name2_norm);
+    $addr1_empty = empty($addr1_norm);
+    $addr2_empty = empty($addr2_norm);
+    
+    // 如果兩個名稱都為空，無法比對
+    if ($name1_empty && $name2_empty) {
+        return 0;
     }
     
-    // 如果地址完全相同，強制判定為重複（無論名稱是否相似）
-    if ($addr1_norm === $addr2_norm) {
+    // 如果名稱完全相同，檢查地址
+    if ($name1_norm === $name2_norm && !$name1_empty) {
+        // 如果兩個地址都為空，判定為重複（名稱相同且都沒有地址）
+        if ($addr1_empty && $addr2_empty) {
+            return 90; // 名稱相同且都沒有地址，高相似度
+        }
+        
+        // 如果地址完全相同，100% 相似
+        if ($addr1_norm === $addr2_norm && !$addr1_empty) {
+            return 100;
+        }
+        
+        // 如果地址都為空，已經在上面處理了
+        // 如果一個有地址一個沒有，計算地址相似度
+        if (!$addr1_empty && !$addr2_empty) {
+            $addr_similarity = byob_calculate_string_similarity($addr1_norm, $addr2_norm);
+            if ($addr_similarity >= 70) {
+                return 85; // 名稱相同且地址相似，高相似度
+            }
+        }
+    }
+    
+    // 如果地址完全相同（且都不為空），強制判定為重複（無論名稱是否相似）
+    if ($addr1_norm === $addr2_norm && !$addr1_empty && !$addr2_empty) {
         // 使用 levenshtein 距離計算名稱相似度
         $name_similarity = byob_calculate_string_similarity($name1_norm, $name2_norm);
         if ($name_similarity >= 70) {
@@ -522,20 +623,28 @@ function byob_calculate_simple_similarity($name1, $addr1, $name2, $addr2) {
         }
     }
     
-    // 如果名稱完全相同，檢查地址相似度
-    if ($name1_norm === $name2_norm) {
-        $addr_similarity = byob_calculate_string_similarity($addr1_norm, $addr2_norm);
-        if ($addr_similarity >= 70) {
-            return 85; // 名稱相同且地址相似，高相似度
+    // 計算整體相似度
+    $name_similarity = byob_calculate_string_similarity($name1_norm, $name2_norm);
+    
+    // 如果兩個地址都為空，只依賴名稱相似度
+    if ($addr1_empty && $addr2_empty) {
+        // 如果名稱相似度 >= 80%，判定為重複
+        if ($name_similarity >= 80) {
+            return $name_similarity;
+        } else {
+            return $name_similarity; // 即使不達 80%，也返回名稱相似度
         }
     }
     
-    // 計算整體相似度
-    $name_similarity = byob_calculate_string_similarity($name1_norm, $name2_norm);
+    // 如果只有一個地址為空，降低地址權重
     $addr_similarity = byob_calculate_string_similarity($addr1_norm, $addr2_norm);
-    
-    // 綜合評分：名稱和地址相似度的加權平均
-    $total_similarity = ($name_similarity * 0.4) + ($addr_similarity * 0.6);
+    if ($addr1_empty || $addr2_empty) {
+        // 如果有一個地址為空，主要依賴名稱相似度
+        $total_similarity = ($name_similarity * 0.8) + ($addr_similarity * 0.2);
+    } else {
+        // 兩個地址都有，使用標準加權平均
+        $total_similarity = ($name_similarity * 0.4) + ($addr_similarity * 0.6);
+    }
     
     return round($total_similarity, 2);
 }
@@ -833,7 +942,26 @@ function byob_create_philly_restaurant_article($restaurant_data) {
             return new WP_Error('missing_required_fields', '缺少核心必填欄位: ' . implode(', ', $missing_fields), array('status' => 400));
         }
         
-        // 費城專用：直接設為草稿狀態（不需要重複檢查）
+        // 檢查是否為重複餐廳（只檢查費城餐廳）
+        $duplicate_check = byob_check_duplicate_restaurant($restaurant_data, 'philly');
+        $is_duplicate = $duplicate_check['is_duplicate'];
+        
+        // 除錯：記錄重複檢查結果
+        error_log('BYOB 重複檢查：餐廳名稱=' . $restaurant_data['restaurant_name'] . ', 是否重複=' . ($is_duplicate ? '是' : '否'));
+        if ($is_duplicate) {
+            error_log('BYOB 重複檢查：相似餐廳ID=' . ($duplicate_check['similar_restaurant_id'] ?? '未知') . ', 相似度=' . ($duplicate_check['similarity_score'] ?? '未知'));
+        }
+        
+        // 如果發現重複，標題加註「(重複)」（只加一次）
+        $restaurant_name = $restaurant_data['restaurant_name'];
+        if ($is_duplicate) {
+            if (strpos($restaurant_name, '(重複)') === false) {
+                $restaurant_name .= ' (重複)';
+            }
+            $restaurant_data['restaurant_name'] = $restaurant_name;
+        }
+        
+        // 費城專用：直接設為草稿狀態
         $post_status = 'draft';
         $review_status = 'pending_general_review';
         
@@ -987,7 +1115,8 @@ function byob_create_philly_restaurant_article($restaurant_data) {
                 'review_status' => $review_status,
                 'submitted_date' => current_time('mysql'),
                 'review_date' => '',
-                'review_notes' => ''
+                'review_notes' => '',
+                'recommendation_count' => 1  // 新建時預設為 1
             );
             
             foreach ($acf_updates as $field_name => $field_value) {
@@ -2380,6 +2509,27 @@ add_action('acf/init', function() {
                     'ajax' => 0,
                     'return_format' => 'value',
                     'placeholder' => '選擇驗證狀態（選填）',
+                ),
+                array(
+                    'key' => 'field_recommendation_count',
+                    'label' => '推薦次數',
+                    'name' => 'recommendation_count',
+                    'type' => 'number',
+                    'instructions' => '此餐廳被推薦的次數（可在後台修改）',
+                    'required' => 0,
+                    'conditional_logic' => 0,
+                    'wrapper' => array(
+                        'width' => '',
+                        'class' => '',
+                        'id' => '',
+                    ),
+                    'default_value' => 1,
+                    'placeholder' => '',
+                    'prepend' => '',
+                    'append' => '',
+                    'min' => 0,
+                    'max' => 999,
+                    'step' => 1,
                 ),
             ),
             'location' => array(
