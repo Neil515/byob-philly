@@ -93,6 +93,7 @@
   opacity: 0.9;
   cursor: help;
 }
+
 </style>
 
 <div class="restaurant-card" style="max-width: 800px; margin: auto; padding: 2em; font-family: sans-serif; position: relative;">
@@ -530,6 +531,7 @@
     </div>
   </div>
 </div>
+
 
 <!-- 照片放大覆蓋層 -->
 <div id="photo-overlay" class="photo-overlay">
