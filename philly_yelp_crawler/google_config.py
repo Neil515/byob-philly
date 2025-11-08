@@ -1,8 +1,12 @@
 # Google Places API 設定檔案
 # 請將下面的 YOUR_GOOGLE_API_KEY_HERE 替換為你的實際 Google Places API Key
 
-# API 憑證
-GOOGLE_API_KEY = "AIzaSyCzcNzweMQjo_vbspHtQcHGmWqhE2GDwjg"  # 使用現有的 Google Places API Key
+# API 憑證（請透過環境變數 GOOGLE_API_KEY 或設定檔注入）
+import os
+
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+if not GOOGLE_API_KEY:
+    raise RuntimeError("未設定環境變數 GOOGLE_API_KEY，請在執行前提供有效的 Google Places API Key")
 
 # API 端點
 GOOGLE_PLACES_BASE_URL = "https://maps.googleapis.com/maps/api/place"
