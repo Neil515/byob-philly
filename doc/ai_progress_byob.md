@@ -16,7 +16,42 @@
 
 ---
 
-## ✅ 2025年11月6日 — 網站前台英文化完成、評論功能移除
+## ✅ 2025年11月8日 — Google Places + Yelp 整合，前台類型顯示修正
+
+### 🎯 今日成就總覽
+- **Google 資料整合腳本**：新增 `philly_yelp_crawler/google_yelp_lookup.py`，讀取 `Name/Add/Phone` Excel，透過 Google Places 驗證地址並萃取餐廳類型，搭配 Programmable Search 找出 Yelp 連結；支援 `.env` 自動載入 `GOOGLE_PLACES_API_KEY`、`GOOGLE_CUSTOM_SEARCH_API_KEY`、`GOOGLE_CUSTOM_SEARCH_CX`。  
+  - 產出結果檔：`Philly BYOB Restaurant_with_google_yelp_20251108_153121.xlsx`，含 `Type_1/Type_2/Yelp_URL/Match_Status`。
+  - README 新增使用說明、指令參數與環境需求。
+- **前台類型顯示修正**：在 `wordpress/functions.php` 新增 `byob_get_restaurant_type_labels()`，統一取得 `restaurant_type` / `philly_restaurant_type`、處理 `Other` 備註與 title case。`archive-restaurant.php`、`single_restaurant.php` 改用新函式，費城餐廳類型得以正常呈現。
+- **工作規劃更新**：`doc/Next Task Prompt Byob.md` 更新日期為 2025-11-08，並排定 11/9 的兩項任務：
+  1. 放大列表頁分頁按鈕。
+  2. Yelp 與電話欄位二擇一顯示。
+
+### 影響與後續
+- Excel 匯出現在包含雙渠道類型資料，後續可作為人工驗證或後台批次匯入依據。
+- 前台類型顯示與費城資料同步，避免因欄位差異出現空白。
+- 明日優先處理列表分頁 UX 與聯絡資訊顯示邏輯。
+
+---
+
+## 📚 近期工作摘要（精簡版）
+
+### ✅ 2025年11月6日 — 前台英文化與評論功能移除
+- 餐廳列表、單頁、註冊表單、Contact Form 全面改為英文；維護註解保留中文。
+- 移除未完成的評論與評分相關檔案，保持程式碼庫整潔。
+
+### ✅ 2025年11月5日 — 重複檢查與資料追蹤優化
+- `byob_check_duplicate_restaurant()` 新增專案參數、日誌與地址縮寫處理。
+- 建立 `recommendation_count` 欄位、標題加註 `(重複)`、相似度權重調整。
+
+### ✅ 2025年11月4日 — Email 搜尋系統
+- 兩階段腳本 `philly_email_searcher.py` + `philly_email_extractor.py` 完成，支援重試、日誌、Excel 匯出。
+
+### ✅ 2025年11月3日 — 驗證徽章與 Yelp 整合
+- 前台徽章視覺化、後台覆寫邏輯與資料來源標記。
+- 表單、Apps Script、後端 API 全程改為使用 Yelp Link。
+
+---
 
 ### 🎯 今日目標
 完成網站前台所有頁面的英文化，移除評論功能相關程式碼，為英文網站上線做準備。
@@ -608,30 +643,6 @@
 
 ---
 
-## 🚨 當前挑戰與風險
-
-### **餐廳聯絡與驗證** ⚠️
-- **風險**：餐廳 email 難以取得、餐廳老闆回覆率可能較低
-- **影響**：資料驗證困難、大量資料停滯待驗證
-- **緩解策略**：建立友善的 email 模板、設計多階段提醒機制、建立社群驗證備案
-
-### **資料衝突處理** ⚠️
-- **風險**：多名網友提供不同資訊，難以判斷正確性
-- **影響**：資料準確性下降、用戶信任度降低
-- **緩解策略**：建立衝突檢測與解決機制、優先採用餐廳老闆驗證、保留多版本供人工審核
-
-### **Reddit 社群接受度**
-- **風險**：新帳號可能被視為推廣或 spam
-- **緩解**：先建立信譽，提供有價值的建議
-- **備案**：準備多個社群平台互動
-
-### **資料品質控制**
-- **風險**：回覆可能包含錯誤資訊
-- **緩解**：交叉驗證、記錄來源
-- **備案**：保留原始爬蟲資料作為備份
-
----
-
-*最後更新：2025年11月6日*
-*版本：v21.0*
-*明日重點：FAQ 英文化、後台英文化、Reddit 回覆工作*
+*最後更新：2025年11月8日*
+*版本：v22.0*
+*明日重點：前台分頁 UX、聯絡方式顯示邏輯*
