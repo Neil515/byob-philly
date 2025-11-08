@@ -1,6 +1,10 @@
 # Google Places API 設定
-# 請將 your_api_key_here 替換為您的實際API金鑰
-GOOGLE_PLACES_API_KEY = "AIzaSyCzcNzweMQjo_vbspHtQcHGmWqhE2GDwjg"
+# 請透過環境變數 GOOGLE_API_KEY 或安全設定檔提供 API Key
+import os
+
+GOOGLE_PLACES_API_KEY = os.getenv("GOOGLE_API_KEY")
+if not GOOGLE_PLACES_API_KEY:
+    raise RuntimeError("未設定環境變數 GOOGLE_API_KEY，請在執行前提供有效的 Google Places API Key")
 
 # 搜尋設定
 SEARCH_QUERY = "台北 串燒"
