@@ -2640,6 +2640,68 @@ function byob_display_verification_badge($post_id = null, $size = 'small') {
 }
 
 /**
+ * 取得餐廳類型的前台顯示文字陣列
+ *
+ * 優先使用舊欄位 `restaurant_type`，若無資料則改用費城專案
+ * 的 `philly_restaurant_type`，並處理 Other 備註、底線、大小寫等格式。
+ *
+ * @param int|null $post_id
+ * @return array
+ */
+function byob_get_restaurant_type_labels($post_id = null) {
+    $post_id = $post_id ?: get_the_ID();
+    if (!$post_id) {
+        return array();
+    }
+
+    $types = get_field('restaurant_type', $post_id);
+    $other_note = get_field('restaurant_type_other_note', $post_id);
+
+    if (empty($types)) {
+        $types = get_field('philly_restaurant_type', $post_id);
+        $other_note = get_field('philly_restaurant_type_other_note', $post_id);
+    }
+
+    if (empty($types)) {
+        return array();
+    }
+
+    if (!is_array($types)) {
+        $types = array_map('trim', explode(',', $types));
+    }
+
+    $labels = array();
+    foreach ($types as $type) {
+        if ($type === null) {
+            continue;
+        }
+        $type = trim((string) $type);
+        if ($type === '') {
+            continue;
+        }
+
+        $type_lower = strtolower($type);
+        if ($type_lower === 'other' || $type_lower === '其他') {
+            if (!empty($other_note)) {
+                $labels[] = sprintf(__('Other: %s', 'byob'), trim($other_note));
+            } else {
+                $labels[] = __('Other', 'byob');
+            }
+            continue;
+        }
+
+        $formatted = str_replace('_', ' ', $type);
+        if (preg_match('/[^\x00-\x7F]/', $formatted)) {
+            $labels[] = $formatted;
+        } else {
+            $labels[] = mb_convert_case($formatted, MB_CASE_TITLE, 'UTF-8');
+        }
+    }
+
+    return $labels;
+}
+
+/**
  * 記錄推薦者參與抽獎
  * 
  * @param int $restaurant_id 餐廳ID
