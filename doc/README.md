@@ -16,37 +16,27 @@ BYOB (Bring Your Own Bottle) 是一個自帶酒水餐廳推薦平台，目前運
 
 ---
 
-## 🚀 最新進度（2025年11月6日）
+## 🚀 最新進度（2025年11月8日）
 
-### 今日完成：網站前台英文化完成、評論功能移除
+### 今日完成：Google Places + Yelp 整合、前台類型顯示修正
 
 **🎯 關鍵成就**
 
-* ✅ **網站前台英文化** ⭐⭐⭐
-  * **餐廳列表頁英文化**：所有欄位標籤、按鈕和連結文字已改為英文
-  * **單一餐廳頁英文化**：所有欄位標籤、按鈕和操作文字已改為英文
-  * **餐廳註冊表單英文化**：所有欄位標籤、驗證訊息、密碼規則說明已改為英文
-  * **Contact 表單英文化**：Contact Form 7 表單所有欄位和訊息已改為英文
-  * 修改檔案：`wordpress/archive-restaurant.php`、`wordpress/single_restaurant.php`、`wordpress/functions.php`
+* ✅ **Google Places + Yelp 查詢腳本**  
+  * 新增 `philly_yelp_crawler/google_yelp_lookup.py`：讀取 `Name/Add/Phone` Excel，透過 Google Places 驗證地址並取得餐廳類型、以 Google Programmable Search 找到 Yelp 連結。結果輸出 `Type_1/Type_2/Yelp_URL/Match_Status`。  
+  * `philly_yelp_crawler/README.md` 更新執行方式、環境變數需求與參數說明。  
+  * `.env` 需包含 `GOOGLE_PLACES_API_KEY`、`GOOGLE_CUSTOM_SEARCH_API_KEY`、`GOOGLE_CUSTOM_SEARCH_CX`。
 
-* ✅ **評論功能移除** ⭐
-  * **移除原因**：評論功能實作過程中遇到技術問題（星級評分系統無法正常顯示、表單文字混合中英文），決定暫時移除
-  * **移除內容**：
-    - 刪除 `wordpress/restaurant-comments.php` 檔案
-    - 刪除 `wordpress/restaurant-rating-system.php` 檔案
-    - 移除 `wordpress/functions.php` 中引入評論和評分系統的程式碼
-    - 移除 `wordpress/single_restaurant.php` 中所有評論相關的 CSS、HTML 和 JavaScript
-  * **後續規劃**：未來如有需要，可重新實作評論功能
+* ✅ **餐廳類型顯示修正**  
+  * `wordpress/functions.php` 新增 `byob_get_restaurant_type_labels()`，統一處理 `restaurant_type` / `philly_restaurant_type`、`Other` 備註與字型格式。  
+  * `wordpress/archive-restaurant.php`、`wordpress/single_restaurant.php` 改用新函式，費城餐廳類型能正常顯示。
 
-**🔧 技術策略**
-- **英文化策略**：所有用戶可見的文字已改為英文，程式碼註解保持中文方便維護
-- **SEO 優化**：使用自然、流暢的英文表達，注意關鍵字使用
-- **程式碼清理**：移除未完成功能，保持程式碼庫整潔，為未來重新實作預留空間
+* ✅ **Next Task 更新**  
+  * `doc/Next Task Prompt Byob.md` 更新日期為 2025-11-08，並排定 11/9 任務：`(1)` 放大餐廳列表分頁按鈕；`(2)` Yelp 與電話欄位二擇一顯示。
 
-**🗓️ 明日（11/7）**
-- 🚀 **FAQ 頁面英文化**：檢查並英文化所有 FAQ 內容
-- 🚀 **WordPress 後台英文化**：後台介面、自訂功能、Email 模板英文化
-- 🚀 **Reddit 回覆工作**：增加 Reddit 社群互動，回覆相關討論並推廣平台
+**🗓️ 明日（11/9）**
+- 🚀 列表頁分頁按鈕尺寸優化。
+- 🚀 Yelp 與電話欄位二擇一顯示，避免前台雙重空白。
 - 詳見 `doc/Next Task Prompt Byob.md`
 
 ---
@@ -290,6 +280,6 @@ WordPress 核心
 
 ---
 
-*最後更新：2025年11月6日*
-*版本：v12.0*
-*明日重點：FAQ 英文化、後台英文化、Reddit 回覆工作*
+*最後更新：2025年11月8日*
+*版本：v13.0*
+*明日重點：列表分頁 UX、Yelp/電話顯示邏輯*
