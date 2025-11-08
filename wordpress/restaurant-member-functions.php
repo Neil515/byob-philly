@@ -2584,14 +2584,14 @@ function byob_is_restaurant_complete($restaurant_id) {
     $restaurant_name = $post ? $post->post_title : '';
     $phone = function_exists('get_field') ? get_field('phone', $restaurant_id) : '';
     $address = function_exists('get_field') ? get_field('address', $restaurant_id) : '';
-    $restaurant_type = function_exists('get_field') ? get_field('restaurant_type', $restaurant_id) : '';
+    // $restaurant_type = function_exists('get_field') ? get_field('restaurant_type', $restaurant_id) : '';
     $corkage_fee = function_exists('get_field') ? get_field('is_charged', $restaurant_id) : '';
     
     // 如果所有欄位都有值，返回 true
     return !empty(trim($restaurant_name)) && 
            !empty(trim($phone)) && 
            !empty(trim($address)) && 
-           !empty($restaurant_type) &&
+           // !empty($restaurant_type) &&
            !empty($corkage_fee);
 }
 
