@@ -345,41 +345,10 @@ document.addEventListener('DOMContentLoaded', function() {
       <h2 class="restaurant-title-line">
         <a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
         <?php
-          $types = get_field('restaurant_type');
-          if ($types):
-            // Process restaurant types, replace 'Other' with 'Other: [description]'
-            $type_output = '';
-            if (is_array($types)) {
-              $processed_types = array();
-              foreach ($types as $type) {
-                if ($type === '其他' || strtolower($type) === 'other') {
-                  // Get other type description
-                  $other_note = get_field('restaurant_type_other_note');
-                  if (!empty($other_note)) {
-                    $processed_types[] = 'Other: ' . $other_note;
-                  } else {
-                    $processed_types[] = $type;
-                  }
-                } else {
-                  $processed_types[] = $type;
-                }
-              }
-              $type_output = implode(' / ', $processed_types);
-            } else {
-              // If string, check if contains 'Other'
-              if (strpos($types, '其他') !== false || stripos($types, 'other') !== false) {
-                $other_note = get_field('restaurant_type_other_note');
-                if (!empty($other_note)) {
-                  $type_output = preg_replace('/\bother\b/i', 'Other: ' . $other_note, $types);
-                } else {
-                  $type_output = $types;
-                }
-              } else {
-                $type_output = $types;
-              }
-            }
-            echo '<span class="restaurant-type">(' . esc_html($type_output) . ')</span>';
-          endif;
+          $type_labels = byob_get_restaurant_type_labels(get_the_ID());
+          if (!empty($type_labels)) {
+            echo '<span class="restaurant-type">(' . esc_html(implode(' / ', $type_labels)) . ')</span>';
+          }
         ?>
       </h2>
 
