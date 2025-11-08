@@ -10,9 +10,42 @@
 
 - `philly_email_searcher.py` - 第一階段程式（取得 website）
 - `philly_email_extractor.py` - 第二階段程式（從 website 搜尋 email）
+- `google_yelp_lookup.py` - 使用 Google Places + Programmable Search 取得餐廳類型與 Yelp 連結
 - `google_config.py` - Google Places API 設定檔
 - `requirements.txt` - Python 套件依賴
 - `data/Philly BYOB Restaurant.xlsx` - 輸入 Excel 檔案
+
+## 新工具：Google Places + Yelp 連結查詢
+
+此腳本會讀取包含 **Name / Add / Phone** 欄位的 Excel，流程如下：
+1. 使用 Google Places API 以「餐廳名稱 + Philadelphia」搜尋候選地點。
+2. 以 Excel 地址與 Google 回傳的地址比對，確認為同一家餐廳。
+3. 取回前兩個餐廳類型（types）。
+4. 使用 Google Programmable Search (Custom Search API) 搜尋 `site:yelp.com`，抓取第一個 Yelp 連結。
+
+### 需求
+- `.env` 內需設定：
+  ```
+  GOOGLE_PLACES_API_KEY=...
+  GOOGLE_CUSTOM_SEARCH_API_KEY=...
+  GOOGLE_CUSTOM_SEARCH_CX=...
+  ```
+- 安裝 `requirements.txt` 提到的套件（包含 `python-dotenv`、`requests`、`pandas` 等）。
+
+### 執行
+```bash
+python google_yelp_lookup.py "data/Philly BYOB Restaurant.xlsx"
+```
+- 可選參數：
+  - `--output result.xlsx`：指定輸出檔案。
+  - `--limit 10`：僅處理前 10 筆做測試。
+  - `--verbose`：顯示除錯資訊。
+
+輸出檔案包含以下欄位：
+- `Matched_Name` / `Matched_Address`：Google Places 回傳資訊。
+- `Type_1` / `Type_2`：前兩個餐廳類型。
+- `Yelp_URL`：第一次搜尋到的 Yelp 連結（若無則留空）。
+- `Match_Status` / `Message`：比對及搜尋狀態說明。
 
 ## 使用方式
 
