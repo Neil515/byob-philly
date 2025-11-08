@@ -197,41 +197,9 @@
       <?php endif; ?>
 
       <?php 
-      $types = get_field('restaurant_type');
-      if ($types): 
-        // 處理餐廳類型，將「其他」替換為「其他: [說明文字]」
-        $type_output = '';
-        if (is_array($types)) {
-          $processed_types = array();
-          foreach ($types as $type) {
-            if ($type === '其他' || strtolower($type) === 'other') {
-              // 獲取其他類型說明
-              $other_note = get_field('restaurant_type_other_note');
-              if (!empty($other_note)) {
-                $processed_types[] = 'Other: ' . $other_note;
-              } else {
-                $processed_types[] = $type;
-              }
-            } else {
-              $processed_types[] = $type;
-            }
-          }
-          $type_output = implode(' / ', $processed_types);
-        } else {
-          // 如果是字串，檢查是否包含「其他」
-          if (strpos($types, '其他') !== false || stripos($types, 'other') !== false) {
-            $other_note = get_field('restaurant_type_other_note');
-            if (!empty($other_note)) {
-              $type_output = preg_replace('/\bother\b/i', 'Other: ' . $other_note, $types);
-            } else {
-              $type_output = $types;
-            }
-          } else {
-            $type_output = $types;
-          }
-        }
-      ?>
-        <div class="field"><strong>Cuisine Type:</strong> <?php echo esc_html($type_output); ?></div>
+      $type_labels = byob_get_restaurant_type_labels(get_the_ID());
+      if (!empty($type_labels)): ?>
+        <div class="field"><strong>Cuisine Type:</strong> <?php echo esc_html(implode(' / ', $type_labels)); ?></div>
       <?php else: ?>
         <div class="field"><strong>Cuisine Type:</strong> </div>
       <?php endif; ?>
