@@ -393,7 +393,8 @@ echo '<input type="text" id="contact_person" name="contact_person" value="' . es
 echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">User name is the name filled during registration and cannot be modified by yourself. If you need to modify, please contact the <a href="https://byobmap.com/contact/" target="_blank" style="color: rgba(139, 38, 53, 0.8); text-decoration: none;">website administrator</a></p>';
 echo '</div>';
 
-// 行政區
+// 行政區（暫時隱藏）
+/*
 echo '<div class="form-group" style="margin-bottom: 25px;">';
 echo '<label for="district" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">District *</label>';
 echo '<select id="district" name="district" required style="width: 100%; height: 50px; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; line-height: 20px; transition: border-color 0.3s; display: flex; align-items: center;">';
@@ -413,6 +414,7 @@ echo '<option value="文山區" ' . (get_field('district', $restaurant_id) === '
 echo '</select>';
 echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please select the district where the restaurant is located</p>';
 echo '</div>';
+*/
 
 // 地址
 echo '<div class="form-group" style="margin-bottom: 25px;">';
