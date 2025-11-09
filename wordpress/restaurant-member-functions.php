@@ -68,7 +68,7 @@ function byob_init_restaurant_member_system() {
     add_filter('woocommerce_account_menu_items', 'byob_customize_account_menu_items', 999);
     add_action('woocommerce_account_restaurant-profile_endpoint', 'byob_restaurant_profile_content');
     add_action('woocommerce_account_restaurant-photos_endpoint', 'byob_restaurant_photos_content');
-    add_action('woocommerce_account_restaurant-menu_endpoint', 'byob_restaurant_menu_content');
+    // add_action('woocommerce_account_restaurant-menu_endpoint', 'byob_restaurant_menu_content');
     
     // 覆蓋預設控制台內容
     add_action('woocommerce_account_dashboard', 'byob_override_dashboard_content', 999);
@@ -1569,7 +1569,7 @@ function byob_restaurant_photos_content() {
                 $upload = wp_handle_upload($file, array('test_form' => false));
                 
                 if (isset($upload['error'])) {
-                    echo '<div class="error" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">檔案上傳失敗：' . esc_html($upload['error']) . '</div>';
+                    echo '<div class="error" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">Upload failed: ' . esc_html($upload['error']) . '</div>';
                 } else {
                     // 建立附件
                     $attachment = array(
@@ -1582,7 +1582,7 @@ function byob_restaurant_photos_content() {
                     $attachment_id = wp_insert_attachment($attachment, $upload['file'], $restaurant_id);
                     
                     if (is_wp_error($attachment_id)) {
-                        echo '<div class="error" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">建立附件失敗：' . esc_html($attachment_id->get_error_message()) . '</div>';
+                        echo '<div class="error" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">Failed to create attachment: ' . esc_html($attachment_id->get_error_message()) . '</div>';
                     } else {
                         // 新增到餐廳照片欄位
                         $new_photo = array(
@@ -1603,14 +1603,14 @@ function byob_restaurant_photos_content() {
                             update_field('restaurant_photo_3', $new_photo, $restaurant_id);
                         }
                         
-                        echo '<div class="success" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">照片上傳成功！</div>';
+                        echo '<div class="success" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">Photo uploaded successfully!</div>';
                     }
                 }
             } else {
-                echo '<div class="error" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">檔案類型不支援：' . esc_html($file_type['type']) . '</div>';
+                echo '<div class="error" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">Unsupported file type: ' . esc_html($file_type['type']) . '</div>';
             }
         } else {
-            echo '<div class="error" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">檔案上傳失敗或未選擇檔案</div>';
+            echo '<div class="error" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">Upload failed or no file selected.</div>';
         }
     }
     
@@ -1621,7 +1621,7 @@ function byob_restaurant_photos_content() {
         if (is_wp_error($result)) {
             echo '<div class="error" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">' . $result->get_error_message() . '</div>';
         } else {
-            echo '<div class="success" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">照片刪除成功！</div>';
+            echo '<div class="success" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">Photo deleted successfully!</div>';
         }
     }
     
@@ -1634,7 +1634,7 @@ function byob_restaurant_photos_content() {
         if (is_wp_error($result)) {
             echo '<div class="error" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">' . $result->get_error_message() . '</div>';
         } else {
-            echo '<div class="success" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">照片說明更新成功！</div>';
+            echo '<div class="success" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0;">Photo description updated successfully!</div>';
         }
     }
     
@@ -1659,65 +1659,62 @@ function byob_restaurant_photos_content() {
     $can_upload = $photo_count < $max_photos;
     
     echo '<div class="restaurant-photos-management" style="max-width: 800px;">';
-    echo '<h2>餐廳照片管理</h2>';
+    echo '<h2>Restaurant Photo Management</h2>';
     
-    // Preview Restaurant按鈕
+    // Preview button
     echo '<div style="text-align: center; margin: 20px 0; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;">';
     echo '<a href="' . get_permalink($restaurant_id) . '" target="_blank" style="background-color: #8b2635; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">👁️ Preview Restaurant</a>';
-    echo '<p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">點擊按鈕在新分頁中預覽您的餐廳前台頁面</p>';
+    echo '<p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">Click the button to preview your restaurant page in a new tab.</p>';
     echo '</div>';
     
-    // 照片上傳區域（永久顯示）
+    // Upload section
     echo '<div class="photo-upload-section" style="background: #f9f9f9; padding: 20px; margin: 20px 0; border-radius: 8px;">';
-    echo '<h3>上傳照片</h3>';
+    echo '<h3>Upload Photos</h3>';
     
-    // 上傳須知（永久顯示）
     echo '<div class="upload-instructions" style="background: #e7f3ff; padding: 15px; border-radius: 5px; margin-bottom: 20px;">';
-    echo '<p><strong>上傳須知：</strong></p>';
+    echo '<p><strong>Guidelines:</strong></p>';
     echo '<ul style="margin: 10px 0; padding-left: 20px;">';
-    echo '<li>最多可上傳 ' . $max_photos . ' 張照片</li>';
-    echo '<li>建議上傳餐廳環境、用餐區域等代表性照片（建議尺寸：1200x800 像素）</li>';
-    echo '<li>可加註照片說明</li>';
-    echo '<li>支援 JPG、PNG、WebP 格式，單張檔案大小不超過 2MB</li>';
-    echo '<li>照片排序：最晚上傳的照片會顯示在最前面</li>';
+    echo '<li>Maximum of ' . $max_photos . ' photos.</li>';
+    echo '<li>Upload representative shots of your dining area, ambiance, or signature dishes (recommended size: 1200x800px).</li>';
+    echo '<li>Photo descriptions are optional.</li>';
+    echo '<li>Supported formats: JPG, PNG, WebP. Maximum file size: 2MB per image.</li>';
+    echo '<li>Newest uploads appear first.</li>';
     echo '</ul>';
     echo '</div>';
     
     if ($can_upload) {
-        // 可以上傳時顯示表單
         echo '<form method="post" enctype="multipart/form-data">';
         echo '<input type="hidden" name="action" value="upload_photos">';
         
         echo '<div class="photo-upload-fields">';
         echo '<div class="photo-field" style="margin: 15px 0;">';
-        echo '<label style="display: block; margin-bottom: 5px; font-weight: bold;">選擇照片：</label>';
+        echo '<label style="display: block; margin-bottom: 5px; font-weight: bold;">Select photo:</label>';
         echo '<input type="file" name="photos[]" accept="image/*" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">';
         echo '</div>';
         echo '<div class="photo-field" style="margin: 15px 0;">';
-        echo '<label style="display: block; margin-bottom: 5px; font-weight: bold;">照片說明（選填）：</label>';
-        echo '<input type="text" name="photo_description" placeholder="例如：餐廳用餐區域" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">';
+        echo '<label style="display: block; margin-bottom: 5px; font-weight: bold;">Photo description (optional):</label>';
+        echo '<input type="text" name="photo_description" placeholder="e.g., Dining area" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">';
         echo '</div>';
         echo '</div>';
         
-        echo '<button type="submit" class="upload-button" style="background: rgba(139, 38, 53, 0.7); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">上傳照片</button>';
+        echo '<button type="submit" class="upload-button" style="background: rgba(139, 38, 53, 0.7); color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Upload Photo</button>';
         echo '</form>';
     } else {
-        // 已達上限時顯示狀態訊息
         echo '<div class="upload-limit-reached" style="background: #e7f3ff; border: 1px solid #b3d9ff; padding: 15px; border-radius: 5px; color: #0066cc; margin: 10px 0; display: flex; align-items: center;">';
-        echo '<p style="margin: 0;"><strong>目前狀態：</strong>您已達到照片數量上限（' . $max_photos . '張）。如需上傳新照片，請先刪除現有照片。</p>';
+        echo '<p style="margin: 0;"><strong>Status:</strong> You have reached the maximum number of photos (' . $max_photos . '). Delete an existing photo to upload a new one.</p>';
         echo '</div>';
     }
     echo '</div>';
     
-    // 現有照片管理
+    // Existing photos
     echo '<div class="existing-photos-section" style="background: #f9f9f9; padding: 20px; margin: 20px 0; border-radius: 8px;">';
-    echo '<h3>現有照片（' . $photo_count . '/' . $max_photos . '）</h3>';
+    echo '<h3>Existing Photos (' . $photo_count . '/' . $max_photos . ')</h3>';
     
     // 自動清理無效照片
     byob_cleanup_invalid_photos($restaurant_id);
     
     if (empty($existing_photos)) {
-        echo '<p>目前還沒有上傳任何照片。</p>';
+        echo '<p>No photos uploaded yet.</p>';
     } else {
         echo '<div class="photos-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 300px)); gap: 20px; margin-top: 20px; justify-content: start;">';
         foreach ($existing_photos as $index => $photo) {
@@ -1763,9 +1760,9 @@ function byob_restaurant_photos_content() {
                 echo '<div class="photo-item" style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">';
                 echo '<div class="photo-preview">';
                 if ($image_url) {
-                    echo '<img src="' . esc_url($image_url) . '" alt="' . esc_attr($photo['description'] ?: '餐廳照片') . '" style="width: 100%; height: 150px; object-fit: cover; border-radius: 4px;">';
+                    echo '<img src="' . esc_url($image_url) . '" alt="' . esc_attr($photo['description'] ?: 'Restaurant photo') . '" style="width: 100%; height: 150px; object-fit: cover; border-radius: 4px;">';
                 } else {
-                    echo '<div style="width: 100%; height: 150px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: #666;">圖片載入失敗</div>';
+                    echo '<div style="width: 100%; height: 150px; background: #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 4px; color: #666;">Image failed to load</div>';
                 }
                 echo '</div>';
                 echo '<div class="photo-info" style="margin-top: 10px;">';
@@ -1773,17 +1770,17 @@ function byob_restaurant_photos_content() {
                 echo '<input type="hidden" name="action" value="update_photo_description">';
                 echo '<input type="hidden" name="photo_id" value="' . $attachment_id . '">';
                 echo '<div class="description-field" style="margin: 10px 0;">';
-                echo '<label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">照片說明：</label>';
-                echo '<input type="text" name="photo_description" value="' . esc_attr($photo['description'] ?: '') . '" placeholder="例如：餐廳用餐區域" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">';
+                echo '<label style="display: block; margin-bottom: 5px; font-weight: bold; font-size: 12px;">Photo Description:</label>';
+                echo '<input type="text" name="photo_description" value="' . esc_attr($photo['description'] ?: '') . '" placeholder="e.g., Dining area" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">';
                 echo '</div>';
                 echo '<div class="photo-actions" style="display: flex; gap: 10px;">';
-                echo '<button type="submit" class="save-button" style="background: #46b450; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">儲存照片說明</button>';
+                echo '<button type="submit" class="save-button" style="background: #46b450; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Save Description</button>';
                 echo '</div>';
                 echo '</form>';
                 echo '<form method="post" class="delete-photo-form" style="margin-top: 10px;">';
                 echo '<input type="hidden" name="action" value="delete_photo">';
                 echo '<input type="hidden" name="photo_id" value="' . $attachment_id . '">';
-                echo '<button type="submit" class="delete-button" onclick="return confirm(\'確定要刪除這張照片嗎？\')" style="background: #dc3232; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">刪除照片</button>';
+                echo '<button type="submit" class="delete-button" onclick="return confirm(\'Are you sure you want to delete this photo?\')" style="background: #dc3232; color: white; padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Delete Photo</button>';
                 echo '</form>';
                 echo '</div>';
                 echo '</div>';
@@ -1800,8 +1797,8 @@ function byob_restaurant_photos_content() {
  */
 function byob_restaurant_menu_content() {
     echo '<div class="restaurant-menu">';
-    echo '<h2>菜單管理</h2>';
-    echo '<p>此功能正在開發中...</p>';
+    echo '<h2>Menu Management</h2>';
+    echo '<p>This feature is currently under development…</p>';
     echo '</div>';
 }
 
@@ -1863,7 +1860,7 @@ function byob_customize_account_menu_items($menu_items) {
     $new_menu_items['dashboard'] = '控制台';
     $new_menu_items['restaurant-profile'] = '餐廳資料編輯';
     $new_menu_items['restaurant-photos'] = '照片管理';
-    $new_menu_items['restaurant-menu'] = '菜單管理';
+    // $new_menu_items['restaurant-menu'] = '菜單管理';
     // 不添加 customer-logout，讓 WooCommerce 自動處理
     
     return $new_menu_items;
