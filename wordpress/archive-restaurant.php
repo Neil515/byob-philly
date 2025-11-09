@@ -24,38 +24,75 @@
 
 /* 分頁導航樣式 */
 .restaurant-pagination {
-  text-align: center;
   margin: 40px 0;
-  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+  padding: 0;
+}
+
+.restaurant-pagination nav.navigation.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
 }
 
 .restaurant-pagination .page-numbers {
-  display: inline-block;
-  padding: 8px 12px;
-  margin: 0 4px;
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 44px;
+  padding: 0 18px;
+  background: #ffffff;
+  border: 1px solid #cfd4da;
+  border-radius: 999px;
   text-decoration: none;
   color: #495057;
-  transition: all 0.3s ease;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .restaurant-pagination .page-numbers:hover {
   background: #8b2635;
-  color: white;
+  color: #ffffff;
   border-color: #8b2635;
+  box-shadow: 0 4px 10px rgba(139, 38, 53, 0.2);
 }
 
 .restaurant-pagination .page-numbers.current {
   background: #8b2635;
-  color: white;
+  color: #ffffff;
   border-color: #8b2635;
+  cursor: default;
 }
 
 .restaurant-pagination .page-numbers.prev,
 .restaurant-pagination .page-numbers.next {
-  font-weight: bold;
+  font-weight: 600;
+  padding: 0 22px;
+}
+
+.restaurant-pagination .page-numbers.dots {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  pointer-events: none;
+  color: #6c757d;
+}
+
+.restaurant-pagination--top {
+  margin-top: 0;
+  margin-bottom: 30px;
+}
+
+.restaurant-pagination--bottom {
+  margin-top: 50px;
+  margin-bottom: 60px;
 }
 
 /* 懶載入動畫 */
@@ -296,6 +333,20 @@ document.addEventListener('DOMContentLoaded', function() {
   };
 });
 </script>
+
+<?php
+$restaurant_pagination_args = array(
+  'prev_text' => '← Previous',
+  'next_text' => 'Next →',
+  'mid_size'  => 2,
+  'before_page_number' => '<span class="screen-reader-text">Page </span>',
+);
+$restaurant_pagination_html = get_the_posts_pagination($restaurant_pagination_args);
+
+if ($restaurant_pagination_html) {
+  echo '<div class="restaurant-pagination restaurant-pagination--top">' . $restaurant_pagination_html . '</div>';
+}
+?>
 
 <div class="restaurant-archive-list">
   
@@ -568,16 +619,10 @@ document.addEventListener('DOMContentLoaded', function() {
   <?php endif; ?>
 </div>
 
-<!-- 分頁導航 -->
 <?php
-// WordPress 預設分頁導航
-the_posts_pagination(array(
-    'prev_text' => '← Previous',
-    'next_text' => 'Next →',
-    'mid_size' => 2,
-    'before_page_number' => '<span class="meta-nav screen-reader-text">Page </span>',
-    'after_page_number' => '</span>',
-));
+if ($restaurant_pagination_html) {
+  echo '<div class="restaurant-pagination restaurant-pagination--bottom">' . $restaurant_pagination_html . '</div>';
+}
 ?>
 
 <?php get_footer(); ?>
