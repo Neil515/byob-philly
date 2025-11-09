@@ -605,18 +605,8 @@ if ($current_logo_url) {
 
 // Logo upload fieldset
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-    echo '<label for="restaurant_logo" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Upload LOGO or representative restaurant photo (select file then click update restaurant information)</label>';
+    echo '<label for="restaurant_logo" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Upload LOGO or representative restaurant photo (select file then click update restaurant information button)</label>';
 echo '<input type="file" id="restaurant_logo" name="restaurant_logo" accept="image/jpeg,image/png,image/webp,image/svg+xml" style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; background: white; transition: border-color 0.3s;">';
-      echo '<div style="margin-top: 10px; padding: 15px; background: #e9ecef; border-radius: 8px;">';
-      echo '<p style="font-size: 14px; color: #495057; margin: 0 0 8px 0;"><strong>📋 Upload Guidelines:</strong></p>';
-      echo '<ul style="font-size: 14px; color: #495057; margin: 0; padding-left: 20px;">';
-      echo '<li><strong>It is recommended to upload square or near-square image files for the best display effect</strong></li>';
-      echo '<li>Supported formats: JPG/JPEG, PNG, WebP, SVG</li>';
-      echo '<li>File size limit: 1MB</li>';
-      echo '<li>Recommended size: 300x300 pixels or above</li>';
-      echo '<li>Upload will automatically replace existing LOGO</li>';
-      echo '</ul>';
-      echo '</div>';
 echo '</div>';
 
 echo '</div>';
@@ -624,6 +614,17 @@ echo '</div>';
 // 提交按鈕
 echo '<div class="form-submit" style="text-align: center; padding-top: 20px; border-top: 2px solid #e9ecef;">';
 echo '<button type="submit" style="background-color: rgba(139, 38, 53, 0.8); color: white; padding: 18px 40px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; font-weight: bold; transition: all 0.3s; box-shadow: 0 4px 8px rgba(139, 38, 53, 0.3);">💾 Update Restaurant Information</button>';
+echo '</div>';
+
+echo '<div style="margin-top: 20px; padding: 15px; background: #e9ecef; border-radius: 8px;">';
+echo '<p style="font-size: 14px; color: #495057; margin: 0 0 8px 0;"><strong>📋 Upload Guidelines:</strong></p>';
+echo '<ul style="font-size: 14px; color: #495057; margin: 0; padding-left: 20px;">';
+echo '<li><strong>It is recommended to upload square or near-square image files for the best display effect</strong></li>';
+echo '<li>Supported formats: JPG/JPEG, PNG, WebP, SVG</li>';
+echo '<li>File size limit: 1MB</li>';
+echo '<li>Recommended size: 300x300 pixels or above</li>';
+echo '<li>Upload will automatically replace existing LOGO</li>';
+echo '</ul>';
 echo '</div>';
 
 echo '</form>';
