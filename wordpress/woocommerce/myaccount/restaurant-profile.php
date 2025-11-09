@@ -56,8 +56,8 @@ $restaurant_id = $restaurant->ID;
 $current_logo_id = get_post_meta($restaurant_id, '_restaurant_logo', true);
 $current_logo_url = $current_logo_id ? wp_get_attachment_image_url($current_logo_id, 'thumbnail') : '';
 
-// ACF 欄位資料載入除錯（僅在開發環境顯示）
-if (defined('WP_DEBUG') && WP_DEBUG) {
+// ACF 欄位資料載入除錯（僅在開發環境且管理員登入時顯示）
+if (defined('WP_DEBUG') && WP_DEBUG && current_user_can('manage_options')) {
     echo '<div style="background: #f8f9fa; border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; margin-bottom: 20px; font-family: monospace; font-size: 12px;">';
     echo '<h4 style="margin: 0 0 15px 0; color: #495057;">🔍 ACF 欄位資料載入除錯資訊</h4>';
     
@@ -72,7 +72,8 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
             'corkage_fee_amount' => 'Corkage Fee Amount',
             'corkage_fee_note' => 'Corkage Fee Other Note',
             'equipment' => 'Wine Equipment',
-            'open_bottle_service' => 'Wine Service',
+            'byob_service_level' => 'BYOB Service Level',
+            'open_bottle_service' => 'Wine Service (legacy)',
             'open_bottle_service_other_note' => 'Wine Service Other Note',
             'website' => 'Official Website',
             'social_links' => 'Social Media Links',
@@ -466,6 +467,47 @@ echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please describe 
 echo '</div>';
 
 // 酒器設備
+$byob_service_level_options = array(
+    'full_service' => array(
+        'label' => 'Full service (opening, pouring, decanting, chilling)',
+        'description' => 'Full service includes opening, pouring, decanting, and chilling.'
+    ),
+    'basic_service' => array(
+        'label' => 'Basic service (opening and pouring)',
+        'description' => 'Basic service includes opening and pouring.'
+    ),
+    'self_service' => array(
+        'label' => 'Self-service (equipment provided)',
+        'description' => 'Self-service: equipment is provided for guests.'
+    ),
+    'no_service' => array(
+        'label' => 'No service (BYOB only, bring your own equipment)',
+        'description' => 'No service: guests should bring their own equipment.'
+    ),
+);
+$byob_service_level_legacy_map = array(
+    '有' => 'full_service',
+    '無' => 'no_service',
+    '其他' => 'self_service',
+);
+$byob_service_level_value = get_field('byob_service_level', $restaurant_id);
+if (empty($byob_service_level_value)) {
+    $legacy_value = get_field('open_bottle_service', $restaurant_id);
+    if ($legacy_value && isset($byob_service_level_legacy_map[$legacy_value])) {
+        $byob_service_level_value = $byob_service_level_legacy_map[$legacy_value];
+    }
+}
+if (!empty($byob_service_level_value) && !isset($byob_service_level_options[$byob_service_level_value])) {
+    $byob_service_level_value = '';
+}
+$byob_service_level_js_data = array();
+foreach ($byob_service_level_options as $slug => $data) {
+    $byob_service_level_js_data[$slug] = array(
+        'label' => $data['label'],
+        'description' => $data['description'],
+    );
+}
+
 echo '<div class="form-group" style="margin-bottom: 25px;">';
 echo '<label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Wine Equipment</label>';
 echo '<div class="checkbox-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">';
@@ -499,37 +541,43 @@ echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please select th
 echo '</div>';
 
 // 開酒服務
+$debug_byob_value = $byob_service_level_value ? $byob_service_level_value : '(empty)';
+$legacy_open_bottle_service = get_field('open_bottle_service', $restaurant_id);
+if (!$byob_service_level_value && $legacy_open_bottle_service && isset($byob_service_level_legacy_map[$legacy_open_bottle_service])) {
+    $debug_byob_value .= ' (derived from legacy value: ' . $legacy_open_bottle_service . ')';
+}
+
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label for="open_bottle_service" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Wine Service</label>';
-
-// 除錯：顯示 ACF 欄位的實際值
-$open_bottle_service_value = get_field('open_bottle_service', $restaurant_id);
+echo '<label for="byob_service_level" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">BYOB Service Level</label>';
 if (defined('WP_DEBUG') && WP_DEBUG) {
-    echo '<p style="font-size: 12px; color: #666; margin-bottom: 5px;">🔍 Debug: ACF field value = "' . esc_html($open_bottle_service_value) . '"</p>';
+    echo '<p style="font-size: 12px; color: #666; margin-bottom: 5px;">🔍 Debug: BYOB service level (slug) = "' . esc_html($debug_byob_value) . '"</p>';
 }
 
-echo '<select id="open_bottle_service" name="open_bottle_service" onchange="toggleOtherNote()" style="width: 100%; height: 50px; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; line-height: 20px; transition: border-color 0.3s; min-width: 200px; text-overflow: clip; white-space: nowrap; display: flex; align-items: center;">';
+echo '<select id="byob_service_level" name="byob_service_level" onchange="toggleOtherNote()" style="width: 100%; height: 50px; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; line-height: 20px; transition: border-color 0.3s; min-width: 200px; text-overflow: clip; white-space: nowrap; display: flex; align-items: center;">';
 echo '<option value="">Please select</option>';
-echo '<option value="有" ' . ($open_bottle_service_value === '有' ? 'selected' : '') . '>Yes</option>';
-echo '<option value="無" ' . ($open_bottle_service_value === '無' ? 'selected' : '') . '>No</option>';
-echo '<option value="其他" ' . ($open_bottle_service_value === '其他' ? 'selected' : '') . '>Other</option>';
+foreach ($byob_service_level_options as $slug => $data) {
+    $selected = ($byob_service_level_value === $slug) ? 'selected' : '';
+    echo '<option value="' . esc_attr($slug) . '" ' . $selected . '>' . esc_html($data['label']) . '</option>';
+}
 echo '</select>';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please select whether you provide wine service</p>';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please select the BYOB service level you provide</p>';
 echo '</div>';
 
-// 開酒服務說明文字（有/無選項）
-echo '<div id="service_status_text" class="form-group" style="margin-bottom: 25px; display: ' . (in_array($open_bottle_service_value, array('有', '無')) ? 'block' : 'none') . ';">';
-echo '<div style="background: #e8f5e8; border: 1px solid #c3e6cb; padding: 15px; border-radius: 8px; text-align: center;">';
-if ($open_bottle_service_value === '有') {
-    echo '<p style="margin: 0; color: #155724; font-weight: bold; font-size: 16px;">✅ Wine service provided</p>';
-} elseif ($open_bottle_service_value === '無') {
-    echo '<p style="margin: 0; color: #721c24; font-weight: bold; font-size: 16px;">No wine service provided</p>';
+$service_message = '';
+if ($byob_service_level_value && isset($byob_service_level_options[$byob_service_level_value])) {
+    $service_message = $byob_service_level_options[$byob_service_level_value]['description'];
+}
+
+echo '<div id="service_status_text" class="form-group" style="margin-bottom: 25px; display: ' . ($service_message ? 'block' : 'none') . ';">';
+if ($service_message) {
+    echo '<div style="background: #e8f5e8; border: 1px solid #c3e6cb; padding: 15px; border-radius: 8px; text-align: center;">';
+    echo '<p style="margin: 0; color: #155724; font-weight: bold; font-size: 16px;">' . esc_html($service_message) . '</p>';
+    echo '</div>';
 }
 echo '</div>';
-echo '</div>';
 
-// 開酒服務其他說明
-echo '<div id="other_note_field" class="form-group" style="margin-bottom: 25px; display: ' . ($open_bottle_service_value === '其他' ? 'block' : 'none') . ';">';
+// 舊的其他說明欄位暫時保留但隱藏
+echo '<div id="other_note_field" class="form-group" style="margin-bottom: 25px; display: none;">';
 echo '<label for="open_bottle_service_other_note" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Other Description</label>';
 echo '<input type="text" id="open_bottle_service_other_note" name="open_bottle_service_other_note" value="' . esc_attr(get_field('open_bottle_service_other_note', $restaurant_id)) . '" placeholder="Please describe the wine service content you provide..." style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
 echo '<p style="font-size: 14px; color: 666; margin-top: 5px;">Please describe in detail the wine service content you provide (optional)</p>';
@@ -668,244 +716,195 @@ echo '<style>
 </style>';
 
 // 添加 JavaScript 來限制餐廳類型最多只能選3個
-echo '<script>
+?>
+<script>
+const byobServiceInfo = <?php echo wp_json_encode($byob_service_level_js_data); ?>;
+
 function limitCheckboxes(checkbox, maxCount, groupName) {
-    var checkboxes = document.querySelectorAll(\'input[name="\' + groupName + \'[]"]\');
-    var checkedCount = 0;
-    var otherTypeNoteField = document.getElementById(\'other_type_note_field\');
-    
-    // 計算已選中的數量
-    checkboxes.forEach(function(cb) {
+    const checkboxes = document.querySelectorAll(`input[name="${groupName}[]"]`);
+    let checkedCount = 0;
+    const otherTypeNoteField = document.getElementById('other_type_note_field');
+
+    checkboxes.forEach((cb) => {
         if (cb.checked) {
-            checkedCount++;
+            checkedCount += 1;
         }
     });
-    
-    // 如果超過限制，取消選中
+
     if (checkedCount > maxCount) {
         checkbox.checked = false;
-        alert("Restaurant type can only select up to " + maxCount + " options");
+        alert(`Restaurant type can only select up to ${maxCount} options`);
         return false;
     }
-    
-    // 檢查是否選擇了「其他」類型
-    var otherCheckbox = document.querySelector(\'input[name="\' + groupName + \'[]"][value="其他"]\');
+
+    const otherCheckbox = document.querySelector(`input[name="${groupName}[]"][value="其他"]`);
     if (otherCheckbox && otherCheckbox.checked) {
-        otherTypeNoteField.style.display = \'block\';
+        otherTypeNoteField.style.display = 'block';
     } else {
-        otherTypeNoteField.style.display = \'none\';
-        // 清空內容
-        document.getElementById(\'restaurant_type_other_note\').value = \'\';
+        otherTypeNoteField.style.display = 'none';
+        const otherNoteInput = document.getElementById('restaurant_type_other_note');
+        if (otherNoteInput) {
+            otherNoteInput.value = '';
+        }
     }
-    
+
     return true;
 }
 
-// 控制開酒服務欄位的顯示邏輯
 function toggleOtherNote() {
-    var openBottleService = document.getElementById(\'open_bottle_service\');
-    var otherNoteField = document.getElementById(\'other_note_field\');
-    var serviceStatusText = document.getElementById(\'service_status_text\');
-    
-    // 隱藏所有相關欄位
-    otherNoteField.style.display = \'none\';
-    serviceStatusText.style.display = \'none\';
-    
-    // 根據選擇顯示對應的欄位
-    if (openBottleService.value === \'有\') {
-        serviceStatusText.style.display = \'block\';
-        // 更新說明文字
-        serviceStatusText.innerHTML = \'<div style="background: #e8f5e8; border: 1px solid #c3e6cb; padding: 15px; border-radius: 8px; text-align: center;"><p style="margin: 0; color: #155724; font-weight: bold; font-size: 16px;">✅ Wine service provided</p></div>\';
-    } else if (openBottleService.value === \'無\') {
-        serviceStatusText.style.display = \'block\';
-        // 更新說明文字
-        serviceStatusText.innerHTML = \'<div style="background: #e8f5e8; border: 1px solid #c3e6cb; padding: 15px; border-radius: 8px; text-align: center;"><p style="margin: 0; color: #721c24; font-weight: bold; font-size: 16px;">❌ No wine service provided</p></div>\';
-    } else if (openBottleService.value === \'其他\') {
-        otherNoteField.style.display = \'block\';
+    const selectEl = document.getElementById('byob_service_level');
+    const serviceStatusText = document.getElementById('service_status_text');
+    const otherNoteField = document.getElementById('other_note_field');
+    if (!selectEl || !serviceStatusText) {
+        return;
     }
-    
-    // 如果不是選擇「其他」，清空其他說明欄位的值
-    if (openBottleService.value !== \'其他\') {
-        document.getElementById(\'open_bottle_service_other_note\').value = \'\';
+    if (otherNoteField) {
+        otherNoteField.style.display = 'none';
+    }
+    const value = selectEl.value || '';
+    const info = byobServiceInfo[value];
+    if (info && info.description) {
+        serviceStatusText.style.display = 'block';
+        serviceStatusText.innerHTML = '<div style="background: #e8f5e8; border: 1px solid #c3e6cb; padding: 15px; border-radius: 8px; text-align: center;"><p style="margin: 0; color: #155724; font-weight: bold; font-size: 16px;">' + info.description + '</p></div>';
+    } else {
+        serviceStatusText.style.display = 'none';
+        serviceStatusText.innerHTML = '';
     }
 }
 
-// 控制開瓶費欄位的顯示邏輯
 function toggleCorkageFields() {
-    var isChargedRadios = document.querySelectorAll(\'input[name="is_charged"]\');
-    var corkageAmountField = document.getElementById(\'corkage_amount_field\');
-    var corkageNoteField = document.getElementById(\'corkage_note_field\');
-    
-    // 隱藏所有開瓶費相關欄位
-    corkageAmountField.style.display = \'none\';
-    corkageNoteField.style.display = \'none\';
-    
-    // 找到選中的選項
-    var selectedValue = \'\';
-    for (var i = 0; i < isChargedRadios.length; i++) {
+    const isChargedRadios = document.querySelectorAll('input[name="is_charged"]');
+    const corkageAmountField = document.getElementById('corkage_amount_field');
+    const corkageNoteField = document.getElementById('corkage_note_field');
+
+    if (corkageAmountField) {
+        corkageAmountField.style.display = 'none';
+    }
+    if (corkageNoteField) {
+        corkageNoteField.style.display = 'none';
+    }
+
+    let selectedValue = '';
+    for (let i = 0; i < isChargedRadios.length; i += 1) {
         if (isChargedRadios[i].checked) {
             selectedValue = isChargedRadios[i].value;
             break;
         }
     }
-    
-    // 根據選擇顯示對應的欄位
-    if (selectedValue === \'yes\') {
-        // 選擇「酌收」時顯示金額欄位
-        corkageAmountField.style.display = \'block\';
-        // 清空其他說明欄位的值
-        document.getElementById(\'corkage_fee_note\').value = \'\';
-    } else if (selectedValue === \'other\') {
-        // 選擇「其他」時顯示說明欄位
-        corkageNoteField.style.display = \'block\';
-        // 清空金額欄位的值
-        document.getElementById(\'corkage_fee_amount\').value = \'\';
+
+    if (selectedValue === 'yes' && corkageAmountField) {
+        corkageAmountField.style.display = 'block';
+        const noteField = document.getElementById('corkage_fee_note');
+        if (noteField) {
+            noteField.value = '';
+        }
+    } else if (selectedValue === 'other' && corkageNoteField) {
+        corkageNoteField.style.display = 'block';
+        const amountField = document.getElementById('corkage_fee_amount');
+        if (amountField) {
+            amountField.value = '';
+        }
     } else {
-        // 選擇「不收費」時清空所有欄位的值
-        document.getElementById(\'corkage_fee_amount\').value = \'\';
-        document.getElementById(\'corkage_fee_note\').value = \'\';
+        const amountField = document.getElementById('corkage_fee_amount');
+        const noteField = document.getElementById('corkage_fee_note');
+        if (amountField) {
+            amountField.value = '';
+        }
+        if (noteField) {
+            noteField.value = '';
+        }
     }
 }
 
-// 頁面載入完成後初始化開酒服務欄位的顯示狀態
-document.addEventListener(\'DOMContentLoaded\', function() {
+document.addEventListener('DOMContentLoaded', () => {
     toggleOtherNote();
     toggleCorkageFields();
-    
-    // 為開瓶費選項按鈕添加事件監聽器
-    var isChargedRadios = document.querySelectorAll(\'input[name="is_charged"]\');
-    for (var i = 0; i < isChargedRadios.length; i++) {
-        isChargedRadios[i].addEventListener(\'change\', toggleCorkageFields);
+
+    const isChargedRadios = document.querySelectorAll('input[name="is_charged"]');
+    for (let i = 0; i < isChargedRadios.length; i += 1) {
+        isChargedRadios[i].addEventListener('change', toggleCorkageFields);
     }
-    
-    // 初始化開酒服務「其他」選項的顯示狀態
-    var openBottleService = document.getElementById(\'open_bottle_service\');
-    var otherNoteField = document.getElementById(\'open_bottle_service_other_note\');
-    
-    // 除錯：檢查開酒服務「其他」選項的狀態
-    console.log(\'DEBUG: openBottleService = \', openBottleService);
-    console.log(\'DEBUG: openBottleService.value = \', openBottleService ? openBottleService.value : \'N/A\');
-    console.log(\'DEBUG: otherNoteField = \', otherNoteField);
-    
-    if (openBottleService && openBottleService.value === \'其他\') {
-        otherNoteField.style.display = \'block\';
-        console.log(\'DEBUG: Show wine service other description field\');
-        
-        // 填入 ACF 中儲存的說明文字
-        var otherNoteValue = \'' . esc_js(get_field('open_bottle_service_other_note', $restaurant_id)) . '\';
-        if (otherNoteValue && otherNoteValue !== \'\') {
+
+    const otherCheckbox = document.querySelector('input[name="restaurant_type[]"][value="其他"]');
+    const otherTypeNoteField = document.getElementById('other_type_note_field');
+    if (otherCheckbox && otherCheckbox.checked && otherTypeNoteField) {
+        otherTypeNoteField.style.display = 'block';
+        const otherNoteField = document.getElementById('restaurant_type_other_note');
+        const otherNoteValue = <?php echo wp_json_encode($other_note); ?>;
+        if (otherNoteField && otherNoteValue) {
             otherNoteField.value = otherNoteValue;
-            console.log(\'DEBUG: Fill wine service other description: "\' + otherNoteValue + \'"\');
         }
-    } else {
-        console.log(\'DEBUG: Hide wine service other description field\');
     }
-    
-    // 初始化其他類型說明欄位的顯示狀態
-    var otherCheckbox = document.querySelector(\'input[name="restaurant_type[]"][value="其他"]\');
-    var otherTypeNoteField = document.getElementById(\'other_type_note_field\');
-    
-    // 除錯：檢查「其他」選項的狀態
-    console.log(\'DEBUG: otherCheckbox = \', otherCheckbox);
-    console.log(\'DEBUG: otherCheckbox.checked = \', otherCheckbox ? otherCheckbox.checked : \'N/A\');
-    console.log(\'DEBUG: otherTypeNoteField = \', otherTypeNoteField);
-    
-    if (otherCheckbox && otherCheckbox.checked) {
-        otherTypeNoteField.style.display = \'block\';
-        console.log(\'DEBUG: Show other type description field\');
-        
-        // 填入 ACF 中儲存的說明文字
-        var otherNoteField = document.getElementById(\'restaurant_type_other_note\');
-        if (otherNoteField) {
-            // 從 PHP 變數中獲取說明文字
-            var otherNoteValue = \'' . esc_js($other_note) . '\';
-            if (otherNoteValue && otherNoteValue !== \'\') {
-                otherNoteField.value = otherNoteValue;
-                console.log(\'DEBUG: Fill other type description: "\' + otherNoteValue + \'"\');
-            }
-        }
-    } else {
-        console.log(\'DEBUG: Hide other type description field\');
-    }
-    
-    // 初始化地址驗證
-    var addressField = document.getElementById(\'restaurant_address\');
+
+    const addressField = document.getElementById('restaurant_address');
     if (addressField && addressField.value) {
         validateAddress(addressField.value);
     }
 });
 
-
-
-// 刪除 LOGO 功能
 function deleteLogo() {
-    if (confirm(\'Are you sure you want to delete this LOGO? It cannot be recovered after deletion.\')) {
-        // 創建一個隱藏的表單來提交刪除請求
-        var form = document.createElement(\'form\');
-        form.method = \'POST\';
-        form.style.display = \'none\';
-        
-        var actionInput = document.createElement(\'input\');
-        actionInput.type = \'hidden\';
-        actionInput.name = \'action\';
-        actionInput.value = \'delete_restaurant_logo\';
-        
-        var restaurantIdInput = document.createElement(\'input\');
-        restaurantIdInput.type = \'hidden\';
-        restaurantIdInput.name = \'restaurant_id\';
-        restaurantIdInput.value = \'' . esc_attr($restaurant_id) . '\';
-        
+    if (confirm('Are you sure you want to delete this LOGO? It cannot be recovered after deletion.')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.style.display = 'none';
+
+        const actionInput = document.createElement('input');
+        actionInput.type = 'hidden';
+        actionInput.name = 'action';
+        actionInput.value = 'delete_restaurant_logo';
+
+        const restaurantIdInput = document.createElement('input');
+        restaurantIdInput.type = 'hidden';
+        restaurantIdInput.name = 'restaurant_id';
+        restaurantIdInput.value = '<?php echo esc_js($restaurant_id); ?>';
+
         form.appendChild(actionInput);
         form.appendChild(restaurantIdInput);
         document.body.appendChild(form);
-        
-        // 提交表單
+
         form.submit();
     }
 }
 
-// 地址驗證功能
 function validateAddress(address) {
-    var resultDiv = document.getElementById(\'address_validation_result\');
-    var textarea = document.getElementById(\'restaurant_address\');
-    
-    if (!address || address.trim() === \'\') {
-        resultDiv.innerHTML = \'\';
-        textarea.style.borderColor = \'#ddd\';
+    const resultDiv = document.getElementById('address_validation_result');
+    const textarea = document.getElementById('restaurant_address');
+
+    if (!resultDiv || !textarea) {
         return;
     }
-    
-    var errors = [];
-    var warnings = [];
-    
-    // 縣市驗證：必須包含「市」、「縣」等關鍵字
+
+    if (!address || address.trim() === '') {
+        resultDiv.innerHTML = '';
+        textarea.style.borderColor = '#ddd';
+        return;
+    }
+
+    const errors = [];
+
     if (!/(市|縣)/.test(address)) {
-        errors.push(\'Missing city information (e.g.: Taipei City, New Taipei City, Taoyuan City, etc.)\');
+        errors.push('Missing city information (e.g.: Taipei City, New Taipei City, Taoyuan City, etc.)');
     }
-    
-    // 行政區驗證：必須包含「區」等關鍵字
+
     if (!/區/.test(address)) {
-        errors.push(\'Missing district information (e.g.: Xinyi District, Daan District, etc.)\');
+        errors.push('Missing district information (e.g.: Xinyi District, Daan District, etc.)');
     }
-    
-    // 路街驗證：必須包含「路」、「街」、「道」等關鍵字
+
     if (!/(路|街|道)/.test(address)) {
-        errors.push(\'Missing street information (e.g.: Xinyi Road, Zhongxiao East Road, etc.)\');
+        errors.push('Missing street information (e.g.: Xinyi Road, Zhongxiao East Road, etc.)');
     }
-    
-    // 門牌驗證：必須包含數字
-    if (!/\\d/.test(address)) {
-        errors.push(\'Missing house number\');
+
+    if (!/\d/.test(address)) {
+        errors.push('Missing house number');
     }
-    
-    // 顯示驗證結果
+
     if (errors.length > 0) {
-        resultDiv.innerHTML = \'<div style="padding: 10px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; font-size: 14px;"><strong>⚠️ Incomplete address format:</strong><ul style="margin: 10px 0 0 0; padding-left: 20px;"><li>\' + errors.join(\'</li><li>\') + \'</li></ul></div>\';
-        textarea.style.borderColor = \'#dc3545\';
+        resultDiv.innerHTML = '<div style="padding: 10px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; font-size: 14px;"><strong>⚠️ Incomplete address format:</strong><ul style="margin: 10px 0 0 0; padding-left: 20px;"><li>' + errors.join('</li><li>') + '</li></ul></div>';
+        textarea.style.borderColor = '#dc3545';
     } else {
-        resultDiv.innerHTML = \'<div style="padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724; font-size: 14px;"><strong>✅ Address format is correct</strong></div>\';
-        textarea.style.borderColor = \'#28a745\';
+        resultDiv.innerHTML = '<div style="padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724; font-size: 14px;"><strong>✅ Address format is correct</strong></div>';
+        textarea.style.borderColor = '#28a745';
     }
 }
-</script>';
-?>
+</script>
+<?php
