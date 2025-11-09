@@ -1,67 +1,67 @@
 <?php
 /**
- * 餐廳照片管理頁面
+ * Restaurant photo management template
  */
 
-// 防止直接訪問
+// Prevent direct access
 if (!defined('ABSPATH')) {
     exit;
 }
 
-// 檢查用戶權限
+// Check user permission
 $user_id = get_current_user_id();
 if (!$user_id) {
     echo '<div style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 20px; border-radius: 8px; text-align: center;">';
-    echo '<h3>❌ 請先登入</h3>';
-    echo '<p>您需要登入才能管理餐廳照片。</p>';
+    echo '<h3>❌ Please Log In</h3>';
+    echo '<p>You must log in to manage restaurant photos.</p>';
     echo '</div>';
     return;
 }
 
-// 檢查用戶角色
+// Verify user role
 $user = get_user_by('id', $user_id);
 if (!in_array('restaurant_owner', $user->roles)) {
     echo '<div style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 20px; border-radius: 8px; text-align: center;">';
-    echo '<h3>❌ 權限不足</h3>';
-    echo '<p>只有餐廳業者才能存取此頁面。</p>';
+    echo '<h3>❌ Insufficient Permissions</h3>';
+    echo '<p>Only restaurant owners can access this page.</p>';
     echo '</div>';
     return;
 }
 
-// 獲取用戶的餐廳
+// Get restaurants owned by the user
 $user_restaurants = byob_get_user_restaurants($user_id);
 if (empty($user_restaurants)) {
     echo '<div style="background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; padding: 20px; border-radius: 8px; text-align: center;">';
-    echo '<h3>⚠️ 注意</h3>';
-    echo '<p>您目前沒有關聯的餐廳。請聯絡管理員。</p>';
+    echo '<h3>⚠️ Notice</h3>';
+    echo '<p>No restaurant is currently linked to this account. Please contact the administrator.</p>';
     echo '</div>';
     return;
 }
 
 $restaurant_id = $user_restaurants[0]->ID;
 
-// 處理照片上傳
+// Handle photo upload
 if ($_POST['action'] === 'upload_photos') {
     $result = byob_handle_photo_upload($restaurant_id, $_FILES['photos']);
     if (is_wp_error($result)) {
         echo '<div class="error">' . $result->get_error_message() . '</div>';
     } else {
-        echo '<div class="success">照片上傳成功！</div>';
+        echo '<div class="success">Photo uploaded successfully!</div>';
     }
 }
 
-// 處理照片刪除
+// Handle photo deletion
 if ($_POST['action'] === 'delete_photo') {
     $photo_id = intval($_POST['photo_id']);
     $result = byob_delete_restaurant_photo($restaurant_id, $photo_id);
     if (is_wp_error($result)) {
         echo '<div class="error">' . $result->get_error_message() . '</div>';
     } else {
-        echo '<div class="success">照片刪除成功！</div>';
+        echo '<div class="success">Photo deleted successfully!</div>';
     }
 }
 
-// 獲取現有照片（讀取三個群組欄位）
+// Retrieve existing photos (three group fields)
 $photo_1 = get_field('restaurant_photo_1', $restaurant_id);
 $photo_2 = get_field('restaurant_photo_2', $restaurant_id);
 $photo_3 = get_field('restaurant_photo_3', $restaurant_id);
@@ -83,65 +83,65 @@ $can_upload = $photo_count < $max_photos;
 ?>
 
 <div class="restaurant-photos-management">
-    <h2>餐廳照片管理</h2>
+    <h2>Restaurant Photo Management</h2>
     
-    <!-- 預覽餐廳按鈕 -->
+    <!-- Preview restaurant button -->
     <div style="text-align: center; margin: 20px 0; padding: 15px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;">
-        <a href="<?php echo get_permalink($restaurant_id); ?>" target="_blank" style="background-color: #8b2635; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">👁️ 預覽餐廳</a>
-        <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">點擊按鈕在新分頁中預覽您的餐廳前台頁面</p>
-        <p style="margin: 5px 0 0 0; color: #999; font-size: 12px;">餐廳ID: <?php echo $restaurant_id; ?> | 連結: <?php echo get_permalink($restaurant_id); ?></p>
+        <a href="<?php echo get_permalink($restaurant_id); ?>" target="_blank" style="background-color: #8b2635; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">👁️ Preview Restaurant</a>
+        <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">Click to preview your restaurant page in a new tab.</p>
+        <p style="margin: 5px 0 0 0; color: #999; font-size: 12px;">Restaurant ID: <?php echo $restaurant_id; ?> | Link: <?php echo get_permalink($restaurant_id); ?></p>
     </div>
     
-    <!-- 照片上傳區域 -->
+    <!-- Photo upload section -->
     <?php if ($can_upload): ?>
         <div class="photo-upload-section">
-            <h3>上傳新照片</h3>
+            <h3>Upload New Photo</h3>
             <form method="post" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="upload_photos">
                 
                 <div class="upload-instructions">
-                    <p><strong>上傳須知：</strong></p>
+                    <p><strong>Upload Guidelines:</strong></p>
                     <ul>
-                        <li>最多可上傳 <?php echo $max_photos; ?> 張照片</li>
-                        <li>建議上傳餐廳環境、用餐區域等代表性照片</li>
-                        <li>照片說明為選填項目</li>
-                        <li>支援 JPG、PNG 格式，單張檔案大小不超過 2MB</li>
+                        <li>Maximum <?php echo $max_photos; ?> photos.</li>
+                        <li>Upload representative photos of the dining area, ambiance, or signature dishes.</li>
+                        <li>Photo description is optional.</li>
+                        <li>Supported formats: JPG, PNG, WebP. Maximum file size 2MB per image.</li>
                     </ul>
                 </div>
                 
                 <div class="photo-upload-fields">
                     <div class="photo-field">
-                        <label>選擇照片：</label>
+                        <label>Select photo:</label>
                         <input type="file" name="photos[]" accept="image/*" required>
                     </div>
                     <div class="photo-field">
-                        <label>照片說明（選填）：</label>
-                        <input type="text" name="photo_description" placeholder="例如：餐廳用餐區域">
+                        <label>Photo description (optional):</label>
+                        <input type="text" name="photo_description" placeholder="e.g., Dining area">
                     </div>
                 </div>
                 
-                <button type="submit" class="upload-button">上傳照片</button>
+                <button type="submit" class="upload-button">Upload Photo</button>
             </form>
         </div>
     <?php else: ?>
         <div class="upload-limit-reached">
-            <p>您已達到照片數量上限（<?php echo $max_photos; ?>張）。如需上傳新照片，請先刪除現有照片。</p>
+            <p>You have reached the maximum number of photos (<?php echo $max_photos; ?>). Delete an existing photo to upload a new one.</p>
         </div>
     <?php endif; ?>
     
-    <!-- 現有照片管理 -->
+    <!-- Existing photos -->
     <div class="existing-photos-section">
-        <h3>現有照片（<?php echo $photo_count; ?>/<?php echo $max_photos; ?>）</h3>
+        <h3>Existing Photos (<?php echo $photo_count; ?>/<?php echo $max_photos; ?>)</h3>
         
         <?php if (empty($existing_photos)): ?>
-            <p>目前還沒有上傳任何照片。</p>
+            <p>No photos have been uploaded yet.</p>
         <?php else: ?>
             <div class="photos-grid">
                 <?php foreach ($existing_photos as $index => $photo): ?>
                     <div class="photo-item">
                         <div class="photo-preview">
                             <img src="<?php echo esc_url($photo['photo']['sizes']['thumbnail']); ?>" 
-                                 alt="<?php echo esc_attr($photo['description'] ?: '餐廳照片'); ?>">
+                                 alt="<?php echo esc_attr($photo['description'] ?: 'Restaurant photo'); ?>">
                         </div>
                         <div class="photo-info">
                             <?php if ($photo['description']): ?>
@@ -150,7 +150,7 @@ $can_upload = $photo_count < $max_photos;
                             <form method="post" class="delete-photo-form">
                                 <input type="hidden" name="action" value="delete_photo">
                                 <input type="hidden" name="photo_id" value="<?php echo $photo['photo']['ID']; ?>">
-                                <button type="submit" class="delete-button" onclick="return confirm('確定要刪除這張照片嗎？')">刪除</button>
+                                <button type="submit" class="delete-button" onclick="return confirm('Are you sure you want to delete this photo?')">Delete Photo</button>
                             </form>
                         </div>
                     </div>
