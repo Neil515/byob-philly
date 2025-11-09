@@ -2061,9 +2061,27 @@ function byob_handle_restaurant_profile_submit($restaurant_id) {
             update_field('equipment', $equipment, $restaurant_id);
         }
         
-        // 新增欄位：開酒服務（選取）
-        if (isset($_POST['open_bottle_service'])) {
-            update_field('open_bottle_service', sanitize_text_field($_POST['open_bottle_service']), $restaurant_id);
+        // 新增欄位：BYOB 服務層級
+        if (isset($_POST['byob_service_level'])) {
+            $byob_service_level = sanitize_text_field($_POST['byob_service_level']);
+            $allowed_service_levels = array('full_service', 'basic_service', 'self_service', 'no_service', '');
+            if (!in_array($byob_service_level, $allowed_service_levels, true)) {
+                $byob_service_level = '';
+            }
+            update_field('byob_service_level', $byob_service_level, $restaurant_id);
+
+            // 兼容舊欄位（暫時保留顯示用）
+            $legacy_map = array(
+                'full_service' => '有',
+                'basic_service' => '有',
+                'self_service' => '其他',
+                'no_service' => '無',
+            );
+            $legacy_value = isset($legacy_map[$byob_service_level]) ? $legacy_map[$byob_service_level] : '';
+            update_field('open_bottle_service', $legacy_value, $restaurant_id);
+            if ($legacy_value !== '其他') {
+                update_field('open_bottle_service_other_note', '', $restaurant_id);
+            }
         }
         
         // 新增欄位：開酒服務其他說明（單行文字）
