@@ -1857,10 +1857,10 @@ function byob_customize_account_menu_items($menu_items) {
     $new_menu_items = array();
     
     // 只保留我們需要的選單項目，使用固定的順序
-    $new_menu_items['dashboard'] = '控制台';
-    $new_menu_items['restaurant-profile'] = '餐廳資料編輯';
-    $new_menu_items['restaurant-photos'] = '照片管理';
-    // $new_menu_items['restaurant-menu'] = '菜單管理';
+    $new_menu_items['dashboard'] = 'Dashboard';
+    $new_menu_items['restaurant-profile'] = 'Edit Restaurant';
+    $new_menu_items['restaurant-photos'] = 'Manage Photos';
+    // $new_menu_items['restaurant-menu'] = 'Menu Management';
     // 不添加 customer-logout，讓 WooCommerce 自動處理
     
     return $new_menu_items;
