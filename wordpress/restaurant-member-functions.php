@@ -1908,12 +1908,12 @@ function byob_override_dashboard_content() {
         echo '<a href="' . get_permalink($restaurant->ID) . '" class="button" target="_blank" style="background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">Preview Restaurant</a>';
         echo '</div>';
         
-        echo '<div class="restaurant-stats-main" style="background: #f9f9f9; padding: 20px; border-radius: 5px;">';
-        echo '<h3>Statistics</h3>';
-        echo '<p><strong>Restaurant Page Views:</strong>Counting...</p>';
-        echo '<p><strong>Review Count:</strong>0</p>';
-        echo '<p><strong>Photo Count:</strong>0</p>';
-        echo '</div>';
+        // echo '<div class="restaurant-stats-main" style="background: #f9f9f9; padding: 20px; border-radius: 5px;">';
+        // echo '<h3>Statistics</h3>';
+        // echo '<p><strong>Restaurant Page Views:</strong>Counting...</p>';
+        // echo '<p><strong>Review Count:</strong>0</p>';
+        // echo '<p><strong>Photo Count:</strong>0</p>';
+        // echo '</div>';
     } else {
         echo '<div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 20px; border-radius: 5px; margin: 20px 0;">';
         echo '<h3>⚠️ Notice</h3>';
