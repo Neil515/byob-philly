@@ -115,97 +115,97 @@ if (isset($_POST['action']) && $_POST['action'] === 'update_restaurant_profile')
     byob_handle_restaurant_profile_submit($restaurant_id);
 }
 
-// 處理 LOGO 刪除
+// Logo deletion handler
 if (isset($_POST['action']) && $_POST['action'] === 'delete_restaurant_logo') {
     $delete_restaurant_id = intval($_POST['restaurant_id']);
     
     // 添加除錯日誌
     if (defined('WP_DEBUG') && WP_DEBUG) {
-        error_log('BYOB LOGO 刪除: 開始處理');
-        error_log('BYOB LOGO 刪除: 餐廳 ID = ' . $restaurant_id . ' (類型: ' . gettype($restaurant_id) . ')');
-        error_log('BYOB LOGO 刪除: 提交的餐廳 ID = ' . $delete_restaurant_id . ' (類型: ' . gettype($delete_restaurant_id) . ')');
-        error_log('BYOB LOGO 刪除: 使用者 ID = ' . $user_id);
-        error_log('BYOB LOGO 刪除: 使用者角色 = ' . implode(', ', $user->roles));
+        error_log('BYOB LOGO Delete: start processing');
+        error_log('BYOB LOGO Delete: restaurant ID = ' . $restaurant_id . ' (type: ' . gettype($restaurant_id) . ')');
+        error_log('BYOB LOGO Delete: submitted restaurant ID = ' . $delete_restaurant_id . ' (type: ' . gettype($delete_restaurant_id) . ')');
+        error_log('BYOB LOGO Delete: user ID = ' . $user_id);
+        error_log('BYOB LOGO Delete: user roles = ' . implode(', ', $user->roles));
     }
     
-    // 檢查權限 - 餐廳業者應該能編輯自己的餐廳
-    if ($delete_restaurant_id == $restaurant_id) { // 使用 == 而不是 === 來處理類型差異
-        // 直接檢查餐廳的擁有者 ID
+    // Permission check - restaurant owners should edit their own restaurant
+    if ($delete_restaurant_id == $restaurant_id) { // use == to handle type difference
+        // Verify the owner ID
         $restaurant_owner_id = get_post_meta($restaurant_id, '_restaurant_owner_id', true);
         $user_has_restaurant = ($restaurant_owner_id == $user_id);
         
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('BYOB LOGO 刪除: 餐廳擁有者 ID = ' . $restaurant_owner_id);
-            error_log('BYOB LOGO 刪除: 當前使用者 ID = ' . $user_id);
-            error_log('BYOB LOGO 刪除: 使用者擁有此餐廳 = ' . ($user_has_restaurant ? 'true' : 'false'));
+            error_log('BYOB LOGO Delete: restaurant owner ID = ' . $restaurant_owner_id);
+            error_log('BYOB LOGO Delete: current user ID = ' . $user_id);
+            error_log('BYOB LOGO Delete: user owns this restaurant = ' . ($user_has_restaurant ? 'true' : 'false'));
         }
         
         if ($user_has_restaurant) {
-        // 獲取當前 LOGO ID
+        // Get current logo ID
         $current_logo_id = get_post_meta($restaurant_id, '_restaurant_logo', true);
         
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('BYOB LOGO 刪除: 當前 LOGO ID = ' . $current_logo_id);
+            error_log('BYOB LOGO Delete: current logo ID = ' . $current_logo_id);
         }
         
         if ($current_logo_id) {
-            // 刪除媒體庫中的附件
+            // Delete attachment from media library
             $delete_result = wp_delete_attachment($current_logo_id, true);
             
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('BYOB LOGO 刪除: wp_delete_attachment 結果 = ' . ($delete_result ? '成功' : '失敗'));
+                error_log('BYOB LOGO Delete: wp_delete_attachment result = ' . ($delete_result ? 'success' : 'failure'));
             }
             
             if ($delete_result) {
-                // 刪除餐廳的 LOGO meta
+                // Remove logo meta from restaurant
                 $meta_delete_result = delete_post_meta($restaurant_id, '_restaurant_logo');
                 
                 if (defined('WP_DEBUG') && WP_DEBUG) {
-                    error_log('BYOB LOGO 刪除: delete_post_meta 結果 = ' . ($meta_delete_result ? '成功' : '失敗'));
+                    error_log('BYOB LOGO Delete: delete_post_meta result = ' . ($meta_delete_result ? 'success' : 'failure'));
                 }
                 
-                // 清除當前頁面的 LOGO 資料，避免重定向
+                // Clear current logo data to avoid redirect issues
                 $current_logo_id = '';
                 $current_logo_url = '';
                 
-                // 設置成功訊息
+                // Set success message
                 $logo_delete_message = 'logo_deleted';
                 
                 if (defined('WP_DEBUG') && WP_DEBUG) {
-                    error_log('BYOB LOGO 刪除: 成功完成');
+                    error_log('BYOB LOGO Delete: completed successfully');
                 }
             } else {
-                // 設置錯誤訊息
+                // Set error message
                 $logo_delete_message = 'logo_delete_error';
                 
                 if (defined('WP_DEBUG') && WP_DEBUG) {
-                    error_log('BYOB LOGO 刪除: 附件刪除失敗');
+                    error_log('BYOB LOGO Delete: attachment removal failed');
                 }
             }
         } else {
-            // 沒有 LOGO 可刪除
+            // No logo to delete
             $logo_delete_message = 'no_logo';
             
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('BYOB LOGO 刪除: 沒有 LOGO 可刪除');
+                error_log('BYOB LOGO Delete: no logo available to delete');
             }
         }
         } else {
-            // 使用者沒有此餐廳的權限
+            // User does not have permission for this restaurant
             $logo_delete_message = 'permission_denied';
             
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                error_log('BYOB LOGO 刪除: 使用者沒有此餐廳的權限');
-                error_log('BYOB LOGO 刪除: 使用者餐廳列表: ' . print_r(array_map(function($r) { return $r->ID; }, $user_restaurants), true));
+                error_log('BYOB LOGO Delete: user lacks permission for this restaurant');
+                error_log('BYOB LOGO Delete: user restaurant list: ' . print_r(array_map(function($r) { return $r->ID; }, $user_restaurants), true));
             }
         }
     } else {
-        // 餐廳 ID 不匹配
+        // Restaurant ID mismatch
         $logo_delete_message = 'permission_denied';
         
         if (defined('WP_DEBUG') && WP_DEBUG) {
-            error_log('BYOB LOGO 刪除: 餐廳 ID 不匹配');
-            error_log('BYOB LOGO 刪除: 提交的餐廳 ID = ' . $delete_restaurant_id . ', 當前餐廳 ID = ' . $restaurant_id);
+            error_log('BYOB LOGO Delete: restaurant ID mismatch');
+            error_log('BYOB LOGO Delete: submitted restaurant ID = ' . $delete_restaurant_id . ', current restaurant ID = ' . $restaurant_id);
         }
     }
 }
@@ -572,11 +572,11 @@ echo '</div>';
 
 echo '</div>';
 
-// LOGO 上傳區塊
+// Logo upload section
 echo '<div class="form-section" style="margin-bottom: 35px;">';
 echo '<h3 style="color: #333; border-bottom: 3px solid rgba(139, 38, 53, 0.8); padding-bottom: 15px; margin-bottom: 25px;">Restaurant LOGO</h3>';
 
-// 顯示當前 LOGO
+// Display current logo if available
 if ($current_logo_url) {
     echo '<div class="current-logo" style="margin-bottom: 25px;">';
     echo '<p style="font-weight: bold; margin-bottom: 15px; color: #333;">Current LOGO:</p>';
@@ -584,10 +584,10 @@ if ($current_logo_url) {
     echo '<img src="' . esc_url($current_logo_url) . '" alt="Current LOGO" class="logo-image" style="max-width: 100%; max-height: 100%; object-fit: contain; transition: all 0.3s;">';
     echo '</div>';
     
-    // 簡化的說明文字
+    // Additional note below the preview
     echo '<div class="logo-display-info" style="margin-top: 15px; text-align: center;">';
     
-    // 刪除 LOGO 按鈕
+    // Delete button
     echo '<div class="logo-actions" style="border-top: 1px solid #e9ecef; padding-top: 15px;">';
     echo '<button type="button" onclick="deleteLogo()" style="background-color: #dc3545; color: white; padding: 8px 16px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: normal; transition: all 0.3s;">🗑️ Delete LOGO</button>';
     echo '<p style="font-size: 12px; color: #999; margin-top: 8px;">Click to permanently delete current LOGO</p>';
@@ -603,7 +603,7 @@ if ($current_logo_url) {
     echo '</div>';
 }
 
-// LOGO 上傳欄位
+// Logo upload fieldset
 echo '<div class="form-group" style="margin-bottom: 25px;">';
     echo '<label for="restaurant_logo" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Upload LOGO or representative restaurant photo (select file then click update restaurant information)</label>';
 echo '<input type="file" id="restaurant_logo" name="restaurant_logo" accept="image/jpeg,image/png,image/webp,image/svg+xml" style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; background: white; transition: border-color 0.3s;">';
