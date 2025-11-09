@@ -1904,7 +1904,7 @@ function byob_override_dashboard_content() {
         echo '<h3>Quick Actions</h3>';
         echo '<a href="' . wc_get_account_endpoint_url('restaurant-profile') . '" class="button" style="margin-right: 10px; background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">Edit Restaurant Information</a> ';
         echo '<a href="' . wc_get_account_endpoint_url('restaurant-photos') . '" class="button" style="margin-right: 10px; background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">Manage Photos</a> ';
-        echo '<a href="' . wc_get_account_endpoint_url('restaurant-menu') . '" class="button" style="margin-right: 10px; background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">Manage Menu</a> ';
+        // echo '<a href="' . wc_get_account_endpoint_url('restaurant-menu') . '" class="button" style="margin-right: 10px; background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">Manage Menu</a> ';
         echo '<a href="' . get_permalink($restaurant->ID) . '" class="button" target="_blank" style="background-color: rgba(139, 38, 53, 0.8); border-radius: 5px; padding: 12px 20px; font-size: 16px; display: inline-block; text-decoration: none; color: white;">Preview Restaurant</a>';
         echo '</div>';
         
