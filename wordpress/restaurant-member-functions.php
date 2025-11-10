@@ -1959,48 +1959,10 @@ function byob_handle_restaurant_profile_submit($restaurant_id) {
         exit;
     }
     
-    // 驗證新增的必填欄位
-    if (empty($_POST['district'])) {
-        wp_redirect(add_query_arg('message', 'error', wc_get_account_endpoint_url('restaurant-profile')));
-        exit;
-    }
-    
+    // 驗證新增的必填欄位（Email 仍為必填，其餘改為選填以支援海外地址）
     if (empty($_POST['contact_email'])) {
         wp_redirect(add_query_arg('message', 'error', wc_get_account_endpoint_url('restaurant-profile')));
         exit;
-    }
-    
-    // 地址驗證
-    if (!empty($_POST['restaurant_address'])) {
-        $address = $_POST['restaurant_address'];
-        $address_errors = array();
-        
-        // 縣市驗證：必須包含「市」、「縣」等關鍵字
-        if (!preg_match('/(市|縣)/', $address)) {
-            $address_errors[] = '缺少縣市資訊（如：台北市、新北市、桃園市等）';
-        }
-        
-        // 行政區驗證：必須包含「區」等關鍵字
-        if (!preg_match('/區/', $address)) {
-            $address_errors[] = '缺少行政區資訊（如：信義區、大安區等）';
-        }
-        
-        // 路街驗證：必須包含「路」、「街」、「道」等關鍵字
-        if (!preg_match('/(路|街|道)/', $address)) {
-            $address_errors[] = '缺少路街資訊（如：信義路、忠孝東路等）';
-        }
-        
-        // 門牌驗證：必須包含數字
-        if (!preg_match('/\d/', $address)) {
-            $address_errors[] = '缺少門牌號碼';
-        }
-        
-        // 如果有地址錯誤，重導向並顯示錯誤訊息
-        if (!empty($address_errors)) {
-            $error_message = 'address_validation_error';
-            wp_redirect(add_query_arg(array('message' => $error_message, 'address_errors' => urlencode(implode('|', $address_errors))), wc_get_account_endpoint_url('restaurant-profile')));
-            exit;
-        }
     }
     
     // 更新餐廳基本資料
@@ -2025,25 +1987,33 @@ function byob_handle_restaurant_profile_submit($restaurant_id) {
         $current_user = wp_get_current_user();
         update_field('contact_person', sanitize_text_field($current_user->display_name), $restaurant_id);
         
-        update_field('district', sanitize_text_field($_POST['district']), $restaurant_id);
+        update_field('district', sanitize_text_field($_POST['district'] ?? ''), $restaurant_id);
         update_field('address', sanitize_textarea_field($_POST['restaurant_address']), $restaurant_id);
         update_field('business_hours', sanitize_textarea_field($_POST['business_hours']), $restaurant_id);
         
         // 新增欄位：餐廳類型（核取方塊陣列）
+        $restaurant_types = array();
         if (isset($_POST['restaurant_type']) && is_array($_POST['restaurant_type'])) {
             $restaurant_types = array_map('sanitize_text_field', $_POST['restaurant_type']);
-            update_field('restaurant_type', $restaurant_types, $restaurant_id);
         }
+        update_field('philly_restaurant_type', $restaurant_types, $restaurant_id);
+        update_field('restaurant_type', $restaurant_types, $restaurant_id);
         
         // 新增欄位：其他類型說明（單行文字）
-        if (isset($_POST['restaurant_type_other_note'])) {
-            update_field('restaurant_type_other_note', sanitize_text_field($_POST['restaurant_type_other_note']), $restaurant_id);
-        }
+        $other_type_note = isset($_POST['restaurant_type_other_note']) ? sanitize_text_field($_POST['restaurant_type_other_note']) : '';
+        update_field('philly_restaurant_type_other_note', $other_type_note, $restaurant_id);
+        update_field('restaurant_type_other_note', $other_type_note, $restaurant_id);
         
         // 新增欄位：是否收開瓶費（選項按鈕）
-        if (isset($_POST['is_charged'])) {
-            update_field('is_charged', sanitize_text_field($_POST['is_charged']), $restaurant_id);
-        }
+        $is_charged = isset($_POST['is_charged']) ? sanitize_text_field($_POST['is_charged']) : '';
+        update_field('is_charged', $is_charged, $restaurant_id);
+        $philly_corkage_map = array(
+            'yes' => 'corkage_fee',
+            'no'  => 'free',
+            'other' => 'other',
+        );
+        $philly_corkage_value = isset($philly_corkage_map[$is_charged]) ? $philly_corkage_map[$is_charged] : '';
+        update_field('philly_corkage_fee', $philly_corkage_value, $restaurant_id);
         
         // 新增欄位：開瓶費金額（數值）
         if (isset($_POST['corkage_fee_amount'])) {
