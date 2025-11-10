@@ -107,16 +107,6 @@
   transform: translateY(0);
 }
 
-/* 餐廳列表頁面標題和內容右邊距調整 */
-.restaurant-card h2,
-.restaurant-card .field {
-  padding-right: 140px !important;
-}
-
-.restaurant-title-line {
-  padding-right: 140px !important;
-}
-
 /* 驗證徽章容器不受右邊距限制 */
 .verification-badge-container {
   padding-right: 0 !important;
