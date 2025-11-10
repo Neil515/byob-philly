@@ -2654,12 +2654,12 @@ function byob_get_restaurant_type_labels($post_id = null) {
         return array();
     }
 
-    $types = get_field('restaurant_type', $post_id);
-    $other_note = get_field('restaurant_type_other_note', $post_id);
+    $types = get_field('philly_restaurant_type', $post_id);
+    $other_note = get_field('philly_restaurant_type_other_note', $post_id);
 
     if (empty($types)) {
-        $types = get_field('philly_restaurant_type', $post_id);
-        $other_note = get_field('philly_restaurant_type_other_note', $post_id);
+        $types = get_field('restaurant_type', $post_id);
+        $other_note = get_field('restaurant_type_other_note', $post_id);
     }
 
     if (empty($types)) {
