@@ -317,34 +317,38 @@ echo '<label style="display: block; margin-bottom: 10px; font-weight: bold; colo
 echo '<div class="checkbox-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">';
 
 $restaurant_types = array(
-    '台式' => 'Taiwanese',
-    '法式' => 'French',
-    '義式' => 'Italian',
-    '日式' => 'Japanese',
-    '美式' => 'American',
-    '熱炒' => 'Stir-fry',
-    '小酒館' => 'Bistro',
-    '咖啡廳' => 'Cafe',
-    '私廚' => 'Private Kitchen',
-    '異國料理' => 'International',
-    '燒烤' => 'BBQ',
-    '火鍋' => 'Hot Pot',
-    '牛排' => 'Steakhouse',
-    'Lounge Bar' => 'Lounge Bar',
-    'Buffet' => 'Buffet',
+    'Italian' => 'Italian',
+    'French' => 'French',
+    'American' => 'American',
+    'Asian' => 'Asian',
+    'Mediterranean' => 'Mediterranean',
+    'Mexican' => 'Mexican',
+    'Steakhouse' => 'Steakhouse',
+    'Seafood' => 'Seafood',
+    'Vegetarian/Vegan' => 'Vegetarian/Vegan',
+    'Thai' => 'Thai',
+    'Japanese' => 'Japanese',
+    'Indian' => 'Indian',
+    'Spanish' => 'Spanish',
     'Fine dining' => 'Fine dining',
-    '其他' => 'Other'
+    'Other' => 'Other'
 );
 
 
 
-$current_types = get_field('restaurant_type', $restaurant_id);
+$current_types = get_field('philly_restaurant_type', $restaurant_id);
+if (!$current_types) {
+    $current_types = get_field('restaurant_type', $restaurant_id);
+}
 $current_types = is_array($current_types) ? $current_types : array();
         
         // 除錯：檢查餐廳類型和其他類型說明
-        $other_note = get_field('restaurant_type_other_note', $restaurant_id);
-        echo '<!-- DEBUG: restaurant_type = ' . print_r($current_types, true) . ' -->';
-        echo '<!-- DEBUG: restaurant_type_other_note = ' . $other_note . ' -->';
+        $other_note = get_field('philly_restaurant_type_other_note', $restaurant_id);
+        if (!$other_note) {
+            $other_note = get_field('restaurant_type_other_note', $restaurant_id);
+        }
+        echo '<!-- DEBUG: philly_restaurant_type = ' . print_r($current_types, true) . ' -->';
+        echo '<!-- DEBUG: philly_restaurant_type_other_note = ' . $other_note . ' -->';
         
         // 更詳細的除錯資訊
         echo '<!-- DEBUG: restaurant_id = ' . $restaurant_id . ' -->';
@@ -374,7 +378,7 @@ echo '</div>';
 // 其他類型說明（條件式顯示）
 echo '<div id="other_type_note_field" class="form-group" style="margin-bottom: 25px; display: none;">';
 echo '<label for="restaurant_type_other_note" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Other Type Description</label>';
-echo '<input type="text" id="restaurant_type_other_note" name="restaurant_type_other_note" value="' . esc_attr(get_field('restaurant_type_other_note', $restaurant_id)) . '" placeholder="Please describe your restaurant type..." style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
+echo '<input type="text" id="restaurant_type_other_note" name="restaurant_type_other_note" value="' . esc_attr($other_note) . '" placeholder="Please describe your restaurant type..." style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
 echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please describe your restaurant type (optional)</p>';
 echo '</div>';
 
@@ -422,8 +426,7 @@ echo '<div class="form-group" style="margin-bottom: 25px;">';
 echo '<label for="restaurant_address" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Address *</label>';
 echo '<textarea id="restaurant_address" name="restaurant_address" rows="3" placeholder="Please enter complete address..." required style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical; transition: border-color 0.3s;" oninput="validateAddress(this.value)">' . esc_textarea(get_field('address', $restaurant_id)) . '</textarea>';
 echo '<div id="address_validation_result" style="margin-top: 10px;"></div>';
-echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please fill in the complete address, including city and district, so it can be displayed on the front-end and be easily searched by customers</p>';
-echo '<p style="font-size: 13px; color: #666; margin-top: 5px;"><strong>Example format</strong>: No. 7, Section 5, Xinyi Road, Xinyi District, Taipei City</p>';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please fill in the complete address, including city, so it can be displayed on the front-end and be easily searched by customers</p>';
 echo '</div>';
 
 // 營業時間
@@ -737,7 +740,7 @@ function limitCheckboxes(checkbox, maxCount, groupName) {
         return false;
     }
 
-    const otherCheckbox = document.querySelector(`input[name="${groupName}[]"][value="其他"]`);
+    const otherCheckbox = document.querySelector(`input[name="${groupName}[]"][value="Other"]`);
     if (otherCheckbox && otherCheckbox.checked) {
         otherTypeNoteField.style.display = 'block';
     } else {
@@ -825,7 +828,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isChargedRadios[i].addEventListener('change', toggleCorkageFields);
     }
 
-    const otherCheckbox = document.querySelector('input[name="restaurant_type[]"][value="其他"]');
+    const otherCheckbox = document.querySelector('input[name="restaurant_type[]"][value="Other"]');
     const otherTypeNoteField = document.getElementById('other_type_note_field');
     if (otherCheckbox && otherCheckbox.checked && otherTypeNoteField) {
         otherTypeNoteField.style.display = 'block';
@@ -837,8 +840,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const addressField = document.getElementById('restaurant_address');
-    if (addressField && addressField.value) {
-        validateAddress(addressField.value);
+    // 暫停地址驗證：初始化時不再自動檢查
+    if (addressField) {
+        addressField.addEventListener('input', function () {
+            const resultDiv = document.getElementById('address_validation_result');
+            const textarea = document.getElementById('restaurant_address');
+            if (resultDiv) resultDiv.innerHTML = '';
+            if (textarea) textarea.style.borderColor = '#ddd';
+        });
     }
 });
 
@@ -866,45 +875,7 @@ function deleteLogo() {
     }
 }
 
-function validateAddress(address) {
-    const resultDiv = document.getElementById('address_validation_result');
-    const textarea = document.getElementById('restaurant_address');
-
-    if (!resultDiv || !textarea) {
-        return;
-    }
-
-    if (!address || address.trim() === '') {
-        resultDiv.innerHTML = '';
-        textarea.style.borderColor = '#ddd';
-        return;
-    }
-
-    const errors = [];
-
-    if (!/(市|縣)/.test(address)) {
-        errors.push('Missing city information (e.g.: Taipei City, New Taipei City, Taoyuan City, etc.)');
-    }
-
-    if (!/區/.test(address)) {
-        errors.push('Missing district information (e.g.: Xinyi District, Daan District, etc.)');
-    }
-
-    if (!/(路|街|道)/.test(address)) {
-        errors.push('Missing street information (e.g.: Xinyi Road, Zhongxiao East Road, etc.)');
-    }
-
-    if (!/\d/.test(address)) {
-        errors.push('Missing house number');
-    }
-
-    if (errors.length > 0) {
-        resultDiv.innerHTML = '<div style="padding: 10px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; color: #721c24; font-size: 14px;"><strong>⚠️ Incomplete address format:</strong><ul style="margin: 10px 0 0 0; padding-left: 20px;"><li>' + errors.join('</li><li>') + '</li></ul></div>';
-        textarea.style.borderColor = '#dc3545';
-    } else {
-        resultDiv.innerHTML = '<div style="padding: 10px; background: #d4edda; border: 1px solid #c3e6cb; border-radius: 4px; color: #155724; font-size: 14px;"><strong>✅ Address format is correct</strong></div>';
-        textarea.style.borderColor = '#28a745';
-    }
-}
+// 後台地點改為自由輸入，此函式留白避免前端驗證
+function validateAddress() {}
 </script>
 <?php
