@@ -195,7 +195,6 @@
 
   .restaurant-card h2,
   .restaurant-card .field,
-  .restaurant-title-line,
   .verification-badge-container,
   .acf-fields,
   .info-group,
@@ -205,8 +204,19 @@
   }
 
   .restaurant-title-line {
-    justify-content: center;
-    text-align: center;
+    justify-content: flex-start;
+    text-align: left;
+    padding-right: 0 !important;
+    width: 100%;
+  }
+
+  .restaurant-card h2 {
+    text-align: left !important;
+    width: 100%;
+  }
+
+  .restaurant-type {
+    margin-left: 6px;
   }
 
   .verification-badge-container {
@@ -657,62 +667,5 @@ if ($restaurant_pagination_html) {
   echo '<div class="restaurant-pagination restaurant-pagination--bottom">' . $restaurant_pagination_html . '</div>';
 }
 ?>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-  const overflowElements = [];
-
-  document.querySelectorAll('body *').forEach(el => {
-    const rect = el.getBoundingClientRect();
-    if (rect.right > viewportWidth + 0.5) {
-      el.style.outline = '2px solid #ff4d4f';
-      el.style.outlineOffset = '2px';
-      overflowElements.push({
-        selector: el.tagName.toLowerCase() + (el.className ? '.' + el.className.toString().trim().replace(/\s+/g, '.') : ''),
-        right: Math.round(rect.right),
-        viewportWidth: Math.round(viewportWidth)
-      });
-    }
-  });
-
-  if (overflowElements.length) {
-    const panel = document.createElement('div');
-    panel.style.position = 'fixed';
-    panel.style.bottom = '16px';
-    panel.style.left = '16px';
-    panel.style.right = '16px';
-    panel.style.maxHeight = '40vh';
-    panel.style.overflowY = 'auto';
-    panel.style.background = 'rgba(255, 77, 79, 0.9)';
-    panel.style.color = '#fff';
-    panel.style.fontSize = '14px';
-    panel.style.lineHeight = '1.4';
-    panel.style.zIndex = '99999';
-    panel.style.padding = '12px 14px';
-    panel.style.borderRadius = '8px';
-    panel.style.boxShadow = '0 6px 24px rgba(0,0,0,0.25)';
-
-    const title = document.createElement('strong');
-    title.textContent = 'Overflow elements detected:';
-    panel.appendChild(title);
-
-    const list = document.createElement('ol');
-    list.style.margin = '8px 0 0';
-    list.style.paddingLeft = '20px';
-
-    overflowElements.forEach(item => {
-      const li = document.createElement('li');
-      li.textContent = `${item.selector} ⇒ right: ${item.right}px (viewport: ${item.viewportWidth}px)`;
-      list.appendChild(li);
-    });
-
-    panel.appendChild(list);
-    document.body.appendChild(panel);
-  } else {
-    console.info('%cNo overflow elements detected.', 'color: #52c41a; font-weight: bold;');
-  }
-});
-</script>
 
 <?php get_footer(); ?>
