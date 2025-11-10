@@ -16,28 +16,31 @@ BYOB (Bring Your Own Bottle) 是一個自帶酒水餐廳推薦平台，目前運
 
 ---
 
-## 🚀 最新進度（2025年11月8日）
+## 🚀 最新進度（2025年11月10日）
 
-### 今日完成：Google Places + Yelp 整合、前台類型顯示修正
+### 今日完成：費城後台欄位英文化調整
 
 **🎯 關鍵成就**
 
-* ✅ **Google Places + Yelp 查詢腳本**  
-  * 新增 `philly_yelp_crawler/google_yelp_lookup.py`：讀取 `Name/Add/Phone` Excel，透過 Google Places 驗證地址並取得餐廳類型、以 Google Programmable Search 找到 Yelp 連結。結果輸出 `Type_1/Type_2/Yelp_URL/Match_Status`。  
-  * `philly_yelp_crawler/README.md` 更新執行方式、環境變數需求與參數說明。  
-  * `.env` 需包含 `GOOGLE_PLACES_API_KEY`、`GOOGLE_CUSTOM_SEARCH_API_KEY`、`GOOGLE_CUSTOM_SEARCH_CX`。
+* ✅ **餐廳類型欄位改版**  
+  * 業者後台餐廳類型改為費城專用英語選項（Italian / French / American…）。  
+  * 提交後同步寫入 `philly_restaurant_type` 與 `restaurant_type`，`Other` 備註同步處理。  
+  * `byob_get_restaurant_type_labels()` 優先讀取 `philly_restaurant_type`，前台顯示維持英文化。
 
-* ✅ **餐廳類型顯示修正**  
-  * `wordpress/functions.php` 新增 `byob_get_restaurant_type_labels()`，統一處理 `restaurant_type` / `philly_restaurant_type`、`Other` 備註與字型格式。  
-  * `wordpress/archive-restaurant.php`、`wordpress/single_restaurant.php` 改用新函式，費城餐廳類型能正常顯示。
+* ✅ **地址檢核鬆綁**  
+  * 移除「需含市/區/路」的台灣規則，只保留 Email 必填，支援美國地址。  
+  * 更新後台提示文字，避免造成儲存失敗。
 
-* ✅ **Next Task 更新**  
-  * `doc/Next Task Prompt Byob.md` 更新日期為 2025-11-08，並排定 11/9 任務：`(1)` 放大餐廳列表分頁按鈕；`(2)` Yelp 與電話欄位二擇一顯示。
+* ✅ **任務排程更新**  
+  * `doc/Next Task Prompt Byob.md` 改為 2025-11-11 待辦：  
+    1. 放大單一餐廳頁 LOGO。  
+    2. 統一 ACF 與業者後台照片欄位。  
+    3. 檢查 Rank Math 是否可調整餐廳頁面標題。
 
-**🗓️ 明日（11/9）**
-- 🚀 列表頁分頁按鈕尺寸優化。
-- 🚀 Yelp 與電話欄位二擇一顯示，避免前台雙重空白。
-- 詳見 `doc/Next Task Prompt Byob.md`
+**🗓️ 明日（11/11）**
+- 👁️ 單頁 LOGO 尺寸與 RWD 檢查。  
+- 🖼️ 餐廳照片欄位同步邏輯。  
+- 🧭 Rank Math 標題設定確認。
 
 ---
 
@@ -132,10 +135,6 @@ WordPress 核心
 - `doc/philly_byob_complete_plan.md`：費城 BYOB 完整專案計畫
 - `doc/Next Task Prompt Byob.md`：工作規劃與任務追蹤
 - `doc/ai_progress_byob.md`：開發進度記錄
-
-### 社群互動文檔
-- `doc/reddit_interaction_tracker.md`：Reddit 貼文記錄
-- `reddit_tracker/Reddit_Interaction_Tracker.xlsx`：Reddit 互動追蹤 Excel 檔案
 
 ### 技術文檔
 - `philly_yelp_crawler/`：多平台爬蟲系統
@@ -243,20 +242,6 @@ WordPress 核心
 - **及時止損決策**：遇到無法解決的技術問題時，及時移除未完成功能
 - **程式碼清理**：移除未完成功能，保持程式碼庫整潔
 - **為未來預留空間**：保留重新實作的彈性，清楚記錄移除原因
-
-### 重複餐廳處理機制（11/5）
-- **專案類型篩選**：避免跨專案誤判，提高準確性
-- **智能相似度計算**：處理地址為空、格式差異等邊緣情況
-- **地址縮寫統一**：Street → St、Avenue → Ave、Philadelphia → Philly 等
-- **標題自動標記**：方便管理員識別重複餐廳
-- **推薦次數追蹤**：記錄餐廳受歡迎程度
-- **權重動態調整**：根據資料完整性調整名稱和地址權重
-
-### 餐廳 Email 搜尋系統（11/4）
-- 兩階段自動化設計：分離取得 website 和搜尋 email，提高靈活性和可維護性
-- 智能 email 選擇：優先選擇包含餐廳名稱或常見前綴的 email
-- 多個 email 自動展開：方便後續處理和使用
-- API 限制處理：自動延遲和重試機制，確保穩定執行
 
 ### 驗證徽章系統
 - 視覺化展示驗證狀態，提升用戶信任度
