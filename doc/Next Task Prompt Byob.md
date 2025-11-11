@@ -1,34 +1,35 @@
 # 🍷 BYOB 專案工作規劃
 
-## 📅 當前日期：2025-11-10
+## 📅 當前日期：2025-11-11
 
 ---
 
 ## ✅ 今日摘要
-- 完成費城餐廳類型欄位英文化與資料同步。
-- 移除業者後台地址的台灣格式限制，支援海外地址。
-- 前台類型顯示改讀 `philly_restaurant_type`，避免顯示中文標籤。
+- 調整單一餐廳頁 `BYOB Service` 顯示邏輯，改讀 `byob_service_level` 並支援舊欄位 fallback。
+- 更新餐廳列表頁的 `BYOB Service` 程式碼（暫時註解，待啟用）。
+- 釐清 LOGO 欄位來源，確認 `_restaurant_logo` 為前台與業者後台的主要顯示依據。
+- 檢視 CPT UI 設定，預備將後台選單名稱改為英文。
 
 ---
 
-## 🗓️ 明日（2025-11-11）待辦
+## 🗓️ 明日（2025-11-12）待辦
 
-1. **放大單一餐廳頁 LOGO**  
-   - 檢查 `single_restaurant.php` 與相關 CSS。  
-   - 調整桌機／手機的圖片容器與 `object-fit` 設定，避免失真或溢出。  
-   - 驗證前台在不同裝置尺寸下排版正常。
+1. **Placeholder Image 策略實作**  
+   - 針對無 LOGO 的餐廳，在 `archive-restaurant.php` 與 `single_restaurant.php` 加入示意圖 fallback。  
+   - 規劃示意圖素材與版本管理（依餐廳類型套用）。  
+   - 在示意圖上加入「Placeholder Image – Awaiting Official Restaurant Logo」文字。
 
-2. **統一餐廳照片欄位來源**  
-   - 目標：ACF 後台與業者後台上傳的照片使用同一組 `philly_restaurant_photo` 欄位。  
-   - 檢視並更新 `archive-restaurant.php`、`single_restaurant.php`、`restaurant-member-functions.php` 內的存取邏輯。  
-  - 測試：在 ACF 與業者帳號各上傳/刪除一次，確認前台同步顯示。
+2. **餐廳排序規則優化**  
+   - 盤點目前餐廳列表排序邏輯（`pre_get_posts` 或查詢參數）。  
+   - 設計新排序規則（如優先顯示已驗證餐廳、業者已確認項目）。  
+   - 在測試環境驗證排序結果，再同步到前台。
 
-3. **Rank Math 頁面標題調整**  
-   - 進入 Rank Math > Titles & Meta，檢查 `restaurant` 文章型別設定。  
-   - 若無法 GUI 設定，評估在 `functions.php` 以 Hook 覆寫 `<title>`。  
-   - 驗證：重整餐廳列表與單頁，確認瀏覽器分頁顯示英文標題。
+3. **業者通知 Email 起草與驗證**  
+   - 定義 email 觸發流程（例如資料確認提醒、LOGO 上傳邀請）。  
+   - 撰寫英文通知模板並整合現有程式（`restaurant-member-functions.php` 或 Apps Script）。  
+   - 寄送測試信件確認格式、連結與內容正確。
 
 ---
 
-*最後更新：2025-11-10*  
+*最後更新：2025-11-11*  
 
