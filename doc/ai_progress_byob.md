@@ -16,6 +16,20 @@
 
 ---
 
+## ✅ 2025年11月11日 — BYOB Service 調整與後續規劃
+
+### 🎯 今日成就總覽
+- **BYOB Service 顯示優化**：`single_restaurant.php` 讀取 `byob_service_level`，支援舊欄位回退並統一顯示標籤文字；`archive-restaurant.php` 同步保留新邏輯（暫時註解待啟用）。
+- **欄位來源盤點**：確認 `_restaurant_logo` 為前台與業者後台的主要 LOGO 來源，釐清 ACF `restaurant_photo` 與 meta 的差異。
+- **後台選單英文化準備**：檢視 CPT UI 設定，確認只需調整 `Plural/Singular Label` 即可改為英文，避免影響程式碼（slug 維持 `restaurant`）。
+- **Placeholder 規劃**：確定示意圖將內嵌文字「Placeholder Image – Awaiting Official Restaurant Logo」，待明日批次套用。
+
+### 後續方向
+- 11/12 依 `Next Task Prompt Byob` 執行示意圖 fallback、餐廳排序調整、業者通知 Email 規劃。
+- 評估 LOGO 欄位同步機制，必要時在儲存流程將 `restaurant_photo` 寫入 `_restaurant_logo`。
+
+---
+
 ## ✅ 2025年11月10日 — 費城餐廳類型與後台欄位調整
 
 ### 🎯 今日成就總覽
@@ -68,93 +82,6 @@
 
 ---
 
-### 🎯 今日目標
-完成網站前台所有頁面的英文化，移除評論功能相關程式碼，為英文網站上線做準備。
-
-### 已完成項目
-
-* [x] **網站前台英文化** ⭐⭐⭐ 核心功能
-  * **餐廳列表頁英文化**：
-    - 所有欄位標籤已改為英文（Cuisine Type, Corkage Fee, Corkage Details, Wine Equipment, Notes, Address, Phone）
-    - 所有按鈕和連結文字已改為英文
-    - 修改檔案：`wordpress/archive-restaurant.php`
-  * **單一餐廳頁英文化**：
-    - 所有欄位標籤已改為英文（Cuisine Type, Corkage Fee, Corkage Details, Wine Equipment, Wine Service, Yelp, Notes, Address, Phone）
-    - 所有按鈕和操作文字已改為英文
-    - 修改檔案：`wordpress/single_restaurant.php`
-  * **餐廳註冊表單英文化**：
-    - 所有欄位標籤已改為英文（Name, Email, Password, Restaurant Name 等）
-    - 所有按鈕文字已改為英文（Register, Submit 等）
-    - 所有驗證訊息已改為英文
-    - 密碼規則說明已改為英文
-    - JavaScript 錯誤訊息已改為英文
-    - 修改檔案：`wordpress/functions.php`（`flatsome_byob_restaurant_registration_form_shortcode` 函數及相關處理函數）
-  * **Contact 表單英文化**：
-    - Contact Form 7 表單所有欄位和訊息已改為英文
-    - 修改檔案：WordPress 後台 Contact Form 7 設定
-
-* [x] **評論功能移除** ⭐ 程式碼清理
-  * **移除原因**：評論功能實作過程中遇到技術問題（星級評分系統無法正常顯示、表單文字混合中英文），決定暫時移除
-  * **移除內容**：
-    - 刪除 `wordpress/restaurant-comments.php` 檔案（評論功能核心檔案）
-    - 刪除 `wordpress/restaurant-rating-system.php` 檔案（星級評分系統檔案）
-    - 移除 `wordpress/functions.php` 中引入評論和評分系統的程式碼
-    - 移除 `wordpress/single_restaurant.php` 中所有評論相關的 CSS、HTML 和 JavaScript
-  * **後續規劃**：未來如有需要，可重新實作評論功能
-
-### 技術成果
-
-**英文化策略：**
-- 所有用戶可見的文字已改為英文
-- 程式碼註解保持中文，方便未來維護
-- 確保內容流暢、自然、符合英文表達習慣
-- 注意 SEO 優化，使用適當的關鍵字
-
-**程式碼清理：**
-- 移除未完成的功能，避免影響網站穩定性
-- 保持程式碼庫整潔，方便後續開發
-- 為未來重新實作預留空間
-
-### 技術細節
-
-**英文化實作方式：**
-- 直接修改 PHP 檔案中的字串文字
-- 確保所有用戶可見的文字都為英文
-- 保持程式碼結構和邏輯不變
-- 程式碼註解保持中文，方便維護
-
-**評論功能移除範圍：**
-- 完全刪除評論和評分相關檔案
-- 移除所有相關的 CSS 樣式
-- 移除所有相關的 HTML 結構
-- 移除所有相關的 JavaScript 功能
-- 移除所有相關的 PHP 函數和過濾器
-
-### 測試狀態
-
-**已完成測試：**
-- 餐廳列表頁英文顯示正常
-- 單一餐廳頁英文顯示正常
-- 餐廳註冊表單英文顯示正常
-- Contact 表單英文顯示正常
-
-**待測試項目：**
-- 完整的前台功能測試
-- 表單提交功能測試
-- 響應式設計測試
-
-### 修改的檔案
-
-**程式碼檔案：**
-- `wordpress/archive-restaurant.php`：餐廳列表頁英文化
-- `wordpress/single_restaurant.php`：單一餐廳頁英文化、評論功能移除
-- `wordpress/functions.php`：餐廳註冊表單英文化、評論功能引入移除
-
-**刪除的檔案：**
-- `wordpress/restaurant-comments.php`：評論功能核心檔案
-- `wordpress/restaurant-rating-system.php`：星級評分系統檔案
-
----
 
 ## ✅ 2025年11月5日 — 重複餐廳處理機制實作完成
 
