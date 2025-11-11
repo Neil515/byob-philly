@@ -300,36 +300,62 @@
         <div class="field"><strong>Wine Equipment:</strong> </div>
       <?php endif; ?>
 
-                    <?php 
-       $open_bottle_service = get_field('open_bottle_service');
-       $open_bottle_service_other_note = get_field('open_bottle_service_other_note');
-       
-       // 除錯：顯示原始值和類型
-       if (current_user_can('administrator')) {
-         echo '<!-- DEBUG: open_bottle_service = ' . var_export($open_bottle_service, true) . ' -->';
-         echo '<!-- DEBUG: open_bottle_service_other_note = ' . var_export($open_bottle_service_other_note, true) . ' -->';
-       }
+      <?php 
+        $byob_service_level = get_field('byob_service_level');
+        $legacy_open_bottle_service = get_field('open_bottle_service');
+        $open_bottle_service_other_note = get_field('open_bottle_service_other_note');
 
-               if ($open_bottle_service): 
-          if ($open_bottle_service === '有') {
-            $service_output = 'Yes';
-          } elseif ($open_bottle_service === '無') {
-            $service_output = 'No';
-          } elseif ($open_bottle_service === '其他') {
-            // 當選擇"其他"時，直接顯示說明文字，不顯示"其他"兩字
-            if ($open_bottle_service_other_note && !empty(trim($open_bottle_service_other_note))) {
-              $service_output = $open_bottle_service_other_note;
-            } else {
-              $service_output = 'Other';
-            }
-          } else {
-            $service_output = $open_bottle_service;
-          }
-       ?>
-         <div class="field"><strong>Wine Service:</strong> <?php echo esc_html($service_output); ?></div>
-       <?php else: ?>
-         <div class="field"><strong>Wine Service:</strong> </div>
-       <?php endif; ?>
+        $service_map = array(
+          'full_service' => array(
+            'label' => 'Full service (opening, pouring, decanting, chilling)',
+            'description' => 'Full service includes opening, pouring, decanting, and chilling.'
+          ),
+          'basic_service' => array(
+            'label' => 'Basic service (opening and pouring)',
+            'description' => 'Basic service includes opening and pouring.'
+          ),
+          'self_service' => array(
+            'label' => 'Self-service (equipment provided)',
+            'description' => 'Self-service: equipment is provided for guests.'
+          ),
+          'no_service' => array(
+            'label' => 'No service (BYOB only, bring your own equipment)',
+            'description' => 'No service: guests should bring their own equipment.'
+          ),
+        );
+
+        $legacy_map = array(
+          '有' => 'full_service',
+          '無' => 'no_service',
+          '其他' => 'self_service',
+          'yes' => 'full_service',
+          'no' => 'no_service',
+          'other' => 'self_service',
+        );
+
+        $service_slug = '';
+        if (!empty($byob_service_level) && isset($service_map[$byob_service_level])) {
+          $service_slug = $byob_service_level;
+        } elseif (!empty($legacy_open_bottle_service) && isset($legacy_map[$legacy_open_bottle_service])) {
+          $service_slug = $legacy_map[$legacy_open_bottle_service];
+        }
+
+        $service_label = '';
+        $service_description = '';
+
+        if ($service_slug && isset($service_map[$service_slug])) {
+          $service_label = $service_map[$service_slug]['label'];
+          $service_description = $service_map[$service_slug]['description'];
+        } elseif (!empty($open_bottle_service_other_note)) {
+          $service_label = $open_bottle_service_other_note;
+        }
+      ?>
+        <div class="field">
+          <strong>BYOB Service:</strong>
+          <?php if ($service_label): ?>
+            <?php echo esc_html($service_label); ?>
+          <?php endif; ?>
+        </div>
     </div>
 
 	<!-- 連結資訊（原本的 Website/Social Links 已註解，改為顯示 Yelp） -->
