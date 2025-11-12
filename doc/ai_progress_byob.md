@@ -16,6 +16,20 @@
 
 ---
 
+## ✅ 2025年11月12日 — LOGO fallback 與 Nearby 功能準備
+
+### 🎯 今日成就總覽
+- 前台 `archive-restaurant.php` 與 `single_restaurant.php` 更新 LOGO fallback 流程，優先採用 ACF `restaurant_logo`，並兼容 `_restaurant_logo` 與舊欄位 `restaurant_photo`。
+- ACF 新增 `Latitude` / `Longitude` 欄位，建立 `geocode_restaurant_locations.py` 腳本，可讀取 `.env` 中的 `GOOGLE_PLACES_API_KEY` 與 `GOOGLE_API_KEY`，自動辨識 `Name/Add` 欄位並輸出 `Latitude`、`Longitude`、`Geocode_Status`、`Matched_Address`。
+- 腳本初步執行完成資料管線，確立失敗清單輸出與欄位寫入格式，待提升查詢比對邏輯與成功率。
+- `Next Task Prompt Byob` 更新 11/13 排程：批次產出座標、寫回 ACF 與實作「Find BYOB Near Me」距離排序功能。
+
+### 後續方向
+- 11/13 先調整 geocode 腳本查詢策略（Places/Geocode 比對、重試、距離檢核）並小量驗證，再批次產出餐廳座標與失敗名單。
+- 規劃將座標寫入 WordPress ACF（REST API 或 WP-CLI）流程，並設計前台距離排序 + 授權/ZIP code fallback 的互動體驗。
+
+---
+
 ## ✅ 2025年11月11日 — BYOB Service 調整與後續規劃
 
 ### 🎯 今日成就總覽
@@ -82,174 +96,6 @@
 
 ---
 
-
-## ✅ 2025年11月5日 — 重複餐廳處理機制實作完成
-
-### 🎯 今日目標
-建立完整的重複餐廳檢測與處理機制，優化相似度計算邏輯，確保資料準確性和系統穩定性。
-
-### 已完成項目
-
-* [x] **重複餐廳標題加註功能** ⭐⭐⭐ 核心功能
-  * 當系統檢測到重複餐廳時，自動在標題後方加註「(重複)」
-  * 例如：「ABC餐廳」→「ABC餐廳(重複)」
-  * 即使多次重複也只加一次（避免重複加註）
-  * 修改檔案：`wordpress/functions.php`（`byob_create_philly_restaurant_article()` 函數）
-
-* [x] **推薦次數欄位新增** ⭐⭐ 數據追蹤
-  * 新增 `recommendation_count` ACF 欄位，記錄餐廳被推薦的次數
-  * 新建餐廳時預設為 1
-  * 可在 WordPress 後台手動修改
-  * 顯示在「Verification Override」欄位群組中
-  * 修改檔案：`wordpress/functions.php`（ACF 欄位定義）
-
-* [x] **重複檢查邏輯優化** ⭐⭐⭐ 系統優化
-  * 修改 `byob_check_duplicate_restaurant()` 函數，新增 `$project` 參數
-  * 費城專案只檢查費城餐廳（透過 `source` 欄位篩選）
-  * 避免與台北專案餐廳誤判為重複
-  * 支援專案類型篩選：`'philly'`、`'taipei'`、`''`（所有專案）
-  * 修改檔案：`wordpress/functions.php`（重複檢查函數）
-
-* [x] **相似度計算優化** ⭐⭐⭐ 核心演算法改進
-  * **地址為空時的處理**：
-    - 如果兩個地址都為空且名稱相同 → 90% 相似度（判定為重複）
-    - 如果兩個地址都為空 → 只依賴名稱相似度
-    - 如果只有一個地址為空 → 名稱權重 80%，地址權重 20%
-  * **英文標點符號處理**：
-    - 新增處理逗號、句號、破折號、連字符等英文標點
-    - 統一移除所有標點符號和空格
-  * **地址縮寫統一**：
-    - Street → St、Avenue → Ave、Boulevard → Blvd
-    - Road → Rd、Drive → Dr、Lane → Ln
-    - Philadelphia → Philly、Pennsylvania → PA
-    - 使用字邊界（`\b`）確保只匹配完整單字
-  * 修改檔案：`wordpress/functions.php`（`byob_calculate_simple_similarity()` 函數）
-
-* [x] **除錯日誌新增** ⭐ 開發工具
-  * 記錄重複檢查查詢結果
-  * 記錄每個比對的餐廳和相似度
-  * 方便後續問題診斷
-  * 修改檔案：`wordpress/functions.php`（重複檢查函數）
-
-### 技術成果
-
-**重複檢測系統架構：**
-- 專案類型篩選機制，避免跨專案誤判
-- 智能相似度計算，處理各種邊緣情況
-- 標題自動標記，方便管理員識別重複餐廳
-
-**相似度計算優化：**
-- 地址為空時的智能處理邏輯
-- 英文標點符號和地址縮寫統一化
-- 靈活的權重分配機制
-
-**數據追蹤機制：**
-- 推薦次數欄位，追蹤餐廳受歡迎程度
-- 除錯日誌，方便問題診斷和優化
-
-### 技術細節
-
-**重複檢查邏輯：**
-- 使用 `source` 欄位篩選費城餐廳，確保只檢查同專案餐廳
-- 支援向後相容，不傳入專案參數時檢查所有餐廳
-- 查詢條件優化，確保查詢效率
-
-**相似度計算邏輯：**
-- 標準化處理：統一大小寫、移除標點、統一縮寫
-- 特殊情況處理：地址為空、名稱相似但地址不同等
-- 權重分配：根據資料完整性動態調整權重
-
-**標題加註機制：**
-- 檢查標題是否已包含「(重複)」，避免重複加註
-- 在建立文章前處理標題，確保資料一致性
-
-### 測試狀態
-
-**待測試項目：**
-- 重複餐廳標題加註功能
-- 推薦次數欄位顯示
-- 地址為空時的相似度計算
-- 英文標點符號和地址縮寫處理
-
-### 修改的檔案
-
-**程式碼檔案：**
-- `wordpress/functions.php`：
-  - 重複檢查函數（`byob_check_duplicate_restaurant()`）
-  - 相似度計算函數（`byob_calculate_simple_similarity()`）
-  - 餐廳建立函數（`byob_create_philly_restaurant_article()`）
-  - ACF 欄位定義（推薦次數欄位）
-
----
-
-## ✅ 2025年11月4日 — 餐廳 Email 搜尋系統建立完成
-
-### 🎯 今日目標
-建立兩階段自動化 Email 搜尋系統，從 Google Places API 取得餐廳 website，再從 website 搜尋 email 地址。
-
-### 已完成項目
-
-* [x] **兩階段 Email 搜尋系統建立** ⭐⭐⭐ 完整自動化工具
-  * **步驟 1：Website 搜尋工具** (`philly_email_searcher.py`)
-    - 輸入：Excel 檔案（Name, Add, Phone 欄位）
-    - 處理：使用「餐廳名稱 + Philadelphia」搜尋 Google Places API
-    - 輸出：Excel 檔案（新增 Google_Website, Google_Place_ID, Google_Place_Name, Google_Address, Search_Status）
-    - 功能：自動重試機制、API 限制處理、進度顯示、完整日誌記錄
-  * **步驟 2：Email 提取工具** (`philly_email_extractor.py`)
-    - 輸入：步驟 1 的輸出 Excel（包含 Google_Website 欄位）
-    - 處理：搜尋多個常見頁面（首頁、聯絡頁面等），提取 email
-    - 輸出：Excel 檔案（新增 Email, Email_Status, Email_Message, Email_All_Found）
-    - 功能：智能 email 選擇、多個 email 自動展開為多行、email 驗證與過濾
-
-* [x] **檔案清理與組織** ⭐ 專案結構優化
-  * 刪除不需要的檔案（Yelp、TripAdvisor 爬蟲等）
-  * 保留 Google Places 相關檔案
-  * 建立清晰的資料夾結構
-
-* [x] **測試與驗證** ⭐ 系統驗證
-  * **檔案 1**：`Philly BYOB Restaurant.xlsx`（42 家餐廳）
-    - 步驟 1：成功取得 website 40 家（95.2%）
-    - 步驟 2：測試 5 家，成功取得 email 4 家（80%）
-  * **檔案 2**：`Philly BYOB Restaurant google form.xlsx`（20 家餐廳）
-    - 步驟 1：成功取得 website 18 家（90%）
-    - 步驟 2：成功取得 email 9 家（45%），展開後共 35 行（包含多個 email 的餐廳）
-
-### 技術成果
-
-**兩階段設計優勢：**
-- 分離取得 website 和搜尋 email，提高靈活性和可維護性
-- 可獨立執行和測試每個步驟
-- 支援批次處理大量餐廳資料
-
-**Email 搜尋功能：**
-- 智能 email 選擇：優先選擇包含餐廳名稱或常見前綴的 email
-- 多個 email 自動展開：當找到多個 email 時，自動展開為多行，每行對應一個 email
-- Email 驗證與過濾：過濾無效 email（範例 email、系統 email 等）
-
-**API 使用優化：**
-- Google Places API：每次請求 0.2-0.5 秒延遲，自動重試機制
-- Website 爬蟲：每次請求 1-2 秒延遲，避免被封鎖
-- 完整記錄 API 請求次數（目前使用 130 次，遠低於免費額度 100,000 次）
-
-### 測試結果統計
-
-- **處理檔案數**：2 個
-- **總餐廳數**：62 家（42 + 20）
-- **步驟 1（取得 Website）**：成功 58/62（93.5%）
-- **步驟 2（搜尋 Email）**：成功 13 家
-- **API 使用量**：130 次請求（0.13% 使用率）
-
-### 修改的檔案
-
-**新建檔案：**
-- `philly_yelp_crawler/philly_email_searcher.py`：Website 搜尋工具
-- `philly_yelp_crawler/philly_email_extractor.py`：Email 提取工具
-- `philly_yelp_crawler/README.md`：更新使用說明
-
-**保留檔案：**
-- `philly_yelp_crawler/google_config.py`：API 設定
-
----
 
 ## ✅ 2025年11月3日 — 驗證徽章系統與 Yelp 連結整合完成
 
