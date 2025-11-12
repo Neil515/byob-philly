@@ -397,25 +397,28 @@ if ($restaurant_pagination_html) {
     <div class="restaurant-card">
       <!-- 加入圖片顯示 -->
       <?php 
-      // 獲取兩個 LOGO 的上傳時間，選擇最新的
-      $admin_logo = get_field('restaurant_photo', get_the_ID());
-      $user_logo_id = get_post_meta(get_the_ID(), '_restaurant_logo', true);
-      
+      // 依序檢查 ACF restaurant_logo、自訂欄位 _restaurant_logo、舊的 restaurant_photo
+      $acf_logo      = get_field('restaurant_logo', get_the_ID());
+      $user_logo_id  = get_post_meta(get_the_ID(), '_restaurant_logo', true);
+      $admin_logo    = get_field('restaurant_photo', get_the_ID());
+
       $logo_id = null;
-      
-      if ($admin_logo && is_array($admin_logo)) {
-        $admin_logo_id = $admin_logo['ID'];
-        $admin_time = get_post_modified_time('U', false, $admin_logo_id);
-        
-        if ($user_logo_id) {
-          $user_time = get_post_modified_time('U', false, $user_logo_id);
-          // 選擇最新的
-          $logo_id = ($admin_time > $user_time) ? $admin_logo_id : $user_logo_id;
-        } else {
-          $logo_id = $admin_logo_id;
+
+      if ($acf_logo) {
+        // ACF 圖片欄位可能是 ID 或包含 ID 的陣列
+        if (is_array($acf_logo) && isset($acf_logo['ID'])) {
+          $logo_id = $acf_logo['ID'];
+        } elseif (is_numeric($acf_logo)) {
+          $logo_id = intval($acf_logo);
         }
-      } else {
+      }
+
+      if (!$logo_id && $user_logo_id) {
         $logo_id = $user_logo_id;
+      }
+
+      if (!$logo_id && $admin_logo && is_array($admin_logo) && isset($admin_logo['ID'])) {
+        $logo_id = $admin_logo['ID'];
       }
       
       if ($logo_id): 
