@@ -16,30 +16,26 @@ BYOB (Bring Your Own Bottle) 是一個自帶酒水餐廳推薦平台，目前運
 
 ---
 
-## 🚀 最新進度（2025年11月11日）
+## 🚀 最新進度（2025年11月12日）
 
-### 今日完成：BYOB Service 顯示調整與後續規劃
+### 今日完成：LOGO fallback 與 Nearby 功能準備
 
 **🎯 關鍵成就**
 
-* ✅ **單頁 BYOB Service 顯示改版**  
-  * `single_restaurant.php` 改讀 `byob_service_level`，保留舊欄位回退邏輯。  
-  * 輸出統一英文標籤「BYOB Service」，移除冗長說明文字。
+* ✅ **LOGO 顯示邏輯統一**  
+  * `archive-restaurant.php` 與 `single_restaurant.php` 改為依序讀取 ACF `restaurant_logo`、Meta `_restaurant_logo`、舊欄位 `restaurant_photo`，確保後台新上傳的 LOGO 能即時顯示。
 
-* ✅ **列表頁程式更新（暫時註解）**  
-  * `archive-restaurant.php` 具備相同顯示邏輯，待示意圖完成後啟用。
+* ✅ **經緯度欄位與腳本建置**  
+  * ACF 新增 `Latitude` / `Longitude` 數值欄位。  
+  * 新增 `philly_yelp_crawler/geocode_restaurant_locations.py`，支援 `.env` 中 `GOOGLE_PLACES_API_KEY`/`GOOGLE_API_KEY`，可從 `Name/Add` 欄位批次產生 `Latitude`、`Longitude`、`Geocode_Status`、`Matched_Address`。
 
-* ✅ **LOGO 欄位來源盤點**  
-  * 確認目前前台／業者後台均以 `_restaurant_logo` meta 為主，ACF `restaurant_photo` 僅作為後台管理用。  
-  * 設定示意圖策略：無 LOGO 時顯示含文字的 placeholder 圖。
+* ✅ **Nearby 功能規劃**  
+  * `Next Task Prompt Byob` 更新 11/13 排程：先調整 geocode 查詢與成功率，再寫回 ACF，最後實作「Find BYOB Near Me」距離排序與授權/ZIP code fallback。
 
-* ✅ **CPT UI 英文化流程確認**  
-  * 僅需調整 `Plural/Singular Label` 即可把「餐廳清單」改為英文，不影響程式碼。
-
-**🗓️ 明日（11/12）**
-- 🖼️ Placeholder Image fallback 實作。  
-- 📊 餐廳排序規則調整。  
-- ✉️ 業者通知 Email 模板與流程規劃。
+**🗓️ 明日（11/13）**
+- 🔄 調整 geocode 腳本（比對邏輯、重試、成功率驗證）並批次輸出座標。  
+- ⬆️ 將成功資料寫回 WordPress ACF，建立稽核流程。  
+- 📍 開始實作距離排序與前端互動（授權、ZIP fallback）。
 
 ---
 
@@ -86,6 +82,7 @@ WordPress 核心
 聯絡與驗證機制（進行中）
 ├── 餐廳 Email 搜尋系統 ✓（11/4）
 ├── 重複餐廳處理機制 ✓（11/5）
+├── 經緯度欄位與 geocode 腳本（11/12）
 ├── Email 模板設計（準備中）
 └── 資料衝突處理邏輯（準備中）
     ↓
@@ -122,8 +119,9 @@ WordPress 核心
 - ✅ 餐廳 Email 搜尋系統：兩階段自動化工具（11/4）
 - ✅ 重複餐廳處理機制：標題加註、推薦次數欄位、相似度優化（11/5）
 - ✅ 網站前台英文化與評論功能清理（11/6）
-- 🔄 進行中：FAQ／後台英文化、Reddit 回覆流程、Placeholder Image 實作
-- ⏳ 後續階段：Email 模板設計、資料衝突處理、餐廳排序調整、網站上線、榮譽系統
+- ✅ LOGO fallback 與經緯度欄位建置（11/12）
+- 🔄 進行中：FAQ／後台英文化、Reddit 回覆流程、Nearby 功能實作
+- ⏳ 後續階段：Email 模板設計、資料衝突處理、距離排序上線、網站上線、榮譽系統
 
 ---
 
@@ -152,9 +150,9 @@ WordPress 核心
 1. **費城專案**：
    - ✅ 前台英文化、評論功能清理（11/6 完成）
    - ✅ BYOB Service 顯示調整（11/11 完成）
-   - 🚀 Placeholder Image fallback（11/12 計畫）
-   - 🚀 餐廳排序規則檢視（11/12 計畫）
-   - 🚀 業者通知 Email 模板（11/12 計畫）
+   - ✅ LOGO fallback 邏輯（11/12 完成）
+   - ✅ geocode 腳本初版（11/12 完成）
+   - ⏳ Placeholder Image fallback、距離排序、Nearby 互動
    - ⏳ FAQ／後台英文化、Reddit 回覆流程
    - ⏳ Reddit 社群互動啟動
 
@@ -261,6 +259,6 @@ WordPress 核心
 
 ---
 
-*最後更新：2025年11月11日*
-*版本：v14.0*
-*明日重點：Placeholder Image、餐廳排序、業者通知 Email*
+*最後更新：2025年11月12日*
+*版本：v15.0*
+*明日重點：geocode 成功率提升、ACF 座標寫入、Nearby 功能實作*
