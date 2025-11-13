@@ -16,26 +16,20 @@ BYOB (Bring Your Own Bottle) 是一個自帶酒水餐廳推薦平台，目前運
 
 ---
 
-## 🚀 最新進度（2025年11月12日）
+## 🚀 最新進度（2025年11月13日）
 
-### 今日完成：LOGO fallback 與 Nearby 功能準備
+### 今日完成：經緯度批次產出與資料對齊
 
 **🎯 關鍵成就**
 
-* ✅ **LOGO 顯示邏輯統一**  
-  * `archive-restaurant.php` 與 `single_restaurant.php` 改為依序讀取 ACF `restaurant_logo`、Meta `_restaurant_logo`、舊欄位 `restaurant_photo`，確保後台新上傳的 LOGO 能即時顯示。
+- ✅ **Google Maps API 換發與批次 geocode**：使用新的 API key，`philly_yelp_crawler/geocode_restaurant_locations.py` 成功為主清單與 Google Form 兩份 Excel 產出 `Latitude` / `Longitude`，並記錄 `Geocode_Status`、`Matched_Address`。
+- ✅ **WordPress ID 對齊腳本**：新增 `add_ids.py`，以餐廳名稱＋地址比對匯出的 `Restaurants-List-Export-2025-November-13-1040.csv`，為兩份 Excel 補上 `ID` 欄位（主清單 19/43、表單 16/20）。
+- ✅ **任務規劃更新**：`doc/Next Task Prompt Byob.md` 新增 11/14 的兩項重點待辦：「餐廳排序優化」與「餐廳聯絡 Email 轉寫」。
 
-* ✅ **經緯度欄位與腳本建置**  
-  * ACF 新增 `Latitude` / `Longitude` 數值欄位。  
-  * 新增 `philly_yelp_crawler/geocode_restaurant_locations.py`，支援 `.env` 中 `GOOGLE_PLACES_API_KEY`/`GOOGLE_API_KEY`，可從 `Name/Add` 欄位批次產生 `Latitude`、`Longitude`、`Geocode_Status`、`Matched_Address`。
-
-* ✅ **Nearby 功能規劃**  
-  * `Next Task Prompt Byob` 更新 11/13 排程：先調整 geocode 查詢與成功率，再寫回 ACF，最後實作「Find BYOB Near Me」距離排序與授權/ZIP code fallback。
-
-**🗓️ 明日（11/13）**
-- 🔄 調整 geocode 腳本（比對邏輯、重試、成功率驗證）並批次輸出座標。  
-- ⬆️ 將成功資料寫回 WordPress ACF，建立稽核流程。  
-- 📍 開始實作距離排序與前端互動（授權、ZIP fallback）。
+**🗓️ 明日（11/14）**
+- 📊 完成餐廳排序優化方案（整理既有排序、設定 fallback、著手調整 WordPress 查詢與前端顯示）。
+- ✉️ 重新撰寫對餐廳的聯絡 Email 模板，並盤點 Apps Script / WP 端的欄位映射。
+- 🔍 追蹤未成功對齊的 `ID` 與 geocode 失敗清單，排定人工或程式補完方式。
 
 ---
 
@@ -259,6 +253,6 @@ WordPress 核心
 
 ---
 
-*最後更新：2025年11月12日*
-*版本：v15.0*
-*明日重點：geocode 成功率提升、ACF 座標寫入、Nearby 功能實作*
+*最後更新：2025年11月13日*
+*版本：v16.0*
+*明日重點：餐廳排序優化、聯絡 Email 轉寫、Geocode/ID 整體補完*
