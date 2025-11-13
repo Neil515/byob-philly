@@ -1,33 +1,29 @@
 # 🍷 BYOB 專案工作規劃
 
-## 📅 當前日期：2025-11-12
+## 📅 當前日期：2025-11-13
 
 ---
 
 ## ✅ 今日摘要
-- 前台列表與單頁已支援 ACF `restaurant_logo` 欄位，LOGO fallback 讀取順序調整完成。
-- ACF 新增 `Latitude` / `Longitude` 欄位，並建立 `geocode_restaurant_locations.py` 腳本準備批次轉換地址為座標。
-- 腳本已能讀取 `Name/Add` 欄位與 `.env` API Key，待調整 API 查詢與結果驗證以取得成功配對。
+- 取得有效的 Google Places / Geocoding API key，`geocode_restaurant_locations.py` 成功批次產出兩份清單的 `Latitude` / `Longitude`。
+- 撰寫 `add_ids.py` 腳本，依餐廳名稱＋地址比對 WordPress 匯出結果，為 `Philly BYOB Restaurant.xlsx` 與 `Philly BYOB Restaurant google form.xlsx` 補上 `ID` 欄位。
+- 初步檢視 ID 比對成果（主清單 19/43、表單 16/20），保留缺漏清單待後續人工確認。
 
 ---
 
-## 🗓️ 明日（2025-11-13）待辦
+## 🗓️ 明日（2025-11-14）待辦
 
-1. **批次產出餐廳經緯度資料**  
-   - 調整 `geocode_restaurant_locations.py` 查詢策略（Places/Geocode API 比對邏輯、失敗重試）。  
-   - 以小量測試確認成功率後跑完整名單，輸出 `Latitude`、`Longitude`、`Geocode_Status`。  
-   - 彙整失敗名單，整理待人工修正的地址。
+1. **餐廳排序優化**  
+   - 盤點目前列表頁排序規則（預設、驗證狀態、經緯度）並確認需求。  
+   - 依資料完整度（ID、經緯度）規劃 fallback 策略，預先擬定距離排序整合方式。  
+   - 調整 WordPress 查詢或前台元件，完成排序實作與測試案例。
 
-2. **經緯度寫回 WordPress / ACF**  
-   - 將成功筆數匯入 ACF `Latitude` / `Longitude` 欄位（可先用 REST API 或 WP-CLI 測試寫入流程）。  
-   - 隨機抽查頁面確認座標已正確儲存，確保後台可手動覆寫。
-
-3. **附近 BYOB 餐廳功能實作**  
-   - 在 `functions.php` / REST API 建立距離排序查詢（Haversine，支援 `lat/lng/radius` 參數）。  
-   - 更新前台列表頁：新增「Find BYOB Near Me」入口、顯示距離與 fallback UI。  
-   - 處理拒絕授權或無座標案例（提示改輸入 ZIP code 或顯示預設排序）。
+2. **餐廳聯絡 Email 轉寫**  
+   - 彙整現有發給餐廳的通知模板，確認資訊與 tone。  
+   - 草擬新版英文/中文信件內容，納入排序/經緯度進度提示與 CTA。  
+   - 與相關腳本（Apps Script／WP 發送流程）對照欄位，準備後續替換作業。
 
 ---
 
-*最後更新：2025-11-12*  
+*最後更新：2025-11-13*  
 
