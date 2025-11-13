@@ -16,6 +16,20 @@
 
 ---
 
+## ✅ 2025年11月13日 — 經緯度批次產出與資料對齊
+
+### 🎯 今日成就總覽
+- 啟用新的 Google Places / Geocoding API key，成功以 `geocode_restaurant_locations.py` 批次產出 `Philly BYOB Restaurant.xlsx` 與 `Philly BYOB Restaurant google form.xlsx` 的 `Latitude` / `Longitude`，同步記錄 `Geocode_Status`、`Matched_Address`。
+- 建立 `add_ids.py` 腳本，讀取 WordPress 匯出的 `Restaurants-List-Export-2025-November-13-1040.csv`，以餐廳名稱 + 地址比對，為兩份 Excel 新增 `ID` 欄位（主清單 19/43 成功、表單 16/20 成功）。
+- 更新 `doc/Next Task Prompt Byob.md`，為 11/14 排程新增「餐廳排序優化」與「餐廳聯絡 Email 轉寫」兩大待辦。
+
+### 後續方向
+- 檢視未匹配到 ID 的餐廳（Excel 留空者），整理由人工或調整比對條件補全。
+- 規劃將經緯度資料寫回 WordPress ACF / meta，並與餐廳排序功能整合。
+- 11/14 進一步處理列表排序邏輯與對餐廳的 Email 範本轉寫。
+
+---
+
 ## ✅ 2025年11月12日 — LOGO fallback 與 Nearby 功能準備
 
 ### 🎯 今日成就總覽
