@@ -286,18 +286,10 @@
 
 .byob-map-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
+  justify-content: flex-start;
   margin-bottom: 16px;
-}
-
-.byob-map-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin: 0;
-  color: #333333;
+  gap: 12px;
 }
 
 .byob-map-retry {
@@ -453,16 +445,13 @@ wp_enqueue_script(
 
 <div class="byob-map-section" id="byob-map-section">
   <div class="byob-map-header">
-    <h2 class="byob-map-title"><?php esc_html_e('Find BYOB Near You', 'byob'); ?></h2>
     <button type="button" id="byob-retry-location" class="byob-map-retry">
       <?php esc_html_e('Locate Again', 'byob'); ?>
     </button>
   </div>
   <div id="byob-restaurant-map" class="byob-map" role="region" aria-label="<?php esc_attr_e('Map of BYOB restaurants', 'byob'); ?>"></div>
-  <p id="byob-map-status" class="byob-map-status">
-    <?php esc_html_e('Loading map. Please allow location access to see nearby restaurants.', 'byob'); ?>
-  </p>
-  <div id="byob-nearby-wrapper" class="byob-nearby-wrapper" hidden>
+<p id="byob-map-status" class="byob-map-status"></p>
+<div id="byob-nearby-wrapper" class="byob-nearby-wrapper" hidden>
     <h3 class="byob-nearby-title"><?php esc_html_e('Closest 5 Restaurants', 'byob'); ?></h3>
     <ul id="byob-nearby-list" class="byob-nearby-list" aria-live="polite"></ul>
   </div>
@@ -1004,9 +993,9 @@ wp_localize_script(
         'lng' => -75.1652,
       ),
       'messages' => array(
-        'locating' => __('Locating nearby restaurants...', 'byob'),
-        'permissionDenied' => __('Location access denied. Showing the full restaurant list.', 'byob'),
-        'unsupported' => __('Your browser does not support geolocation. Showing the full restaurant list.', 'byob'),
+      'locating' => __('', 'byob'),
+      'permissionDenied' => __('Location access denied. Showing the full restaurant list.', 'byob'),
+      'unsupported' => __('Your browser does not support geolocation. Showing the full restaurant list.', 'byob'),
         'nearestListHeading' => __('Closest 5 Restaurants', 'byob'),
       ),
     ),
