@@ -90,36 +90,45 @@
     }
 
     cards.sort((a, b) => {
+      // 1. 驗證狀態：verified (2) > community (1) > none (0)
       const aVerification = Number(a.dataset.verification || 0);
       const bVerification = Number(b.dataset.verification || 0);
       if (aVerification !== bVerification) {
         return bVerification - aVerification;
       }
 
+      // 2. 資料完整度：分數高的優先
       const aCompleteness = Number(a.dataset.completeness || 0);
       const bCompleteness = Number(b.dataset.completeness || 0);
       if (aCompleteness !== bCompleteness) {
         return bCompleteness - aCompleteness;
       }
 
+      // 3. 是否有餐廳照片：有照片 (1) > 無照片 (0)
       const aPhoto = Number(a.dataset.hasPhoto || 0);
       const bPhoto = Number(b.dataset.hasPhoto || 0);
       if (aPhoto !== bPhoto) {
         return bPhoto - aPhoto;
       }
 
+      // 4. 距離：近的優先（只有在距離不是預設值 999999 時才比較）
       const aDistance = parseFloat(a.dataset.distance || '999999');
       const bDistance = parseFloat(b.dataset.distance || '999999');
-      if (aDistance !== bDistance) {
-        return aDistance - bDistance;
+      // 如果兩個距離都不是預設值，或只有一個是預設值，才比較距離
+      if (aDistance !== 999999 || bDistance !== 999999) {
+        if (aDistance !== bDistance) {
+          return aDistance - bDistance;
+        }
       }
 
+      // 5. 收藏數：收藏多的優先（目前都是 0，未來功能）
       const aFavorite = Number(a.dataset.favorite || 0);
       const bFavorite = Number(b.dataset.favorite || 0);
       if (aFavorite !== bFavorite) {
         return bFavorite - aFavorite;
       }
 
+      // 6. 最後依名稱字母順序
       const aTitleElement = a.querySelector('h2 a');
       const bTitleElement = b.querySelector('h2 a');
       const aTitle = aTitleElement ? aTitleElement.textContent.trim().toLowerCase() : '';
