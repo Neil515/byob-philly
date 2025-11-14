@@ -417,7 +417,7 @@
       return;
     }
     isLocating = true;
-    updateStatus(messages.locating || 'Locating nearby restaurants...');
+  updateStatus(messages.locating || '');
 
     if (!navigator.geolocation) {
       handleGeolocationFailure('unsupported');
@@ -456,7 +456,7 @@
         applyDistances(userLatLng);
         renderNearbyList();
         sortRestaurantCards();
-        updateStatus('Sorted by distance. Showing nearby restaurants.');
+        updateStatus('');
       },
       (error) => {
         console.warn('[BYOB] Geolocation failed', error);
