@@ -1,6 +1,28 @@
 <?php
 // Add custom Theme Functions here
 
+// Provide Google Maps JavaScript API key from wp-config.php constant or environment variables.
+add_filter('byob_google_maps_api_key', function ($api_key) {
+    // Prefer the dedicated MAPS_JAVASCRIPT_API_KEY constant from wp-config.php.
+    if (defined('MAPS_JAVASCRIPT_API_KEY') && !empty(MAPS_JAVASCRIPT_API_KEY)) {
+        return MAPS_JAVASCRIPT_API_KEY;
+    }
+
+    // Fallback to environment variable if constant is not defined.
+    $env_key = getenv('MAPS_JAVASCRIPT_API_KEY');
+    if (!empty($env_key)) {
+        return $env_key;
+    }
+
+    // Fallback to GOOGLE_API_KEY for backwards compatibility.
+    $fallback = getenv('GOOGLE_API_KEY');
+    if (!empty($fallback)) {
+        return $fallback;
+    }
+
+    return $api_key;
+});
+
 // BYOB 功能開關設定 - 已移至檔案結尾的 byob_get_feature_settings() 函數
 
 // BYOB Google Form 自動導入 WordPress 功能
