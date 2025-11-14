@@ -16,17 +16,26 @@
 
 ---
 
+## ✅ 2025年11月14日 — 「離你最近的 BYOB 餐廳」功能完成
+
+### 🎯 今日成就總覽
+- **地圖功能實作**：在餐廳列表頁最上方加入 Google Maps 地圖區塊，整合 Google Maps JavaScript API，實作 HTML5 Geolocation 定位功能。定位成功時顯示使用者位置與最近餐廳，失敗時自動縮放顯示全部費城餐廳。
+- **最近 5 間餐廳列表**：地圖下方顯示「Closest 5 Restaurants」區塊，使用 Haversine 公式計算距離並排序。桌機版支援標記 hover 互動，行動版支援點擊 InfoWindow。
+- **餐廳列表排序優化**：實作多層級排序邏輯（驗證狀態 > 資料完整度 > 餐廳照片 > 距離 > 收藏數 > 名稱），前端 JavaScript 自動排序確保列表依權重正確排列。
+- **技術實作**：新增 `wordpress/assets/js/byob-nearby.js`，在 `archive-restaurant.php` 輸出餐廳經緯度與排序權重，在 `wp-config.php` 實作 `.env` 讀取功能優先讀取 API key。
+- **修正項目**：修正 API key 讀取問題（最終採用 `.env` 讀取），移除多餘提示文字，關閉 `WP_DEBUG`。
+
+### 後續方向
+- 11/15 處理首頁精選餐廳功能與發給餐廳的確認 Email 轉寫。
+
+---
+
 ## ✅ 2025年11月13日 — 經緯度批次產出與資料對齊
 
 ### 🎯 今日成就總覽
-- 啟用新的 Google Places / Geocoding API key，成功以 `geocode_restaurant_locations.py` 批次產出 `Philly BYOB Restaurant.xlsx` 與 `Philly BYOB Restaurant google form.xlsx` 的 `Latitude` / `Longitude`，同步記錄 `Geocode_Status`、`Matched_Address`。
-- 建立 `add_ids.py` 腳本，讀取 WordPress 匯出的 `Restaurants-List-Export-2025-November-13-1040.csv`，以餐廳名稱 + 地址比對，為兩份 Excel 新增 `ID` 欄位（主清單 19/43 成功、表單 16/20 成功）。
-- 更新 `doc/Next Task Prompt Byob.md`，為 11/14 排程新增「餐廳排序優化」與「餐廳聯絡 Email 轉寫」兩大待辦。
-
-### 後續方向
-- 檢視未匹配到 ID 的餐廳（Excel 留空者），整理由人工或調整比對條件補全。
-- 規劃將經緯度資料寫回 WordPress ACF / meta，並與餐廳排序功能整合。
-- 11/14 進一步處理列表排序邏輯與對餐廳的 Email 範本轉寫。
+- 啟用新的 Google Places / Geocoding API key，成功批次產出兩份清單的 `Latitude` / `Longitude`。
+- 建立 `add_ids.py` 腳本，為 Excel 新增 `ID` 欄位（主清單 19/43 成功、表單 16/20 成功）。
+- 規劃將經緯度資料與餐廳排序功能整合。
 
 ---
 
@@ -91,162 +100,44 @@
 
 ---
 
-## 📚 近期工作摘要（精簡版）
+## ✅ 2025年11月6日 — 前台英文化與評論功能移除
 
-### ✅ 2025年11月6日 — 前台英文化與評論功能移除
+### 🎯 今日成就總覽
 - 餐廳列表、單頁、註冊表單、Contact Form 全面改為英文；維護註解保留中文。
 - 移除未完成的評論與評分相關檔案，保持程式碼庫整潔。
 
-### ✅ 2025年11月5日 — 重複檢查與資料追蹤優化
+---
+
+## ✅ 2025年11月5日 — 重複檢查與資料追蹤優化
+
+### 🎯 今日成就總覽
 - `byob_check_duplicate_restaurant()` 新增專案參數、日誌與地址縮寫處理。
 - 建立 `recommendation_count` 欄位、標題加註 `(重複)`、相似度權重調整。
 
-### ✅ 2025年11月4日 — Email 搜尋系統
+---
+
+## ✅ 2025年11月4日 — Email 搜尋系統
+
+### 🎯 今日成就總覽
 - 兩階段腳本 `philly_email_searcher.py` + `philly_email_extractor.py` 完成，支援重試、日誌、Excel 匯出。
 
-### ✅ 2025年11月3日 — 驗證徽章與 Yelp 整合
-- 前台徽章視覺化、後台覆寫邏輯與資料來源標記。
-- 表單、Apps Script、後端 API 全程改為使用 Yelp Link。
+---
+
+## ✅ 2025年11月3日 — 驗證徽章系統與 Yelp 連結整合
+
+### 🎯 今日成就總覽
+- **驗證徽章系統**：前台顯示驗證狀態徽章（Verified by Restaurant / Community Recommended），後台新增 `verification_override` 欄位供管理員手動覆蓋。
+- **Yelp 連結整合**：表單、Apps Script、WordPress 後端、前台顯示完整整合，聚焦單一外部平台連結。
+- **前端格式統一**：統一所有欄位標籤冒號後空格格式。
 
 ---
 
+## ✅ 2025年11月1日 — 費城餐廳確認表單系統建立
 
-## ✅ 2025年11月3日 — 驗證徽章系統與 Yelp 連結整合完成
-
-### 🎯 今日目標
-建立完整的驗證徽章顯示系統，整合 Yelp 連結欄位，優化餐廳業者後台，統一前端顯示格式。
-
-### 已完成項目
-
-* [x] **驗證徽章系統實作** ⭐⭐ 前台顯示與後台管理
-  * 前台顯示系統：
-    - 餐廳列表頁和單一餐廳頁新增驗證徽章
-    - 徽章顯示在餐廳名稱上方一行
-    - 兩種狀態設計：
-      - `Verified by Restaurant`：藍色背景，🔒 圖示，表示餐廳老闆驗證
-      - `Community Recommended`：橙色背景，👥 圖示，表示社群推薦
-  * 後台管理機制：
-    - 新增 `verification_override` ACF 欄位（管理員可手動覆蓋驗證狀態）
-    - 優先順序：`verification_override` > `source` 欄位
-    - 修改檔案：`wordpress/functions.php`（新增 ACF 欄位定義和 `byob_display_verification_badge()` 函數）
-  * 前端顯示檔案：
-    - `wordpress/archive-restaurant.php`：列表頁徽章顯示（small 尺寸）
-    - `wordpress/single_restaurant.php`：單一餐廳頁徽章顯示（medium 尺寸）
-
-* [x] **Yelp 連結欄位整合** ⭐⭐ 端到端整合
-  * Google 表單更新：
-    - 將「Website or Reservation Link」改為「Yelp Link」
-    - 更新欄位映射邏輯
-  * Apps Script 修改：
-    - `wordpress/Apps script - 費城推薦版.js`：更新通知郵件顯示 Yelp Link
-    - `wordpress/Apps script - 費城餐廳確認版.js`：更新通知郵件顯示 Yelp Link
-  * WordPress 後端：
-    - `wordpress/functions.php`：修改 API 端點處理 `yelp_link` 參數
-    - 更新 `byob_create_philly_restaurant_post` 和 `byob_create_philly_restaurant_article` 函數
-    - 將原本的 `website` 相關程式碼註解保留
-  * 前台顯示：
-    - 餐廳列表頁：Yelp 欄位已註解（不顯示）
-    - 單一餐廳頁：顯示 Yelp 連結
-    - 原本的 Website/Social Links 相關程式碼已註解保留
-
-* [x] **餐廳業者後台優化** ⭐ 用戶體驗提升
-  * Yelp 連結欄位：
-    - 在餐廳業者編輯頁面加入 Yelp Link 欄位
-    - 欄位位置：在「Yelp Link / Official Website/Social Media Links」區塊內的第一個位置
-    - 修改檔案：`wordpress/woocommerce/myaccount/restaurant-profile.php`
-  * 表單提交處理：
-    - `wordpress/restaurant-member-functions.php`：新增 `yelp_link` 的保存邏輯
-
-* [x] **前端格式統一** ⭐ 顯示一致性
-  * 欄位冒號後空格統一：
-    - 檢查並修正餐廳列表頁和單一餐廳頁所有欄位的冒號後空格
-    - 統一格式：所有欄位標籤冒號後都加上空格
-  * 修改檔案：
-    - `wordpress/archive-restaurant.php`：修正 Corkage Fee, Corkage Details, Wine Equipment, Notes, Address, Phone
-    - `wordpress/single_restaurant.php`：修正 Cuisine Type, Corkage Fee, Corkage Details, Wine Equipment, Wine Service, Yelp, Notes, Address, Phone
-
-### 技術成果
-
-**驗證系統架構：**
-- 視覺化驗證狀態展示，提升用戶信任度
-- 管理員可手動覆蓋驗證狀態，保持管理彈性
-- 基於 `source` 欄位的自動驗證狀態判斷
-
-**Yelp 整合策略：**
-- 聚焦單一外部平台連結（Yelp），簡化用戶選擇
-- 保留原有 Website/Social Links 程式碼供未來使用
-- 完整的端到端整合：表單 → 後端 → 前台
-
-**格式統一成果：**
-- 所有欄位顯示格式一致，提升專業度
-- 改善用戶閱讀體驗
-
-### 修改的檔案
-
-**程式碼檔案：**
-- `wordpress/functions.php`：驗證徽章系統、Yelp 欄位處理
-- `wordpress/archive-restaurant.php`：徽章顯示、格式統一
-- `wordpress/single_restaurant.php`：徽章顯示、格式統一
-- `wordpress/woocommerce/myaccount/restaurant-profile.php`：Yelp 欄位加入
-- `wordpress/restaurant-member-functions.php`：Yelp 保存邏輯
-- `wordpress/Apps script - 費城推薦版.js`：Yelp 通知更新
-- `wordpress/Apps script - 費城餐廳確認版.js`：Yelp 通知更新
-
----
-
-## ✅ 2025年11月1日 — 費城餐廳確認表單系統建立完成
-
-### 🎯 今日目標
-建立專為費城餐廳老闆設計的資料確認表單，並完成完整的技術整合與資料來源辨識機制。
-
-### 已完成項目
-
-* [x] **費城餐廳確認表單完整建置** ⭐⭐ 雙表單系統完成
-  * 建立新 Google 表單「Philly BYOB Restaurant (for owners)」
-  * 與網友推薦表單的差異：
-    - 移除「Show Reddit Username」問題
-    - 「Reddit Username」→「Contact name」（聯絡人姓名）
-    - 新增 `source = 'philly_owner_verification'` 來源標記
-  * Spreadsheet ID：`11kIfdMNJ-6Pa-331AUViYpotnMRfM2sNoAuW7U0lLkA`
-
-* [x] **建立專屬 Apps Script** ⭐ 獨立處理流程
-  * 新建 `Apps script - 費城餐廳確認版.js`
-  * 函式命名獨立化：`onPhillyOwnerFormSubmit`, `parsePhillyOwnerFormData`, `sendPhillyOwnerNotificationEmail`
-  * Email 通知主旨：「Owner Verification」vs「Recommendation」
-  * 資料來源標記：`philly_owner_verification` vs `philly_community_recommendation`
-
-* [x] **修復 WordPress API source 欄位硬編碼問題** ⭐ 關鍵修復
-  * 問題：`functions.php` 中 `source` 被硬編碼為 `'philly_community_recommendation'`，導致無法區分資料來源
-  * 修復步驟：
-    - 新增 `source` 參數到 API 端點定義（190-193 行）
-    - 從 `$request->get_param('source')` 讀取（761 行）
-    - 移除兩處硬編碼，改用動態值（784 行、980 行）
-  * 影響：後台可正確辨識網友推薦或老闆驗證的資料來源
-
-* [x] **ACF source 欄位處理決策** ⭐ 技術決策
-  * 決定：不強制新增 ACF 欄位（選配）
-  * 理由：程式碼已自動寫入 source，後台可手動新增作為視覺辨識
-  * 狀態：系統功能完整，保持彈性
-
-### 技術成果
-
-**雙表單系統架構：**
-- 推薦表單：社群驅動，Reddit 用戶回饋為主
-- 確認表單：老闆驗證，直接授權資料
-- 資料來源自動區分與追蹤
-- 獨立但共享 API 端點和處理邏輯
-
-**系統辨識機制：**
-- Email 通知區分來源和格式
-- 後台標籤顯示資料可信度
-- 後續追蹤系統的基礎架構
-
-### 修改的檔案
-
-**程式碼檔案：**
-- `wordpress/Apps script - 費城餐廳確認版.js`：新建完整處理邏輯
-- `wordpress/functions.php`：4處修改（API 參數、動態 source）
-- Google Sheets 欄位映射表：新建並測試驗證
+### 🎯 今日成就總覽
+- **雙表單系統**：建立專為餐廳老闆設計的確認表單，與網友推薦表單區分資料來源。
+- **專屬 Apps Script**：獨立處理流程，Email 通知區分來源和格式。
+- **API 修復**：修復 `source` 欄位硬編碼問題，後台可正確辨識資料來源。
 
 ---
 
@@ -281,22 +172,22 @@
 * ✅ **驗證徽章系統**：前台顯示與後台管理機制
 * ✅ **Yelp 連結整合**：表單、後端、前台完整整合
 * ✅ **餐廳 Email 搜尋系統**：兩階段自動化工具（11/4）
+* ✅ **重複餐廳處理機制**：智能去重與標記（11/5）
+* ✅ **網站前台英文化**：列表、單頁、表單全面英文化（11/6）
+* ✅ **經緯度資料產出**：批次產出餐廳座標資料（11/13）
+* ✅ **離你最近的 BYOB 餐廳功能**：地圖、定位、距離排序（11/14）
 
 **當前狀態：**
 * ✅ 兩套完整表單系統運作中
 * ✅ 資料來源自動辨識與追蹤
 * ✅ 驗證狀態視覺化展示
-* ✅ 餐廳 Email 搜尋系統完成（11/4）
-* ✅ 重複餐廳處理機制完成（11/5）
-* ✅ 網站前台英文化完成（11/6）
-* ✅ 評論功能移除完成（11/6）
-* 🔄 準備 FAQ 英文化、後台英文化、Reddit 回覆工作（11/7）
+* ✅ 地圖與定位功能完成
+* ✅ 餐廳列表多層級排序邏輯完成
 
 **下一步重點：**
-* 🚀 FAQ 頁面英文化（11/7）
-* 🚀 WordPress 後台英文化（11/7）
-* 🚀 Reddit 回覆工作（11/7）
-* ⏳ 寄給餐廳的 Email 模板設計、多名網友資料衝突處理邏輯、Reddit 社群互動啟動、網站上線、用戶招募、榮譽系統
+* 🚀 首頁精選餐廳功能（11/15）
+* 🚀 發給餐廳的確認 Email 轉寫（11/15）
+* ⏳ FAQ 英文化、後台英文化、Reddit 回覆工作、多名網友資料衝突處理邏輯、Reddit 社群互動啟動、網站上線、用戶招募、榮譽系統
 
 ---
 
@@ -318,6 +209,12 @@
   - Google Places API 搜尋（取得 website）
   - Website email 提取（搜尋 email）
   - 支援多個 email 自動展開
+* **地圖與定位系統**：Google Maps JavaScript API 整合
+  - HTML5 Geolocation 定位功能
+  - Haversine 公式距離計算
+  - 地圖標記互動（hover/click）
+  - 前端多層級排序邏輯
+  - `.env` 檔案 API key 管理
 
 ### **台北專案工具**
 * `wine_exhibitor_crawler.py`：葡萄酒展參展商爬蟲
