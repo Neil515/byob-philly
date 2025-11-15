@@ -981,6 +981,9 @@ if ($restaurant_pagination_html) {
 </div>
 
 <?php
+// 獲取圖標 URL
+$marker_icon_url = get_stylesheet_directory_uri() . '/assets/images/placeholder.svg';
+
 wp_localize_script(
   'byob-nearby-restaurants',
   'BYOB_RESTAURANT_ARCHIVE',
@@ -992,6 +995,7 @@ wp_localize_script(
         'lat' => 39.9526,
         'lng' => -75.1652,
       ),
+      'markerIconUrl' => $marker_icon_url,
       'messages' => array(
       'locating' => __('', 'byob'),
       'permissionDenied' => __('Location access denied. Showing the full restaurant list.', 'byob'),
