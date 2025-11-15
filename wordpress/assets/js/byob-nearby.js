@@ -11,6 +11,7 @@
   const maxNearby = Number(settings.maxNearby || 5);
   const fallbackCenter = settings.fallbackCenter || { lat: 39.9526, lng: -75.1652 };
   const messages = settings.messages || {};
+  const markerIconUrl = settings.markerIconUrl || '';
   const hasHoverPointer =
     window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
@@ -163,22 +164,64 @@
   infoWindow = new google.maps.InfoWindow();
   const bounds = new google.maps.LatLngBounds();
 
-  const defaultMarkerIcon = {
-    path: 'M12 2C8 2 5 5 5 9c0 3.58 2.69 6.55 6.2 6.95l-1.7 5.1h6.99l-1.7-5.1C18.31 15.55 21 12.58 21 9c0-4-3-7-7-7z',
-    fillColor: '#8b2635',
-    fillOpacity: 0.92,
-    strokeColor: '#541622',
-    strokeOpacity: 0.9,
-    strokeWeight: 1.2,
-    scale: 1.05,
-    anchor: new google.maps.Point(12, 20),
-  };
+  // 使用自定義 SVG 圖標（如果提供），否則使用默認 SVG 路徑
+  let defaultMarkerIcon;
+  let highlightMarkerIcon;
 
-  const highlightMarkerIcon = Object.assign({}, defaultMarkerIcon, {
-    fillColor: '#d47988',
-    strokeColor: '#812030',
-    scale: 1.2,
-  });
+  // 調試：確認圖標 URL
+  if (markerIconUrl) {
+    console.log('[BYOB] 使用自定義圖標:', markerIconUrl);
+  } else {
+    console.warn('[BYOB] 未找到圖標 URL，使用默認圖標');
+  }
+
+  if (markerIconUrl) {
+    // 使用圖片 URL 方式（SVG 或 PNG）
+    // SVG 尺寸是 512x512，我們縮放到合適的大小
+    // 根據 SVG 結構，圖標底部約在 y=480 左右（不是 y=512）
+    // 錨點設置在底部中心
+    // 圖標尺寸：40x40 像素（可調整：24, 32, 40, 48, 64）
+    const iconSize = new google.maps.Size(32, 32);
+    const iconAnchor = new google.maps.Point(12, 23); // 底部中心，根據尺寸調整
+    const iconOrigin = new google.maps.Point(0, 0);
+
+    defaultMarkerIcon = {
+      url: markerIconUrl,
+      scaledSize: iconSize,
+      size: iconSize,
+      anchor: iconAnchor,
+      origin: iconOrigin,
+    };
+
+    // 高亮圖標（稍微放大）
+    const highlightSize = new google.maps.Size(40, 40);
+    const highlightAnchor = new google.maps.Point(16, 30);
+    highlightMarkerIcon = {
+      url: markerIconUrl,
+      scaledSize: highlightSize,
+      size: highlightSize,
+      anchor: highlightAnchor,
+      origin: iconOrigin,
+    };
+  } else {
+    // 回退到默認 SVG 路徑圖標
+    defaultMarkerIcon = {
+      path: 'M12 2C8 2 5 5 5 9c0 3.58 2.69 6.55 6.2 6.95l-1.7 5.1h6.99l-1.7-5.1C18.31 15.55 21 12.58 21 9c0-4-3-7-7-7z',
+      fillColor: '#8b2635',
+      fillOpacity: 0.92,
+      strokeColor: '#541622',
+      strokeOpacity: 0.9,
+      strokeWeight: 1.2,
+      scale: 1.05,
+      anchor: new google.maps.Point(12, 20),
+    };
+
+    highlightMarkerIcon = Object.assign({}, defaultMarkerIcon, {
+      fillColor: '#d47988',
+      strokeColor: '#812030',
+      scale: 1.2,
+    });
+  }
 
   const restaurantWithCoords = restaurants.filter(
     (restaurant) =>
