@@ -8,13 +8,50 @@ add_filter('byob_google_maps_api_key', function ($api_key) {
         return MAPS_JAVASCRIPT_API_KEY;
     }
 
-    // Fallback to environment variable if constant is not defined.
+    // Fallback 1: Try to read from .env file directly (if wp-config.php failed to load it)
+    if (!function_exists('byob_load_env_file')) {
+        function byob_load_env_file($file_path) {
+            if (!file_exists($file_path)) {
+                return array();
+            }
+            $env = array();
+            $lines = file($file_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                if (strpos(trim($line), '#') === 0) {
+                    continue;
+                }
+                if (strpos($line, '=') !== false) {
+                    list($key, $value) = explode('=', $line, 2);
+                    $key = trim($key);
+                    $value = trim($value);
+                    $value = trim($value, '"\'');
+                    if (!empty($key)) {
+                        $env[$key] = $value;
+                    }
+                }
+            }
+            return $env;
+        }
+    }
+    
+    $env_file = dirname(__FILE__) . '/../.env';
+    $env_vars = byob_load_env_file($env_file);
+    
+    if (isset($env_vars['MAPS_JAVASCRIPT_API_KEY']) && !empty($env_vars['MAPS_JAVASCRIPT_API_KEY'])) {
+        return $env_vars['MAPS_JAVASCRIPT_API_KEY'];
+    }
+    
+    if (isset($env_vars['GOOGLE_API_KEY']) && !empty($env_vars['GOOGLE_API_KEY'])) {
+        return $env_vars['GOOGLE_API_KEY'];
+    }
+
+    // Fallback 2: Try system environment variables (may not work in WordPress)
     $env_key = getenv('MAPS_JAVASCRIPT_API_KEY');
     if (!empty($env_key)) {
         return $env_key;
     }
 
-    // Fallback to GOOGLE_API_KEY for backwards compatibility.
+    // Fallback 3: Try GOOGLE_API_KEY from system environment
     $fallback = getenv('GOOGLE_API_KEY');
     if (!empty($fallback)) {
         return $fallback;
