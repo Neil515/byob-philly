@@ -59,8 +59,8 @@ define('FS_CHMOD_FILE', (0664 & ~ umask()));
  * It is strongly recommended that plugin and theme developers use WP_DEBUG
  * in their development environments.
  */
-define( 'WP_DEBUG', false );
-define( 'WP_DEBUG_LOG', false );
+define( 'WP_DEBUG', true );
+define( 'WP_DEBUG_LOG', true );
 define( 'WP_DEBUG_DISPLAY', false );
 define( 'WP_REDIS_CONFIG', [
    'token' => "e279430effe043b8c17d3f3c751c4c0846bc70c97f0eaaea766b4079001c",
@@ -112,26 +112,108 @@ if (!function_exists('byob_load_env_file')) {
     }
 }
 
-// 載入 .env 檔案（假設 .env 在專案根目錄，wp-config.php 的上一層）
-$env_file = dirname(__FILE__) . '/../.env';
+// 載入 .env 檔案（嘗試多個可能的路徑）
+// 根據生產環境路徑：/home/1492233.cloudwaysapps.com/eakvpjqczj/public_html/wp-config.php
+// .env 應該在：/home/1492233.cloudwaysapps.com/eakvpjqczj/.env（專案根目錄）
+
+// 嘗試 1：專案根目錄（wp-config.php 的上一層）- 主要路徑
+$env_file_path1 = dirname(__FILE__) . '/../.env';
+// 嘗試 2：WordPress 根目錄（與 wp-config.php 同層）
+$env_file_path2 = dirname(__FILE__) . '/.env';
+// 嘗試 3：絕對路徑（專案根目錄）- 針對生產環境
+$env_file_path3 = '/home/1492233.cloudwaysapps.com/eakvpjqczj/.env';
+// 嘗試 4：根據 wp-config.php 位置動態計算
+$wp_config_dir = dirname(__FILE__);
+$env_file_path4 = realpath($wp_config_dir . '/..') . '/.env';
+
+// 記錄所有嘗試的路徑到多個位置（確保能看到）
+$log_file1 = dirname(__FILE__) . '/../.env-debug.log';
+$log_file2 = dirname(__FILE__) . '/.env-debug.log';
+$log_content = date('Y-m-d H:i:s') . " UTC - wp-config.php: Checking .env paths\n";
+$log_content .= "wp-config.php location: " . __FILE__ . "\n";
+$log_content .= "wp-config.php dirname: " . dirname(__FILE__) . "\n";
+$log_content .= "Path 1 (relative ../): {$env_file_path1} - " . (file_exists($env_file_path1) ? 'EXISTS' : 'NOT FOUND') . "\n";
+$log_content .= "Path 2 (same dir): {$env_file_path2} - " . (file_exists($env_file_path2) ? 'EXISTS' : 'NOT FOUND') . "\n";
+$log_content .= "Path 3 (absolute): {$env_file_path3} - " . (file_exists($env_file_path3) ? 'EXISTS' : 'NOT FOUND') . "\n";
+$log_content .= "Path 4 (realpath): {$env_file_path4} - " . (file_exists($env_file_path4) ? 'EXISTS' : 'NOT FOUND') . "\n";
+
+// 優先使用存在的文件
+$env_file = '';
+if (file_exists($env_file_path1)) {
+    $env_file = $env_file_path1;
+    $log_content .= "✓ Using Path 1 (../.env)\n";
+} elseif (file_exists($env_file_path2)) {
+    $env_file = $env_file_path2;
+    $log_content .= "✓ Using Path 2 (same dir)\n";
+} elseif (file_exists($env_file_path3)) {
+    $env_file = $env_file_path3;
+    $log_content .= "✓ Using Path 3 (absolute)\n";
+} elseif (file_exists($env_file_path4)) {
+    $env_file = $env_file_path4;
+    $log_content .= "✓ Using Path 4 (realpath)\n";
+} else {
+    $log_content .= "✗ ERROR: No .env file found in any location!\n";
+    $log_content .= "Please upload .env file to: " . dirname(__FILE__) . "/../.env\n";
+}
+
+// 寫入調試日誌文件（多個位置確保能看到）
+@file_put_contents($log_file1, $log_content, FILE_APPEND);
+@file_put_contents($log_file2, $log_content, FILE_APPEND);
+// 同時寫入到 wp-content 目錄（更容易找到）
+$log_file3 = dirname(__FILE__) . '/wp-content/.env-debug.log';
+@file_put_contents($log_file3, $log_content, FILE_APPEND);
+
 $env_vars = byob_load_env_file($env_file);
 
-// 設定 MAPS_JAVASCRIPT_API_KEY（優先從 .env 讀取）
+// 設定 MAPS_JAVASCRIPT_API_KEY（從 .env 讀取）
 if (!defined('MAPS_JAVASCRIPT_API_KEY')) {
     $maps_key = '';
+    
+    // 調試信息（寫入多個位置的日誌文件，確保能看到）
+    $debug_log1 = dirname(__FILE__) . '/../.env-debug.log';
+    $debug_log2 = dirname(__FILE__) . '/.env-debug.log';
+    $debug_log3 = dirname(__FILE__) . '/wp-content/.env-debug.log';
+    $debug_log = $debug_log1; // 主要日誌文件
+    $debug_content = date('Y-m-d H:i:s') . " - MAPS_JAVASCRIPT_API_KEY setup\n";
+    $debug_content .= "Env file: " . ($env_file ?: 'NOT SET') . "\n";
+    $debug_content .= "Env file exists: " . ($env_file && file_exists($env_file) ? 'YES' : 'NO') . "\n";
+    $debug_content .= "Loaded env vars: " . implode(', ', array_keys($env_vars)) . "\n";
+    
     if (isset($env_vars['MAPS_JAVASCRIPT_API_KEY'])) {
         $maps_key = $env_vars['MAPS_JAVASCRIPT_API_KEY'];
+        $debug_content .= "Using MAPS_JAVASCRIPT_API_KEY from .env\n";
+        $debug_content .= "Key length: " . strlen($maps_key) . "\n";
+        $debug_content .= "Key preview: " . substr($maps_key, 0, 15) . "...\n";
     } elseif (isset($env_vars['GOOGLE_API_KEY'])) {
         // Fallback 到 GOOGLE_API_KEY
         $maps_key = $env_vars['GOOGLE_API_KEY'];
+        $debug_content .= "Using GOOGLE_API_KEY from .env as fallback\n";
+        $debug_content .= "Key length: " . strlen($maps_key) . "\n";
+        $debug_content .= "Key preview: " . substr($maps_key, 0, 15) . "...\n";
+    } else {
+        $debug_content .= "ERROR: Neither MAPS_JAVASCRIPT_API_KEY nor GOOGLE_API_KEY found in .env\n";
     }
     
-    // 如果 .env 沒有，記錄錯誤（不在 wp-config.php 中使用硬編碼，確保安全性）
+    // 如果 .env 沒有，記錄錯誤
     if (empty($maps_key)) {
-        error_log('警告：MAPS_JAVASCRIPT_API_KEY 未設定。請在 .env 檔案中設定 MAPS_JAVASCRIPT_API_KEY 或 GOOGLE_API_KEY。');
-        // 注意：如果 .env 中沒有設定，地圖功能將無法運作
-        // 請確保生產環境的 .env 文件包含正確的 API Key
+        $debug_content .= "ERROR: MAPS_JAVASCRIPT_API_KEY is empty!\n";
+        $debug_content .= "Available keys in .env: " . implode(', ', array_keys($env_vars)) . "\n";
+        $debug_content .= "WARNING: No API Key found from .env file!\n";
+        // 注意：根據檢查結果，.env 文件存在於 Path 2，應該能讀取
+        // 如果這裡顯示錯誤，可能是 byob_load_env_file() 函數有問題
     }
+    
+    $debug_content .= "Final maps_key length: " . strlen($maps_key) . "\n";
+    $debug_content .= "Final maps_key preview: " . substr($maps_key, 0, 15) . "...\n";
+    $debug_content .= "---\n";
+    
+    // 寫入調試日誌（多個位置）
+    @file_put_contents($debug_log1, $debug_content, FILE_APPEND);
+    @file_put_contents($debug_log2, $debug_content, FILE_APPEND);
+    @file_put_contents($debug_log3, $debug_content, FILE_APPEND);
+    
+    // 同時嘗試 error_log（如果可用）
+    @error_log('BYOB: MAPS_JAVASCRIPT_API_KEY setup - File: ' . ($env_file ?: 'NONE') . ' - Key length: ' . strlen($maps_key));
     
     define('MAPS_JAVASCRIPT_API_KEY', $maps_key);
 }
