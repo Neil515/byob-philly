@@ -1,77 +1,83 @@
 # 🍷 BYOB 專案工作規劃
 
-## 📅 當前日期：2025-11-14
+## 📅 當前日期：2025-11-15
 
 ---
 
-## ✅ 今日摘要（2025-11-14）
+## ✅ 今日摘要（2025-11-15）
 
-### 🗺️ 「離你最近的 BYOB 餐廳」功能完成
-- **地圖功能實作**：
-  - 在餐廳列表頁最上方加入 Google Maps 地圖區塊
-  - 整合 Google Maps JavaScript API（透過 `wp-config.php` 讀取 `.env` 的 API key）
-  - 實作 HTML5 Geolocation 定位功能，成功時顯示使用者位置標記
-  - 若定位失敗或被拒絕，地圖自動縮放顯示全部費城餐廳
+### 🗺️ 地圖標記圖標優化與 Attribution 添加
+- **地圖標記圖標調整**：
+  - 將自定義 SVG 圖標（`placeholder.svg`）尺寸從 64x64 調整為 32x32 像素（默認）
+  - 高亮圖標尺寸從 72x72 調整為 40x40 像素
+  - 調整錨點位置以確保圖標正確對齊地圖位置
+  - 修改文件：`wordpress/assets/js/byob-nearby.js`
 
-- **最近 5 間餐廳列表**：
-  - 地圖下方顯示「Closest 5 Restaurants」區塊
-  - 使用 Haversine 公式計算距離，依距離排序取前 5 家
-  - 桌機版：地圖標記 hover 時顯示 tooltip 並 highlight 對應列表項目
-  - 行動版：點擊標記顯示 InfoWindow，列表項目可點擊查看詳情
+- **Attribution 添加**：
+  - 在地圖下方添加圖標來源 attribution
+  - 內容：`Wine icons created by surang - Flaticon`
+  - 連結到：`https://www.flaticon.com/free-icons/wine`
+  - 樣式：小字體（0.75rem）、靠右對齊、灰色文字
+  - 懸停效果：變為品牌色並顯示底線
 
-- **餐廳列表排序優化**：
-  - 實作多層級排序邏輯：驗證狀態 > 資料完整度 > 餐廳照片 > 距離 > 收藏數 > 名稱
-  - 驗證狀態：Verified (2) > Community (1) > None (0)
-  - 資料完整度：計算 11 個欄位的完成數量（地址、電話、開瓶費、設備、備註等）
-  - 距離排序：僅在定位成功時生效，定位失敗時忽略距離條件
-  - 前端 JavaScript 自動排序，確保列表依權重正確排列
+- **間距調整**：
+  - 增加地圖與 "Closest 5 Restaurants" 之間的間距
+  - 將 `.byob-nearby-wrapper` 的 `margin-top` 從 24px 調整為 40px
 
-- **技術實作**：
-  - 新增 `wordpress/assets/js/byob-nearby.js` 處理地圖、定位、距離計算、排序
-  - 在 `archive-restaurant.php` 輸出餐廳經緯度與排序權重資料到前端
-  - 在 `wp-config.php` 實作 `.env` 讀取功能，優先從 `.env` 讀取 API key
-  - 調整頁面結構：BYOB Near You → 地圖 → Closest 5 Restaurants → All BYOB Restaurants
-
-- **修正項目**：
-  - 修正 API key 讀取問題（從 `.env` 改為 `wp-config.php` 常數，再改為 `.env` 讀取）
-  - 移除多餘的提示文字（「Find BYOB Near You」副標題、「Sorted by distance」訊息）
-  - 關閉 `WP_DEBUG` 避免正式環境持續寫入 log
+- **修改文件**：
+  - `wordpress/archive-restaurant.php`：添加 attribution HTML 和 CSS 樣式
 
 ---
 
-## 🗓️ 明日（2025-11-15）待辦
+## 🗓️ 明日（2025-11-16）待辦
 
-### 1. **首頁精選餐廳功能**
-   - **需求確認**：
-     - 確認精選餐廳的選取標準（手動指定、依驗證狀態、依完整度、依距離等）
-     - 確認顯示數量與版面配置（輪播、網格、列表等）
-     - 確認是否需要「查看更多」連結
-   
-   - **實作項目**：
-     - 在首頁模板加入精選餐廳區塊
-     - 建立 ACF 欄位或後台選項，讓管理員可手動指定精選餐廳
-     - 或實作自動選取邏輯（例如：驗證狀態為 Verified、完整度 > 8、有照片的餐廳）
-     - 設計精選餐廳卡片樣式（與列表頁卡片區分）
-     - 確保響應式設計（桌機、平板、手機）
-
-### 2. **發給餐廳的確認 Email 轉寫**
+### 1. **發給餐廳的 Email 優化**
    - **需求確認**：
      - 確認 Email 發送時機（餐廳註冊時、資料更新時、驗證通過時等）
      - 確認 Email 語言（英文、中文、或雙語）
      - 確認 Email 內容重點（歡迎訊息、資料確認、後續步驟、CTA 等）
    
    - **實作項目**：
-     - 檢視現有的餐廳通知 Email 模板（`wordpress/Apps script - 費城餐廳確認版.js`）
+     - 檢視現有的餐廳通知 Email 模板：
+       - `wordpress/functions.php` 中的 `byob_send_approval_notification()` 函數
+       - `wordpress/functions.php` 中的 `byob_send_welcome_email()` 函數
+       - `wordpress/Apps script - 費城餐廳確認版.js` 中的 `sendPhillyOwnerNotificationEmail()` 函數
      - 草擬新版 Email 內容，納入：
        - 歡迎加入 BYOB 平台
        - 資料確認與補充說明
        - 排序邏輯說明（驗證狀態、完整度、照片的重要性）
        - 鼓勵上傳餐廳照片與補充完整資訊
        - 提供後台編輯連結或說明
-     - 更新 Apps Script 中的 Email 模板
+     - 更新相關 Email 模板函數
      - 測試 Email 發送流程與內容顯示
+
+### 2. **餐廳業者與既有文章建立連結功能**
+   - **需求說明**：
+     - 當已經有網友推薦的餐廳文章存在時，餐廳業者註冊後需要能夠與既有文章建立連結
+     - 目前情況：餐廳業者註冊後，如果沒有關聯的餐廳，後台會顯示「You currently have no associated restaurants」
+     - 需要實作：讓餐廳業者可以在後台搜尋並連結到既有的餐廳文章
+   
+   - **實作項目**：
+     - **後台頁面修改**：
+       - 修改 `wordpress/woocommerce/myaccount/restaurant-profile.php`
+       - 當餐廳業者沒有關聯餐廳時，顯示「連結既有餐廳」功能
+     - **搜尋功能**：
+       - 實作餐廳搜尋功能（依餐廳名稱、地址等）
+       - 顯示搜尋結果列表（餐廳名稱、地址、狀態等）
+       - 允許業者選擇要連結的餐廳
+     - **連結功能**：
+       - 實作連結確認機制（防止誤連結）
+       - 更新 `_restaurant_owner_id` 和 `_owned_restaurant_id` meta
+       - 發送通知給管理員（如有需要）
+     - **權限檢查**：
+       - 檢查餐廳是否已有其他業者連結
+       - 檢查餐廳狀態（是否已發布）
+       - 驗證業者身份（email 是否與餐廳資料匹配）
+     - **相關文件**：
+       - `wordpress/restaurant-member-functions.php`：可能需要新增連結相關函數
+       - `wordpress/functions.php`：可能需要新增搜尋 API endpoint
 
 ---
 
-*最後更新：2025-11-14*  
+*最後更新：2025-11-15*  
 
