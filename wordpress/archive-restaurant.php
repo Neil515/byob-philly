@@ -324,8 +324,27 @@
   color: #555555;
 }
 
+.byob-map-attribution {
+  margin-top: 12px;
+  text-align: right;
+  font-size: 0.75rem;
+  color: #888888;
+  line-height: 1.4;
+}
+
+.byob-map-attribution a {
+  color: #888888;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.byob-map-attribution a:hover {
+  color: #8b2635;
+  text-decoration: underline;
+}
+
 .byob-nearby-wrapper {
-  margin-top: 24px;
+  margin-top: 40px;
   padding: 20px;
   border: 1px solid #f0d9dd;
   border-radius: 12px;
@@ -451,6 +470,9 @@ wp_enqueue_script(
   </div>
   <div id="byob-restaurant-map" class="byob-map" role="region" aria-label="<?php esc_attr_e('Map of BYOB restaurants', 'byob'); ?>"></div>
 <p id="byob-map-status" class="byob-map-status"></p>
+<div class="byob-map-attribution">
+  <a href="https://www.flaticon.com/free-icons/wine" title="wine icons">Wine icons created by surang - Flaticon</a>
+</div>
 <div id="byob-nearby-wrapper" class="byob-nearby-wrapper" hidden>
     <h3 class="byob-nearby-title"><?php esc_html_e('Closest 5 Restaurants', 'byob'); ?></h3>
     <ul id="byob-nearby-list" class="byob-nearby-list" aria-live="polite"></ul>
