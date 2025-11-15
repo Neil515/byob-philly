@@ -1,0 +1,50 @@
+# 環境變數與敏感資訊
+.env
+.env.local
+.env.*.local
+*.env
+
+# API Keys 和憑證
+*secret*.json
+*credentials*.json
+client_secret*.json
+service_account*.json
+
+# WordPress
+# 注意：wp-config.php 需要追蹤，但敏感資訊應從 .env 載入
+wordpress/.htaccess
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+*.log
+
+# 作業系統
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 資料文件（可選，根據需要調整）
+# *.xlsx
+# *.csv
+
+# 臨時文件
+*.tmp
+*.temp
+temp/
+tmp/
+

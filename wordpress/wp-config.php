@@ -126,9 +126,11 @@ if (!defined('MAPS_JAVASCRIPT_API_KEY')) {
         $maps_key = $env_vars['GOOGLE_API_KEY'];
     }
     
-    // 如果 .env 沒有，使用預設值（僅作為最後備援）
+    // 如果 .env 沒有，記錄錯誤（不在 wp-config.php 中使用硬編碼，確保安全性）
     if (empty($maps_key)) {
-        $maps_key = 'AIzaSyDW1WHnxH5ESrv3zX5p_0aKZHsVuO95olg';
+        error_log('警告：MAPS_JAVASCRIPT_API_KEY 未設定。請在 .env 檔案中設定 MAPS_JAVASCRIPT_API_KEY 或 GOOGLE_API_KEY。');
+        // 注意：如果 .env 中沒有設定，地圖功能將無法運作
+        // 請確保生產環境的 .env 文件包含正確的 API Key
     }
     
     define('MAPS_JAVASCRIPT_API_KEY', $maps_key);
