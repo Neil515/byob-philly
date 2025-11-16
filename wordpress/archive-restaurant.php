@@ -629,35 +629,43 @@ if ($restaurant_pagination_html) {
 
       $type_labels = byob_get_restaurant_type_labels($post_id);
 
-      $is_charged = get_field('is_charged', $post_id);
+      // Philly 專案欄位（新）：philly_corkage_fee（移除舊欄位 is_charged 回退）
+      $philly_corkage_fee = get_field('philly_corkage_fee', $post_id);
       $corkage_fee_amount = get_field('corkage_fee_amount', $post_id);
       $corkage_fee_note = get_field('corkage_fee_note', $post_id);
 
+      // 顯示用的「Corkage Fee」概要文字
       $charged_output = '';
-      if ($is_charged) {
-        if (is_array($is_charged)) {
-          $charged_output = implode(' / ', $is_charged);
+      if (!empty($philly_corkage_fee)) {
+        // 映射 philly_corkage_fee -> 顯示文字
+        if ($philly_corkage_fee === 'free') {
+          $charged_output = __('Free', 'byob');
+        } elseif ($philly_corkage_fee === 'corkage_fee') {
+          $charged_output = __('Corkage Fee', 'byob');
+        } elseif ($philly_corkage_fee === 'other') {
+          $charged_output = __('Other', 'byob');
         } else {
-          $charged_output = $is_charged;
+          $charged_output = $philly_corkage_fee;
         }
       }
 
       $fee_output = '';
-      if ($is_charged) {
-        $charged_value = is_array($is_charged) ? reset($is_charged) : $is_charged;
-
-        if (($charged_value === '酌收' || $charged_value === 'yes') && $corkage_fee_amount) {
-          $fee_output = $corkage_fee_amount;
-        } elseif (($charged_value === '其他' || $charged_value === 'other') && $corkage_fee_note) {
-          $fee_output = $corkage_fee_note;
-        } elseif ($charged_value === '酌收' || $charged_value === 'yes') {
-          $fee_output = __('Charged (amount not set)', 'byob');
-        } elseif ($charged_value === '其他' || $charged_value === 'other') {
-          $fee_output = __('Other (description not set)', 'byob');
-        } elseif ($charged_value === 'no') {
+      if (!empty($philly_corkage_fee)) {
+        // 依 philly 欄位決定細節
+        if ($philly_corkage_fee === 'corkage_fee') {
+          if (!empty($corkage_fee_amount)) {
+            $fee_output = $corkage_fee_amount;
+          } else {
+            $fee_output = __('Charged (amount not set)', 'byob');
+          }
+        } elseif ($philly_corkage_fee === 'other') {
+          if (!empty($corkage_fee_note)) {
+            $fee_output = $corkage_fee_note;
+          } else {
+            $fee_output = __('Other (description not set)', 'byob');
+          }
+        } elseif ($philly_corkage_fee === 'free') {
           $fee_output = __('No corkage fee', 'byob');
-        } else {
-          $fee_output = $charged_value;
         }
       }
 
@@ -748,7 +756,6 @@ if ($restaurant_pagination_html) {
       $completeness_sources = array(
         $address,
         $phone,
-        $is_charged,
         $corkage_fee_amount,
         $corkage_fee_note,
         $equipment,
@@ -867,20 +874,19 @@ if ($restaurant_pagination_html) {
         </div>
 
         <div class="info-group wine-info">
-          <?php 
-          if ($is_charged): ?>
+          <?php if (!empty($charged_output)): ?>
             <div class="field"><strong>Corkage Fee:</strong> <?php echo esc_html($charged_output); ?> 🥂</div>
           <?php else: ?>
             <div class="field"><strong>Corkage Fee:</strong> </div>
           <?php endif; ?>
           <?php 
           if (current_user_can('administrator')) {
-            echo '<!-- DEBUG: is_charged = ' . var_export($is_charged, true) . ' -->';
+            echo '<!-- DEBUG: philly_corkage_fee = ' . var_export($philly_corkage_fee, true) . ' -->';
             echo '<!-- DEBUG: corkage_fee_amount = ' . var_export($corkage_fee_amount, true) . ' -->';
             echo '<!-- DEBUG: corkage_fee_note = ' . var_export($corkage_fee_note, true) . ' -->';
           }
-          
-          if ($is_charged): ?>
+          ?>
+          <?php if (!empty($fee_output)): ?>
             <div class="field"><strong>Corkage Details:</strong> <?php echo esc_html($fee_output); ?> 🪙</div>
           <?php else: ?>
             <div class="field"><strong>Corkage Details:</strong> </div>
