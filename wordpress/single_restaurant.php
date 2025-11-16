@@ -265,8 +265,8 @@
       <?php endif; ?>
 
       <?php 
-      $equipment = get_field('equipment');
-      $equipment_other_note = get_field('equipment_other_note');
+      $equipment = get_field('wine_service_equipment');
+      $equipment_other_note = get_field('philly_equipment_other_note');
       
       if ($equipment): 
         if (is_array($equipment)) {
@@ -408,8 +408,8 @@
 
     <!-- 其他資訊 -->
     <div class="info-group other-info">
-      <?php if(get_field('notes')): ?>
-        <div class="field"><strong>Notes:</strong> <?php the_field('notes'); ?> 📝</div>
+      <?php if(get_field('philly_dining_experience')): ?>
+        <div class="field"><strong>Notes:</strong> <?php the_field('philly_dining_experience'); ?> 📝</div>
       <?php else: ?>
         <div class="field"><strong>Notes:</strong> </div>
       <?php endif; ?>
