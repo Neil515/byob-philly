@@ -16,6 +16,38 @@
 
 ---
 
+## ✅ 2025年11月16日 — 前台欄位切換、資料管線與名單更新
+
+### 🎯 今日成就總覽
+- 前台全面切換為費城欄位（移除台北舊鍵回退）
+  - 單頁 `wordpress/single_restaurant.php`、列表 `wordpress/archive-restaurant.php`
+  - 開瓶費顯示改用 `philly_corkage_fee` + `corkage_fee_amount` + `corkage_fee_note`
+  - 修復單頁 PHP/HTML 邊界語法錯誤（造成嚴重錯誤的來源）
+- 列表顯示修正
+  - 以新欄位輸出「Corkage Fee / Corkage Details」
+  - 移除對舊變數 `$is_charged` 的依賴
+  - 修正完整度計算來源
+- 列表未顯示新餐廳問題排除
+  - `restaurant-member-functions.php` 的完整性過濾改用 `philly_corkage_fee`
+  - 新餐廳（Ristorante Aroma、Bricco Coal Fired Pizza）可顯示
+- 資料名單補強
+  - 取 11/16 新增餐廳官網（Google Places Details）→ 與舊檔合併
+  - 新增 Google Custom Search 查找 Yelp 連結，覆寫到同檔 `Yelp_URL`
+  - 以地址查詢經緯度（TextSearch/Geocode），在 `Yelp_URL` 右側插入 `Latitude` / `Longitude`
+- 新增小工具腳本
+  - `philly_yelp_crawler/update_yelp_links.py`（針對 11/16，用 CSE 寫回 Yelp_URL）
+  - `philly_yelp_crawler/update_latlng_1116.py`（針對 11/16，寫回 Lat/Lng）
+
+### 🔧 主要修改檔案
+- `wordpress/single_restaurant.php`（Corkage 採用 philly 欄位；修復語法錯誤）
+- `wordpress/archive-restaurant.php`（Corkage 顯示/完整度來源修正）
+- `wordpress/woocommerce/myaccount/restaurant-profile.php`（後台改用 `philly_corkage_fee` radio）
+- `wordpress/restaurant-member-functions.php`（完整性過濾改用 philly 欄位，儲存流程更新）
+- `doc/Next Task Prompt Byob.md`（新增 11/17 目標）
+- `philly_yelp_crawler/update_yelp_links.py`、`philly_yelp_crawler/update_latlng_1116.py`
+
+---
+
 ## ✅ 2025年11月15日 — 地圖標記圖標優化與 Attribution 添加
 
 ### 🎯 今日成就總覽
@@ -135,10 +167,12 @@
 * ✅ 地圖與定位功能完成
 * ✅ 餐廳列表多層級排序邏輯完成
 
-**下一步重點：**
-* 🚀 發給餐廳的 Email 優化（11/16）
-* 🚀 餐廳業者與既有文章建立連結功能（11/16）
-* ⏳ FAQ 英文化、後台英文化、Reddit 回覆工作、多名網友資料衝突處理邏輯、Reddit 社群互動啟動、網站上線、用戶招募、榮譽系統
+**下一步重點（11/17）：**
+* 📧 餐廳業者 Email 建立與驗證（歡迎/啟用）
+* 🧭 檢查餐廳業者後台欄位與權限流程
+* 🔄 「先網友推薦、後餐廳加入」資料流巡檢與事件串接
+* 🏷️ 列表「餐廳類型」點選篩選（前台 UX + Query）
+* ⏳ FAQ/後台英文化、Reddit 回覆節奏、資料衝突處理、社群啟動、上線與招募、榮譽系統
 
 ---
 
