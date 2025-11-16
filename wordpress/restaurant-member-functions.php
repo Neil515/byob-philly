@@ -2004,16 +2004,15 @@ function byob_handle_restaurant_profile_submit($restaurant_id) {
         update_field('philly_restaurant_type_other_note', $other_type_note, $restaurant_id);
         update_field('restaurant_type_other_note', $other_type_note, $restaurant_id);
         
-        // 新增欄位：是否收開瓶費（選項按鈕）
-        $is_charged = isset($_POST['is_charged']) ? sanitize_text_field($_POST['is_charged']) : '';
-        update_field('is_charged', $is_charged, $restaurant_id);
-        $philly_corkage_map = array(
-            'yes' => 'corkage_fee',
-            'no'  => 'free',
-            'other' => 'other',
-        );
-        $philly_corkage_value = isset($philly_corkage_map[$is_charged]) ? $philly_corkage_map[$is_charged] : '';
-        update_field('philly_corkage_fee', $philly_corkage_value, $restaurant_id);
+        // 開瓶費政策（Philly 專用）
+        if (isset($_POST['philly_corkage_fee'])) {
+            $pcf = sanitize_text_field($_POST['philly_corkage_fee']);
+            $allowed = array('free', 'corkage_fee', 'other');
+            if (!in_array($pcf, $allowed, true)) {
+                $pcf = '';
+            }
+            update_field('philly_corkage_fee', $pcf, $restaurant_id);
+        }
         
         // 新增欄位：開瓶費金額（數值）
         if (isset($_POST['corkage_fee_amount'])) {
@@ -2570,7 +2569,8 @@ function byob_is_restaurant_complete($restaurant_id) {
     $phone = function_exists('get_field') ? get_field('phone', $restaurant_id) : '';
     $address = function_exists('get_field') ? get_field('address', $restaurant_id) : '';
     // $restaurant_type = function_exists('get_field') ? get_field('restaurant_type', $restaurant_id) : '';
-    $corkage_fee = function_exists('get_field') ? get_field('is_charged', $restaurant_id) : '';
+    // 改用費城專案欄位：philly_corkage_fee（取代舊 is_charged）
+    $corkage_fee = function_exists('get_field') ? get_field('philly_corkage_fee', $restaurant_id) : '';
     
     // 如果所有欄位都有值，返回 true
     return !empty(trim($restaurant_name)) && 
