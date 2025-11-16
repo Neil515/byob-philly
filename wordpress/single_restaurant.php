@@ -210,24 +210,28 @@
     <!-- 酒水相關 -->
     <div class="info-group wine-info">
       <?php 
-      $is_charged = get_field('is_charged');
+      // Philly 新欄位（優先）：philly_corkage_fee；兼容舊欄位 is_charged
+      $philly_corkage_fee = get_field('philly_corkage_fee');
       // 除錯：顯示原始值和類型
       if (current_user_can('administrator')) {
-        echo '<!-- DEBUG: is_charged = ' . var_export($is_charged, true) . ' -->';
+        echo '<!-- DEBUG: philly_corkage_fee = ' . var_export($philly_corkage_fee, true) . ' -->';
       }
       
-      if ($is_charged): 
-        if (is_array($is_charged)) {
-          $charged_output = implode(' / ', $is_charged);
+      // 概要文字（Corkage Fee）
+      $charged_output = '';
+      if (!empty($philly_corkage_fee)) {
+        if ($philly_corkage_fee === 'free') {
+          $charged_output = __('Free', 'byob');
+        } elseif ($philly_corkage_fee === 'corkage_fee') {
+          $charged_output = __('Corkage Fee', 'byob');
+        } elseif ($philly_corkage_fee === 'other') {
+          $charged_output = __('Other', 'byob');
         } else {
-          $charged_output = $is_charged;
+          $charged_output = $philly_corkage_fee;
         }
+      }
       ?>
-        <div class="field"><strong>Corkage Fee:</strong> <?php echo esc_html($charged_output); ?> 🥂</div>
-      <?php else: ?>
-        <div class="field"><strong>Corkage Fee:</strong> </div>
-      <?php endif; ?>
-
+      <div class="field"><strong>Corkage Fee:</strong> <?php echo esc_html($charged_output); ?> 🥂</div>
       <?php 
       // 根據 is_charged 選項顯示對應的開瓶費資訊
       // 注意：這裡不重新獲取 $is_charged，使用上面已經獲取的值
@@ -236,33 +240,35 @@
       
       // 除錯：顯示開瓶費相關欄位的值
       if (current_user_can('administrator')) {
-        echo '<!-- DEBUG: is_charged = ' . var_export($is_charged, true) . ' -->';
+        echo '<!-- DEBUG: philly_corkage_fee = ' . var_export($philly_corkage_fee, true) . ' -->';
         echo '<!-- DEBUG: corkage_fee_amount = ' . var_export($corkage_fee_amount, true) . ' -->';
         echo '<!-- DEBUG: corkage_fee_note = ' . var_export($corkage_fee_note, true) . ' -->';
       }
       
-      if ($is_charged): 
-        // 處理陣列情況
-        $charged_value = is_array($is_charged) ? $is_charged[0] : $is_charged;
-        
-        if (($charged_value === '酌收' || $charged_value === 'yes') && $corkage_fee_amount) {
-          $fee_output = $corkage_fee_amount;
-        } elseif (($charged_value === '其他' || $charged_value === 'other') && $corkage_fee_note) {
-          $fee_output = $corkage_fee_note;
-        } elseif ($charged_value === '酌收' || $charged_value === 'yes') {
-          $fee_output = 'Charged (amount not set)';
-        } elseif ($charged_value === '其他' || $charged_value === 'other') {
-          $fee_output = 'Other (description not set)';
-        } elseif ($charged_value === 'no') {
-          $fee_output = 'No corkage fee';
+      // 詳細文字（Corkage Details）
+      if (!empty($philly_corkage_fee)) {
+        if ($philly_corkage_fee === 'corkage_fee') {
+          if (!empty($corkage_fee_amount)) {
+            $fee_output = $corkage_fee_amount;
+          } else {
+            $fee_output = __('Charged (amount not set)', 'byob');
+          }
+        } elseif ($philly_corkage_fee === 'other') {
+          if (!empty($corkage_fee_note)) {
+            $fee_output = $corkage_fee_note;
+          } else {
+            $fee_output = __('Other (description not set)', 'byob');
+          }
+        } elseif ($philly_corkage_fee === 'free') {
+          $fee_output = __('No corkage fee', 'byob');
         } else {
-          $fee_output = $charged_value;
+          $fee_output = $philly_corkage_fee;
         }
+      } else {
+        $fee_output = '';
+      }
       ?>
-        <div class="field"><strong>Corkage Details:</strong> <?php echo esc_html($fee_output); ?> 🪙</div>
-      <?php else: ?>
-        <div class="field"><strong>Corkage Details:</strong> </div>
-      <?php endif; ?>
+      <div class="field"><strong>Corkage Details:</strong> <?php echo esc_html($fee_output); ?> 🪙</div>
 
       <?php 
       $equipment = get_field('wine_service_equipment');
