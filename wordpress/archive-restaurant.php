@@ -661,8 +661,8 @@ if ($restaurant_pagination_html) {
         }
       }
 
-      $equipment = get_field('equipment', $post_id);
-      $equipment_other_note = get_field('equipment_other_note', $post_id);
+      $equipment = get_field('wine_service_equipment', $post_id);
+      $equipment_other_note = get_field('philly_equipment_other_note', $post_id);
       $equipment_output = '';
 
       if ($equipment) {
@@ -693,7 +693,7 @@ if ($restaurant_pagination_html) {
         }
       }
 
-      $notes = get_field('notes', $post_id);
+      $notes = get_field('philly_dining_experience', $post_id);
       $truncated_notes = '';
       if ($notes) {
         $truncated_notes = mb_strlen($notes) > 100 ? mb_substr($notes, 0, 100) . '...' : $notes;
