@@ -435,20 +435,20 @@ echo '<label for="business_hours" style="display: block; margin-bottom: 10px; fo
 echo '<textarea id="business_hours" name="business_hours" rows="3" placeholder="e.g.: Monday to Friday 11:00-22:00, Saturday and Sunday 10:00-23:00" style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical; transition: border-color 0.3s;">' . esc_textarea(get_field('business_hours', $restaurant_id)) . '</textarea>';
 echo '</div>';
 
-// 是否收開瓶費
+// 是否收開瓶費（Philly 欄位）
 echo '<div class="form-group" style="margin-bottom: 25px;">';
-echo '<label for="is_charged" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Corkage Fee *</label>';
+echo '<label for="philly_corkage_fee" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Corkage Fee *</label>';
 echo '<div class="radio-group" style="display: flex; gap: 20px; align-items: center; flex-wrap: nowrap;">';
 echo '<label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; white-space: nowrap; writing-mode: horizontal-tb; text-orientation: mixed;">';
-echo '<input type="radio" name="is_charged" value="yes" ' . (get_field('is_charged', $restaurant_id) === 'yes' ? 'checked' : '') . ' style="margin-right: 8px;">';
-echo '<span style="display: inline-block; white-space: nowrap;">Charged</span>';
+echo '<input type="radio" name="philly_corkage_fee" value="corkage_fee" ' . (get_field('philly_corkage_fee', $restaurant_id) === 'corkage_fee' ? 'checked' : '') . ' style="margin-right: 8px;">';
+echo '<span style="display: inline-block; white-space: nowrap;">Corkage Fee</span>';
 echo '</label>';
 echo '<label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; white-space: nowrap; writing-mode: horizontal-tb; text-orientation: mixed;">';
-echo '<input type="radio" name="is_charged" value="no" ' . (get_field('is_charged', $restaurant_id) === 'no' ? 'checked' : '') . ' style="margin-right: 8px;">';
+echo '<input type="radio" name="philly_corkage_fee" value="free" ' . (get_field('philly_corkage_fee', $restaurant_id) === 'free' ? 'checked' : '') . ' style="margin-right: 8px;">';
 echo '<span style="display: inline-block; white-space: nowrap;">Free</span>';
 echo '</label>';
 echo '<label style="display: flex; align-items: center; cursor: pointer; font-weight: normal; white-space: nowrap; writing-mode: horizontal-tb; text-orientation: mixed;">';
-echo '<input type="radio" name="is_charged" value="other" ' . (get_field('is_charged', $restaurant_id) === 'other' ? 'checked' : '') . ' style="margin-right: 8px;">';
+echo '<input type="radio" name="philly_corkage_fee" value="other" ' . (get_field('philly_corkage_fee', $restaurant_id) === 'other' ? 'checked' : '') . ' style="margin-right: 8px;">';
 echo '<span style="display: inline-block; white-space: nowrap;">Other</span>';
 echo '</label>';
 echo '</div>';
@@ -776,7 +776,7 @@ function toggleOtherNote() {
 }
 
 function toggleCorkageFields() {
-    const isChargedRadios = document.querySelectorAll('input[name="is_charged"]');
+    const isChargedRadios = document.querySelectorAll('input[name="philly_corkage_fee"]');
     const corkageAmountField = document.getElementById('corkage_amount_field');
     const corkageNoteField = document.getElementById('corkage_note_field');
 
@@ -795,7 +795,7 @@ function toggleCorkageFields() {
         }
     }
 
-    if (selectedValue === 'yes' && corkageAmountField) {
+    if (selectedValue === 'corkage_fee' && corkageAmountField) {
         corkageAmountField.style.display = 'block';
         const noteField = document.getElementById('corkage_fee_note');
         if (noteField) {
@@ -823,7 +823,7 @@ document.addEventListener('DOMContentLoaded', () => {
     toggleOtherNote();
     toggleCorkageFields();
 
-    const isChargedRadios = document.querySelectorAll('input[name="is_charged"]');
+    const isChargedRadios = document.querySelectorAll('input[name="philly_corkage_fee"]');
     for (let i = 0; i < isChargedRadios.length; i += 1) {
         isChargedRadios[i].addEventListener('change', toggleCorkageFields);
     }
