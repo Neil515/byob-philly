@@ -16,6 +16,39 @@
 
 ---
 
+## ✅ 2025年11月17日 — 餐廳接管流程與 Email 任務準備
+
+### 🎯 今日成就總覽
+- **餐廳接管流程上線**  
+  - 在後台餐廳文章右側新增「Restaurant Takeover Link」meta box，可生成 30 天有效、可重複使用的 token，並自動記錄產生者與到期時間。  
+  - 新增 `byob_generate_restaurant_takeover_token()`、`byob_handle_restaurant_takeover_page()` 等流程，處理 token 驗證、接管頁面顯示、已註冊/未註冊業者接管、取代舊業者等情境。  
+  - 完成接管後自動登入並導回 `restaurant-profile`，同時寄送通知信至 `byobmap.tw@gmail.com`，信件含餐廳資訊與後台連結。  
+  - 接管頁面全部改為英文介面，並覆寫按鈕 `text-transform`，維持正確大小寫。
+
+- **後台使用者檢視強化**  
+  - 在 WordPress 使用者列表新增 `Restaurant` 欄位，可排序並直接連往餐廳文章，方便管理者查看每位餐廳業者與其所屬餐廳。
+
+- **Next Task / 明日任務更新**  
+  - 將 11/18 需進行的四大工作寫入 `Next Task Prompt Byob.md`：  
+    1. 對 `Philly BYOB Restaurant_with_websites_merged_20251116.xlsx` 中 Date=2025-11-16 的餐廳進行官網/Email 爬取，按舊檔格式 append 至 `Philly BYOB Restaurant_with_websites_20251104_142325_with_emails_20251106_114433.xlsx`。  
+    2. 補齊同檔案缺失的 Latitude/Longitude。  
+    3. 準備批次發送邀請 Email（含 takeover link 與前台連結）。  
+    4. 清理 `philly_yelp_crawler` 資料夾與 README。
+
+- **資料介面與文檔**  
+  - `Next Task Prompt Byob.md` 更新至 11/17，加入 11/18 具體任務。  
+  - 規劃 Email 發送流程：未來會以 Sheets + Apps Script 合併方式寄信，並提供 takeover link 及餐廳展示連結。
+
+### 🔧 主要修改檔案
+- `wordpress/functions.php`
+  - `byob_add_restaurant_takeover_meta_box()`、`byob_handle_generate_takeover_token()`、`byob_handle_restaurant_takeover_page()`、`byob_process_restaurant_takeover()`、`byob_send_takeover_notification()` 等一系列新函式。  
+  - takeover 頁面 UI/文案調整（標題改為 *Restaurant Access Transfer*、按鈕改為 *Claim Your Restaurant*、checkbox 提示為英文、自訂樣式避免全大寫）。  
+  - `byob_get_takeover_notification_email()` 支援自訂通知信箱。  
+  - 新增 `manage_users_columns` 與 `manage_users_sortable_columns`，顯示/排序 `Restaurant` 欄位。
+- `doc/Next Task Prompt Byob.md`：更新 11/18 工作。
+
+---
+
 ## ✅ 2025年11月16日 — 前台欄位切換、資料管線與名單更新
 
 ### 🎯 今日成就總覽
@@ -58,68 +91,6 @@
 
 ### 後續方向
 - 11/16 處理發給餐廳的 Email 優化與餐廳業者與既有文章建立連結功能。
-
----
-
-## ✅ 2025年11月14日 — 「離你最近的 BYOB 餐廳」功能完成
-
-### 🎯 今日成就總覽
-- **地圖功能實作**：在餐廳列表頁最上方加入 Google Maps 地圖區塊，整合 Google Maps JavaScript API，實作 HTML5 Geolocation 定位功能。定位成功時顯示使用者位置與最近餐廳，失敗時自動縮放顯示全部費城餐廳。
-- **最近 5 間餐廳列表**：地圖下方顯示「Closest 5 Restaurants」區塊，使用 Haversine 公式計算距離並排序。桌機版支援標記 hover 互動，行動版支援點擊 InfoWindow。
-- **餐廳列表排序優化**：實作多層級排序邏輯（驗證狀態 > 資料完整度 > 餐廳照片 > 距離 > 收藏數 > 名稱），前端 JavaScript 自動排序確保列表依權重正確排列。
-- **技術實作**：新增 `wordpress/assets/js/byob-nearby.js`，在 `archive-restaurant.php` 輸出餐廳經緯度與排序權重，在 `wp-config.php` 實作 `.env` 讀取功能優先讀取 API key。
-- **修正項目**：修正 API key 讀取問題（最終採用 `.env` 讀取），移除多餘提示文字，關閉 `WP_DEBUG`。
-
----
-
-## ✅ 2025年11月13日 — 經緯度批次產出與資料對齊
-
-### 🎯 今日成就總覽
-- 啟用新的 Google Places / Geocoding API key，成功批次產出兩份清單的 `Latitude` / `Longitude`。
-- 建立 `add_ids.py` 腳本，為 Excel 新增 `ID` 欄位，規劃將經緯度資料與餐廳排序功能整合。
-
----
-
-## ✅ 2025年11月12日 — LOGO fallback 與 Nearby 功能準備
-
-### 🎯 今日成就總覽
-- 前台更新 LOGO fallback 流程，優先採用 ACF `restaurant_logo`，並兼容舊欄位。
-- ACF 新增 `Latitude` / `Longitude` 欄位，建立 `geocode_restaurant_locations.py` 腳本，自動辨識並輸出座標資料。
-
----
-
-## ✅ 2025年11月11日 — BYOB Service 調整與後續規劃
-
-### 🎯 今日成就總覽
-- BYOB Service 顯示優化，支援舊欄位回退並統一顯示標籤文字。
-- 確認 `_restaurant_logo` 為前台與業者後台的主要 LOGO 來源，釐清欄位差異。
-
----
-
-## ✅ 2025年11月10日 — 費城餐廳類型與後台欄位調整
-
-### 🎯 今日成就總覽
-- 餐廳類型欄位英文化，改用費城專屬 15 個英文選項，確保前台顯示與資料一致。
-- 地址驗證規則調整，移除台灣地址限制，支援美國地址格式。
-
----
-
-## ✅ 2025年11月8日 — Google Places + Yelp 整合
-
-### 🎯 今日成就總覽
-- 新增 `google_yelp_lookup.py` 腳本，透過 Google Places 驗證地址並萃取餐廳類型，搭配 Programmable Search 找出 Yelp 連結。
-- 前台類型顯示修正，新增 `byob_get_restaurant_type_labels()` 統一處理類型顯示。
-
----
-
-## ✅ 2025年11月1-6日 — 系統優化與功能完善
-
-### 🎯 主要成就
-- **11/6**：前台英文化完成，移除未完成的評論功能。
-- **11/5**：重複檢查系統優化，新增 `recommendation_count` 欄位與相似度權重調整。
-- **11/4**：Email 搜尋系統完成，兩階段自動化工具支援重試與日誌。
-- **11/3**：驗證徽章系統與 Yelp 連結整合完成。
-- **11/1**：費城餐廳確認表單系統建立，雙表單系統區分資料來源。
 
 ---
 
