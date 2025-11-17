@@ -16,26 +16,29 @@ BYOB (Bring Your Own Bottle) 是一個自帶酒水餐廳推薦平台，目前運
 
 ---
 
-## 🚀 最新進度（2025年11月16日）
+## 🚀 最新進度（2025年11月17日）
 
-### 今日完成：前台欄位切換、列表修正、名單補強
+### 今日完成：餐廳接管流程、後台欄位、Email 任務準備
 
 **🎯 關鍵成就**
 
-- ✅ 前台全面採用費城欄位（移除台北舊鍵回退）：單頁 `single_restaurant.php`、列表 `archive-restaurant.php`
-- ✅ 修復單頁 PHP/HTML 邊界語法錯誤造成的嚴重錯誤
-- ✅ 列表「Corkage Fee / Corkage Details」顯示改用 `philly_corkage_fee` + 金額/說明；完整度來源修正
-- ✅ 排除列表未顯示新餐廳的問題：完整性過濾改用 `philly_corkage_fee`，新餐廳（Ristorante Aroma、Bricco Coal Fired Pizza）可顯示
-- ✅ 名單補強：針對 11/16 新增餐廳
-  - 以 Google Places 取官網，與舊檔合併
-  - 以 Google Custom Search 取得 Yelp 連結，覆寫回同檔 `Yelp_URL`
-  - 以地址取得經緯度，於 `Yelp_URL` 右側插入 `Latitude` / `Longitude`
+- ✅ **餐廳接管（Restaurant Access Transfer）流程上線**  
+  - 後台餐廳文章新增 meta box，可產生 30 天有效、可重複使用的 takeover link（token 存於 `_restaurant_takeover_token`）。  
+  - 接管頁面改為英文，標題、按鈕文字（`Claim Your Restaurant`）與 checkbox 提示皆英文化，並覆寫樣式避免 CSS 強制大寫。  
+  - 完成接管後自動登入並導回 `restaurant-profile`，寄送通知信至 `byobmap.tw@gmail.com`，內容含餐廳名稱、接管人、後台連結。
 
-**🗓️ 明日（11/17）**
-- ✉️ 餐廳業者 Email 建立與驗證（歡迎/啟用）
-- 🧭 檢查餐廳業者後台欄位與權限流程
-- 🔄 「先網友推薦、後餐廳加入」資料流巡檢與事件串接
-- 🏷️ 列表「餐廳類型」點選篩選（前台 UX + Query）
+- ✅ **後台使用者列表強化**  
+  - 在 WordPress 使用者列表新增 `Restaurant` 欄位（帶連結），並支援排序，方便追蹤每位餐廳業者與其所屬餐廳。
+
+- ✅ **文檔與任務規劃更新**  
+  - `doc/Next Task Prompt Byob.md` 新增 11/18 四大任務：Email 爬取、經緯度補錄、批次寄信、整理 `philly_yelp_crawler`。  
+  - `doc/ai_progress_byob.md` 同步記錄今日進度，刪除無助理解的舊紀錄。
+
+**🗓️ 明日（11/18）**
+- ✉️ 對 11/16 餐廳資料執行 Email 爬取，並 append 至既有 Email 清單。
+- 📍 補齊 `Philly BYOB Restaurant_with_websites_merged_20251116.xlsx` 中缺漏的 Lat/Lng。
+- 📧 擬定批次邀請信內容（含 takeover link 與前台連結），規劃寄送流程。
+- 🗂️ 整理 `philly_yelp_crawler/`（資料、README、腳本說明）。
 
 ---
 
@@ -88,7 +91,8 @@ WordPress 核心
     ↓
 聯絡與驗證機制（進行中）
 ├── 餐廳 Email 搜尋系統 ✓
-├── Email 模板優化（11/17）
+├── Restaurant Access Transfer（接管流程）✓
+├── Email 模板優化（11/18）
 └── 餐廳業者連結功能（11/17）
     ↓
 網站展示層
@@ -120,7 +124,8 @@ WordPress 核心
 - ✅ 網站前台英文化與評論功能清理
 - ✅ 地圖與定位功能：Google Maps 整合、距離排序、最近餐廳列表
 - ✅ 地圖標記圖標優化：自定義 SVG 圖標、Attribution 添加
-- 🔄 進行中：Email 模板設計、餐廳業者連結功能、FAQ／後台英文化
+- ✅ Restaurant Access Transfer：接管流程、通知信、後台 meta box
+- 🔄 進行中：Email 模板設計、FAQ／後台英文化、資料夾整理
 - ⏳ 後續階段：Reddit 回覆流程、資料衝突處理、網站上線、榮譽系統
 
 ---
@@ -150,10 +155,11 @@ WordPress 核心
 1. **費城專案**：
    - ✅ 地圖與定位功能（11/14 完成）
    - ✅ 地圖標記圖標優化（11/15 完成）
-   - 🚀 餐廳業者 Email 建立與驗證（11/17）
-   - 🚀 餐廳業者後台檢查與流程修正（11/17）
-   - 🚀 流程：先網友推薦、後餐廳加入（11/17）
-   - 🚀 列表類型點選篩選（11/17）
+   - ✅ Restaurant Access Transfer（11/17 完成）
+   - 🚀 11/16 餐廳 Email 爬取（11/18）
+   - 🚀 Lat/Lng 補齊（11/18）
+   - 🚀 批次邀請信流程（11/18）
+   - 🚀 `philly_yelp_crawler` 整理（11/18）
    - ⏳ FAQ／後台英文化、Reddit 回覆流程
 
 2. **台北專案**：
@@ -206,12 +212,18 @@ WordPress 核心
 
 ### 餐廳聯絡與驗證 ⚠️
 - **挑戰**：餐廳 email 難以取得、餐廳老闆回覆率可能較低
-- **進展**：✅ Email 搜尋系統已完成（11/4）
-- **下一步**：優化 Email 模板內容、實作餐廳業者連結既有文章功能
+- **進展**：✅ Email 搜尋系統（11/4）、Restaurant Access Transfer（11/17）
+- **下一步**：11/18 Email 爬取與批次寄信、FAQ／後台英文化
 
 ---
 
 ## 🔑 重要技術突破
+
+### 餐廳接管流程（2025/11/17）
+- **Token 生成與管理**：後台 meta box 提供生成/查看/重設 token 的介面，token 32 字元、30 天有效。  
+- **前端頁面**：`/takeover-restaurant?token=xxx` 使用 `template_redirect` 注入自訂頁面，UI 全英文並提供註冊/登入切換。  
+- **權限移轉**：接管時確認該 email 是否已綁定其他餐廳，可選擇覆蓋既有業者，並同步更新 `_restaurant_owner_id` 與 `_owned_restaurant_id`。  
+- **通知與導流**：成功接管後寄信給管理員並導向 `restaurant-profile`，登入流程自動完成。
 
 ### 地圖與定位系統（11/14-11/15）
 - **Google Maps JavaScript API 整合**：實作互動式地圖，支援使用者定位與餐廳標記
@@ -232,6 +244,6 @@ WordPress 核心
 
 ---
 
-*最後更新：2025年11月16日*
-*版本：v19.0*
-*明日重點（11/17）：業者 Email、後台巡檢、推薦→加入流程、類型點選篩選*
+*最後更新：2025年11月17日*
+*版本：v20.0*
+*明日重點（11/18）：Email 爬取、Lat/Lng 補齊、批次寄信、爬蟲資料夾整理*
