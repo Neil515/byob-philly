@@ -515,21 +515,24 @@ echo '<div class="form-group" style="margin-bottom: 25px;">';
 echo '<label style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Wine Equipment</label>';
 echo '<div class="checkbox-group" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px;">';
 
+// 費城版酒器設備選項（value 和 label 都是英文）
 $equipment_options = array(
-    '酒杯' => 'Wine Glasses',
-    '開瓶器' => 'Corkscrew',
-    '冰桶' => 'Ice Bucket',
-    '醒酒器' => 'Decanter',
-    '酒塞/瓶塞' => 'Wine Stopper',
-    '酒架/酒櫃' => 'Wine Rack',
-    '溫度計' => 'Thermometer',
-    '濾酒器' => 'Wine Filter',
-    '其他' => 'Other',
-    '無提供' => 'Not Provided'
+    'wine glasses' => 'wine glasses',
+    'shot glasses' => 'shot glasses',
+    'opener/corkscrew' => 'opener/corkscrew',
+    'decanter' => 'decanter',
+    'Ice bucket' => 'Ice bucket',
+    'wine storage locker service' => 'wine storage locker service',
+    'none' => 'none',
+    'other' => 'other'
 );
 
-$current_equipment = get_field('equipment', $restaurant_id);
+// 讀取酒器設備（只讀取費城版欄位）
+$current_equipment = get_field('wine_service_equipment', $restaurant_id);
 $current_equipment = is_array($current_equipment) ? $current_equipment : array();
+
+// 讀取其他酒器設備說明
+$equipment_other_note = get_field('philly_equipment_other_note', $restaurant_id);
 
 foreach ($equipment_options as $value => $label) {
     $checked = in_array($value, $current_equipment) ? 'checked' : '';
@@ -541,6 +544,13 @@ foreach ($equipment_options as $value => $label) {
 
 echo '</div>';
 echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please select the wine equipment you provide</p>';
+echo '</div>';
+
+// 其他酒器設備說明欄位（條件式顯示）
+echo '<div id="equipment_other_note_field" class="form-group" style="margin-bottom: 25px; display: none;">';
+echo '<label for="equipment_other_note" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Other Equipment Description</label>';
+echo '<input type="text" id="equipment_other_note" name="equipment_other_note" value="' . esc_attr($equipment_other_note) . '" placeholder="Please describe other wine equipment you provide..." style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; transition: border-color 0.3s;">';
+echo '<p style="font-size: 14px; color: #666; margin-top: 5px;">Please describe other wine equipment you provide (optional)</p>';
 echo '</div>';
 
 // 開酒服務
@@ -586,10 +596,10 @@ echo '<input type="text" id="open_bottle_service_other_note" name="open_bottle_s
 echo '<p style="font-size: 14px; color: 666; margin-top: 5px;">Please describe in detail the wine service content you provide (optional)</p>';
 echo '</div>';
 
-// 其他BYOB規定或備註
+// 其他BYOB規定或備註（只讀取費城版欄位）
 echo '<div class="form-group" style="margin-bottom: 25px;">';
 echo '<label for="notes" style="display: block; margin-bottom: 10px; font-weight: bold; color: #333; font-size: 16px;">Other BYOB Policies or Notes</label>';
-echo '<textarea id="notes" name="notes" rows="5" placeholder="Other BYOB policies, or your restaurant features, style, service, etc..." style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical; transition: border-color 0.3s;">' . esc_textarea(get_field('notes', $restaurant_id)) . '</textarea>';
+echo '<textarea id="notes" name="notes" rows="5" placeholder="Other BYOB policies, or your restaurant features, style, service, etc..." style="width: 100%; padding: 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; resize: vertical; transition: border-color 0.3s;">' . esc_textarea(get_field('philly_dining_experience', $restaurant_id)) . '</textarea>';
 echo '</div>';
 
 // 官方網站/社群連結（包含 Yelp Link）
@@ -819,13 +829,49 @@ function toggleCorkageFields() {
     }
 }
 
+function toggleEquipmentOtherNote() {
+    const equipmentCheckboxes = document.querySelectorAll('input[name="equipment[]"]');
+    const equipmentOtherNoteField = document.getElementById('equipment_other_note_field');
+    
+    if (!equipmentOtherNoteField) {
+        return;
+    }
+    
+    // 檢查是否有勾選 "other" 選項
+    let isOtherChecked = false;
+    for (let i = 0; i < equipmentCheckboxes.length; i += 1) {
+        if (equipmentCheckboxes[i].value === 'other' && equipmentCheckboxes[i].checked) {
+            isOtherChecked = true;
+            break;
+        }
+    }
+    
+    // 顯示或隱藏補充說明欄位
+    if (isOtherChecked) {
+        equipmentOtherNoteField.style.display = 'block';
+    } else {
+        equipmentOtherNoteField.style.display = 'none';
+        const otherNoteInput = document.getElementById('equipment_other_note');
+        if (otherNoteInput) {
+            otherNoteInput.value = '';
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     toggleOtherNote();
     toggleCorkageFields();
+    toggleEquipmentOtherNote();
 
     const isChargedRadios = document.querySelectorAll('input[name="philly_corkage_fee"]');
     for (let i = 0; i < isChargedRadios.length; i += 1) {
         isChargedRadios[i].addEventListener('change', toggleCorkageFields);
+    }
+
+    // 為所有酒器設備 checkbox 添加事件監聽
+    const equipmentCheckboxes = document.querySelectorAll('input[name="equipment[]"]');
+    for (let i = 0; i < equipmentCheckboxes.length; i += 1) {
+        equipmentCheckboxes[i].addEventListener('change', toggleEquipmentOtherNote);
     }
 
     const otherCheckbox = document.querySelector('input[name="restaurant_type[]"][value="Other"]');
@@ -836,6 +882,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const otherNoteValue = <?php echo wp_json_encode($other_note); ?>;
         if (otherNoteField && otherNoteValue) {
             otherNoteField.value = otherNoteValue;
+        }
+    }
+    
+    // 初始化時檢查酒器設備的 "other" 選項是否已勾選
+    const equipmentOtherCheckbox = document.querySelector('input[name="equipment[]"][value="other"]');
+    if (equipmentOtherCheckbox && equipmentOtherCheckbox.checked) {
+        const equipmentOtherNoteField = document.getElementById('equipment_other_note_field');
+        if (equipmentOtherNoteField) {
+            equipmentOtherNoteField.style.display = 'block';
         }
     }
 
