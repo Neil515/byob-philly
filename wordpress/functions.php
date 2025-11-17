@@ -5947,3 +5947,62 @@ function byob_get_takeover_notification_email() {
 
     return get_option('admin_email');
 }
+
+// =============================================================================
+// 🧑‍🍳 使用者列表顯示餐廳欄位
+// =============================================================================
+
+/**
+ * 在使用者列表加入「Restaurant」欄位
+ */
+add_filter('manage_users_columns', function ($columns) {
+    $columns['byob_restaurant'] = 'Restaurant';
+    return $columns;
+});
+
+/**
+ * 顯示使用者所屬餐廳
+ */
+add_filter('manage_users_custom_column', function ($output, $column_name, $user_id) {
+    if ($column_name !== 'byob_restaurant') {
+        return $output;
+    }
+
+    $restaurant_id = get_user_meta($user_id, '_owned_restaurant_id', true);
+    if (!$restaurant_id) {
+        return '—';
+    }
+
+    $restaurant = get_post($restaurant_id);
+    if (!$restaurant || $restaurant->post_type !== 'restaurant') {
+        return '—';
+    }
+
+    $link = admin_url('post.php?post=' . $restaurant_id . '&action=edit');
+    return sprintf(
+        '<a href="%s">%s</a>',
+        esc_url($link),
+        esc_html($restaurant->post_title)
+    );
+}, 10, 3);
+
+/**
+ * 讓「Restaurant」欄支援排序
+ */
+add_filter('manage_users_sortable_columns', function ($columns) {
+    $columns['byob_restaurant'] = 'byob_restaurant';
+    return $columns;
+});
+
+add_action('pre_user_query', function ($query) {
+    if (!is_admin()) {
+        return;
+    }
+
+    if (isset($query->query_vars['orderby']) && $query->query_vars['orderby'] === 'byob_restaurant') {
+        global $wpdb;
+        $query->query_from .= " LEFT JOIN {$wpdb->usermeta} um_rest ON (um_rest.user_id = {$wpdb->users}.ID AND um_rest.meta_key = '_owned_restaurant_id')";
+        $order = isset($query->query_vars['order']) && strtoupper($query->query_vars['order']) === 'DESC' ? 'DESC' : 'ASC';
+        $query->query_orderby = "ORDER BY um_rest.meta_value {$order}";
+    }
+});
