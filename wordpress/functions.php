@@ -5667,7 +5667,7 @@ function byob_display_takeover_page($restaurant, $token) {
     byob_prepare_takeover_page($restaurant_name);
     get_header();
     ?>
-    <div style="max-width: 600px; margin: 50px auto; padding: 30px; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <div class="byob-takeover-page" style="max-width: 600px; margin: 50px auto; padding: 30px; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         <h1 style="color: #333; margin-bottom: 20px;">🍷 Restaurant Access Transfer</h1>
         
         <div style="background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 30px;">
@@ -5757,8 +5757,9 @@ function byob_display_takeover_page($restaurant, $token) {
             <?php endif; ?>
             
             <button type="submit" 
-                    style="width: 100%; padding: 15px; background: rgba(139, 38, 53, 0.8); color: white; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer;">
-                Claim Restaurant
+                    class="byob-takeover-button"
+                    style="width: 100%; padding: 15px; background: rgba(139, 38, 53, 0.8); color: white; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; text-transform: none;">
+                Claim Your Restaurant
             </button>
         </form>
     </div>
