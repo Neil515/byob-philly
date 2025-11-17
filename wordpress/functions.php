@@ -5372,3 +5372,578 @@ function byob_generate_rejection_notification_html($restaurant_name, $recommende
 // 3. 觸發 transition_post_status hook
 // 4. 自動發送推薦成功通知（如果是顧客推薦）
 // =============================================================================
+
+// =============================================================================
+// 🏪 餐廳業者接管功能
+// =============================================================================
+
+/**
+ * 在餐廳文章編輯頁面添加「餐廳接管連結」Meta Box
+ */
+add_action('add_meta_boxes', 'byob_add_restaurant_takeover_meta_box');
+function byob_add_restaurant_takeover_meta_box() {
+    add_meta_box(
+        'restaurant_takeover_link',
+        'Restaurant Takeover Link',
+        'byob_restaurant_takeover_meta_box_callback',
+        'restaurant',
+        'side',
+        'high'
+    );
+}
+
+/**
+ * Meta Box 內容回調函數
+ */
+function byob_restaurant_takeover_meta_box_callback($post) {
+    $restaurant_id = $post->ID;
+    $token_data = get_post_meta($restaurant_id, '_restaurant_takeover_token', true);
+    
+    // 檢查當前業者
+    $current_owner_id = get_post_meta($restaurant_id, '_restaurant_owner_id', true);
+    $current_owner = null;
+    if ($current_owner_id) {
+        $current_owner = get_user_by('id', $current_owner_id);
+    }
+    
+    ?>
+    <div style="padding: 10px 0;">
+        <?php if ($current_owner): ?>
+            <p><strong>Current Owner:</strong><br>
+            <?php echo esc_html($current_owner->display_name); ?><br>
+            <small><?php echo esc_html($current_owner->user_email); ?></small></p>
+        <?php else: ?>
+            <p><strong>Status:</strong> No owner assigned</p>
+        <?php endif; ?>
+        
+        <?php if ($token_data && !empty($token_data['token'])): 
+            $expires_timestamp = strtotime($token_data['expires_at']);
+            $is_expired = $expires_timestamp < current_time('timestamp');
+            $takeover_url = home_url('/takeover-restaurant?token=' . urlencode($token_data['token']));
+        ?>
+            <div style="margin: 15px 0; padding: 10px; background: #f0f0f0; border-radius: 5px;">
+                <p><strong>Takeover Link:</strong></p>
+                <input type="text" 
+                       value="<?php echo esc_attr($takeover_url); ?>" 
+                       readonly 
+                       style="width: 100%; padding: 8px; font-size: 12px;"
+                       onclick="this.select();">
+                <p style="margin: 5px 0 0 0; font-size: 11px; color: #666;">
+                    Expires: <?php echo esc_html(date('Y-m-d H:i', $expires_timestamp)); ?>
+                    <?php if ($is_expired): ?>
+                        <span style="color: #dc3545;">(Expired)</span>
+                    <?php endif; ?>
+                </p>
+            </div>
+        <?php endif; ?>
+        
+        <?php
+            $generate_url = wp_nonce_url(
+                add_query_arg(
+                    array(
+                        'action' => 'byob_generate_takeover_token',
+                        'post'   => $restaurant_id,
+                    ),
+                    admin_url('admin-post.php')
+                ),
+                'generate_takeover_token_' . $restaurant_id
+            );
+        ?>
+        <p style="margin-top: 10px;">
+            <a href="<?php echo esc_url($generate_url); ?>" class="button button-primary" style="width: 100%; text-align: center; display: inline-block;">
+                <?php echo $token_data ? 'Regenerate Takeover Link' : 'Generate Takeover Link'; ?>
+            </a>
+        </p>
+        
+        <p style="margin-top: 10px; font-size: 11px; color: #666;">
+            This link allows restaurant owners to claim and manage this restaurant. 
+            Valid for 30 days and can be used multiple times.
+        </p>
+    </div>
+    <?php
+}
+
+/**
+ * 生成餐廳接管 Token
+ */
+function byob_generate_restaurant_takeover_token($restaurant_id) {
+    $token = wp_generate_password(32, false);
+    $expires_at = date('Y-m-d H:i:s', strtotime('+30 days'));
+    
+    $token_data = array(
+        'token' => $token,
+        'created_at' => current_time('mysql'),
+        'expires_at' => $expires_at,
+        'created_by' => get_current_user_id()
+    );
+    
+    update_post_meta($restaurant_id, '_restaurant_takeover_token', $token_data);
+    
+    return $token;
+}
+
+/**
+ * 後台處理：生成餐廳接管 Token
+ */
+add_action('admin_post_byob_generate_takeover_token', 'byob_handle_generate_takeover_token');
+function byob_handle_generate_takeover_token() {
+    if (!isset($_GET['post'])) {
+        wp_die('Invalid request.');
+    }
+
+    $restaurant_id = intval($_GET['post']);
+
+    if (!current_user_can('edit_post', $restaurant_id)) {
+        wp_die('You do not have permission to perform this action.');
+    }
+
+    $nonce = isset($_GET['_wpnonce']) ? $_GET['_wpnonce'] : '';
+    if (!wp_verify_nonce($nonce, 'generate_takeover_token_' . $restaurant_id)) {
+        wp_die('Security check failed.');
+    }
+
+    $result = byob_generate_restaurant_takeover_token($restaurant_id);
+
+    $redirect = add_query_arg(
+        array(
+            'post' => $restaurant_id,
+            'action' => 'edit',
+            'takeover_link' => $result ? 'generated' : 'error'
+        ),
+        admin_url('post.php')
+    );
+
+    wp_redirect($redirect);
+    exit;
+}
+
+/**
+ * 顯示後台提示訊息
+ */
+add_action('admin_notices', 'byob_takeover_link_admin_notice');
+function byob_takeover_link_admin_notice() {
+    if (!is_admin()) {
+        return;
+    }
+
+    if (!isset($_GET['takeover_link'])) {
+        return;
+    }
+
+    if (!function_exists('get_current_screen')) {
+        return;
+    }
+
+    $screen = get_current_screen();
+    if (!$screen || $screen->base !== 'post' || $screen->post_type !== 'restaurant') {
+        return;
+    }
+
+    $status = sanitize_text_field($_GET['takeover_link']);
+
+    if ($status === 'generated') {
+        echo '<div class="notice notice-success is-dismissible"><p>Takeover link generated successfully!</p></div>';
+    } elseif ($status === 'error') {
+        echo '<div class="notice notice-error is-dismissible"><p>Failed to generate takeover link. Please try again.</p></div>';
+    }
+}
+
+/**
+ * 驗證餐廳接管 Token
+ */
+function byob_verify_restaurant_takeover_token($token) {
+    if (empty($token)) {
+        return array('valid' => false, 'message' => 'Token is required');
+    }
+    
+    // 查詢所有餐廳，逐一檢查 token（因為 meta_query 無法直接查詢序列化陣列中的值）
+    $restaurants = get_posts(array(
+        'post_type' => 'restaurant',
+        'numberposts' => -1,
+        'post_status' => 'any'
+    ));
+    
+    foreach ($restaurants as $restaurant) {
+        $token_data = get_post_meta($restaurant->ID, '_restaurant_takeover_token', true);
+        
+        if (!empty($token_data) && is_array($token_data) && isset($token_data['token']) && $token_data['token'] === $token) {
+            // 檢查是否過期
+            $expires_timestamp = strtotime($token_data['expires_at']);
+            if ($expires_timestamp < current_time('timestamp')) {
+                return array('valid' => false, 'message' => 'Token has expired');
+            }
+            
+            return array(
+                'valid' => true,
+                'restaurant_id' => $restaurant->ID,
+                'restaurant' => $restaurant,
+                'token_data' => $token_data
+            );
+        }
+    }
+    
+    return array('valid' => false, 'message' => 'Invalid token');
+}
+
+/**
+ * 處理餐廳接管頁面
+ */
+add_action('template_redirect', 'byob_handle_restaurant_takeover_page');
+function byob_handle_restaurant_takeover_page() {
+    // 檢查是否為接管頁面 URL
+    $request_uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+    
+    // 檢查 URL 是否包含 takeover-restaurant
+    if (strpos($request_uri, 'takeover-restaurant') === false) {
+        return;
+    }
+    
+    // 取得 token
+    $token = isset($_GET['token']) ? sanitize_text_field($_GET['token']) : '';
+    
+    if (empty($token)) {
+        byob_display_takeover_error('Token is required');
+        exit;
+    }
+    
+    // 驗證 token
+    $verification = byob_verify_restaurant_takeover_token($token);
+    
+    if (!$verification['valid']) {
+        byob_display_takeover_error($verification['message']);
+        exit;
+    }
+    
+    $restaurant_id = $verification['restaurant_id'];
+    $restaurant = $verification['restaurant'];
+    
+    // 處理接管表單提交
+    if (isset($_POST['takeover_action']) && $_POST['takeover_action'] === 'claim') {
+        byob_process_restaurant_takeover($restaurant_id, $token);
+        return;
+    }
+    
+    // 顯示接管頁面
+    byob_display_takeover_page($restaurant, $token);
+    exit;
+}
+
+/**
+ * 顯示接管錯誤頁面
+ */
+function byob_display_takeover_error($message) {
+    byob_prepare_takeover_page();
+    get_header();
+    ?>
+    <div style="max-width: 600px; margin: 50px auto; padding: 30px; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h1 style="color: #dc3545; margin-bottom: 20px;">⚠️ Error</h1>
+        <p style="font-size: 16px; color: #666;"><?php echo esc_html($message); ?></p>
+        <p style="margin-top: 20px;">
+            <a href="<?php echo home_url(); ?>" class="button">Return to Home</a>
+        </p>
+    </div>
+    <?php
+    get_footer();
+}
+
+/**
+ * 顯示接管頁面
+ */
+function byob_display_takeover_page($restaurant, $token) {
+    $restaurant_id = $restaurant->ID;
+    $restaurant_name = $restaurant->post_title;
+    $restaurant_address = get_field('address', $restaurant_id);
+    $restaurant_phone = get_field('phone', $restaurant_id);
+    
+    // 檢查當前業者
+    $current_owner_id = get_post_meta($restaurant_id, '_restaurant_owner_id', true);
+    $current_owner = null;
+    $has_existing_owner = false;
+    if ($current_owner_id) {
+        $current_owner = get_user_by('id', $current_owner_id);
+        $has_existing_owner = true;
+    }
+    
+    byob_prepare_takeover_page($restaurant_name);
+    get_header();
+    ?>
+    <div style="max-width: 600px; margin: 50px auto; padding: 30px; background: #fff; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+        <h1 style="color: #333; margin-bottom: 20px;">🍷 Restaurant Access Transfer</h1>
+        
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 30px;">
+            <h2 style="margin: 0 0 15px 0; font-size: 24px;"><?php echo esc_html($restaurant_name); ?></h2>
+            <?php if ($restaurant_address): ?>
+                <p style="margin: 5px 0; color: #666;">📍 <?php echo esc_html($restaurant_address); ?></p>
+            <?php endif; ?>
+            <?php if ($restaurant_phone): ?>
+                <p style="margin: 5px 0; color: #666;">📞 <?php echo esc_html($restaurant_phone); ?></p>
+            <?php endif; ?>
+        </div>
+        
+        <?php if ($has_existing_owner): ?>
+            <div style="background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                <p style="margin: 0; color: #856404;">
+                    <strong>⚠️ Notice:</strong> This restaurant is currently managed by:<br>
+                    <strong><?php echo esc_html($current_owner->display_name); ?></strong><br>
+                    <small><?php echo esc_html($current_owner->user_email); ?></small>
+                </p>
+                <p style="margin: 10px 0 0 0; color: #856404;">
+                    If you proceed, you will replace the current owner.
+                </p>
+            </div>
+        <?php endif; ?>
+        
+        <form method="post" style="margin-top: 30px;">
+            <input type="hidden" name="takeover_action" value="claim">
+            <input type="hidden" name="token" value="<?php echo esc_attr($token); ?>">
+            
+            <div style="margin-bottom: 20px;">
+                <label for="email" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Email Address *</label>
+                <input type="email" 
+                       id="email" 
+                       name="email" 
+                       required 
+                       style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; font-size: 16px;"
+                       placeholder="your@email.com">
+                <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                    Enter your email address. If you already have an account, you will be logged in automatically. 
+                    If not, you will need to create a password below.
+                </p>
+            </div>
+            
+            <div id="new_account_fields" style="margin-bottom: 20px;">
+                <p style="margin: 15px 0 10px 0; font-size: 14px; color: #666; font-style: italic;">
+                    New account? Fill in the fields below:
+                </p>
+                
+                <div style="margin-bottom: 15px;">
+                    <label for="password" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Password</label>
+                    <input type="password" 
+                           id="password" 
+                           name="password" 
+                           style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; font-size: 16px;"
+                           placeholder="Create a password (required for new accounts)">
+                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                        Required only if you don't have an account yet.
+                    </p>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label for="display_name" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Your Name</label>
+                    <input type="text" 
+                           id="display_name" 
+                           name="display_name" 
+                           style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 5px; font-size: 16px;"
+                           placeholder="Your name (optional)">
+                    <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">
+                        Optional. Will use your email if left blank.
+                    </p>
+                </div>
+            </div>
+            
+            <?php if ($has_existing_owner): ?>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: flex; align-items: center; cursor: pointer;">
+                        <input type="checkbox"
+                               name="replace_owner"
+                               value="1"
+                               required
+                               style="margin-right: 8px;"
+                               oninvalid="this.setCustomValidity('Please confirm that you understand you will replace the current owner.')"
+                               oninput="this.setCustomValidity('');">
+                        <span>I understand that I will replace the current owner</span>
+                    </label>
+                </div>
+            <?php endif; ?>
+            
+            <button type="submit" 
+                    style="width: 100%; padding: 15px; background: rgba(139, 38, 53, 0.8); color: white; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer;">
+                Claim Restaurant
+            </button>
+        </form>
+    </div>
+    
+    <?php
+    get_footer();
+}
+
+/**
+ * 準備接管頁面的標題與狀態
+ */
+function byob_prepare_takeover_page($restaurant_name = '') {
+    status_header(200);
+    if (isset($GLOBALS['wp_query'])) {
+        $GLOBALS['wp_query']->is_404 = false;
+    }
+
+    $title = 'Restaurant Access Transfer';
+    if (!empty($restaurant_name)) {
+        $title .= ' | ' . $restaurant_name;
+    }
+
+    add_filter('pre_get_document_title', function () use ($title) {
+        return $title;
+    }, 99);
+}
+
+/**
+ * 處理餐廳接管邏輯
+ */
+function byob_process_restaurant_takeover($restaurant_id, $token) {
+    $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+    $password = isset($_POST['password']) ? $_POST['password'] : '';
+    $display_name = isset($_POST['display_name']) ? sanitize_text_field($_POST['display_name']) : '';
+    $replace_owner = isset($_POST['replace_owner']) && $_POST['replace_owner'] === '1';
+    
+    // 驗證 email
+    if (empty($email) || !is_email($email)) {
+        byob_display_takeover_error('Invalid email address');
+        return;
+    }
+    
+    // 檢查 email 是否已註冊
+    $existing_user = get_user_by('email', $email);
+    
+    if ($existing_user) {
+        // 已註冊：檢查是否已關聯其他餐廳
+        $existing_restaurant_id = get_user_meta($existing_user->ID, '_owned_restaurant_id', true);
+        
+        if ($existing_restaurant_id && $existing_restaurant_id != $restaurant_id) {
+            byob_display_takeover_error('This email is already associated with another restaurant. Please use a different email address.');
+            return;
+        }
+        
+        // 檢查是否需要取代現有業者
+        $current_owner_id = get_post_meta($restaurant_id, '_restaurant_owner_id', true);
+        if ($current_owner_id && $current_owner_id != $existing_user->ID && !$replace_owner) {
+            byob_display_takeover_error('This restaurant already has an owner. Please check the "replace owner" checkbox to proceed.');
+            return;
+        }
+        
+        // 關聯餐廳
+        update_post_meta($restaurant_id, '_restaurant_owner_id', $existing_user->ID);
+        update_user_meta($existing_user->ID, '_owned_restaurant_id', $restaurant_id);
+        
+        // 確保用戶有 restaurant_owner 角色
+        $existing_user->add_role('restaurant_owner');
+        
+        // 自動登入
+        wp_set_current_user($existing_user->ID);
+        wp_set_auth_cookie($existing_user->ID);
+        
+        // 發送通知給管理員
+        byob_send_takeover_notification($restaurant_id, $existing_user->ID, true);
+        
+        // 導向後台
+        wp_redirect(get_permalink(get_option('woocommerce_myaccount_page_id')) . 'restaurant-profile/');
+        exit;
+        
+    } else {
+        // 未註冊：需要密碼
+        if (empty($password)) {
+            byob_display_takeover_error('Password is required for new accounts');
+            return;
+        }
+        
+        // 如果沒有提供姓名，使用 email 作為預設名稱
+        if (empty($display_name)) {
+            $display_name = $email;
+        }
+        
+        // 檢查是否需要取代現有業者
+        $current_owner_id = get_post_meta($restaurant_id, '_restaurant_owner_id', true);
+        if ($current_owner_id && !$replace_owner) {
+            byob_display_takeover_error('This restaurant already has an owner. Please check the "replace owner" checkbox to proceed.');
+            return;
+        }
+        
+        // 建立新用戶
+        $user_data = array(
+            'user_login' => $email,
+            'user_email' => $email,
+            'user_pass' => $password,
+            'display_name' => $display_name,
+            'role' => 'restaurant_owner'
+        );
+        
+        $user_id = wp_insert_user($user_data);
+        
+        if (is_wp_error($user_id)) {
+            byob_display_takeover_error('Failed to create account: ' . $user_id->get_error_message());
+            return;
+        }
+        
+        // 關聯餐廳
+        update_post_meta($restaurant_id, '_restaurant_owner_id', $user_id);
+        update_user_meta($user_id, '_owned_restaurant_id', $restaurant_id);
+        
+        // 標記註冊類型
+        update_user_meta($user_id, '_byob_registration_type', 'takeover');
+        
+        // 自動登入
+        wp_set_current_user($user_id);
+        wp_set_auth_cookie($user_id);
+        
+        // 發送通知給管理員
+        byob_send_takeover_notification($restaurant_id, $user_id, false);
+        
+        // 導向後台
+        wp_redirect(get_permalink(get_option('woocommerce_myaccount_page_id')) . 'restaurant-profile/');
+        exit;
+    }
+}
+
+/**
+ * 發送接管通知給管理員
+ */
+function byob_send_takeover_notification($restaurant_id, $user_id, $is_existing_user) {
+    $restaurant = get_post($restaurant_id);
+    $user = get_user_by('id', $user_id);
+    
+    if (!$restaurant || !$user) {
+        return;
+    }
+    
+    $admin_email = byob_get_takeover_notification_email();
+    $restaurant_name = $restaurant->post_title;
+    $owner_name = $user->display_name;
+    $owner_email = $user->user_email;
+    $user_type = $is_existing_user ? 'existing user' : 'new user';
+    
+    $subject = 'Restaurant Takeover: ' . $restaurant_name;
+    $message = "A restaurant has been taken over by an owner.\n\n";
+    $message .= "Restaurant: {$restaurant_name}\n";
+    $message .= "Restaurant ID: {$restaurant_id}\n";
+    $message .= "Owner Name: {$owner_name}\n";
+    $message .= "Owner Email: {$owner_email}\n";
+    $message .= "User Type: {$user_type}\n";
+    $message .= "Takeover Date: " . current_time('mysql') . "\n\n";
+    $message .= "View Restaurant: " . admin_url('post.php?post=' . $restaurant_id . '&action=edit') . "\n";
+    
+    wp_mail($admin_email, $subject, $message);
+}
+
+/**
+ * 取得餐廳接管通知信箱
+ *
+ * 可透過設定常數 BYOB_TAKEOVER_NOTIFICATION_EMAIL 來覆寫預設信箱
+ * 也可以使用選項 byob_takeover_notification_email (可透過 WP-CLI 或自訂程式設定)
+ */
+function byob_get_takeover_notification_email() {
+    $default_email = 'byobmap.tw@gmail.com';
+
+    if (defined('BYOB_TAKEOVER_NOTIFICATION_EMAIL') && is_email(BYOB_TAKEOVER_NOTIFICATION_EMAIL)) {
+        return BYOB_TAKEOVER_NOTIFICATION_EMAIL;
+    }
+
+    $custom_email = get_option('byob_takeover_notification_email');
+    if ($custom_email && is_email($custom_email)) {
+        return $custom_email;
+    }
+
+    if ($default_email && is_email($default_email)) {
+        return $default_email;
+    }
+
+    return get_option('admin_email');
+}
