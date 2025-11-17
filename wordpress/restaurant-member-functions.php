@@ -2024,10 +2024,16 @@ function byob_handle_restaurant_profile_submit($restaurant_id) {
             update_field('corkage_fee_note', sanitize_text_field($_POST['corkage_fee_note']), $restaurant_id);
         }
         
-        // 新增欄位：酒器設備（核取方塊陣列）
+        // 新增欄位：酒器設備（核取方塊陣列）- 只保存到費城版欄位
         if (isset($_POST['equipment']) && is_array($_POST['equipment'])) {
             $equipment = array_map('sanitize_text_field', $_POST['equipment']);
-            update_field('equipment', $equipment, $restaurant_id);
+            update_field('wine_service_equipment', $equipment, $restaurant_id);
+        }
+        
+        // 新增欄位：其他酒器設備說明（單行文字）- 只保存到費城版欄位
+        if (isset($_POST['equipment_other_note'])) {
+            $equipment_other_note = sanitize_text_field($_POST['equipment_other_note']);
+            update_field('philly_equipment_other_note', $equipment_other_note, $restaurant_id);
         }
         
         // 新增欄位：BYOB 服務層級
@@ -2073,9 +2079,9 @@ function byob_handle_restaurant_profile_submit($restaurant_id) {
             update_field('social_links', esc_url_raw($_POST['social_links']), $restaurant_id);
         }
         
-        // 新增欄位：備註說明（多行文字）
+        // 新增欄位：備註說明（多行文字）- 只保存到費城版欄位
         if (isset($_POST['notes'])) {
-            update_field('notes', sanitize_textarea_field($_POST['notes']), $restaurant_id);
+            update_field('philly_dining_experience', sanitize_textarea_field($_POST['notes']), $restaurant_id);
         }
         
         // 新增欄位：聯絡人Email
