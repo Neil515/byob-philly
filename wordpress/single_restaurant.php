@@ -276,10 +276,10 @@
       
       if ($equipment): 
         if (is_array($equipment)) {
-          // 將「其他」替換為實際說明文字（類似餐廳類型的顯示方式）
+          // 將 "other" 替換為實際說明文字
           $equipment_display = array();
           foreach ($equipment as $item) {
-            if ($item === '其他' || strtolower($item) === 'other') {
+            if (strtolower($item) === 'other') {
               if (!empty($equipment_other_note)) {
                 $equipment_display[] = 'Other: ' . $equipment_other_note;
               } else {
@@ -292,7 +292,7 @@
           $equipment_output = implode(' | ', $equipment_display);
         } else {
           // 處理字串情況（防備）
-          if (strpos($equipment, '其他') !== false || stripos($equipment, 'other') !== false) {
+          if (stripos($equipment, 'other') !== false) {
             if (!empty($equipment_other_note)) {
               $equipment_output = preg_replace('/\bother\b/i', 'Other: ' . $equipment_other_note, $equipment);
             } else {
