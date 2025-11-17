@@ -112,5 +112,29 @@
 
 ---
 
-*最後更新：2025-11-16*  
+## 🗓️ 明日（2025-11-18）待辦
+
+### 1. 2025-11-16 餐廳 Email 爬取
+- 從 `Philly BYOB Restaurant_with_websites_merged_20251116.xlsx` 篩出 `Date = 2025-11-16` 餐廳
+- 使用既有 `philly_email_searcher.py` / `philly_email_extractor.py` 流程取得官方網站與 Email，結果格式需與 `Philly BYOB Restaurant_with_websites_20251104_142325_with_emails_20251106_114433.xlsx` 相同
+- 無官方網站或未抓到 Email 的欄位保留空值（或依流程填入 `no_website` / `not_found` 狀態），完成後將資料 append 到既有 Email 清單檔案末端
+
+### 2. 餐廳經緯度補錄
+- 針對 `Philly BYOB Restaurant_with_websites_merged_20251116.xlsx` 仍缺 `Latitude/Longitude` 的餐廳進行補抓
+- 沿用現有 Google Places / Geocode 查詢邏輯（`Name + Address + Philadelphia, PA`）；只更新空白欄位
+- 寫回同檔，並確認欄位位置仍在 `Yelp_URL` 之後
+
+### 3. 批次發送 Email 給業者
+- 匯出已取得 Email 的餐廳名單（含餐廳名稱、Email、前台連結、接管連結）
+- 使用既有 Gmail/Apps Script 模板，填入接管連結與前台連結後批次寄送
+- 完成後在清單標註寄送日期與狀態，保留實際寄出的樣本
+
+### 4. `philly_yelp_crawler` 資料夾整理
+- 移除無用或重複腳本、測試檔案與舊 log，保留正式使用的工具
+- 調整資料夾結構與 README，標註每個脚本的用途與輸入/輸出檔
+- 確認 `data/` 內檔案命名一致、移除過期中繼檔
+
+---
+
+*最後更新：2025-11-17*  
 
