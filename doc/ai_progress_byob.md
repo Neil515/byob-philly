@@ -1,82 +1,73 @@
 # BYOB 專案開發進度記錄
 
-## 📅 專案概覽
+## 📅 專案概覽（更新：2025-11-18）
 
-### **台北 BYOB 專案**（主要專案）
-* **專案名稱**：BYOB 台北 - 自帶酒水餐廳推薦平台
-* **目前階段**：核心系統完成，推廣與酒商合作階段
-* **核心功能**：餐廳推薦表單、重複檢查、審核管理、抽獎系統、Email 通知、多平台推廣
-* **技術架構**：WordPress + ACF + Google Apps Script + Python 爬蟲工具
+### **台北 BYOB**（核心系統維運）
+- 核心功能與自動化流程已完整，持續推廣、酒商合作與 Email 模板優化。
 
-### **費城 BYOB 專案**（新專案）
-* **專案名稱**：Philadelphia BYOB Restaurant Guide
-* **目前階段**：網站前台英文化完成，準備 FAQ 英文化、後台英文化與 Reddit 回覆工作
-* **核心策略**：多平台資料收集 + 雙向表單驗證 + 自動化文章生成 + Reddit 社群互動 + 餐廳聯絡機制
-* **定位**：成為 Yelp 的 BYOB 專業補充平台
+### **費城 BYOB**（主要開發重心）
+- 前台英文化完成，持續拓展資料源、餐廳接管、自動寄信與社群推廣。
+- 技術堆疊：WordPress + WooCommerce + ACF + WP-CLI + Python 資料腳本 + SendGrid。
+
+---
+
+## ✅ 2025年11月18日 — Token 批次、Email 流程與資料整併
+
+### 🎯 今日成就總覽
+- **資料整併 & 爬蟲擴充**
+  - `update_1117_restaurants.py` 可針對 11/17、11/18 餐廳，一次查詢官網、Yelp、Latitude/Longitude、Email，並支援 `.env` 讀取 Google API/自訂金鑰。
+  - Email 抓取流程優化：加入無效 email 過濾、搜尋 contact/about 頁面，並可寫入多欄（Email_1~Email_n）。
+  - 新增 `merge_token_emails.py`（後續刪除）以便把 Excel 的 Email 欄位合併回 takeover token CSV。
+
+- **Token 與批次寄信準備**
+  - 在 Cloudways WordPress 建立 `wp-content/mu-plugins/byob-takeover-cli.php`，提供 `wp byob-takeovers batch` 指令，輸入 JSON/CSV 即可批次產生 takeover token、Takeover Link、CSV 輸出，並支援覆寫舊 token、寄送單一 Summary Email。
+  - 以 `token_batch_memo.md` 記錄 Cloudways 操作流程（SSH 登入、路徑、指令、清理方式），確保下次可複製流程。
+  - `sendgrid_test.py` 建立，讀 `takeover_tokens_20251118_copy.csv` 前兩筆，寄至 wavyclub21 / slow3605 測試；指示使用者將 API Key 放入環境變數，並提示 403 原因（Sender 未驗證或 Key 權限不足）。
+
+- **計畫與文件**
+  - `Next Task Prompt Byob.md` 更新：加入 11/19 的 SendGrid 批次發信、餐廳 Logo 補齊、餐廳類型篩選優化三大任務。
+  - 說明環境變數與 `.env` 使用方式，避免在腳本內硬編 API Key。
+
+### 🔧 主要修改檔案
+- `philly_yelp_crawler/update_1117_restaurants.py`：整合網站/Yelp/LatLng/Email 流程，支援 `.env`、日期參數化。
+- `philly_yelp_crawler/sendgrid_test.py`：建立 SendGrid 測試寄信腳本（最新版已刪除待重建）。
+- `wp-content/mu-plugins/byob-takeover-cli.php`：WP-CLI 自訂指令，輸出 CSV、寄 Summary Email。
+- `philly_yelp_crawler/token_batch_memo.md`：Cloudways/Token 產生備忘錄。
+- `doc/Next Task Prompt Byob.md`：新增 2025-11-19 待辦。
+- 其他臨時腳本（`merge_token_emails.py` 等）經分析後刪除。
+
+### 📌 備註 / 重要決策
+- **SendGrid 403**：使用者提供付費 API Key，若寄信遭 403，優先檢查 Sender Identity 驗證及 Key 權限（Mail Send）。
+- **WP-CLI 指令命名**：為避免 `wp byob` 既有命名衝突，改註冊為 `wp byob-takeovers`。
+- **資料合併**：Email 欄位以餐廳名稱對應，若 Excel 有多欄 Email，全部合併至 Token CSV，供後續批次寄信使用。
 
 ---
 
 ## ✅ 2025年11月17日 — 餐廳接管流程與 Email 任務準備
 
 ### 🎯 今日成就總覽
-- **餐廳接管流程上線**  
-  - 在後台餐廳文章右側新增「Restaurant Takeover Link」meta box，可生成 30 天有效、可重複使用的 token，並自動記錄產生者與到期時間。  
-  - 新增 `byob_generate_restaurant_takeover_token()`、`byob_handle_restaurant_takeover_page()` 等流程，處理 token 驗證、接管頁面顯示、已註冊/未註冊業者接管、取代舊業者等情境。  
-  - 完成接管後自動登入並導回 `restaurant-profile`，同時寄送通知信至 `byobmap.tw@gmail.com`，信件含餐廳資訊與後台連結。  
-  - 接管頁面全部改為英文介面，並覆寫按鈕 `text-transform`，維持正確大小寫。
-
-- **後台使用者檢視強化**  
-  - 在 WordPress 使用者列表新增 `Restaurant` 欄位，可排序並直接連往餐廳文章，方便管理者查看每位餐廳業者與其所屬餐廳。
-
-- **Next Task / 明日任務更新**  
-  - 將 11/18 需進行的四大工作寫入 `Next Task Prompt Byob.md`：  
-    1. 對 `Philly BYOB Restaurant_with_websites_merged_20251116.xlsx` 中 Date=2025-11-16 的餐廳進行官網/Email 爬取，按舊檔格式 append 至 `Philly BYOB Restaurant_with_websites_20251104_142325_with_emails_20251106_114433.xlsx`。  
-    2. 補齊同檔案缺失的 Latitude/Longitude。  
-    3. 準備批次發送邀請 Email（含 takeover link 與前台連結）。  
-    4. 清理 `philly_yelp_crawler` 資料夾與 README。
-
-- **資料介面與文檔**  
-  - `Next Task Prompt Byob.md` 更新至 11/17，加入 11/18 具體任務。  
-  - 規劃 Email 發送流程：未來會以 Sheets + Apps Script 合併方式寄信，並提供 takeover link 及餐廳展示連結。
+- 後台餐廳文章新增「Restaurant Takeover Link」meta box，可生成 30 天有效 token、記錄產生者與到期日。
+- 完成接管流程：token 驗證、已註冊/未註冊接管、接管後自動登入並寄通知信到 `byobmap.tw@gmail.com`。
+- 接管頁面全面英文化，按鈕/Checkbox 語系調整，避免 `text-transform` 造成大寫。
+- 使用者列表新增 `Restaurant` 欄位，可直接連至餐廳文章並排序。
+- `Next Task Prompt` 更新 11/18 任務：Email 爬取、Lat/Lng、批次寄信、資料夾整理。
 
 ### 🔧 主要修改檔案
-- `wordpress/functions.php`
-  - `byob_add_restaurant_takeover_meta_box()`、`byob_handle_generate_takeover_token()`、`byob_handle_restaurant_takeover_page()`、`byob_process_restaurant_takeover()`、`byob_send_takeover_notification()` 等一系列新函式。  
-  - takeover 頁面 UI/文案調整（標題改為 *Restaurant Access Transfer*、按鈕改為 *Claim Your Restaurant*、checkbox 提示為英文、自訂樣式避免全大寫）。  
-  - `byob_get_takeover_notification_email()` 支援自訂通知信箱。  
-  - 新增 `manage_users_columns` 與 `manage_users_sortable_columns`，顯示/排序 `Restaurant` 欄位。
-- `doc/Next Task Prompt Byob.md`：更新 11/18 工作。
+- `wordpress/functions.php`：新增一系列 Takeover 相關函式（meta box、token 生成/驗證、通知信）、使用者列表欄位顯示。
+- `doc/Next Task Prompt Byob.md`：記錄 11/18 待辦。
 
 ---
 
 ## ✅ 2025年11月16日 — 前台欄位切換、資料管線與名單更新
 
 ### 🎯 今日成就總覽
-- 前台全面切換為費城欄位（移除台北舊鍵回退）
-  - 單頁 `wordpress/single_restaurant.php`、列表 `wordpress/archive-restaurant.php`
-  - 開瓶費顯示改用 `philly_corkage_fee` + `corkage_fee_amount` + `corkage_fee_note`
-  - 修復單頁 PHP/HTML 邊界語法錯誤（造成嚴重錯誤的來源）
-- 列表顯示修正
-  - 以新欄位輸出「Corkage Fee / Corkage Details」
-  - 移除對舊變數 `$is_charged` 的依賴
-  - 修正完整度計算來源
-- 列表未顯示新餐廳問題排除
-  - `restaurant-member-functions.php` 的完整性過濾改用 `philly_corkage_fee`
-  - 新餐廳（Ristorante Aroma、Bricco Coal Fired Pizza）可顯示
-- 資料名單補強
-  - 取 11/16 新增餐廳官網（Google Places Details）→ 與舊檔合併
-  - 新增 Google Custom Search 查找 Yelp 連結，覆寫到同檔 `Yelp_URL`
-  - 以地址查詢經緯度（TextSearch/Geocode），在 `Yelp_URL` 右側插入 `Latitude` / `Longitude`
-- 新增小工具腳本
-  - `philly_yelp_crawler/update_yelp_links.py`（針對 11/16，用 CSE 寫回 Yelp_URL）
-  - `philly_yelp_crawler/update_latlng_1116.py`（針對 11/16，寫回 Lat/Lng）
+- 前台全部切換為費城欄位：`single_restaurant.php`、`archive-restaurant.php`、`restaurant-profile.php`、`restaurant-member-functions.php`。
+- 修復 Corkage 顯示與完整度計算、確保新餐廳可顯示。
+- 針對 11/16 新餐廳補齊官網、Yelp、Lat/Lng，並以 Python 腳本寫回 Excel。
 
 ### 🔧 主要修改檔案
-- `wordpress/single_restaurant.php`（Corkage 採用 philly 欄位；修復語法錯誤）
-- `wordpress/archive-restaurant.php`（Corkage 顯示/完整度來源修正）
-- `wordpress/woocommerce/myaccount/restaurant-profile.php`（後台改用 `philly_corkage_fee` radio）
-- `wordpress/restaurant-member-functions.php`（完整性過濾改用 philly 欄位，儲存流程更新）
-- `doc/Next Task Prompt Byob.md`（新增 11/17 目標）
+- `wordpress/single_restaurant.php`、`archive-restaurant.php`、`woocommerce/myaccount/restaurant-profile.php`、`restaurant-member-functions.php`
+- `doc/Next Task Prompt Byob.md`
 - `philly_yelp_crawler/update_yelp_links.py`、`philly_yelp_crawler/update_latlng_1116.py`
 
 ---
@@ -84,13 +75,9 @@
 ## ✅ 2025年11月15日 — 地圖標記圖標優化與 Attribution 添加
 
 ### 🎯 今日成就總覽
-- **地圖標記圖標調整**：將自定義 SVG 圖標（`placeholder.svg`）尺寸從 64x64 調整為 32x32 像素（默認），高亮圖標從 72x72 調整為 40x40 像素，調整錨點位置確保正確對齊。
-- **Attribution 添加**：在地圖下方添加圖標來源 attribution（Flaticon 連結），樣式為小字體、靠右對齊、灰色文字，懸停時變為品牌色。
-- **間距調整**：增加地圖與 "Closest 5 Restaurants" 之間的間距（從 24px 調整為 40px）。
-- **修改文件**：`wordpress/assets/js/byob-nearby.js`、`wordpress/archive-restaurant.php`。
-
-### 後續方向
-- 11/16 處理發給餐廳的 Email 優化與餐廳業者與既有文章建立連結功能。
+- 自訂 SVG 地圖圖標調整（32px/40px），修正錨點與間距。
+- 地圖下方新增 Flaticon Attribution、樣式微調。
+- 相關修改檔案：`wordpress/assets/js/byob-nearby.js`、`wordpress/archive-restaurant.php`。
 
 ---
 
@@ -165,13 +152,8 @@
   - Google Places API 搜尋（取得 website）
   - Website email 提取（搜尋 email）
   - 支援多個 email 自動展開
-* **地圖與定位系統**：Google Maps JavaScript API 整合
-  - HTML5 Geolocation 定位功能
-  - Haversine 公式距離計算
-  - 地圖標記互動（hover/click）
-  - 前端多層級排序邏輯
-  - 自定義 SVG 圖標與 Attribution
-  - `.env` 檔案 API key 管理
+* **地圖與定位系統**：Google Maps JavaScript API、客製 SVG 圖標、Attribution、定位排序
+* `.env` 檔案 API key 管理：Python 爬蟲 / SendGrid / WordPress 指令
 
 ### **台北專案工具**
 * `wine_exhibitor_crawler.py`：葡萄酒展參展商爬蟲
