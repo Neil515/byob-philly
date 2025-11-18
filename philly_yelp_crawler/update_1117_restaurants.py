@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-更新 2025-11-17 餐廳的官網、Yelp 連結和經緯度
+更新 2025-11-17 餐廳的官網、Yelp 連結、經緯度和 Email
 - 用餐廳名稱 + Philadelphia 作為關鍵字
 - 使用 Google Places API 找官網（寫入 D 欄：Google_Website）
 - 使用 Google Custom Search API 找 Yelp link（寫入 E 欄：Yelp_URL）
 - 使用 Google Geocoding API 根據地址找經緯度（寫入 F 欄：Latitude，G 欄：Longitude）
+- 從官網提取 Email（寫入 I 欄：Email_1，J 欄：Email_2，K 欄：Email_3...）
 - 不理會現有資料，一律重新搜尋
 """
 
@@ -15,8 +16,12 @@ import time
 import requests
 import pandas as pd
 from pathlib import Path
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 import logging
+import re
+import random
+from urllib.parse import urljoin
+from dotenv import load_dotenv
 
 # 設定日誌
 logging.basicConfig(
@@ -163,6 +168,130 @@ def get_yelp_link(restaurant_name: str, api_key: str, cx: str) -> Optional[str]:
     return None
 
 
+def extract_emails_from_website(website_url: str, restaurant_name: str = None) -> List[str]:
+    """
+    從餐廳官網提取所有 email
+    
+    Args:
+        website_url: 餐廳官網 URL
+        restaurant_name: 餐廳名稱（可選，用於日誌）
+        
+    Returns:
+        email 列表，如果找不到則返回空列表
+    """
+    if not website_url or pd.isna(website_url) or str(website_url).strip() == '':
+        return []
+    
+    # Email 正則表達式
+    email_pattern = re.compile(
+        r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    )
+    
+    # 常見的無效 email 域名和前綴
+    invalid_domains = {
+        'example.com', 'test.com', 'sample.com', 'demo.com',
+        'yoursite.com', 'website.com', 'domain.com'
+    }
+    invalid_prefixes = {
+        'noreply', 'no-reply', 'donotreply', 'do-not-reply',
+        'mailer-daemon', 'postmaster'
+    }
+    
+    def is_valid_email(email: str) -> bool:
+        """驗證 email 是否有效"""
+        if not email or len(email) < 5:
+            return False
+        
+        email_lower = email.lower().strip()
+        
+        # 檢查格式
+        if not email_pattern.match(email_lower):
+            return False
+        
+        # 檢查無效前綴
+        for prefix in invalid_prefixes:
+            if email_lower.startswith(prefix):
+                return False
+        
+        # 檢查無效域名
+        if '@' in email_lower:
+            domain = email_lower.split('@')[1]
+            if domain in invalid_domains:
+                return False
+        
+        # 過濾常見的範例 email
+        invalid_patterns = [
+            r'example\.', r'test\.', r'sample\.', r'demo\.',
+            r'your.*@', r'email@', r'info@info', r'contact@contact'
+        ]
+        
+        for pattern in invalid_patterns:
+            if re.search(pattern, email_lower):
+                return False
+        
+        return True
+    
+    # 清理 URL
+    base_url = str(website_url).strip()
+    if not base_url.startswith(('http://', 'https://')):
+        base_url = 'https://' + base_url
+    
+    # 要搜尋的頁面路徑
+    search_paths = [
+        '',                    # 首頁
+        '/contact',
+        '/contact-us',
+        '/contact.html',
+        '/about',
+        '/about-us',
+    ]
+    
+    all_emails = []
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
+    }
+    
+    for path in search_paths:
+        try:
+            url = urljoin(base_url, path)
+            logger.info(f"搜尋 Email 頁面: {url}")
+            
+            time.sleep(random.uniform(0.5, 1.5))  # 避免請求過快
+            
+            response = requests.get(url, headers=headers, timeout=10, allow_redirects=True)
+            
+            if response.status_code == 200:
+                # 提取 email
+                emails = email_pattern.findall(response.text)
+                valid_emails = []
+                
+                for email in emails:
+                    email = email.lower().strip()
+                    if is_valid_email(email) and email not in all_emails:
+                        valid_emails.append(email)
+                        all_emails.append(email)
+                
+                if valid_emails:
+                    logger.info(f"在 {url} 找到 {len(valid_emails)} 個 email: {valid_emails}")
+                
+                # 如果找到 email 且是聯絡頁面，可以選擇停止
+                if path in ['/contact', '/contact-us', '/contact.html'] and all_emails:
+                    break
+            
+            elif response.status_code == 404:
+                # 404 錯誤，跳過這個路徑
+                continue
+            
+        except Exception as e:
+            logger.warning(f"搜尋頁面 {path} 時發生錯誤: {str(e)[:50]}")
+            continue
+    
+    # 去重並返回
+    return list(set(all_emails))
+
+
 def get_lat_lng_from_address(address: str, api_key: str) -> Tuple[Optional[float], Optional[float]]:
     """
     使用 Google Geocoding API 根據地址取得經緯度
@@ -216,18 +345,19 @@ def get_lat_lng_from_address(address: str, api_key: str) -> Tuple[Optional[float
     return None, None
 
 
-def process_restaurant(restaurant_name: str, address: str, places_api_key: str, 
-                      custom_search_api_key: str, custom_search_cx: str) -> Tuple[Optional[str], Optional[str], Optional[float], Optional[float]]:
+def process_restaurant(restaurant_name: str, address: str, website: str, places_api_key: str, 
+                      custom_search_api_key: str, custom_search_cx: str) -> Tuple[Optional[str], Optional[str], Optional[float], Optional[float], List[str]]:
     """
-    處理單一餐廳：搜尋官網、Yelp 連結和經緯度
+    處理單一餐廳：搜尋官網、Yelp 連結、經緯度和 Email
     
     Returns:
-        (website, yelp_link, latitude, longitude) 元組
+        (website, yelp_link, latitude, longitude, emails) 元組
     """
     logger.info(f"\n處理餐廳: {restaurant_name}")
     
-    # 搜尋官網
-    website = get_website_from_places(restaurant_name, places_api_key)
+    # 如果沒有官網，先搜尋官網
+    if not website or pd.isna(website) or str(website).strip() == '':
+        website = get_website_from_places(restaurant_name, places_api_key)
     
     # 搜尋 Yelp 連結
     yelp_link = get_yelp_link(restaurant_name, custom_search_api_key, custom_search_cx)
@@ -235,15 +365,37 @@ def process_restaurant(restaurant_name: str, address: str, places_api_key: str,
     # 搜尋經緯度
     lat, lng = get_lat_lng_from_address(address, places_api_key)
     
-    return website, yelp_link, lat, lng
+    # 從官網提取 Email
+    emails = []
+    if website and not pd.isna(website) and str(website).strip() != '':
+        emails = extract_emails_from_website(website, restaurant_name)
+        if emails:
+            logger.info(f"找到 {len(emails)} 個 Email: {emails}")
+        else:
+            logger.warning("未找到 Email")
+    
+    return website, yelp_link, lat, lng, emails
 
 
 def main() -> int:
     """主程式"""
-    # 檢查環境變數
-    places_api_key = os.environ.get("GOOGLE_API_KEY")
-    custom_search_api_key = os.environ.get("GOOGLE_CUSTOM_SEARCH_API_KEY")
-    custom_search_cx = os.environ.get("GOOGLE_CUSTOM_SEARCH_CX")
+    # 嘗試從 .env 檔案載入環境變數（如果存在）
+    # 先檢查專案根目錄的 .env 檔案
+    env_path = Path(__file__).resolve().parents[1] / ".env"
+    if env_path.exists():
+        load_dotenv(env_path)
+        logger.info(f"已載入 .env 檔案: {env_path}")
+    else:
+        # 如果專案根目錄沒有，檢查當前目錄
+        local_env = Path(__file__).parent / ".env"
+        if local_env.exists():
+            load_dotenv(local_env)
+            logger.info(f"已載入 .env 檔案: {local_env}")
+    
+    # 檢查環境變數（從 .env 或系統環境變數）
+    places_api_key = os.getenv("GOOGLE_API_KEY")
+    custom_search_api_key = os.getenv("GOOGLE_CUSTOM_SEARCH_API_KEY")
+    custom_search_cx = os.getenv("GOOGLE_CUSTOM_SEARCH_CX")
     
     if not places_api_key:
         logger.error("❌ 缺少環境變數: GOOGLE_API_KEY")
@@ -276,19 +428,26 @@ def main() -> int:
         return 1
     
     # 檢查必要欄位
-    required_columns = ['Name', 'Date', 'Add', 'Google_Website', 'Yelp_URL', 'Latitude', 'Longitude']
+    required_columns = ['Name', 'Date', 'Add', 'Google_Website']
     missing_columns = [col for col in required_columns if col not in df.columns]
     if missing_columns:
         logger.error(f"Excel 檔案缺少必要欄位: {missing_columns}")
         print(f"缺少欄位: {missing_columns}", file=sys.stderr)
         return 1
     
-    # 篩選 Date = 2025-11-17 的餐廳
-    date_mask = df['Date'].astype(str).str.strip().str.contains('2025-11-17', na=False, regex=False)
+    # 確保有 Email 欄位（I 欄開始：Email_1, Email_2, Email_3...）
+    max_email_columns = 10  # 最多支援 10 個 email
+    for i in range(1, max_email_columns + 1):
+        email_col = f'Email_{i}'
+        if email_col not in df.columns:
+            df[email_col] = ''
+    
+    # 篩選 Date = 2025-11-18 的餐廳
+    date_mask = df['Date'].astype(str).str.strip().str.contains('2025-11-18', na=False, regex=False)
     target_indices = df[date_mask].index.tolist()
     
     if not target_indices:
-        logger.warning("未找到 Date = 2025-11-17 的餐廳")
+        logger.warning("未找到 Date = 2025-11-18 的餐廳")
         print("未找到目標餐廳", file=sys.stderr)
         return 1
     
@@ -299,19 +458,22 @@ def main() -> int:
     website_count = 0
     yelp_count = 0
     latlng_count = 0
+    email_count = 0
     
     for idx in target_indices:
         restaurant_name = str(df.at[idx, 'Name']).strip()
         address = str(df.at[idx, 'Add']).strip() if pd.notna(df.at[idx, 'Add']) else ''
+        existing_website = str(df.at[idx, 'Google_Website']).strip() if pd.notna(df.at[idx, 'Google_Website']) else ''
         
         if not restaurant_name:
             logger.warning(f"第 {idx} 筆餐廳名稱為空，跳過")
             continue
         
         # 重新搜尋，不理會現有資料
-        website, yelp_link, lat, lng = process_restaurant(
+        website, yelp_link, lat, lng, emails = process_restaurant(
             restaurant_name,
             address,
+            existing_website,  # 傳入現有官網，如果沒有則會重新搜尋
             places_api_key,
             custom_search_api_key,
             custom_search_cx
@@ -319,9 +481,22 @@ def main() -> int:
         
         # 更新資料（即使為 None 也要寫入，覆蓋舊資料）
         df.at[idx, 'Google_Website'] = website if website else ''
-        df.at[idx, 'Yelp_URL'] = yelp_link if yelp_link else ''
-        df.at[idx, 'Latitude'] = lat if lat is not None else ''
-        df.at[idx, 'Longitude'] = lng if lng is not None else ''
+        if 'Yelp_URL' in df.columns:
+            df.at[idx, 'Yelp_URL'] = yelp_link if yelp_link else ''
+        if 'Latitude' in df.columns:
+            df.at[idx, 'Latitude'] = lat if lat is not None else ''
+        if 'Longitude' in df.columns:
+            df.at[idx, 'Longitude'] = lng if lng is not None else ''
+        
+        # 將 emails 寫入 Email_1, Email_2, Email_3... 欄位
+        for i, email in enumerate(emails[:max_email_columns], 1):
+            email_col = f'Email_{i}'
+            df.at[idx, email_col] = email
+        
+        # 清除多餘的 email 欄位
+        for i in range(len(emails) + 1, max_email_columns + 1):
+            email_col = f'Email_{i}'
+            df.at[idx, email_col] = ''
         
         if website:
             website_count += 1
@@ -329,10 +504,12 @@ def main() -> int:
             yelp_count += 1
         if lat is not None and lng is not None:
             latlng_count += 1
-        if website or yelp_link or (lat is not None and lng is not None):
+        if emails:
+            email_count += 1
+        if website or yelp_link or (lat is not None and lng is not None) or emails:
             success_count += 1
         
-        logger.info(f"✅ {restaurant_name}: 官網={bool(website)}, Yelp={bool(yelp_link)}, 經緯度={bool(lat and lng)}")
+        logger.info(f"✅ {restaurant_name}: 官網={bool(website)}, Yelp={bool(yelp_link)}, 經緯度={bool(lat and lng)}, Email={len(emails)}個")
     
     # 儲存結果（覆寫原檔案）
     try:
@@ -352,6 +529,7 @@ def main() -> int:
     logger.info(f"成功找到官網: {website_count}")
     logger.info(f"成功找到 Yelp: {yelp_count}")
     logger.info(f"成功找到經緯度: {latlng_count}")
+    logger.info(f"成功找到 Email: {email_count}")
     logger.info(f"至少找到一項: {success_count}")
     logger.info("="*60)
     
@@ -360,6 +538,7 @@ def main() -> int:
     print(f"   找到官網: {website_count}")
     print(f"   找到 Yelp: {yelp_count}")
     print(f"   找到經緯度: {latlng_count}")
+    print(f"   找到 Email: {email_count}")
     print(f"   結果已寫回: {INPUT_FILE.name}")
     
     return 0
