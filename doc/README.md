@@ -16,29 +16,33 @@ BYOB (Bring Your Own Bottle) 是一個自帶酒水餐廳推薦平台，目前運
 
 ---
 
-## 🚀 最新進度（2025年11月17日）
+## 🚀 最新進度（2025年11月18日）
 
-### 今日完成：餐廳接管流程、後台欄位、Email 任務準備
+### 今日完成：資料整併、Token 批次、SendGrid 測試
 
 **🎯 關鍵成就**
 
-- ✅ **餐廳接管（Restaurant Access Transfer）流程上線**  
-  - 後台餐廳文章新增 meta box，可產生 30 天有效、可重複使用的 takeover link（token 存於 `_restaurant_takeover_token`）。  
-  - 接管頁面改為英文，標題、按鈕文字（`Claim Your Restaurant`）與 checkbox 提示皆英文化，並覆寫樣式避免 CSS 強制大寫。  
-  - 完成接管後自動登入並導回 `restaurant-profile`，寄送通知信至 `byobmap.tw@gmail.com`，內容含餐廳名稱、接管人、後台連結。
+- ✅ **資料整併與爬蟲擴充**  
+  - `update_1117_restaurants.py` 現可針對 11/17~18 餐廳一次取得官網、Yelp、Latitude/Longitude 與 Email，並支援 `.env` 管理 Google/Custom Search 金鑰。  
+  - Email 擷取邏輯加入無效信箱過濾與常見聯絡頁搜尋，結果可自動寫入 `Email_1~n`。  
+  - `merge_token_emails.py`（後續已移除）用於將 Excel 的 Email 欄位合併至 takeover token CSV，產生 `takeover_tokens_20251118_with_emails.csv`。
 
-- ✅ **後台使用者列表強化**  
-  - 在 WordPress 使用者列表新增 `Restaurant` 欄位（帶連結），並支援排序，方便追蹤每位餐廳業者與其所屬餐廳。
+- ✅ **WP-CLI Token 批次產生**  
+  - 建立 `wp-content/mu-plugins/byob-takeover-cli.php`，註冊 `wp byob-takeovers batch` 指令，可讀 JSON/CSV（如 `token_generating.json`）批次產生 takeover token、輸出 CSV、寄送單一 Summary Email。  
+  - `philly_yelp_crawler/token_batch_memo.md` 紀錄 Cloudways SSH、路徑、指令與還原流程，方便重複操作。
 
-- ✅ **文檔與任務規劃更新**  
-  - `doc/Next Task Prompt Byob.md` 新增 11/18 四大任務：Email 爬取、經緯度補錄、批次寄信、整理 `philly_yelp_crawler`。  
-  - `doc/ai_progress_byob.md` 同步記錄今日進度，刪除無助理解的舊紀錄。
+- ✅ **SendGrid 測試與環境設定**  
+  - `philly_yelp_crawler/sendgrid_test.py` 讀取 `takeover_tokens_20251118_copy.csv` 前兩筆，寄給 wavyclub21/slow3605 測試。  
+  - 指導使用 `.env` 或系統環境設定 `SENDGRID_API_KEY`，並說明 HTTP 403 可能原因（Sender 未驗證或 API Key 權限不足）。
 
-**🗓️ 明日（11/18）**
-- ✉️ 對 11/16 餐廳資料執行 Email 爬取，並 append 至既有 Email 清單。
-- 📍 補齊 `Philly BYOB Restaurant_with_websites_merged_20251116.xlsx` 中缺漏的 Lat/Lng。
-- 📧 擬定批次邀請信內容（含 takeover link 與前台連結），規劃寄送流程。
-- 🗂️ 整理 `philly_yelp_crawler/`（資料、README、腳本說明）。
+- ✅ **文件同步**  
+  - `doc/Next Task Prompt Byob.md` 更新 11/19 三大任務：SendGrid 批次發信、餐廳 Logo 補齊、餐廳類型篩選。  
+  - `doc/ai_progress_byob.md` 加入本日進度並精簡舊紀錄。
+
+**🗓️ 明日（11/19）**
+- ✉️ 使用 SendGrid 以 token CSV + Email 欄位批次寄信（含 log、dry-run、安全節流）。
+- 🖼️ 整理/上傳餐廳 Logo，補齊 WordPress post meta 與前端顯示。
+- 🏷️ 實作餐廳類型篩選（多選 UI + URL query + 後端 tax query）。
 
 ---
 
@@ -153,18 +157,14 @@ WordPress 核心
 
 ### 短期（本週）
 1. **費城專案**：
-   - ✅ 地圖與定位功能（11/14 完成）
-   - ✅ 地圖標記圖標優化（11/15 完成）
-   - ✅ Restaurant Access Transfer（11/17 完成）
-   - 🚀 11/16 餐廳 Email 爬取（11/18）
-   - 🚀 Lat/Lng 補齊（11/18）
-   - 🚀 批次邀請信流程（11/18）
-   - 🚀 `philly_yelp_crawler` 整理（11/18）
+   - ✅ 地圖與定位、圖標優化（11/14-15）
+   - ✅ Restaurant Access Transfer（11/17）
+   - ✅ Token 批次與資料整併（11/18）
+   - 🚀 11/19：SendGrid 批次寄信、餐廳 Logo 補齊、類型篩選
    - ⏳ FAQ／後台英文化、Reddit 回覆流程
 
 2. **台北專案**：
-   - 🔄 酒商合作邀約
-   - 🔄 Facebook 社團推廣
+   - 🔄 酒商合作邀約、Facebook 社團推廣
 
 ### 中期（未來 1 個月）
 1. **費城專案**：
@@ -244,6 +244,6 @@ WordPress 核心
 
 ---
 
-*最後更新：2025年11月17日*
-*版本：v20.0*
-*明日重點（11/18）：Email 爬取、Lat/Lng 補齊、批次寄信、爬蟲資料夾整理*
+*最後更新：2025年11月18日*
+*版本：v21.0*
+*明日重點（11/19）：SendGrid 批次寄信、餐廳 Logo 補齊、餐廳類型篩選*
