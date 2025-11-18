@@ -1,6 +1,6 @@
 # 🍷 BYOB 專案工作規劃
 
-## 📅 當前日期：2025-11-15
+## 📅 當前日期：2025-11-18
 
 ---
 
@@ -136,5 +136,30 @@
 
 ---
 
-*最後更新：2025-11-17*  
+## 🗓️ 明日（2025-11-19）待辦
+
+### 1. SendGrid 批次發信
+- **資料整備**：使用 `takeover_tokens_20251118_with_emails.csv`（或最新 CSV），確認欄位含 Restaurant、Restaurant URL、Takeover Link、Email_1~n。
+- **API 與 Sender**：在 `.env`/系統環境設定 `SENDGRID_API_KEY`，並確認 `team@byobphilly.com` 已完成 Domain 或 Single Sender 驗證。
+- **腳本更新**：擴寫 `philly_yelp_crawler/sendgrid_test.py` → 讀完整 CSV、逐筆寄送、對同餐廳多 Email 以 `to_emails` 或 `bcc` 全數寄出，加入節流與 retry。
+- **安全流程**：支援 `--dry-run` 參數、寫入寄送 log（包含 HTTP status 與失敗原因），寄前先跑前兩筆到測試信箱確認。
+- **稽核**：完成後輸出成功/失敗報表，附寄送時間、信件主旨、Takeover Link 供後續追蹤。
+
+### 2. 餐廳 Logo 圖片補齊
+- **清單**：比對 WordPress `restaurant` posts 與 Excel 是否缺少 Logo，產出需補圖名單。
+- **素材處理**：向餐廳索取或從網站擷取 Logo，統一裁切為 600x600 PNG（透明背景），命名為 `restaurant-slug-logo.png`。
+- **上傳與綁定**：批次上傳到 `wp-content/uploads/byob-logos/`（或媒體庫），並將檔案 ID 寫入對應 post meta/ACF 欄位。
+- **前端顯示**：在 `archive-restaurant.php`、`single-restaurant.php` 引用 Logo，未提供時顯示預設圖；確認 RWD 與 Lazy-load 設定。
+- **驗收**：抽查 5 筆（含手機/桌機），確保圖片載入正常且通過 Lighthouse 尺寸/壓縮建議。
+
+### 3. 餐廳類型篩選優化
+- **資料面**：確定 `restaurant_type` taxonomy 或 meta 值完整；必要時從 `Philly BYOB Restaurant_with_websites_merged.xlsx` 匯入並去重。
+- **UI/UX**：在前台列表新增多選類型篩選（pill 或抽屜式），操作後更新 URL query（例：`?types=italian,seafood`），提供一鍵清除。
+- **後端邏輯**：調整 REST API 或 `WP_Query`，解析 `types` 參數並以 `tax_query` 過濾，同時與分頁、排序、定位共存；必要時加 transient cache。
+- **QA**：測試多種組合、空結果、重新整理後狀態是否保留，並記錄效能指標（查詢時間 < 500ms）。
+- **文件化**：更新開發筆記/README，說明欄位來源、前端操作、後端 query 與新增設定。
+
+---
+
+*最後更新：2025-11-18*  
 
