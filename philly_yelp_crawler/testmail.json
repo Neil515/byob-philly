@@ -1,0 +1,312 @@
+{
+  "from": { "email": "join-us@byobmap.com", "name": "BYOB Philly Team" },
+  "personalizations": [
+    {
+      "to": [{ "email": "info@amanophl.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "A Mano",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=jtIKt41Ey4arJHvK9KtsIf1tNj2c6uhX",
+        "listing_url": "https://byobmap.com/byob-restaurant/a-mano/"
+      }
+    },
+    {
+      "to": [{ "email": "1700bistrolabaia@gmail.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Bistro La Baia BYOB",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=IQaoQIanng8iKeI0NDaSqOSeKJLQQJnD",
+        "listing_url": "https://byobmap.com/byob-restaurant/bistro-la-baia-byob/"
+      }
+    },
+    {
+      "to": [
+        { "email": "contact@sansoxygen.com" },
+        { "email": "burrataphilly@gmail.com" }
+      ],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Burrata",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=w6JRhrpqGsvoobAvn7uLbl3JSgX0NS0O",
+        "listing_url": "https://byobmap.com/byob-restaurant/burrata/"
+      }
+    },
+    {
+      "to": [{ "email": "casanostraphilly@gmail.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Casa Nostra",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=KTAMu4GPn5q8w11eLyNAcSdqytxN1TdS",
+        "listing_url": "https://byobmap.com/byob-restaurant/casa-nostra/"
+      }
+    },
+    {
+      "to": [
+        { "email": "hospitality@char.pizza" },
+        { "email": "viraj@char.pizza" }
+      ],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "CHAR",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=tWKJCeIQGT8aWBXPGIUhqrEEzUYpKrSS",
+        "listing_url": "https://byobmap.com/byob-restaurant/char/"
+      }
+    },
+    {
+      "to": [{ "email": "info@elchingonphilly.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "El Chingon Philly",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=ceNNObYScsOpY8ij2U3lRcAzGPRHtxz6",
+        "listing_url": "https://byobmap.com/byob-restaurant/el-chingon-philly/"
+      }
+    },
+    {
+      "to": [{ "email": "hello@elmaphilly.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Elma",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=Dvl9gcDVr2dGU9M946IGs414HFkF8Npc",
+        "listing_url": "https://byobmap.com/byob-restaurant/elma/"
+      }
+    },
+    {
+      "to": [{ "email": "hikariphilly17@gmail.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Hikari Sushi",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=EkQ9vTtixFtxu4e2qWMBrIB6jw8FNICW",
+        "listing_url": "https://byobmap.com/byob-restaurant/hikari-sushi/"
+      }
+    },
+    {
+      "to": [{ "email": "info@illataphl.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "ILLATA",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=NTvn9BzeW1lpCoKtcUsLToD45zfrBVwV",
+        "listing_url": "https://byobmap.com/byob-restaurant/illata/"
+      }
+    },
+    {
+      "to": [{ "email": "hello@littlefishbyob.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Little Fish BYOB",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=yU4384XLUqLde5hw8a7De86ELoV0LECQ",
+        "listing_url": "https://byobmap.com/byob-restaurant/little-fish-byob/"
+      }
+    },
+    {
+      "to": [
+        { "email": "info@lunabyob.com" },
+        { "email": "info@ndiscovered.com" }
+      ],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Luna BYOB",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=TJo8Ds7Za8O5KNPO3Ov1bWEjy0Pu2X5n",
+        "listing_url": "https://byobmap.com/byob-restaurant/luna-byob/"
+      }
+    },
+    {
+      "to": [{ "email": "melogranophiladelphia@gmail.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Melograno",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=fOE3tTLQl1RYlMerwCwOHK9E5ftu8tFY",
+        "listing_url": "https://byobmap.com/byob-restaurant/melograno/"
+      }
+    },
+    {
+      "to": [
+        { "email": "events@anni-restaurants.com" },
+        { "email": "info@mercatobyob.com" }
+      ],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Mercato",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=BByL08bK3whlNGmCBUAWWJG2rPkX6GKe",
+        "listing_url": "https://byobmap.com/byob-restaurant/mercato/"
+      }
+    },
+    {
+      "to": [{ "email": "luis.oleaphilly@gmail.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Olea",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=OxNLwjE3OjGZzrmyLz72A5tz7lX4gJcW",
+        "listing_url": "https://byobmap.com/byob-restaurant/olea/"
+      }
+    },
+    {
+      "to": [{ "email": "paffutophl@gmail.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Paffuto",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=54oVDnNRhDjOXmmNviFFyRvzN2b6euZC",
+        "listing_url": "https://byobmap.com/byob-restaurant/paffuto/"
+      }
+    },
+    {
+      "to": [{ "email": "peraphiladelphia@gmail.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Pera Turkish Cuisine",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=kB6r2TeceFxFBSzL5VWaMgzDQz5W6God",
+        "listing_url": "https://byobmap.com/byob-restaurant/pera-turkish-cuisine/"
+      }
+    },
+    {
+      "to": [{ "email": "stinapizzeria@gmail.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Stina",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=Mn8yLzt4YV98WwQDmanhPDs8Ylg4a9M7",
+        "listing_url": "https://byobmap.com/byob-restaurant/stina/"
+      }
+    },
+    {
+      "to": [{ "email": "thaisquarephilly@gmail.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Thai Square Restaurant",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=aqDKPGzEskMMBsDVOv5uAsZPQ1YfGxGe",
+        "listing_url": "https://byobmap.com/byob-restaurant/thai-square-restaurant/"
+      }
+    },
+    {
+      "to": [{ "email": "info@trattoriacarina.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Trattoria Carina",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=7PkGqoBLVPkGUskvguEAx5v3bpi8odnn",
+        "listing_url": "https://byobmap.com/byob-restaurant/trattoria-carina/"
+      }
+    },
+    {
+      "to": [
+        { "email": "team@latofonts.com" },
+        { "email": "impallari@gmail.com" }
+      ],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Gnocchi Restaurant",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=kjRuuMgsVXYCcPl9nDwYL7SLTzs8VTbl",
+        "listing_url": "https://byobmap.com/byob-restaurant/gnocchi-restaurant/"
+      }
+    },
+    {
+      "to": [
+        { "email": "info@kanellarestaurant.com" },
+        { "email": "culinaryking@hotmail.com" }
+      ],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Kanella",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=h4MHts8oEkfk6unJGEmu3NrTJ0D23RMB",
+        "listing_url": "https://byobmap.com/byob-restaurant/kanella/"
+      }
+    },
+    {
+      "to": [{ "email": "sdaku@dakugroupllc.net" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "La Fontana Della Citta",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=uSyNV4tvcLguxEXSAIogg9E65VwGA9MZ",
+        "listing_url": "https://byobmap.com/byob-restaurant/la-fontana-della-citta/"
+      }
+    },
+    {
+      "to": [
+        { "email": "moma.trattoria@gmail.com" },
+        { "email": "hello@trattoriamoma.com" },
+        { "email": "hello@latrattoriamtairy.com" }
+      ],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "La Trattoria",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=m424Wju5uLF3yZJHeLVocdHxb2UpuJcd",
+        "listing_url": "https://byobmap.com/byob-restaurant/la-trattoria/"
+      }
+    },
+    {
+      "to": [{ "email": "taquerialosgallos@hotmail.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Los Gallos",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=j2rmaOjcolOvf3ghlH7D6k0f0S4S5Put",
+        "listing_url": "https://byobmap.com/byob-restaurant/los-gallos/"
+      }
+    },
+    {
+      "to": [{ "email": "info@osteriaamaphilly.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Osteria Ama Philly",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=dVw1Vqh7vFBZyOZZdVnSMrKEKjl5ndRS",
+        "listing_url": "https://byobmap.com/byob-restaurant/osteria-ama-philly/"
+      }
+    },
+    {
+      "to": [{ "email": "pizza@pizzarichmond.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Pizza Richmond",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=BX0NRSqok7zU1V7DWfAhiGPsJeQUDY5c",
+        "listing_url": "https://byobmap.com/byob-restaurant/pizza-richmond/"
+      }
+    },
+    {
+      "to": [
+        { "email": "chance@tabachoyphilly.com" },
+        { "email": "tabachoyphilly@gmail.com" }
+      ],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Tabachoy",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=jhM9xWyhXhat66NJdV402YN2kARSpDLv",
+        "listing_url": "https://byobmap.com/byob-restaurant/tabachoy/"
+      }
+    },
+    {
+      "to": [{ "email": "hello@chateaurougephilly.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Chateau Rouge",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=BFRt92r1o57Aca14WDGLivzwfhoY3LAQ",
+        "listing_url": "https://byobmap.com/byob-restaurant/chateau-rouge/"
+      }
+    },
+    {
+      "to": [{ "email": "info@babysphl.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Baby's Kusina + Market",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=mhu4HBY7SpVZc64R3ebQZA1AV2xiWTRu",
+        "listing_url": "https://byobmap.com/byob-restaurant/babys-kusina-market/"
+      }
+    },
+    {
+      "to": [{ "email": "yuhirosushi@gmail.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Yuhiro Omakase Sushi",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=fbkFhYC2YhKl3IAFG4xf61qpZfXG22qn",
+        "listing_url": "https://byobmap.com/byob-restaurant/yuhiro-omakase-sushi/"
+      }
+    },
+    {
+      "to": [{ "email": "mabukitchenmanager@outlook.com" }],
+      "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
+      "dynamic_template_data": {
+        "restaurant_name": "Mabu Kitchen",
+        "takeover_link": "https://byobmap.com/takeover-restaurant?token=fNWzZtoKEMoq4PvN5rbMLeWDKyS5fzhy",
+        "listing_url": "https://byobmap.com/byob-restaurant/mabu-kitchen/"
+      }
+    }
+  ],
+  "template_id": "d-d62bee119113489eaa546ed878db1f1a",
+  "send_at": 1763555280,
+  "batch_id": "N2QzNDk0ZDktYzRmNS0xMWYwLWFmNTMtYTYzMTg3MmI1YjMwLWZhZGIxZjYyYQ"
+}
