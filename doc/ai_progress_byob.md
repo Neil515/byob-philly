@@ -1,6 +1,6 @@
 # BYOB 專案開發進度記錄
 
-## 📅 專案概覽（更新：2025-11-18）
+## 📅 專案概覽（更新：2025-11-19）
 
 ### **台北 BYOB**（核心系統維運）
 - 核心功能與自動化流程已完整，持續推廣、酒商合作與 Email 模板優化。
@@ -8,6 +8,35 @@
 ### **費城 BYOB**（主要開發重心）
 - 前台英文化完成，持續拓展資料源、餐廳接管、自動寄信與社群推廣。
 - 技術堆疊：WordPress + WooCommerce + ACF + WP-CLI + Python 資料腳本 + SendGrid。
+
+---
+
+## ✅ 2025年11月19日 — SendGrid 排程與餐廳類型篩選優化
+
+### 🎯 今日成就總覽
+- **SendGrid 批次寄信落地**
+  - 整理 `takeover_tokens_20251118_copy.csv`，依每家餐廳的 Email_1~3 產出 31 筆 `personalizations`，寫入 `philly_yelp_crawler/testmail.json`。
+  - 透過 API 建立 `batch_id` 與 `send_at`（對應台北 2025/11/19 20:28），使用 curl/PowerShell 成功排程並記錄驗證步驟、取消方式。
+  - 新增 `doc/sendgrid_batch_email_flow.md`，把 CSV 準備、JSON 組裝、排程寄送、Activity 驗證與取消流程整理成白話 SOP。
+- **餐廳類型篩選體驗大幅升級**
+  - 在 `wordpress/functions.php` 新增 slug/label helper、URL 參數解析、快取與 `pre_get_posts` 過濾邏輯，支援多選 OR 條件與「Other」聚合。
+  - `archive-restaurant.php` 類型 pill 可切換、清除、保留多選狀態，並在餐廳卡片/單頁以 chip 顯示，可直接連至指定篩選。
+  - 類型已選項會自動排在列表頂端，並調整 chip 與地址間距、RWD 滑動體驗，確保桌機/手機一致。
+- **文件與待辦同步**
+  - `Next Task Prompt Byob.md` 更新至 2025-11-19，新增 11/20 的三項任務（官網按鈕、Placeholder 更換、媒體庫整理）。
+  - `ai_progress_byob.md` 本檔案與 sendgrid flow, test JSON 等皆更新，確保日誌一致。
+
+### 🔧 主要修改檔案
+- `wordpress/functions.php`：餐廳類型 helper、URL 篩選、快取清理、Other 聚合等。
+- `wordpress/archive-restaurant.php`：篩選列、卡片 chip、RWD/互動調整（含 active pill 排序、距離調整）。
+- `wordpress/single_restaurant.php`：單頁 chip 可點擊導至列表。
+- `philly_yelp_crawler/testmail.json`：批次寄信 JSON（含 batch_id/send_at）。
+- `doc/sendgrid_batch_email_flow.md`、`doc/Next Task Prompt Byob.md`、`doc/ai_progress_byob.md`：流程與待辦紀錄。
+
+### 📌 備註 / 重要決策
+- 類型篩選採 OR 邏輯，並使用 URL query，使其他頁面可直接鏈接（例：`?types=italian`）。
+- 「Other」類型在篩選列合併為單一按鈕，但餐廳卡片仍顯示詳細描述，兼顧易用性與資訊完整度。
+- 建議寄信前先跑 1-2 筆測試並檢查 Sender Identity，確保 SendGrid 排程穩定；必要時透過 batch API 立即取消。
 
 ---
 
