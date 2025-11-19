@@ -96,7 +96,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 6px;
+  margin-top: 10px;
+  margin-bottom: 8px;
 }
 
 /* 分頁導航樣式 */
@@ -517,6 +518,19 @@
 <?php
 $active_type_filters = byob_get_active_type_filters();
 $type_filter_terms = byob_get_all_restaurant_type_terms();
+$type_filter_display_terms = array();
+$other_filter_slug = byob_get_other_type_slug();
+$has_other_filter_terms = false;
+
+foreach ($type_filter_terms as $term) {
+  if (!empty($term['is_other'])) {
+    $has_other_filter_terms = true;
+    continue;
+  }
+  $type_filter_display_terms[] = $term;
+}
+
+$has_type_filters_ui = !empty($type_filter_display_terms) || $has_other_filter_terms;
 ?>
 <div class="page-header page-header--nearby">
   <h1 class="page-title">BYOB Near You</h1>
@@ -671,7 +685,7 @@ document.addEventListener('DOMContentLoaded', function() {
   <h1 class="page-title">All BYOB Restaurants</h1>
 </div>
 
-<?php if (!empty($type_filter_terms)) : ?>
+<?php if ($has_type_filters_ui) : ?>
   <div class="restaurant-type-filter">
     <div class="restaurant-type-filter__header">
       <span><?php esc_html_e('Browse by Cuisine', 'byob'); ?></span>
@@ -682,7 +696,7 @@ document.addEventListener('DOMContentLoaded', function() {
       <?php endif; ?>
     </div>
     <div class="type-chip-row" role="list">
-      <?php foreach ($type_filter_terms as $term) :
+      <?php foreach ($type_filter_display_terms as $term) :
         $is_active = in_array($term['slug'], $active_type_filters, true);
         $next_filters = byob_toggle_type_filter($active_type_filters, $term['slug']);
         $chip_url = byob_build_type_filter_url($next_filters);
@@ -695,6 +709,19 @@ document.addEventListener('DOMContentLoaded', function() {
           <?php echo esc_html($term['label']); ?>
         </a>
       <?php endforeach; ?>
+      <?php if ($has_other_filter_terms) :
+        $is_other_active = in_array($other_filter_slug, $active_type_filters, true);
+        $other_next_filters = byob_toggle_type_filter($active_type_filters, $other_filter_slug);
+        $other_chip_url = byob_build_type_filter_url($other_next_filters);
+      ?>
+        <a
+          class="type-chip<?php echo $is_other_active ? ' is-active' : ''; ?>"
+          href="<?php echo esc_url($other_chip_url); ?>"
+          role="listitem"
+        >
+          <?php esc_html_e('Other', 'byob'); ?>
+        </a>
+      <?php endif; ?>
     </div>
   </div>
 <?php endif; ?>
