@@ -16,33 +16,30 @@ BYOB (Bring Your Own Bottle) 是一個自帶酒水餐廳推薦平台，目前運
 
 ---
 
-## 🚀 最新進度（2025年11月18日）
+## 🚀 最新進度（2025年11月19日）
 
-### 今日完成：資料整併、Token 批次、SendGrid 測試
+### 今日完成：SendGrid 排程與餐廳類型篩選優化
 
 **🎯 關鍵成就**
 
-- ✅ **資料整併與爬蟲擴充**  
-  - `update_1117_restaurants.py` 現可針對 11/17~18 餐廳一次取得官網、Yelp、Latitude/Longitude 與 Email，並支援 `.env` 管理 Google/Custom Search 金鑰。  
-  - Email 擷取邏輯加入無效信箱過濾與常見聯絡頁搜尋，結果可自動寫入 `Email_1~n`。  
-  - `merge_token_emails.py`（後續已移除）用於將 Excel 的 Email 欄位合併至 takeover token CSV，產生 `takeover_tokens_20251118_with_emails.csv`。
+- ✅ **SendGrid 批次寄信落地**  
+  - 以 `takeover_tokens_20251118_copy.csv` 為基礎，產生 31 筆 `personalizations`（含 Email_1~3）寫入 `philly_yelp_crawler/testmail.json`。  
+  - 使用 API 建立 `batch_id` 與 `send_at`（台北時間 2025-11-19 20:28），並透過 curl/PowerShell 成功排程寄送。  
+  - 撰寫 `doc/sendgrid_batch_email_flow.md`，整理 CSV 準備、JSON 組裝、排程、Activity 驗證與取消操作 SOP。
 
-- ✅ **WP-CLI Token 批次產生**  
-  - 建立 `wp-content/mu-plugins/byob-takeover-cli.php`，註冊 `wp byob-takeovers batch` 指令，可讀 JSON/CSV（如 `token_generating.json`）批次產生 takeover token、輸出 CSV、寄送單一 Summary Email。  
-  - `philly_yelp_crawler/token_batch_memo.md` 紀錄 Cloudways SSH、路徑、指令與還原流程，方便重複操作。
+- ✅ **餐廳類型篩選體驗升級**  
+  - `wordpress/functions.php` 新增類型 slug/label helper、URL 參數解析、快取與 `pre_get_posts` 過濾邏輯，支援 OR 多選與「Other」聚合。  
+  - `archive-restaurant.php` 列表頁提供可切換、多選、清除的類型 pill；餐廳卡片與 `single_restaurant.php` 單頁 chip 皆可點擊帶入 `types` 篩選。  
+  - 已選類型自動排在篩選列前端，chip 與地址間距調整，手機版可左右滑動，操作更直覺。
 
-- ✅ **SendGrid 測試與環境設定**  
-  - `philly_yelp_crawler/sendgrid_test.py` 讀取 `takeover_tokens_20251118_copy.csv` 前兩筆，寄給 wavyclub21/slow3605 測試。  
-  - 指導使用 `.env` 或系統環境設定 `SENDGRID_API_KEY`，並說明 HTTP 403 可能原因（Sender 未驗證或 API Key 權限不足）。
+- ✅ **文件與待辦同步**  
+  - `doc/Next Task Prompt Byob.md` 更新至 2025-11-19，並新增 11/20 三大任務（官網連結、placeholder 替換、媒體庫整理）。  
+  - `doc/ai_progress_byob.md` 及本 README 均記錄今日成果，保持知識庫一致。
 
-- ✅ **文件同步**  
-  - `doc/Next Task Prompt Byob.md` 更新 11/19 三大任務：SendGrid 批次發信、餐廳 Logo 補齊、餐廳類型篩選。  
-  - `doc/ai_progress_byob.md` 加入本日進度並精簡舊紀錄。
-
-**🗓️ 明日（11/19）**
-- ✉️ 使用 SendGrid 以 token CSV + Email 欄位批次寄信（含 log、dry-run、安全節流）。
-- 🖼️ 整理/上傳餐廳 Logo，補齊 WordPress post meta 與前端顯示。
-- 🏷️ 實作餐廳類型篩選（多選 UI + URL query + 後端 tax query）。
+**🗓️ 明日（11/20）**
+- 🌐 單一餐廳頁補上官方網站/CTA。
+- 🖼️ 替換重點餐廳的 placeholder 圖片。
+- 🗂️ 整理媒體庫命名與資料夾，移除舊測試檔。
 
 ---
 
@@ -244,6 +241,6 @@ WordPress 核心
 
 ---
 
-*最後更新：2025年11月18日*
-*版本：v21.0*
-*明日重點（11/19）：SendGrid 批次寄信、餐廳 Logo 補齊、餐廳類型篩選*
+*最後更新：2025年11月19日*
+*版本：v22.0*
+*明日重點（11/20）：單頁官網、照片替換、媒體庫整理*
