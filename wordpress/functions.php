@@ -2710,6 +2710,37 @@ function byob_normalize_type_slug($value) {
 }
 
 /**
+ * 取得聚合用的「Other」類型 slug
+ *
+ * @return string
+ */
+function byob_get_other_type_slug() {
+    return 'other-types';
+}
+
+/**
+ * 判斷是否為 Other 類型
+ *
+ * @param string $raw
+ * @param string $label
+ * @return bool
+ */
+function byob_is_other_type_value($raw = '', $label = '') {
+    $raw = strtolower((string) $raw);
+    $label = strtolower((string) $label);
+
+    if ($raw !== '' && strpos($raw, 'other') === 0) {
+        return true;
+    }
+
+    if ($label !== '' && strpos($label, 'other') === 0) {
+        return true;
+    }
+
+    return false;
+}
+
+/**
  * 取得餐廳類型（同時含原始值、顯示文字、slug）
  *
  * @param int|null $post_id
@@ -2766,6 +2797,7 @@ function byob_get_restaurant_type_terms($post_id = null) {
             'raw'   => $type,
             'label' => $label,
             'slug'  => $slug,
+            'is_other' => byob_is_other_type_value($type, $label),
         );
     }
 
@@ -2814,7 +2846,10 @@ function byob_get_all_restaurant_type_terms() {
                 continue;
             }
             if (!isset($collection[$term['slug']])) {
-                $collection[$term['slug']] = $term;
+        if (!isset($collection[$term['slug']])) {
+            $term['is_other'] = isset($term['is_other']) ? $term['is_other'] : byob_is_other_type_value($term['raw'], $term['label']);
+            $collection[$term['slug']] = $term;
+        }
             }
         }
     }
@@ -2830,6 +2865,27 @@ function byob_get_all_restaurant_type_terms() {
 
     set_transient('byob_restaurant_type_terms', $collection, 12 * HOUR_IN_SECONDS);
     return $collection;
+}
+
+/**
+ * 取得所有 Other 類型的原始值
+ *
+ * @param array|null $terms
+ * @return array
+ */
+function byob_get_other_type_raw_values($terms = null) {
+    if ($terms === null) {
+        $terms = byob_get_all_restaurant_type_terms();
+    }
+
+    $values = array();
+    foreach ($terms as $term) {
+        if (!empty($term['is_other']) && !empty($term['raw'])) {
+            $values[] = $term['raw'];
+        }
+    }
+
+    return array_values(array_unique($values));
 }
 
 /**
@@ -2925,26 +2981,42 @@ function byob_apply_restaurant_type_filters($query) {
     $available_terms = byob_get_all_restaurant_type_terms();
     $slug_raw_map = array();
     foreach ($available_terms as $term) {
-        if (!empty($term['slug']) && !empty($term['raw'])) {
-            $slug_raw_map[$term['slug']] = $term['raw'];
+        if (empty($term['slug']) || empty($term['raw'])) {
+            continue;
         }
+        if (!isset($slug_raw_map[$term['slug']])) {
+            $slug_raw_map[$term['slug']] = array();
+        }
+        $slug_raw_map[$term['slug']][] = $term['raw'];
+    }
+
+    $other_slug = byob_get_other_type_slug();
+    $other_raw_values = byob_get_other_type_raw_values($available_terms);
+    if (!empty($other_raw_values)) {
+        $slug_raw_map[$other_slug] = $other_raw_values;
     }
 
     $meta_query_types = array('relation' => 'OR');
     foreach ($active_slugs as $slug) {
-        $raw_value = isset($slug_raw_map[$slug]) ? $slug_raw_map[$slug] : $slug;
+        $raw_values = isset($slug_raw_map[$slug]) ? (array) $slug_raw_map[$slug] : array($slug);
+        $raw_values = array_values(array_unique(array_filter($raw_values)));
+        if (empty($raw_values)) {
+            continue;
+        }
 
-        $meta_query_types[] = array(
-            'key'     => 'philly_restaurant_type',
-            'value'   => '"' . $raw_value . '"',
-            'compare' => 'LIKE',
-        );
+        foreach ($raw_values as $raw_value) {
+            $meta_query_types[] = array(
+                'key'     => 'philly_restaurant_type',
+                'value'   => '"' . $raw_value . '"',
+                'compare' => 'LIKE',
+            );
 
-        $meta_query_types[] = array(
-            'key'     => 'restaurant_type',
-            'value'   => $raw_value,
-            'compare' => 'LIKE',
-        );
+            $meta_query_types[] = array(
+                'key'     => 'restaurant_type',
+                'value'   => $raw_value,
+                'compare' => 'LIKE',
+            );
+        }
     }
 
     $existing_meta_query = $query->get('meta_query');
