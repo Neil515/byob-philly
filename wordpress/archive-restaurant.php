@@ -22,6 +22,83 @@
   padding: 1rem 2rem;
 }
 
+/* 餐廳類型篩選列 */
+.restaurant-type-filter {
+  max-width: 1200px;
+  margin: 0 auto 24px;
+  padding: 0 20px;
+}
+
+.restaurant-type-filter__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-weight: 600;
+  color: #8b2635;
+}
+
+.type-filter-clear {
+  font-size: 0.9rem;
+  color: #8b2635;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.type-filter-clear:hover,
+.type-filter-clear:focus {
+  color: #a33745;
+  border-color: #a33745;
+}
+
+.type-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 8px 0;
+}
+
+.type-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid #f0d9dd;
+  background: #ffffff;
+  color: #8b2635;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  white-space: nowrap;
+}
+
+.type-chip:hover,
+.type-chip:focus {
+  border-color: #8b2635;
+  color: #8b2635;
+  background: #fff5f6;
+}
+
+.type-chip.is-active {
+  background: #8b2635;
+  color: #ffffff;
+  border-color: #8b2635;
+}
+
+.type-chip--compact {
+  padding: 4px 12px;
+  font-size: 0.85rem;
+}
+
+.restaurant-type-chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
 /* 分頁導航樣式 */
 .restaurant-pagination {
   margin: 40px 0;
@@ -215,13 +292,23 @@
     width: 100%;
   }
 
-  .restaurant-type {
-    margin-left: 6px;
-  }
-
   .verification-badge-container {
     display: flex !important;
     justify-content: center !important;
+  }
+
+  .type-chip-row {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .type-chip-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .type-chip {
+    flex: 0 0 auto;
   }
 }
 
@@ -426,6 +513,11 @@
   }
 }
 </style>
+
+<?php
+$active_type_filters = byob_get_active_type_filters();
+$type_filter_terms = byob_get_all_restaurant_type_terms();
+?>
 <div class="page-header page-header--nearby">
   <h1 class="page-title">BYOB Near You</h1>
 </div>
@@ -579,6 +671,34 @@ document.addEventListener('DOMContentLoaded', function() {
   <h1 class="page-title">All BYOB Restaurants</h1>
 </div>
 
+<?php if (!empty($type_filter_terms)) : ?>
+  <div class="restaurant-type-filter">
+    <div class="restaurant-type-filter__header">
+      <span><?php esc_html_e('Browse by Cuisine', 'byob'); ?></span>
+      <?php if (!empty($active_type_filters)) : ?>
+        <a class="type-filter-clear" href="<?php echo esc_url(byob_build_type_filter_url(array())); ?>">
+          <?php esc_html_e('Clear', 'byob'); ?>
+        </a>
+      <?php endif; ?>
+    </div>
+    <div class="type-chip-row" role="list">
+      <?php foreach ($type_filter_terms as $term) :
+        $is_active = in_array($term['slug'], $active_type_filters, true);
+        $next_filters = byob_toggle_type_filter($active_type_filters, $term['slug']);
+        $chip_url = byob_build_type_filter_url($next_filters);
+      ?>
+        <a
+          class="type-chip<?php echo $is_active ? ' is-active' : ''; ?>"
+          href="<?php echo esc_url($chip_url); ?>"
+          role="listitem"
+        >
+          <?php echo esc_html($term['label']); ?>
+        </a>
+      <?php endforeach; ?>
+    </div>
+  </div>
+<?php endif; ?>
+
 <?php
 $restaurant_pagination_args = array(
   'prev_text' => '← Previous',
@@ -627,7 +747,8 @@ if ($restaurant_pagination_html) {
         }
       }
 
-      $type_labels = byob_get_restaurant_type_labels($post_id);
+      $type_terms = byob_get_restaurant_type_terms($post_id);
+      $type_labels = !empty($type_terms) ? wp_list_pluck($type_terms, 'label') : array();
 
       // Philly 專案欄位（新）：philly_corkage_fee（移除舊欄位 is_charged 回退）
       $philly_corkage_fee = get_field('philly_corkage_fee', $post_id);
@@ -833,10 +954,19 @@ if ($restaurant_pagination_html) {
       
       <h2 class="restaurant-title-line">
         <a href="<?php echo esc_url($permalink); ?>"><?php echo esc_html($post_title); ?></a>
-        <?php if (!empty($type_labels)) : ?>
-          <span class="restaurant-type">(<?php echo esc_html(implode(' / ', $type_labels)); ?>)</span>
-        <?php endif; ?>
       </h2>
+
+      <?php if (!empty($type_terms)) : ?>
+        <div class="restaurant-type-chip-group">
+          <?php foreach ($type_terms as $chip_term) :
+            $chip_url = byob_build_type_filter_url(array($chip_term['slug']));
+          ?>
+            <a class="type-chip type-chip--compact" href="<?php echo esc_url($chip_url); ?>">
+              <?php echo esc_html($chip_term['label']); ?>
+            </a>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
 
       <div class="acf-fields">
         <div class="info-group basic-info">
