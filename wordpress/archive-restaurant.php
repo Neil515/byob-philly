@@ -519,16 +519,24 @@
 $active_type_filters = byob_get_active_type_filters();
 $type_filter_terms = byob_get_all_restaurant_type_terms();
 $type_filter_display_terms = array();
+$type_filter_active_terms = array();
 $other_filter_slug = byob_get_other_type_slug();
 $has_other_filter_terms = false;
+$other_filter_is_active = in_array($other_filter_slug, $active_type_filters, true);
 
 foreach ($type_filter_terms as $term) {
   if (!empty($term['is_other'])) {
     $has_other_filter_terms = true;
     continue;
   }
-  $type_filter_display_terms[] = $term;
+  if (in_array($term['slug'], $active_type_filters, true)) {
+    $type_filter_active_terms[] = $term;
+  } else {
+    $type_filter_display_terms[] = $term;
+  }
 }
+
+$type_filter_display_terms = array_merge($type_filter_active_terms, $type_filter_display_terms);
 
 $has_type_filters_ui = !empty($type_filter_display_terms) || $has_other_filter_terms;
 ?>
@@ -710,12 +718,11 @@ document.addEventListener('DOMContentLoaded', function() {
         </a>
       <?php endforeach; ?>
       <?php if ($has_other_filter_terms) :
-        $is_other_active = in_array($other_filter_slug, $active_type_filters, true);
         $other_next_filters = byob_toggle_type_filter($active_type_filters, $other_filter_slug);
         $other_chip_url = byob_build_type_filter_url($other_next_filters);
       ?>
         <a
-          class="type-chip<?php echo $is_other_active ? ' is-active' : ''; ?>"
+          class="type-chip<?php echo $other_filter_is_active ? ' is-active' : ''; ?>"
           href="<?php echo esc_url($other_chip_url); ?>"
           role="listitem"
         >
