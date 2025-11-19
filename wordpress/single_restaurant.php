@@ -44,6 +44,37 @@
   margin-bottom: 25px !important;
 }
 
+.single-restaurant .type-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.single-restaurant .type-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid #f0d9dd;
+  background: #ffffff;
+  color: #8b2635;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.single-restaurant .type-chip:hover,
+.single-restaurant .type-chip:focus {
+  background: #fff5f6;
+  border-color: #8b2635;
+}
+
+.single-restaurant .type-chip--compact {
+  padding: 4px 12px;
+  font-size: 0.85rem;
+}
+
 /* 底部操作按鈕間距 */
 .single-page-actions {
   margin-top: 30px !important;
@@ -198,10 +229,21 @@
         <div class="field"><strong>Phone:</strong> </div>
       <?php endif; ?>
 
-      <?php 
-      $type_labels = byob_get_restaurant_type_labels(get_the_ID());
-      if (!empty($type_labels)): ?>
-        <div class="field"><strong>Cuisine Type:</strong> <?php echo esc_html(implode(' / ', $type_labels)); ?></div>
+      <?php
+      $type_terms = byob_get_restaurant_type_terms(get_the_ID());
+      if (!empty($type_terms)): ?>
+        <div class="field restaurant-type-field">
+          <strong>Cuisine Type:</strong>
+          <div class="type-chip-row">
+            <?php foreach ($type_terms as $term): 
+              $chip_url = byob_build_type_filter_url(array($term['slug']));
+            ?>
+              <a class="type-chip type-chip--compact" href="<?php echo esc_url($chip_url); ?>">
+                <?php echo esc_html($term['label']); ?>
+              </a>
+            <?php endforeach; ?>
+          </div>
+        </div>
       <?php else: ?>
         <div class="field"><strong>Cuisine Type:</strong> </div>
       <?php endif; ?>
