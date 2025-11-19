@@ -2699,15 +2699,23 @@ function byob_display_verification_badge($post_id = null, $size = 'small') {
 }
 
 /**
- * 取得餐廳類型的前台顯示文字陣列
+ * 正規化餐廳類型 slug
  *
- * 優先使用舊欄位 `restaurant_type`，若無資料則改用費城專案
- * 的 `philly_restaurant_type`，並處理 Other 備註、底線、大小寫等格式。
+ * @param string $value
+ * @return string
+ */
+function byob_normalize_type_slug($value) {
+    $slug = sanitize_title($value);
+    return $slug ? $slug : '';
+}
+
+/**
+ * 取得餐廳類型（同時含原始值、顯示文字、slug）
  *
  * @param int|null $post_id
- * @return array
+ * @return array[] 每個元素包含 raw / label / slug
  */
-function byob_get_restaurant_type_labels($post_id = null) {
+function byob_get_restaurant_type_terms($post_id = null) {
     $post_id = $post_id ?: get_the_ID();
     if (!$post_id) {
         return array();
@@ -2729,7 +2737,7 @@ function byob_get_restaurant_type_labels($post_id = null) {
         $types = array_map('trim', explode(',', $types));
     }
 
-    $labels = array();
+    $terms = array();
     foreach ($types as $type) {
         if ($type === null) {
             continue;
@@ -2739,26 +2747,218 @@ function byob_get_restaurant_type_labels($post_id = null) {
             continue;
         }
 
+        $label = str_replace('_', ' ', $type);
+        $slug = byob_normalize_type_slug($type);
+
         $type_lower = strtolower($type);
         if ($type_lower === 'other' || $type_lower === '其他') {
             if (!empty($other_note)) {
-                $labels[] = sprintf(__('Other: %s', 'byob'), trim($other_note));
+                $label = sprintf(__('Other: %s', 'byob'), trim($other_note));
+                $slug = byob_normalize_type_slug($label);
             } else {
-                $labels[] = __('Other', 'byob');
+                $label = __('Other', 'byob');
             }
-            continue;
+        } elseif (!preg_match('/[^\x00-\x7F]/', $label)) {
+            $label = mb_convert_case($label, MB_CASE_TITLE, 'UTF-8');
         }
 
-        $formatted = str_replace('_', ' ', $type);
-        if (preg_match('/[^\x00-\x7F]/', $formatted)) {
-            $labels[] = $formatted;
-        } else {
-            $labels[] = mb_convert_case($formatted, MB_CASE_TITLE, 'UTF-8');
+        $terms[] = array(
+            'raw'   => $type,
+            'label' => $label,
+            'slug'  => $slug,
+        );
+    }
+
+    return $terms;
+}
+
+/**
+ * 取得餐廳類型的顯示文字陣列（相容舊用法）
+ *
+ * @param int|null $post_id
+ * @return array
+ */
+function byob_get_restaurant_type_labels($post_id = null) {
+    $terms = byob_get_restaurant_type_terms($post_id);
+    if (empty($terms)) {
+        return array();
+    }
+
+    return wp_list_pluck($terms, 'label');
+}
+
+/**
+ * 取得全部餐廳類型（用於篩選列，結果已排序並快取）
+ *
+ * @return array
+ */
+function byob_get_all_restaurant_type_terms() {
+    $cached = get_transient('byob_restaurant_type_terms');
+    if ($cached !== false) {
+        return $cached;
+    }
+
+    $ids = get_posts(array(
+        'post_type'      => 'restaurant',
+        'post_status'    => 'publish',
+        'fields'         => 'ids',
+        'posts_per_page' => -1,
+        'no_found_rows'  => true,
+    ));
+
+    $collection = array();
+    foreach ($ids as $restaurant_id) {
+        $terms = byob_get_restaurant_type_terms($restaurant_id);
+        foreach ($terms as $term) {
+            if (empty($term['slug'])) {
+                continue;
+            }
+            if (!isset($collection[$term['slug']])) {
+                $collection[$term['slug']] = $term;
+            }
         }
     }
 
-    return $labels;
+    if (!empty($collection)) {
+        uasort($collection, function ($a, $b) {
+            return strcasecmp($a['label'], $b['label']);
+        });
+        $collection = array_values($collection);
+    } else {
+        $collection = array();
+    }
+
+    set_transient('byob_restaurant_type_terms', $collection, 12 * HOUR_IN_SECONDS);
+    return $collection;
 }
+
+/**
+ * 清除餐廳類型快取
+ */
+function byob_clear_restaurant_type_terms_cache($post_id = null) {
+    delete_transient('byob_restaurant_type_terms');
+}
+add_action('save_post_restaurant', 'byob_clear_restaurant_type_terms_cache');
+add_action('deleted_post', 'byob_clear_restaurant_type_terms_cache');
+
+/**
+ * 取得目前啟用的餐廳類型篩選（已正規化 slug）
+ *
+ * @return array
+ */
+function byob_get_active_type_filters() {
+    if (empty($_GET['types'])) {
+        return array();
+    }
+
+    $raw = explode(',', wp_unslash($_GET['types']));
+    $slugs = array();
+
+    foreach ($raw as $value) {
+        $slug = byob_normalize_type_slug($value);
+        if ($slug) {
+            $slugs[] = $slug;
+        }
+    }
+
+    return array_values(array_unique($slugs));
+}
+
+/**
+ * 建立帶有指定類型的餐廳列表連結
+ *
+ * @param array $types
+ * @return string
+ */
+function byob_build_type_filter_url($types = array()) {
+    $types = array_values(array_unique(array_filter(array_map('byob_normalize_type_slug', (array) $types))));
+    $base_url = get_post_type_archive_link('restaurant');
+    if (!$base_url) {
+        $base_url = home_url('/');
+    }
+
+    if (!empty($types)) {
+        return add_query_arg('types', implode(',', $types), $base_url);
+    }
+
+    return $base_url;
+}
+
+/**
+ * 切換某一類型是否在目前篩選條件中
+ *
+ * @param array $current
+ * @param string $slug
+ * @return array
+ */
+function byob_toggle_type_filter($current, $slug) {
+    $slug = byob_normalize_type_slug($slug);
+    if (!$slug) {
+        return array_values(array_unique(array_filter($current)));
+    }
+
+    $current = array_values(array_unique(array_filter(array_map('byob_normalize_type_slug', (array) $current))));
+
+    if (in_array($slug, $current, true)) {
+        return array_values(array_diff($current, array($slug)));
+    }
+
+    $current[] = $slug;
+    return array_values(array_unique($current));
+}
+
+/**
+ * 依據 URL 參數在餐廳列表套用類型篩選
+ *
+ * @param WP_Query $query
+ */
+function byob_apply_restaurant_type_filters($query) {
+    if (is_admin() || !$query->is_main_query() || !$query->is_post_type_archive('restaurant')) {
+        return;
+    }
+
+    $active_slugs = byob_get_active_type_filters();
+    if (empty($active_slugs)) {
+        return;
+    }
+
+    $available_terms = byob_get_all_restaurant_type_terms();
+    $slug_raw_map = array();
+    foreach ($available_terms as $term) {
+        if (!empty($term['slug']) && !empty($term['raw'])) {
+            $slug_raw_map[$term['slug']] = $term['raw'];
+        }
+    }
+
+    $meta_query_types = array('relation' => 'OR');
+    foreach ($active_slugs as $slug) {
+        $raw_value = isset($slug_raw_map[$slug]) ? $slug_raw_map[$slug] : $slug;
+
+        $meta_query_types[] = array(
+            'key'     => 'philly_restaurant_type',
+            'value'   => '"' . $raw_value . '"',
+            'compare' => 'LIKE',
+        );
+
+        $meta_query_types[] = array(
+            'key'     => 'restaurant_type',
+            'value'   => $raw_value,
+            'compare' => 'LIKE',
+        );
+    }
+
+    $existing_meta_query = $query->get('meta_query');
+    if (empty($existing_meta_query)) {
+        $query->set('meta_query', $meta_query_types);
+    } else {
+        if (!isset($existing_meta_query['relation'])) {
+            $existing_meta_query['relation'] = 'AND';
+        }
+        $existing_meta_query[] = $meta_query_types;
+        $query->set('meta_query', $existing_meta_query);
+    }
+}
+add_action('pre_get_posts', 'byob_apply_restaurant_type_filters');
 
 /**
  * 記錄推薦者參與抽獎
