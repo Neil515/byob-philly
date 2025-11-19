@@ -1,6 +1,6 @@
 # 🍷 BYOB 專案工作規劃
 
-## 📅 當前日期：2025-11-18
+## 📅 當前日期：2025-11-19
 
 ---
 
@@ -161,5 +161,24 @@
 
 ---
 
-*最後更新：2025-11-18*  
+## 🗓️ 明日（2025-11-20）待辦
+
+### 1. 單一餐廳頁顯示官方網站
+- 盤點 `single_restaurant.php` 及 ACF 欄位，確認可用的 Website / Google 表單連結欄位；若無資料使用 `restaurant_url`、`website` 或 `map_link` 作為 fallback。
+- 在標題或 Contact 區塊新增「Visit Website」按鈕，採 `target="_blank"`、`rel="noopener"`，同時提供 icon 與 hover 狀態。
+- 行動版需維持易點擊（44px 高度），並確認沒有資料時隱藏整行，避免留空。
+
+### 2. 替換餐廳 Placeholder 圖片
+- 從待補清單挑選優先餐廳（例如曝光高或首頁推薦），取得品牌照/菜色照並裁切為 3:2 或 1:1 尺寸，保留 <200KB。
+- 上傳至媒體庫後記錄檔名（建議 `restaurant-slug-cover.jpg`），在 `archive-restaurant.php` / `single_restaurant.php` 的 ACF meta 中更新 attachment ID。
+- 清除對應快取、重新載入列表抽查至少 5 筆（桌機+手機），確認 Lazy-load 與 fallback 正常。
+
+### 3. 媒體庫整理
+- 依日期/用途篩出舊 Placeholder、重複或未引用的影像，建立命名規則（`yyyy-mm-desc.ext` 或 `restaurant-slug-*`）後進行批次重新命名。
+- 將正式素材、Placeholder、Logo 各自放入對應資料夾或使用 Media Tags/分類，方便後續檢索。
+- 刪除不再使用的測試檔，並匯出整理前/後清單（Excel 或 Notion），做為日後上傳規範。
+
+---
+
+*最後更新：2025-11-19*  
 
