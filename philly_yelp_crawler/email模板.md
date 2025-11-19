@@ -1,3 +1,7 @@
+Subject
+
+Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate
+
 Email Body
 
 Hi {{restaurant_name}} Team,
