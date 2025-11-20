@@ -16,30 +16,33 @@ BYOB (Bring Your Own Bottle) 是一個自帶酒水餐廳推薦平台，目前運
 
 ---
 
-## 🚀 最新進度（2025年11月19日）
+## 🚀 最新進度（2025年11月20日）
 
-### 今日完成：SendGrid 排程與餐廳類型篩選優化
+### 今日完成：單頁官網顯示與餐廳類型排序權重
 
 **🎯 關鍵成就**
 
-- ✅ **SendGrid 批次寄信落地**  
-  - 以 `takeover_tokens_20251118_copy.csv` 為基礎，產生 31 筆 `personalizations`（含 Email_1~3）寫入 `philly_yelp_crawler/testmail.json`。  
-  - 使用 API 建立 `batch_id` 與 `send_at`（台北時間 2025-11-19 20:28），並透過 curl/PowerShell 成功排程寄送。  
-  - 撰寫 `doc/sendgrid_batch_email_flow.md`，整理 CSV 準備、JSON 組裝、排程、Activity 驗證與取消操作 SOP。
+- ✅ **單一餐廳頁 Website / Social 欄位上線**  
+  - Yelp 區塊下方新增「Website / Social」欄位，支援顯示官方網站與多個社群連結，無資料時自動隱藏。  
+  - 建立社群欄位解析器（單一 URL、逗號/換行串、ACF Link/Repeater 皆可），並統一採淺藍色連結樣式與 hover 效果。  
+  - 為未來在列表頁啟用同樣邏輯預先寫好程式碼（暫以註解保留）。
 
-- ✅ **餐廳類型篩選體驗升級**  
-  - `wordpress/functions.php` 新增類型 slug/label helper、URL 參數解析、快取與 `pre_get_posts` 過濾邏輯，支援 OR 多選與「Other」聚合。  
-  - `archive-restaurant.php` 列表頁提供可切換、多選、清除的類型 pill；餐廳卡片與 `single_restaurant.php` 單頁 chip 皆可點擊帶入 `types` 篩選。  
-  - 已選類型自動排在篩選列前端，chip 與地址間距調整，手機版可左右滑動，操作更直覺。
+- ✅ **ACF `social_links` 資料流確認**  
+  - 新增 ACF URL 欄位後，餐廳業者後台與 `restaurant-member-functions.php` 原流程即可讀寫；API 匯入處增加 `esc_url_raw()` 清洗，確保資料安全。  
+  - 與後台欄位、Apps Script 參數一致，避免重複開發。
 
-- ✅ **文件與待辦同步**  
-  - `doc/Next Task Prompt Byob.md` 更新至 2025-11-19，並新增 11/20 三大任務（官網連結、placeholder 替換、媒體庫整理）。  
-  - `doc/ai_progress_byob.md` 及本 README 均記錄今日成果，保持知識庫一致。
+- ✅ **餐廳類型篩選排序與預設清單**  
+  - `byob_get_all_restaurant_type_terms()` 會統計每個類型的出現次數並依人氣排序，已選類型仍優先顯示。  
+  - 新增預設類型集合（American、Steakhouse、Vegetarian/Vegan、Indian、Spanish 等），即便目前零筆餐廳也能呈現篩選 pill。  
+  - 仍以 transient 快取結果，並於 save/delete 餐廳時清除；測試期間曾加速清快取的 hook 已在收尾時移除。
 
-**🗓️ 明日（11/20）**
-- 🌐 單一餐廳頁補上官方網站/CTA。
-- 🖼️ 替換重點餐廳的 placeholder 圖片。
-- 🗂️ 整理媒體庫命名與資料夾，移除舊測試檔。
+- ✅ **文件與任務同步**  
+  - `doc/Next Task Prompt Byob.md` 更新 11/20 摘要並加入 11/21 兩項任務（Reddit 貼文活化、第二封餐廳 Email 草擬）。  
+  - `doc/ai_progress_byob.md`、本 README 與工作計畫保持一致。
+
+**🗓️ 明日（11/21）**
+- 💬 Reddit 貼文活化：盤點既有貼文、撰寫回覆模板、規劃下一波互動節奏並記錄成果。
+- 📧 第二封餐廳 Email 草擬：定義觸發時機、撰寫英文主體與中文註記、整理動態欄位與測試要點。
 
 ---
 
@@ -157,8 +160,9 @@ WordPress 核心
    - ✅ 地圖與定位、圖標優化（11/14-15）
    - ✅ Restaurant Access Transfer（11/17）
    - ✅ Token 批次與資料整併（11/18）
-   - 🚀 11/19：SendGrid 批次寄信、餐廳 Logo 補齊、類型篩選
-   - ⏳ FAQ／後台英文化、Reddit 回覆流程
+   - ✅ 11/19：SendGrid 排程、類型篩選優化
+   - 🚀 11/20：單頁官網顯示、類型排序權重、預設類型清單
+   - ⏳ Reddit 貼文活化、第二封餐廳 Email、FAQ／後台英文化
 
 2. **台北專案**：
    - 🔄 酒商合作邀約、Facebook 社團推廣
@@ -241,6 +245,6 @@ WordPress 核心
 
 ---
 
-*最後更新：2025年11月19日*
-*版本：v22.0*
-*明日重點（11/20）：單頁官網、照片替換、媒體庫整理*
+*最後更新：2025年11月20日*
+*版本：v23.0*
+*明日重點（11/21）：Reddit 貼文活化、第二封餐廳 Email 草案*
