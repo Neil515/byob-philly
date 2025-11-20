@@ -439,7 +439,7 @@ function byob_create_restaurant_article($restaurant_data, $source = 'direct') {
                 'open_bottle_service_other_note' => sanitize_textarea_field($restaurant_data['open_bottle_service_other_note'] ?? ''),
                 'phone' => sanitize_text_field($restaurant_data['phone'] ?? ''),
                 'website' => esc_url_raw($restaurant_data['website'] ?? ''),
-                'social_links' => $social_media_primary,
+                'social_links' => esc_url_raw($social_media_primary),
                 'notes' => sanitize_textarea_field($restaurant_data['notes'] ?? ''),
                 'last_updated' => current_time('Y-m-d'),
                 'source' => $restaurant_data['source'] ?? ($restaurant_data['is_owner'] === '是' ? '店主' : '表單填寫者'),
@@ -2830,6 +2830,25 @@ function byob_get_all_restaurant_type_terms() {
         return $cached;
     }
 
+    $default_other_slug = byob_get_other_type_slug();
+    $default_types = array(
+        array('label' => 'American',        'slug' => 'american'),
+        array('label' => 'Asian',           'slug' => 'asian'),
+        array('label' => 'French',          'slug' => 'french'),
+        array('label' => 'Italian',         'slug' => 'italian'),
+        array('label' => 'Japanese',        'slug' => 'japanese'),
+        array('label' => 'Mediterranean',   'slug' => 'mediterranean'),
+        array('label' => 'Mexican',         'slug' => 'mexican'),
+        array('label' => 'Steakhouse',      'slug' => 'steakhouse'),
+        array('label' => 'Seafood',         'slug' => 'seafood'),
+        array('label' => 'Vegetarian/Vegan','slug' => 'vegetarian-vegan'),
+        array('label' => 'Thai',            'slug' => 'thai'),
+        array('label' => 'Indian',          'slug' => 'indian'),
+        array('label' => 'Spanish',         'slug' => 'spanish'),
+        array('label' => 'Fine Dining',     'slug' => 'fine-dining'),
+        array('label' => 'Other',           'slug' => $default_other_slug, 'is_other' => true),
+    );
+
     $ids = get_posts(array(
         'post_type'      => 'restaurant',
         'post_status'    => 'publish',
@@ -2845,18 +2864,43 @@ function byob_get_all_restaurant_type_terms() {
             if (empty($term['slug'])) {
                 continue;
             }
-            if (!isset($collection[$term['slug']])) {
-        if (!isset($collection[$term['slug']])) {
-            $term['is_other'] = isset($term['is_other']) ? $term['is_other'] : byob_is_other_type_value($term['raw'], $term['label']);
-            $collection[$term['slug']] = $term;
-        }
+            $slug = $term['slug'];
+            if (!isset($collection[$slug])) {
+                $term['is_other'] = isset($term['is_other']) ? $term['is_other'] : byob_is_other_type_value($term['raw'], $term['label']);
+                $term['count'] = 0;
+                $collection[$slug] = $term;
             }
+            $collection[$slug]['count'] = isset($collection[$slug]['count']) ? $collection[$slug]['count'] + 1 : 1;
+        }
+    }
+
+    foreach ($default_types as $default_type) {
+        $slug = byob_normalize_type_slug($default_type['slug']);
+        if (!$slug) {
+            continue;
+        }
+
+        if (!isset($collection[$slug])) {
+            $collection[$slug] = array(
+                'raw'   => $default_type['label'],
+                'label' => $default_type['label'],
+                'slug'  => $slug,
+                'is_other' => !empty($default_type['is_other']),
+                'count' => 0,
+            );
         }
     }
 
     if (!empty($collection)) {
         uasort($collection, function ($a, $b) {
-            return strcasecmp($a['label'], $b['label']);
+            $count_a = isset($a['count']) ? intval($a['count']) : 0;
+            $count_b = isset($b['count']) ? intval($b['count']) : 0;
+
+            if ($count_a === $count_b) {
+                return strcasecmp($a['label'], $b['label']);
+            }
+
+            return ($count_a > $count_b) ? -1 : 1;
         });
         $collection = array_values($collection);
     } else {
