@@ -1,14 +1,15 @@
-{
-  "from": { "email": "join-us@byobmap.com", "name": "BYOB Philly Team" },
-  "personalizations": [
-    {
+     {
+       "from": { "email": "join-us@byobmap.com", "name": "BYOB Philly Team" },
+  "reply_to": { "email": "byobmap.tw@gmail.com", "name": "BYOB Philly Team Support" },
+       "personalizations": [
+         {
       "to": [{ "email": "info@amanophl.com" }],
       "subject": "Your Restaurant Was Recommended by the Philly BYOB Community — Help Us Keep It Accurate",
-      "dynamic_template_data": {
-        "restaurant_name": "A Mano",
-        "takeover_link": "https://byobmap.com/takeover-restaurant?token=jtIKt41Ey4arJHvK9KtsIf1tNj2c6uhX",
-        "listing_url": "https://byobmap.com/byob-restaurant/a-mano/"
-      }
+           "dynamic_template_data": {
+             "restaurant_name": "A Mano",
+             "takeover_link": "https://byobmap.com/takeover-restaurant?token=jtIKt41Ey4arJHvK9KtsIf1tNj2c6uhX",
+             "listing_url": "https://byobmap.com/byob-restaurant/a-mano/"
+           }
     },
     {
       "to": [{ "email": "1700bistrolabaia@gmail.com" }],
@@ -306,7 +307,5 @@
       }
     }
   ],
-  "template_id": "d-d62bee119113489eaa546ed878db1f1a",
-  "send_at": 1763555280,
-  "batch_id": "N2QzNDk0ZDktYzRmNS0xMWYwLWFmNTMtYTYzMTg3MmI1YjMwLWZhZGIxZjYyYQ"
-}
+  "template_id": "d-d62bee119113489eaa546ed878db1f1a"
+     }
