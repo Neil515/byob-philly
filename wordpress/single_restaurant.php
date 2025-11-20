@@ -75,6 +75,20 @@
   font-size: 0.85rem;
 }
 
+/* Link info section link color */
+.single-restaurant .link-info .field a {
+  color: #1a73e8;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.single-restaurant .link-info .field a:hover,
+.single-restaurant .link-info .field a:focus {
+  color: #1558b0;
+  border-color: #1558b0;
+}
+
 /* 底部操作按鈕間距 */
 .single-page-actions {
   margin-top: 30px !important;
@@ -411,22 +425,26 @@
 	<!-- 連結資訊（原本的 Website/Social Links 已註解，改為顯示 Yelp） -->
 	<div class="info-group link-info">
 		<?php 
-		  // 原本的 Website/Social Links 顯示邏輯已註解，改為只顯示 Yelp
-		  /*
-		  $website = get_field('website');
-		  $social_links = get_field('social_links');
-		  $links = [];
-
-		  if ($website) {
-			$links[] = '<a href="'.esc_url($website).'" target="_blank" rel="noopener">Website</a>';
-		  }
-		  if ($social_links) {
-			$links[] = '<a href="'.esc_url($social_links).'" target="_blank" rel="noopener">Social Media</a>';
-		  }
-		  */
-
-		  // 新增 Yelp 連結顯示
 		  $yelp_link = get_field('yelp_link');
+		  $website_link = trim((string) get_field('website'));
+		  $social_links_raw = (string) get_field('social_links');
+		  $social_links = array();
+
+		  if (!empty($social_links_raw)) {
+			$raw_items = preg_split('/[\r\n,]+/', $social_links_raw);
+			if ($raw_items && is_array($raw_items)) {
+			  foreach ($raw_items as $item) {
+				$item = trim($item);
+				if (!$item) {
+				  continue;
+				}
+				$social_links[] = $item;
+			  }
+			  $social_links = array_values(array_unique($social_links));
+			}
+		  }
+
+		  $has_website_or_social = !empty($website_link) || !empty($social_links);
 		?>
 
 		<?php if ($yelp_link): ?>
@@ -438,19 +456,28 @@
 		  <div class="field"><strong>Yelp:</strong> </div>
 		<?php endif; ?>
 
-		<?php 
-		  // 原本的 Website/Social Links 顯示（已註解）
-		  /*
-		  if (!empty($links)) {
-			echo '<div class="field">';
-			echo '<strong>Website/Social Links:</strong>';
-			echo implode(' | ', $links);
-			echo '</div>';
-		  } else {
-			echo '<div class="field"><strong>Website/Social Links:</strong></div>';
-		  }
-		  */
-		?>
+		<?php if ($has_website_or_social): ?>
+		  <div class="field website-social-links">
+			<strong>Website / Social:</strong>
+			<?php
+			  $link_snippets = array();
+
+			  if (!empty($website_link)) {
+				$link_snippets[] = '<a href="' . esc_url($website_link) . '" target="_blank" rel="noopener">View Website</a>';
+			  }
+
+			  if (!empty($social_links)) {
+				$total_social = count($social_links);
+				foreach ($social_links as $index => $link) {
+				  $label = ($total_social > 1) ? 'Social Profile ' . ($index + 1) : 'Social Profile';
+				  $link_snippets[] = '<a href="' . esc_url($link) . '" target="_blank" rel="noopener">' . esc_html($label) . '</a>';
+				}
+			  }
+
+			  echo '<span class="link-list">' . implode(' | ', $link_snippets) . '</span>';
+			?>
+		  </div>
+		<?php endif; ?>
 	</div>
 
 
