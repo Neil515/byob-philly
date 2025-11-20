@@ -1137,6 +1137,40 @@ if ($restaurant_pagination_html) {
             }
             */
             
+            /*
+            // Website / Social 顯示（前台列表預備，暫不顯示）
+            $website_link = trim((string) get_field('website'));
+            $social_links_raw = (string) get_field('social_links');
+            $social_links = array();
+            if (!empty($social_links_raw)) {
+              $raw_items = preg_split('/[\r\n,]+/', $social_links_raw);
+              if ($raw_items && is_array($raw_items)) {
+                foreach ($raw_items as $item) {
+                  $item = trim($item);
+                  if (!$item) {
+                    continue;
+                  }
+                  $social_links[] = $item;
+                }
+                $social_links = array_values(array_unique($social_links));
+              }
+            }
+            if (!empty($website_link) || !empty($social_links)) {
+              $link_snippets = array();
+              if (!empty($website_link)) {
+                $link_snippets[] = '<a href="' . esc_url($website_link) . '" target="_blank" rel="noopener">View Website</a>';
+              }
+              if (!empty($social_links)) {
+                $total_social = count($social_links);
+                foreach ($social_links as $index => $link) {
+                  $label = ($total_social > 1) ? 'Social Profile ' . ($index + 1) : 'Social Profile';
+                  $link_snippets[] = '<a href="' . esc_url($link) . '" target="_blank" rel="noopener">' . esc_html($label) . '</a>';
+                }
+              }
+              echo '<div class="field"><strong>Website / Social:</strong> ' . implode(' | ', $link_snippets) . '</div>';
+            }
+            */
+            
             // Yelp 連結顯示（暫時註解，未來如需顯示可啟用）
             /*
             $yelp_link = get_field('yelp_link');
