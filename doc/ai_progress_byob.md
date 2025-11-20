@@ -1,6 +1,6 @@
 # BYOB 專案開發進度記錄
 
-## 📅 專案概覽（更新：2025-11-19）
+## 📅 專案概覽（更新：2025-11-20）
 
 ### **台北 BYOB**（核心系統維運）
 - 核心功能與自動化流程已完整，持續推廣、酒商合作與 Email 模板優化。
@@ -8,6 +8,35 @@
 ### **費城 BYOB**（主要開發重心）
 - 前台英文化完成，持續拓展資料源、餐廳接管、自動寄信與社群推廣。
 - 技術堆疊：WordPress + WooCommerce + ACF + WP-CLI + Python 資料腳本 + SendGrid。
+
+
+## ✅ 2025年11月20日 — 單頁官網顯示與類型排序權重
+
+### 🎯 今日成就總覽
+- **單一餐廳頁連結體驗升級**
+  - Yelp 區塊下方新增「Website / Social」欄位，若同時有官網與多個社群連結會依序顯示並自動加入 `View Website`、`Social Profile` 連結。
+  - 新增社群欄位解析器，支援單一 URL、逗號/換行清單與 ACF Link/Reapter 格式；無資料時整段隱藏。
+  - Link 區塊統一套用淺藍色樣式與 hover 效果，與頁面底部 CTA 風格一致。
+- **ACF 欄位與資料流同步**
+  - 新增 `social_links` ACF URL 欄位後，後台表單與 `restaurant-member-functions.php` 原邏輯可直接使用；僅需在 API 匯入時對社群 URL 做 `esc_url_raw()` 清洗。
+  - 確認 `Next Task Prompt Byob`、相關表單不需額外改動即可支援新欄位格式。
+- **餐廳類型篩選排序與完整性**
+  - `byob_get_all_restaurant_type_terms()` 會計算每個類型在現有文章中的出現次數，並依 `count DESC + label ASC` 排序；UI 仍將已選類型優先顯示。
+  - 新增固定展示的預設類型清單（包含 Steakhouse、Vegetarian/Vegan、Indian、Spanish 等），即使目前零筆餐廳也會顯示篩選 pill。
+  - 以 transient 快取結果，並提供臨時清除 hook 便於驗證（已於作業完成後移除）。
+- **文件與待辦更新**
+  - `Next Task Prompt Byob.md` 更新至 2025-11-20，新增 11/21 兩項重點任務（Reddit 貼文活化、第二封餐廳 Email 草擬），並移除過早歷史紀錄。
+
+### 🔧 主要修改檔案
+- `wordpress/single_restaurant.php`：新增 Website/Social 區塊、連結樣式與多格式解析。
+- `wordpress/archive-restaurant.php`：預留相同顯示邏輯（暫時註解），供列表頁未來啟用。
+- `wordpress/functions.php`：餐廳類型統計排序、預設類型集合、`social_links` 匯入清洗、臨時快取清除 hook（已撤除）。
+- `doc/Next Task Prompt Byob.md`：重寫 11/20 摘要與 11/21 待辦。
+
+### 📌 備註 / 重要決策
+- 新的 Website/Social 區塊僅在該餐廳有填寫時渲染，避免空白欄位；列表頁需求待日後解除註解即可。
+- 類型排序改以實際資料熱度為主，預設類型則確保平台主力分類持續曝光；cache 仍以 save_post/delete_post 事件清除。
+- 11/21 重點鎖定社群活化與第二封餐廳 Email，確保資料更新與市場推廣同步推進。
 
 ---
 
