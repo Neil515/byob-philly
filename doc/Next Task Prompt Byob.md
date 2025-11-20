@@ -1,138 +1,20 @@
 # 🍷 BYOB 專案工作規劃
 
-## 📅 當前日期：2025-11-19
+## 📅 當前日期：2025-11-20
 
 ---
 
-## ✅ 今日摘要（2025-11-15）
+## ✅ 今日摘要（2025-11-20）
 
-### 🗺️ 地圖標記圖標優化與 Attribution 添加
-- **地圖標記圖標調整**：
-  - 將自定義 SVG 圖標（`placeholder.svg`）尺寸從 64x64 調整為 32x32 像素（默認）
-  - 高亮圖標尺寸從 72x72 調整為 40x40 像素
-  - 調整錨點位置以確保圖標正確對齊地圖位置
-  - 修改文件：`wordpress/assets/js/byob-nearby.js`
+### 🔗 單一餐廳頁外部連結更新
+- Yelp 區塊下方新增「Website / Social」欄位：依序顯示官方網站與多個社群連結，無資料時自動隱藏。
+- 新增社群欄位解析邏輯，支援單一 URL、逗號/換行清單與 ACF Link/Reapter 格式。
+- 所有連結採淺藍色樣式，與頁面底部導航一致。
 
-- **Attribution 添加**：
-  - 在地圖下方添加圖標來源 attribution
-  - 內容：`Wine icons created by surang - Flaticon`
-  - 連結到：`https://www.flaticon.com/free-icons/wine`
-  - 樣式：小字體（0.75rem）、靠右對齊、灰色文字
-  - 懸停效果：變為品牌色並顯示底線
-
-- **間距調整**：
-  - 增加地圖與 "Closest 5 Restaurants" 之間的間距
-  - 將 `.byob-nearby-wrapper` 的 `margin-top` 從 24px 調整為 40px
-
-- **修改文件**：
-  - `wordpress/archive-restaurant.php`：添加 attribution HTML 和 CSS 樣式
-
----
-
-## 🗓️ 明日（2025-11-16）待辦
-
-### 1. **發給餐廳的 Email 優化**
-   - **需求確認**：
-     - 確認 Email 發送時機（餐廳註冊時、資料更新時、驗證通過時等）
-     - 確認 Email 語言（英文、中文、或雙語）
-     - 確認 Email 內容重點（歡迎訊息、資料確認、後續步驟、CTA 等）
-   
-   - **實作項目**：
-     - 檢視現有的餐廳通知 Email 模板：
-       - `wordpress/functions.php` 中的 `byob_send_approval_notification()` 函數
-       - `wordpress/functions.php` 中的 `byob_send_welcome_email()` 函數
-       - `wordpress/Apps script - 費城餐廳確認版.js` 中的 `sendPhillyOwnerNotificationEmail()` 函數
-     - 草擬新版 Email 內容，納入：
-       - 歡迎加入 BYOB 平台
-       - 資料確認與補充說明
-       - 排序邏輯說明（驗證狀態、完整度、照片的重要性）
-       - 鼓勵上傳餐廳照片與補充完整資訊
-       - 提供後台編輯連結或說明
-     - 更新相關 Email 模板函數
-     - 測試 Email 發送流程與內容顯示
-
-### 2. **餐廳業者與既有文章建立連結功能**
-   - **需求說明**：
-     - 當已經有網友推薦的餐廳文章存在時，餐廳業者註冊後需要能夠與既有文章建立連結
-     - 目前情況：餐廳業者註冊後，如果沒有關聯的餐廳，後台會顯示「You currently have no associated restaurants」
-     - 需要實作：讓餐廳業者可以在後台搜尋並連結到既有的餐廳文章
-   
-   - **實作項目**：
-     - **後台頁面修改**：
-       - 修改 `wordpress/woocommerce/myaccount/restaurant-profile.php`
-       - 當餐廳業者沒有關聯餐廳時，顯示「連結既有餐廳」功能
-     - **搜尋功能**：
-       - 實作餐廳搜尋功能（依餐廳名稱、地址等）
-       - 顯示搜尋結果列表（餐廳名稱、地址、狀態等）
-       - 允許業者選擇要連結的餐廳
-     - **連結功能**：
-       - 實作連結確認機制（防止誤連結）
-       - 更新 `_restaurant_owner_id` 和 `_owned_restaurant_id` meta
-       - 發送通知給管理員（如有需要）
-     - **權限檢查**：
-       - 檢查餐廳是否已有其他業者連結
-       - 檢查餐廳狀態（是否已發布）
-       - 驗證業者身份（email 是否與餐廳資料匹配）
-     - **相關文件**：
-       - `wordpress/restaurant-member-functions.php`：可能需要新增連結相關函數
-       - `wordpress/functions.php`：可能需要新增搜尋 API endpoint
-
----
-
-## 🗓️ 明日（2025-11-17）待辦
-
-### 1. 餐廳業者 Email 建立與驗證
-- 產出並確認「業者歡迎/啟用」Email 英文模板（必要時雙語附註）
-- 觸發時機：完成註冊、資料儲存更新、審核通過
-- 內容要點：平台定位、後台編輯入口、資料完整度指引、上傳照片 CTA、聯絡窗口
-- 技術項目：
-  - 新增/更新寄送函數（WordPress）
-  - 寄送測試（實寄 + 截圖留存）
-
-### 2. 檢查餐廳業者後台（My Account）
-- 表單欄位與邏輯巡檢：
-  - 已切換 philly 欄位（`philly_corkage_fee`、`corkage_fee_amount`、`corkage_fee_note`）
-  - 顯示切換：`corkage_fee` 顯示金額、`other` 顯示說明
-  - 資料回填/儲存是否正確（含必填驗證）
-- 權限與導覽：角色/菜單/返回入口
-- 錯誤狀態與提示文案
-
-### 3. 「先網友推薦，後餐廳加入」的資料流檢視
-- 流程盤點：網友推薦 → 審核/去重 → 產草稿 → 邀請業者 → 業者接管/補完資訊
-- 核對關鍵欄位的來源與覆寫規則（避免覆蓋正確資料）
-- 事件觸發：完成註冊後自動關聯既有餐廳（或提供搜尋連結機制）
-- 通知串接：推薦者通知、業者通知、管理員監控清單
-
-### 4. 列表「餐廳類型」點選篩選（前台 UX）
-- 需求：點選列表卡片上的類型標籤，即以該類型為條件重新載入列表
-- 技術方案：
-  - 以 URL query 帶入類型（支援多值），前端讀取後應用現有排序/過濾邏輯
-  - 切換時保留既有排序、分頁、定位設定（可寫入/讀取 `sessionStorage`）
-- 驗收：桌機/手機可用、與 Nearby/排序不互斥、可清除篩選
-
----
-
-## 🗓️ 明日（2025-11-18）待辦
-
-### 1. 2025-11-16 餐廳 Email 爬取
-- 從 `Philly BYOB Restaurant_with_websites_merged_20251116.xlsx` 篩出 `Date = 2025-11-16` 餐廳
-- 使用既有 `philly_email_searcher.py` / `philly_email_extractor.py` 流程取得官方網站與 Email，結果格式需與 `Philly BYOB Restaurant_with_websites_20251104_142325_with_emails_20251106_114433.xlsx` 相同
-- 無官方網站或未抓到 Email 的欄位保留空值（或依流程填入 `no_website` / `not_found` 狀態），完成後將資料 append 到既有 Email 清單檔案末端
-
-### 2. 餐廳經緯度補錄
-- 針對 `Philly BYOB Restaurant_with_websites_merged_20251116.xlsx` 仍缺 `Latitude/Longitude` 的餐廳進行補抓
-- 沿用現有 Google Places / Geocode 查詢邏輯（`Name + Address + Philadelphia, PA`）；只更新空白欄位
-- 寫回同檔，並確認欄位位置仍在 `Yelp_URL` 之後
-
-### 3. 批次發送 Email 給業者
-- 匯出已取得 Email 的餐廳名單（含餐廳名稱、Email、前台連結、接管連結）
-- 使用既有 Gmail/Apps Script 模板，填入接管連結與前台連結後批次寄送
-- 完成後在清單標註寄送日期與狀態，保留實際寄出的樣本
-
-### 4. `philly_yelp_crawler` 資料夾整理
-- 移除無用或重複腳本、測試檔案與舊 log，保留正式使用的工具
-- 調整資料夾結構與 README，標註每個脚本的用途與輸入/輸出檔
-- 確認 `data/` 內檔案命名一致、移除過期中繼檔
+### 🏷️ 餐廳類型篩選優化
+- `byob_get_all_restaurant_type_terms()` 會計算每個類型的實際出現次數並依人氣排序。
+- 新增固定展示的預設類型（包含 Steakhouse、Vegetarian/Vegan、Indian、Spanish 等），即使目前零筆餐廳也能顯示按鈕。
+- 列表篩選 UI 仍將已選類型優先顯示，其餘按出現次數排序。
 
 ---
 
@@ -180,5 +62,21 @@
 
 ---
 
-*最後更新：2025-11-19*  
+## 🗓️ 明日（2025-11-21）待辦
+
+### 1. Reddit 貼文活化
+- **盤點現況**：整理既有 Reddit 貼文（r/philadelphia、r/PhillyFood 等）的互動狀態，列出需回覆的留言與潛在跟進對象。
+- **互動節奏**：撰寫 2-3 則範例回覆/更新貼文，強調進度（網站更新、餐廳接管成果）、詢問讀者想知道的 BYOB 主題。
+- **任務清單**：為下一波推文建立甘特（時間、子任務、所需素材），同時擬定 cross-post or AMA 計畫，避免與餐廳招募衝突。
+- **驗收**：完成回覆並記錄截圖、互動數；更新 `ai_progress_byob.md` 或專用追蹤表。
+
+### 2. 第二封餐廳 Email 草擬
+- **定位**：定義這封信的觸發情境（例如：第一次邀請後 3-5 天未回應、資料部分補齊、提醒上傳照片）。
+- **內容架構**：包含「感謝／提醒」「平台價值」「下一步操作（後台登入、FAQ、客服）」「CTA」；草擬英文主體並附中文註記。
+- **素材準備**：列出需要插入的動態欄位（餐廳名稱、接管連結、前台頁面、客服 Email），確定由 SendGrid 或 Apps Script 發送時的代碼欄位。
+- **檢查重點**：文案 tone & manner、加入 unsub / 偏好設定說明、測試郵件 placeholder，並在 `message_and_form/` 內建立對應草稿檔。
+
+---
+
+*最後更新：2025-11-20*  
 
