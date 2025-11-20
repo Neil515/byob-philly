@@ -1140,20 +1140,39 @@ if ($restaurant_pagination_html) {
             /*
             // Website / Social 顯示（前台列表預備，暫不顯示）
             $website_link = trim((string) get_field('website'));
-            $social_links_raw = (string) get_field('social_links');
             $social_links = array();
-            if (!empty($social_links_raw)) {
-              $raw_items = preg_split('/[\r\n,]+/', $social_links_raw);
+            $social_field_value = get_field('social_links');
+            if (is_array($social_field_value)) {
+              if (isset($social_field_value['url'])) {
+                $social_links[] = $social_field_value['url'];
+              } else {
+                foreach ($social_field_value as $entry) {
+                  if (is_string($entry)) {
+                    $entry = trim($entry);
+                    if ($entry) {
+                      $social_links[] = $entry;
+                    }
+                  } elseif (is_array($entry) && isset($entry['url'])) {
+                    $entry_url = trim((string) $entry['url']);
+                    if ($entry_url) {
+                      $social_links[] = $entry_url;
+                    }
+                  }
+                }
+              }
+            } elseif (is_string($social_field_value) && !empty(trim($social_field_value))) {
+              $raw_items = preg_split('/[\r\n,]+/', $social_field_value);
               if ($raw_items && is_array($raw_items)) {
                 foreach ($raw_items as $item) {
                   $item = trim($item);
-                  if (!$item) {
-                    continue;
+                  if ($item) {
+                    $social_links[] = $item;
                   }
-                  $social_links[] = $item;
                 }
-                $social_links = array_values(array_unique($social_links));
               }
+            }
+            if (!empty($social_links)) {
+              $social_links = array_values(array_unique($social_links));
             }
             if (!empty($website_link) || !empty($social_links)) {
               $link_snippets = array();
