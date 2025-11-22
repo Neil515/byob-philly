@@ -16,33 +16,27 @@ BYOB (Bring Your Own Bottle) 是一個自帶酒水餐廳推薦平台，目前運
 
 ---
 
-## 🚀 最新進度（2025年11月20日）
+## 🚀 最新進度（2025年11月22日）
 
-### 今日完成：單頁官網顯示與餐廳類型排序權重
+### 今日完成：SendGrid 稽核 SOP + 社群節奏
 
 **🎯 關鍵成就**
 
-- ✅ **單一餐廳頁 Website / Social 欄位上線**  
-  - Yelp 區塊下方新增「Website / Social」欄位，支援顯示官方網站與多個社群連結，無資料時自動隱藏。  
-  - 建立社群欄位解析器（單一 URL、逗號/換行串、ACF Link/Repeater 皆可），並統一採淺藍色連結樣式與 hover 效果。  
-  - 為未來在列表頁啟用同樣邏輯預先寫好程式碼（暫以註解保留）。
+- ✅ **SendGrid 寄送稽核流程建立**  
+  - 梳理 11/19 兩批餐廳 Email 的追蹤方式，於說明中示範 SendGrid Activity 搜尋（`batch_id`、日期範圍、主旨）與 `POST /v3/messages/search` API 查詢，確保能快速掌握送達／退信／開信狀態。  
+  - 盤點 `philly_yelp_crawler/testmail.json`：31 家餐廳、8 家有多組 email、共 40 個收件地址，作為後續報表與第二封寄信清單基準。
 
-- ✅ **ACF `social_links` 資料流確認**  
-  - 新增 ACF URL 欄位後，餐廳業者後台與 `restaurant-member-functions.php` 原流程即可讀寫；API 匯入處增加 `esc_url_raw()` 清洗，確保資料安全。  
-  - 與後台欄位、Apps Script 參數一致，避免重複開發。
+- ✅ **社群輕量經營藍圖完成**  
+  - 新增 `philly_yelp_crawler/social_channel_playbook.md`，定義「Reddit 每週 1 則主題貼文 + Facebook 私密社團每週 1 則 spotlight」的 60 分鐘節奏，附 CTA 樣板、素材共享規則與 KPI 表（推薦數 / 接管數 / Email 回覆數）。  
+  - 明確指定 Facebook `Philly BYOB Club` 為官方社團，Reddit 則以收集串、討論串、地圖進度、回顧串輪替，降低營運成本但維持導流。
 
-- ✅ **餐廳類型篩選排序與預設清單**  
-  - `byob_get_all_restaurant_type_terms()` 會統計每個類型的出現次數並依人氣排序，已選類型仍優先顯示。  
-  - 新增預設類型集合（American、Steakhouse、Vegetarian/Vegan、Indian、Spanish 等），即便目前零筆餐廳也能呈現篩選 pill。  
-  - 仍以 transient 快取結果，並於 save/delete 餐廳時清除；測試期間曾加速清快取的 hook 已在收尾時移除。
+- ✅ **任務規劃同步**  
+  - `doc/Next Task Prompt Byob.md` 更新至 2025-11-22，新增 11/23 兩項重點（第二封餐廳 Email 排程、Reddit + Facebook 固定內容設定），並刪除舊的 11/19～11/21 任務。  
+  - `doc/ai_progress_byob.md`、本 README 皆同步記錄今日成果與後續行動。
 
-- ✅ **文件與任務同步**  
-  - `doc/Next Task Prompt Byob.md` 更新 11/20 摘要並加入 11/21 兩項任務（Reddit 貼文活化、第二封餐廳 Email 草擬）。  
-  - `doc/ai_progress_byob.md`、本 README 與工作計畫保持一致。
-
-**🗓️ 明日（11/21）**
-- 💬 Reddit 貼文活化：盤點既有貼文、撰寫回覆模板、規劃下一波互動節奏並記錄成果。
-- 📧 第二封餐廳 Email 草擬：定義觸發時機、撰寫英文主體與中文註記、整理動態欄位與測試要點。
+**🗓️ 明日（11/23）**
+- 📧 第二封餐廳 Email 排程：鎖定未回覆的第一批餐廳，完成文案、名單整理、SendGrid 批次設定與排程記錄。
+- 💬 Reddit + Facebook 貼文規律：依社群 playbook 建立貼文排程表、預寫首週內容、設置 `#填表入口` 與 `#本週任務板` 置頂貼文，並統一 CTA。
 
 ---
 
@@ -157,12 +151,11 @@ WordPress 核心
 
 ### 短期（本週）
 1. **費城專案**：
-   - ✅ 地圖與定位、圖標優化（11/14-15）
-   - ✅ Restaurant Access Transfer（11/17）
-   - ✅ Token 批次與資料整併（11/18）
-   - ✅ 11/19：SendGrid 排程、類型篩選優化
-   - 🚀 11/20：單頁官網顯示、類型排序權重、預設類型清單
-   - ⏳ Reddit 貼文活化、第二封餐廳 Email、FAQ／後台英文化
+   - ✅ SendGrid 稽核 SOP、`testmail.json` 數據盤點（11/22）
+   - ✅ 社群節奏與貼文模板建立（11/22）
+   - 🚀 11/23：第二封餐廳 Email 排程
+   - 🚀 11/23：Reddit + Facebook 固定貼文規律與 CTA 設定
+   - ⏳ FAQ／後台英文化（排程中）
 
 2. **台北專案**：
    - 🔄 酒商合作邀約、Facebook 社團推廣
