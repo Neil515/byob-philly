@@ -1,6 +1,6 @@
 # BYOB 專案開發進度記錄
 
-## 📅 專案概覽（更新：2025-11-20）
+## 📅 專案概覽（更新：2025-11-22）
 
 ### **台北 BYOB**（核心系統維運）
 - 核心功能與自動化流程已完整，持續推廣、酒商合作與 Email 模板優化。
@@ -9,6 +9,29 @@
 - 前台英文化完成，持續拓展資料源、餐廳接管、自動寄信與社群推廣。
 - 技術堆疊：WordPress + WooCommerce + ACF + WP-CLI + Python 資料腳本 + SendGrid。
 
+
+## ✅ 2025年11月22日 — SendGrid 稽核與社群節奏
+
+### 🎯 今日成就總覽
+- **SendGrid 寄送稽核 SOP 完成**
+  - 梳理 11/19 兩批餐廳 Email 的追蹤流程，於說明中示範 Activity 搜尋（依 `batch_id`、日期範圍、主旨）與 `POST /v3/messages/search` API 查詢，確保可快速核對送達、退信與開信事件。
+  - 盤點 `philly_yelp_crawler/testmail.json`：確認 31 家餐廳、8 家擁有多組 email、總計 40 個收件地址，作為報表與後續跟進的基準資料。
+- **社群輕量經營藍圖落地**
+  - 建立 `social_channel_playbook.md`，定義 Reddit 每週單一主題貼文 + Facebook 私密社團週貼與日常互動的 60 分鐘節奏，並提供 CTA 樣板、素材共享與 KPI 表格（推薦數 / 接管數 / Email 回覆數）。
+  - 針對 Facebook 社團確立 `Philly BYOB Club` 作為官方陣地，Reddit 則輪替收集串、討論串、地圖進度、回顧串，降低經營成本但維持導流。
+- **工作排程同步**
+  - `Next Task Prompt Byob.md` 更新至 2025-11-22，新增 11/23 的兩項重點：第二封餐廳 Email 排程、Reddit + Facebook 貼文規律與固定內容設定，並刪除舊的 11/19～11/21 任務。
+
+### 🔧 主要修改檔案
+- `doc/Next Task Prompt Byob.md`：重寫今日摘要與 11/23 待辦。
+- `philly_yelp_crawler/social_channel_playbook.md`：新增社群節奏、貼文模板與 KPI 追蹤表。
+
+### 📌 備註 / 重要決策
+- SendGrid 稽核需保留 `batch_id` 與寄送 JSON，後續按照 Activity 或 API 查詢即可掌握未回信業者清單，作為第二封 Email 排程基礎。
+- Reddit/Facebook 雙軌以「固定模板 + 集中時段」運作，可在一週內用 60 分鐘完成所有貼文與互動；所有 CTA 導向推薦表單與 takeover link，確保三大 KPI（推薦、接管、Email 回覆）同步提升。
+- 社群素材（成功案例、Email 指標、待回覆名單）集中於共享資料夾，貼文時僅需複用資料即可加速產出。
+
+---
 
 ## ✅ 2025年11月20日 — 單頁官網顯示與類型排序權重
 
@@ -113,29 +136,6 @@
 ### 🔧 主要修改檔案
 - `wordpress/functions.php`：新增一系列 Takeover 相關函式（meta box、token 生成/驗證、通知信）、使用者列表欄位顯示。
 - `doc/Next Task Prompt Byob.md`：記錄 11/18 待辦。
-
----
-
-## ✅ 2025年11月16日 — 前台欄位切換、資料管線與名單更新
-
-### 🎯 今日成就總覽
-- 前台全部切換為費城欄位：`single_restaurant.php`、`archive-restaurant.php`、`restaurant-profile.php`、`restaurant-member-functions.php`。
-- 修復 Corkage 顯示與完整度計算、確保新餐廳可顯示。
-- 針對 11/16 新餐廳補齊官網、Yelp、Lat/Lng，並以 Python 腳本寫回 Excel。
-
-### 🔧 主要修改檔案
-- `wordpress/single_restaurant.php`、`archive-restaurant.php`、`woocommerce/myaccount/restaurant-profile.php`、`restaurant-member-functions.php`
-- `doc/Next Task Prompt Byob.md`
-- `philly_yelp_crawler/update_yelp_links.py`、`philly_yelp_crawler/update_latlng_1116.py`
-
----
-
-## ✅ 2025年11月15日 — 地圖標記圖標優化與 Attribution 添加
-
-### 🎯 今日成就總覽
-- 自訂 SVG 地圖圖標調整（32px/40px），修正錨點與間距。
-- 地圖下方新增 Flaticon Attribution、樣式微調。
-- 相關修改檔案：`wordpress/assets/js/byob-nearby.js`、`wordpress/archive-restaurant.php`。
 
 ---
 
