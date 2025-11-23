@@ -1,6 +1,6 @@
 # BYOB 專案開發進度記錄
 
-## 📅 專案概覽（更新：2025-11-22）
+## 📅 專案概覽（更新：2025-11-23）
 
 ### **台北 BYOB**（核心系統維運）
 - 核心功能與自動化流程已完整，持續推廣、酒商合作與 Email 模板優化。
@@ -9,6 +9,31 @@
 - 前台英文化完成，持續拓展資料源、餐廳接管、自動寄信與社群推廣。
 - 技術堆疊：WordPress + WooCommerce + ACF + WP-CLI + Python 資料腳本 + SendGrid。
 
+
+## ✅ 2025年11月23日 — 第二封 Email A/B 與社群行事曆
+
+### 🎯 今日成就總覽
+- **SendGrid 第二封排程準備到位**
+  - 將 `philly_yelp_crawler/mail_11.30.json` 拆成 `mail_11.30_template2.json`、`mail_11.30_template3.json`，並加入兩筆模擬餐廳（wavyclub21 測試）以便隨時驗證模板。
+  - 產出單獨測試檔（Mabu / Yuhiro）並以模板 2、模板 3 寄出，即時調整 SendGrid 動態欄位與模板錯誤（Template Render Fail）問題。
+  - 新增 `doc/sendgrid_followup_ab_test.md`，將 72 小時限制、PowerShell 指令、測試/驗證步驟寫成操作手冊，未來只需等到 11/30 22:45（台北）前 72 小時再執行即可。
+- **社群節奏文件化**
+  - 依照今日確立的時間/成本模型，編寫 `doc/social_calendar.md`，把 Reddit 每週 1 貼 + FB 每週 2 貼的主題輪替、CTA 連結與貼文語氣整理成白話清單。
+  - `doc/Next Task Prompt Byob.md` 更新至 11/23，並將 11/24 的兩項重點（FB 週一 Spotlight + Reddit 週五草稿）寫入，附上 Little Fish 草稿以供複製。
+
+### 🔧 主要修改檔案
+- `philly_yelp_crawler/mail_11.30.json`：新增測試餐廳、校正 personalizations。
+- `philly_yelp_crawler/mail_11.30_template2.json` / `mail_11.30_template3.json` / 測試 JSON：分拆 A/B 名單、設定 send_at。
+- `doc/sendgrid_followup_ab_test.md`：新增 SendGrid 排程操作指引。
+- `doc/social_calendar.md`：新增 Reddit + FB 行事曆。
+- `doc/Next Task Prompt Byob.md`：更新 11/24 工作內容與貼文草稿.
+
+### 📌 備註 / 重要決策
+- SendGrid `/mail/send` 只能在 72 小時內排程；操作手冊已提醒需等到 11/27 晚上後再送出正式批次。
+- 模板 2、3 綁定的 Handlebars 需維持 `{{restaurant_name}}`、`{{listing_url}}`、`{{takeover_link}}`；若再度異動，記得用 `Test Your Email` 驗證。
+- 社群節奏以 60 分鐘/週維運：Reddit 週末長帖 + FB 週一 Spotlight/週五任務；所有 CTA 統一導向推薦表單與 takeover。
+
+---
 
 ## ✅ 2025年11月22日 — SendGrid 稽核與社群節奏
 
@@ -92,53 +117,6 @@
 
 ---
 
-## ✅ 2025年11月18日 — Token 批次、Email 流程與資料整併
-
-### 🎯 今日成就總覽
-- **資料整併 & 爬蟲擴充**
-  - `update_1117_restaurants.py` 可針對 11/17、11/18 餐廳，一次查詢官網、Yelp、Latitude/Longitude、Email，並支援 `.env` 讀取 Google API/自訂金鑰。
-  - Email 抓取流程優化：加入無效 email 過濾、搜尋 contact/about 頁面，並可寫入多欄（Email_1~Email_n）。
-  - 新增 `merge_token_emails.py`（後續刪除）以便把 Excel 的 Email 欄位合併回 takeover token CSV。
-
-- **Token 與批次寄信準備**
-  - 在 Cloudways WordPress 建立 `wp-content/mu-plugins/byob-takeover-cli.php`，提供 `wp byob-takeovers batch` 指令，輸入 JSON/CSV 即可批次產生 takeover token、Takeover Link、CSV 輸出，並支援覆寫舊 token、寄送單一 Summary Email。
-  - 以 `token_batch_memo.md` 記錄 Cloudways 操作流程（SSH 登入、路徑、指令、清理方式），確保下次可複製流程。
-  - `sendgrid_test.py` 建立，讀 `takeover_tokens_20251118_copy.csv` 前兩筆，寄至 wavyclub21 / slow3605 測試；指示使用者將 API Key 放入環境變數，並提示 403 原因（Sender 未驗證或 Key 權限不足）。
-
-- **計畫與文件**
-  - `Next Task Prompt Byob.md` 更新：加入 11/19 的 SendGrid 批次發信、餐廳 Logo 補齊、餐廳類型篩選優化三大任務。
-  - 說明環境變數與 `.env` 使用方式，避免在腳本內硬編 API Key。
-
-### 🔧 主要修改檔案
-- `philly_yelp_crawler/update_1117_restaurants.py`：整合網站/Yelp/LatLng/Email 流程，支援 `.env`、日期參數化。
-- `philly_yelp_crawler/sendgrid_test.py`：建立 SendGrid 測試寄信腳本（最新版已刪除待重建）。
-- `wp-content/mu-plugins/byob-takeover-cli.php`：WP-CLI 自訂指令，輸出 CSV、寄 Summary Email。
-- `philly_yelp_crawler/token_batch_memo.md`：Cloudways/Token 產生備忘錄。
-- `doc/Next Task Prompt Byob.md`：新增 2025-11-19 待辦。
-- 其他臨時腳本（`merge_token_emails.py` 等）經分析後刪除。
-
-### 📌 備註 / 重要決策
-- **SendGrid 403**：使用者提供付費 API Key，若寄信遭 403，優先檢查 Sender Identity 驗證及 Key 權限（Mail Send）。
-- **WP-CLI 指令命名**：為避免 `wp byob` 既有命名衝突，改註冊為 `wp byob-takeovers`。
-- **資料合併**：Email 欄位以餐廳名稱對應，若 Excel 有多欄 Email，全部合併至 Token CSV，供後續批次寄信使用。
-
----
-
-## ✅ 2025年11月17日 — 餐廳接管流程與 Email 任務準備
-
-### 🎯 今日成就總覽
-- 後台餐廳文章新增「Restaurant Takeover Link」meta box，可生成 30 天有效 token、記錄產生者與到期日。
-- 完成接管流程：token 驗證、已註冊/未註冊接管、接管後自動登入並寄通知信到 `byobmap.tw@gmail.com`。
-- 接管頁面全面英文化，按鈕/Checkbox 語系調整，避免 `text-transform` 造成大寫。
-- 使用者列表新增 `Restaurant` 欄位，可直接連至餐廳文章並排序。
-- `Next Task Prompt` 更新 11/18 任務：Email 爬取、Lat/Lng、批次寄信、資料夾整理。
-
-### 🔧 主要修改檔案
-- `wordpress/functions.php`：新增一系列 Takeover 相關函式（meta box、token 生成/驗證、通知信）、使用者列表欄位顯示。
-- `doc/Next Task Prompt Byob.md`：記錄 11/18 待辦。
-
----
-
 ## 📊 專案整體進度
 
 ### 🍷 台北 BYOB 專案
@@ -183,12 +161,10 @@
 * ✅ 地圖與定位功能完成
 * ✅ 餐廳列表多層級排序邏輯完成
 
-**下一步重點（11/17）：**
-* 📧 餐廳業者 Email 建立與驗證（歡迎/啟用）
-* 🧭 檢查餐廳業者後台欄位與權限流程
-* 🔄 「先網友推薦、後餐廳加入」資料流巡檢與事件串接
-* 🏷️ 列表「餐廳類型」點選篩選（前台 UX + Query）
-* ⏳ FAQ/後台英文化、Reddit 回覆節奏、資料衝突處理、社群啟動、上線與招募、榮譽系統
+**近期重點（11/23）：**
+* 📧 11/30 第二封 Email 排程：等到 SendGrid 72 小時視窗開啟後立即送出模板 2/3。
+* 📣 FB 週一 Spotlight + Reddit 週五貼文草稿：依行事曆維持週節奏並導流至表單/Takeover。
+* 🔄 持續蒐集餐廳回覆，反饋到 KPI 與地圖資料，確保後續寄送名單更新。
 
 ---
 
