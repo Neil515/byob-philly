@@ -97,37 +97,41 @@ Your BYOB Info Could Help Guests Find You – Can You Confirm?
 
 📩 Email 內容：
 
-Hi [Restaurant Name] Team,
-
-We’re building Philly’s first dedicated BYOB dining guide — and your restaurant was highlighted by the community as a great BYOB spot!
-
-To make sure your listing stands out and gives guests accurate expectations, we’d love your quick confirmation.
-
-Here’s what we’re hoping to verify:
-
-• Is BYOB allowed?
-
-• Do you charge a corkage fee?
-
-• Are wine glasses or openers provided?
+Hi {{restaurant_name}} Team,
 
 
-📣 Restaurants that confirm are marked as “Verified by Restaurant”, get higher visibility, and are prioritized in search results.
-
-You can preview your public listing here:  
-👉 [Restaurant Frontend Page Link]
-
-And it only takes a minute to review and confirm your info:  
-👉 [Restaurant Takeover Link]
+You’ve been highlighted by the Philly BYOB community as a great bring-your-own-bottle spot!
 
 
-You can also just reply to this email — we’ll help update your listing.
+👉 Can you quickly confirm or update your info here?
+{{takeover_link}}
+This only takes a minute — and helps your listing stand out to guests.
+Or just reply to this email — we’ll take care of the rest.
 
-Thanks again for being part of Philly’s unique BYOB scene. We're excited to feature the best local spots — including yours!
 
-Best,
-Neil
+We’re building Philly’s first dedicated BYOB guide, and your listing could be shown as “Verified by Restaurant.”
+
+
+What we’d like to confirm:
+- Is BYOB allowed?
+- Do you charge a corkage fee?
+- Are wine glasses or openers available?
+
+
+Why it matters:
+- Verified listings show higher in search
+- Guests know what to expect
+- You’ll connect with more wine-loving diners
+
+
+You can also preview your current listing here:
+{{frontend_page_link}}
+
+
+Thanks again for being part of Philly’s amazing BYOB culture!
+
+
+— Neil
 BYOB Philly Team
 📍 https://byobmap.com
-
 📬 https://byobmap.com/contact
