@@ -16,27 +16,28 @@ BYOB (Bring Your Own Bottle) 是一個自帶酒水餐廳推薦平台，目前運
 
 ---
 
-## 🚀 最新進度（2025年11月22日）
+## 🚀 最新進度（2025年11月23日）
 
-### 今日完成：SendGrid 稽核 SOP + 社群節奏
+### 今日完成：第二封 Email A/B 及社群行事曆
 
 **🎯 關鍵成就**
 
-- ✅ **SendGrid 寄送稽核流程建立**  
-  - 梳理 11/19 兩批餐廳 Email 的追蹤方式，於說明中示範 SendGrid Activity 搜尋（`batch_id`、日期範圍、主旨）與 `POST /v3/messages/search` API 查詢，確保能快速掌握送達／退信／開信狀態。  
-  - 盤點 `philly_yelp_crawler/testmail.json`：31 家餐廳、8 家有多組 email、共 40 個收件地址，作為後續報表與第二封寄信清單基準。
+- ✅ **SendGrid 第二封排程就緒（模板 2 & 3）**  
+  - `philly_yelp_crawler/mail_11.30.json` 拆成 `mail_11.30_template2.json`、`mail_11.30_template3.json`，並加入 2 筆模擬餐廳方便隨時測試。  
+  - 製作單獨測試檔（Mabu = 模板 2、Yuhiro = 模板 3），針對 SendGrid Handlebars error 做即時排查，確認模板正確帶入 `restaurant_name / listing_url / takeover_link`。  
+  - 新增 `doc/sendgrid_followup_ab_test.md`，記錄 72 小時限制、PowerShell 指令、Activity 驗證與清除 API key 的步驟，等 11/27 22:45（台北）之後即可直接排程。
 
-- ✅ **社群輕量經營藍圖完成**  
-  - 新增 `philly_yelp_crawler/social_channel_playbook.md`，定義「Reddit 每週 1 則主題貼文 + Facebook 私密社團每週 1 則 spotlight」的 60 分鐘節奏，附 CTA 樣板、素材共享規則與 KPI 表（推薦數 / 接管數 / Email 回覆數）。  
-  - 明確指定 Facebook `Philly BYOB Club` 為官方社團，Reddit 則以收集串、討論串、地圖進度、回顧串輪替，降低營運成本但維持導流。
+- ✅ **社群節奏文件化**  
+  - 建立 `doc/social_calendar.md`，把「Reddit 每週 1 貼（週末）」 + 「FB 私密社團每週 2 貼（週一 Spotlight / 週五任務）」的主題輪替、CTA 連結與語氣整理成白話操作表。  
+  - 將網站導流入口統一為 3 條連結（推薦表單 / takeover / 地圖首頁），貼文只要複製即可，降低產出成本。
 
-- ✅ **任務規劃同步**  
-  - `doc/Next Task Prompt Byob.md` 更新至 2025-11-22，新增 11/23 兩項重點（第二封餐廳 Email 排程、Reddit + Facebook 固定內容設定），並刪除舊的 11/19～11/21 任務。  
-  - `doc/ai_progress_byob.md`、本 README 皆同步記錄今日成果與後續行動。
+- ✅ **任務規劃更新**  
+  - `doc/Next Task Prompt Byob.md` 更新到 11/24，列出 FB 週一 Spotlight（Little Fish 草稿）與 Reddit 週五長帖草稿兩項待辦。  
+  - `doc/ai_progress_byob.md`、本 README 同步記錄今日成果與下一步。
 
-**🗓️ 明日（11/23）**
-- 📧 第二封餐廳 Email 排程：鎖定未回覆的第一批餐廳，完成文案、名單整理、SendGrid 批次設定與排程記錄。
-- 💬 Reddit + Facebook 貼文規律：依社群 playbook 建立貼文排程表、預寫首週內容、設置 `#填表入口` 與 `#本週任務板` 置頂貼文，並統一 CTA。
+**🗓️ 明日（11/24）**
+- 📘 FB 社團週一貼文：使用 Little Fish Spotlight 草稿，確保 24 小時內互動並記錄 KPI。
+- 🧵 Reddit 週五草稿：先寫好「待驗證 BYOB 名單 + CTA」長帖，週五可直接貼上。
 
 ---
 
@@ -151,14 +152,15 @@ WordPress 核心
 
 ### 短期（本週）
 1. **費城專案**：
-   - ✅ SendGrid 稽核 SOP、`testmail.json` 數據盤點（11/22）
-   - ✅ 社群節奏與貼文模板建立（11/22）
-   - 🚀 11/23：第二封餐廳 Email 排程
-   - 🚀 11/23：Reddit + Facebook 固定貼文規律與 CTA 設定
+   - ✅ SendGrid 第二封 A/B 準備（11/23）
+   - ✅ 社群行事曆與 CTA 入口文件化（11/23）
+   - 🚀 11/24：FB 週一 Spotlight 貼文（Little Fish）+ KPI 記錄
+   - 🚀 11/24：Reddit 週五長帖草稿完成
+   - ⏳ 11/27 以後：於 SendGrid 72 小時視窗內送出第二封批次
    - ⏳ FAQ／後台英文化（排程中）
 
 2. **台北專案**：
-   - 🔄 酒商合作邀約、Facebook 社團推廣
+   - 🔄 酒商合作邀約、Facebook 社團推廣（持續）
 
 ### 中期（未來 1 個月）
 1. **費城專案**：
@@ -238,6 +240,6 @@ WordPress 核心
 
 ---
 
-*最後更新：2025年11月20日*
-*版本：v23.0*
-*明日重點（11/21）：Reddit 貼文活化、第二封餐廳 Email 草案*
+*最後更新：2025年11月23日*
+*版本：v24.0*
+*明日重點（11/24）：FB 週一 Spotlight、Reddit 週五草稿*
