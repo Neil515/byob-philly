@@ -1,52 +1,43 @@
 # 🍷 BYOB 專案工作規劃
 
-## 📅 當前日期：2025-11-23
+## 📅 當前日期：2025-11-24
 
 ---
 
-## ✅ 今日摘要（2025-11-23）
+## ✅ 今日摘要（2025-11-24）
 
-### 📨 第二封 Email 排程準備
-- 將 `philly_yelp_crawler/mail_11.30.json` 拆成兩個模板批次（模板 2 & 3），並新增 `mail_11.30_template{2,3}.json`、`mail_11.30_test.json`、模擬餐廳測試流程。
-- 建立 `doc/sendgrid_followup_ab_test.md`，記錄 72 小時限制、API 指令與驗證步驟，方便進入可排程視窗時快速重送。
-- 完成模板 2/3 測試（Mabu、Yuhiro）與錯誤排除，確認後續僅需重新送出即可。
-
-### 👥 社群節奏落地
-- 依據今天的討論，建立 `doc/social_calendar.md`，把 Reddit 每週 1 貼 + FB 每週 2 貼的節奏、主題輪替、CTA 連結整理成操作說明。
-- 明確鎖定網站導流的三個連結（推薦表單、takeover、地圖首頁），後續貼文全部複用，降低產出成本。
+- 完成地圖介面 UX 改版：map pin 點擊會開啟右側/底部資訊面板，`View Details >>` 新視窗連結、hover 延遲與鎖定機制皆已調整。
+- 調整 `archive-restaurant.php`，地圖載入改為「全量餐廳 + 分頁卡片」，目前 85 家都有 marker。
+- 產出 `lookup_post_ids.py`、`push_acf_latlng.py` 的 README，紀錄 slug/REST API 流程、常見錯誤與指令。
 
 ---
 
-## 🗓️ 明日（2025-11-24）待辦
+## 🗓️ 明日（2025-11-25）待辦
 
-### 1. FB 社團週一貼文（Little Fish Spotlight）
-- **目標**：在 `Philly BYOB Club` 上線週一 Spotlight，持續保持每週固定節奏。
+### 1. Other 類別篩選修正
+- **目標**：修復餐廳類別篩選點選「Other」只顯示部分資料的問題。
 - **步驟**：
-  - 以下列草稿為主，搭配餐廳圖片或地圖截圖：
-    ```
-    🍷 BYOB Pick of the Week: Little Fish (Queen Village)
+  - 釐清 `byob_get_other_type_slug()` 與前端 URL 參數的對應，確認是否支援多選。
+  - 若「Other」是聚合多個小類別，需在查詢端加入 OR 條件，並處理清單標籤顯示。
+  - 加上自動化測試或至少記錄 2~3 家樣本驗證流程。
+- **完成定義**：在前台點選 Other 後能列出所有對應餐廳，URL 可分享，與其他篩選互不衝突。
 
-    One of the most loved BYOB seafood spots in Philly, Little Fish is known for its cozy space, $0 corkage fee, and seasonal tasting menu.
+### 2. 網站文章（內容/SEO）
+- **目標**：完成下一篇官網文章（題材可與 BYOB 地圖進度、餐廳 spotlight 或操作教學相關），以帶動站內導流。
+- **步驟**：
+  - 先決定題目＋大綱，列出必備 CTA（推薦表單、Takeover、地圖）。
+  - 撰寫草稿（約 600–800 字），包含至少一張圖片或表格，並補好 meta title/description。
+  - 排程至 WordPress（或存草稿），並將連結放入社群/Email 待發布清單。
+- **完成定義**：文章已上 CMS 且內含 CTA、SEO meta，待核可即可發布。
 
-    Do you have another seafood BYOB you love? Share below — or help us confirm restaurant info here:
-
-    👉 https://byobmap.com/takeover
-
-    Let’s build this map together 🗺️
-
-    #BYOBPhilly #MemberPick #SeafoodWeek
-    ```
-  - 確認貼文中標記 `byobmap.com/byob-restaurant/little-fish-byob/` 或圖片說明，並在 24 小時內回覆留言。
-- **完成定義**：貼文已排程/發布並記錄在 KPI 表，留言通知開啟。
-
-### 2. Reddit 週五貼文草稿
-- **目標**：提前完成 11/29（週五）長帖內容，主題聚焦「驗證倒數清單 + 社群徵求資料」。
-- **大綱**：
-  - 標題建議：`[Help Needed] 15 Philly BYOB spots still missing corkage info – can you confirm?`
-  - 內文包含：目前 verified/待驗證數據、列出 5~8 家重點餐廳（附簡短描述 + takeover/表單連結）、說明如何私訊或留言提供資料。
-  - 結尾 CTA：`Submit a rec → byobmap.com/recommend`、`Restaurant takeover → byobmap.com/takeover`
-- **完成定義**：Markdown 草稿寫入 Notion/Doc，並在 `social_calendar` 中註記，待週五複製貼上即可。
+### 3. 整理 `restaurant_crawler` 資料夾
+- **目標**：盤整 `restaurant_crawler` 中的程式與資料檔，清楚標註目前仍使用/已淘汰的項目。
+- **步驟**：
+  - 逐一檢視 `requirements`, `config`, `list/*.xlsx`, `logs` 等資料夾，列出用途與最後更新時間。
+  - 對「已完成」或「不再使用」的檔案建立 `README` 或備註（必要時移到 `archive/`）。
+  - 針對仍使用的腳本補充執行指令/依賴套件。
+- **完成定義**：資料夾內有一份整理文檔，明確列出保留/備份/移除建議，並刪除確定不用的舊檔。
 
 ---
 
-*最後更新：2025-11-23*
+*最後更新：2025-11-24*
