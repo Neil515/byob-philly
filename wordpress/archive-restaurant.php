@@ -370,6 +370,7 @@
   max-width: 1200px;
   margin: 0 auto 40px;
   padding: 0 20px;
+  position: relative;
 }
 
 .byob-map-header {
@@ -493,10 +494,199 @@
   color: #666666;
 }
 
+.byob-map-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+.byob-map-canvas {
+  position: relative;
+}
+
+.byob-map-detail {
+  position: relative;
+  background: #fff6f7;
+  border-radius: 18px;
+  box-shadow: 0 15px 35px rgba(139, 38, 53, 0.12);
+  padding: 24px;
+  border: 1px solid rgba(139, 38, 53, 0.1);
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.byob-map-detail.is-active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.byob-map-detail__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  border: none;
+  background: transparent;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #a33745;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 50%;
+}
+
+.byob-map-detail__close:hover,
+.byob-map-detail__close:focus {
+  background: rgba(163, 55, 69, 0.08);
+  outline: none;
+}
+
+.byob-detail__placeholder {
+  margin: 0;
+  color: #8b2635;
+  font-weight: 600;
+}
+
+.byob-detail__header h3 {
+  margin: 4px 0 4px;
+  font-size: 1.35rem;
+  color: #2f2f2f;
+}
+
+.byob-detail__eyebrow {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #a05b6a;
+}
+
+.byob-detail__meta {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.byob-detail__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  background: #8b2635;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.byob-detail__cta:hover,
+.byob-detail__cta:focus {
+  background: #a33745;
+  color: #fff;
+}
+
+.byob-detail__section {
+  margin-top: 14px;
+}
+
+.byob-detail__row {
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.byob-detail__row strong {
+  display: inline-block;
+  width: 130px;
+  color: #8b2635;
+}
+
+.byob-detail__subtext {
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 4px;
+}
+
+.byob-detail__muted {
+  color: #888;
+}
+
+.byob-infowindow__hint {
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #777;
+}
+
+.byob-map-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+  z-index: 20;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.byob-map-overlay.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (min-width: 1024px) {
+  .byob-map-layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .byob-map-canvas {
+    flex: 1 1 65%;
+  }
+
+  .byob-map-detail {
+    flex: 1 1 35%;
+    min-height: 360px;
+    position: sticky;
+    top: 100px;
+  }
+
+  .byob-map-overlay {
+    display: none;
+  }
+}
+
 .restaurant-card--highlight {
   border-color: #8b2635 !important;
   box-shadow: 0 10px 20px rgba(139, 38, 53, 0.18) !important;
   transform: translateY(-3px);
+}
+
+@media (max-width: 767px) {
+  .byob-map-detail {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 20px 20px 0 0;
+    padding: 24px;
+    z-index: 30;
+    box-shadow: 0 -12px 35px rgba(0, 0, 0, 0.15);
+    transform: translateY(100%);
+    opacity: 1;
+    pointer-events: none;
+  }
+
+  .byob-map-detail.is-active {
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .byob-map-detail__close {
+    right: 12px;
+    top: 10px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -546,6 +736,183 @@ $has_type_filters_ui = !empty($type_filter_display_terms) || $has_other_filter_t
 
 <?php
 $byob_restaurant_js_data = array();
+$byob_restaurant_js_ids = array();
+
+if (!function_exists('byob_fetch_restaurant_js_entry')) {
+  function byob_fetch_restaurant_js_entry($post_id) {
+    $post_id = intval($post_id);
+    if (!$post_id || get_post_status($post_id) !== 'publish') {
+      return null;
+    }
+
+    $post_title = get_the_title($post_id);
+    $permalink = get_permalink($post_id);
+
+    $latitude = get_field('latitude', $post_id);
+    $longitude = get_field('longitude', $post_id);
+
+    $address = get_field('address', $post_id);
+    $map_link = get_field('map_link', $post_id);
+    if (!$map_link && $address) {
+      $clean_address = preg_replace('/(\d+樓|\d+[Ff]|\d+樓層|地下\d+樓|[Bb]\d+)/u', '', $address);
+      $clean_address = trim($clean_address);
+      $map_link = $clean_address ? 'https://www.google.com/maps/search/?api=1&query=' . urlencode($clean_address) : '';
+    }
+
+    $phone = get_field('phone', $post_id);
+    $formatted_phone = '';
+    if (!empty($phone)) {
+      $formatted_phone = $phone;
+      if (strpos($phone, '-') === false) {
+        $clean_phone = preg_replace('/[^0-9]/', '', $phone);
+        if (strlen($clean_phone) == 8) {
+          $formatted_phone = substr($clean_phone, 0, 2) . '-' . substr($clean_phone, 2);
+        } elseif (strlen($clean_phone) == 10 && substr($clean_phone, 0, 2) == '09') {
+          $formatted_phone = substr($clean_phone, 0, 4) . '-' . substr($clean_phone, 4);
+        }
+      }
+    }
+
+    $type_terms = byob_get_restaurant_type_terms($post_id);
+    $type_labels = !empty($type_terms) ? wp_list_pluck($type_terms, 'label') : array();
+
+    $philly_corkage_fee = get_field('philly_corkage_fee', $post_id);
+    $corkage_fee_amount = get_field('corkage_fee_amount', $post_id);
+    $corkage_fee_note = get_field('corkage_fee_note', $post_id);
+
+    $charged_output = '';
+    if (!empty($philly_corkage_fee)) {
+      if ($philly_corkage_fee === 'free') {
+        $charged_output = __('Free', 'byob');
+      } elseif ($philly_corkage_fee === 'corkage_fee') {
+        $charged_output = __('Corkage Fee', 'byob');
+      } elseif ($philly_corkage_fee === 'other') {
+        $charged_output = __('Other', 'byob');
+      } else {
+        $charged_output = $philly_corkage_fee;
+      }
+    }
+
+    $fee_output = '';
+    if (!empty($philly_corkage_fee)) {
+      if ($philly_corkage_fee === 'corkage_fee') {
+        $fee_output = !empty($corkage_fee_amount) ? $corkage_fee_amount : __('Charged (amount not set)', 'byob');
+      } elseif ($philly_corkage_fee === 'other') {
+        $fee_output = !empty($corkage_fee_note) ? $corkage_fee_note : __('Other (description not set)', 'byob');
+      } elseif ($philly_corkage_fee === 'free') {
+        $fee_output = __('No corkage fee', 'byob');
+      }
+    }
+
+    $equipment = get_field('wine_service_equipment', $post_id);
+    $equipment_other_note = get_field('philly_equipment_other_note', $post_id);
+    $equipment_output = '';
+    if ($equipment) {
+      if (is_array($equipment)) {
+        $equipment_display = array();
+        foreach ($equipment as $item) {
+          if (strtolower($item) === 'other') {
+            $equipment_display[] = !empty($equipment_other_note) ? 'Other: ' . $equipment_other_note : $item;
+          } else {
+            $equipment_display[] = $item;
+          }
+        }
+        $equipment_output = implode(' | ', $equipment_display);
+      } else {
+        if (stripos($equipment, 'other') !== false && !empty($equipment_other_note)) {
+          $equipment_output = preg_replace('/\bother\b/i', 'Other: ' . $equipment_other_note, $equipment);
+        } else {
+          $equipment_output = $equipment;
+        }
+      }
+    }
+
+    $notes = get_field('philly_dining_experience', $post_id);
+
+    $verification_info = byob_get_verification_badge_info($post_id);
+
+    $gallery_fields = array('restaurant_photo_1', 'restaurant_photo_2', 'restaurant_photo_3');
+    $has_gallery_photo = false;
+    foreach ($gallery_fields as $gallery_field) {
+      $photo_value = get_field($gallery_field, $post_id);
+      if ((is_array($photo_value) && !empty($photo_value['ID'])) || !empty($photo_value)) {
+        $has_gallery_photo = true;
+        break;
+      }
+    }
+
+    $acf_logo      = get_field('restaurant_logo', $post_id);
+    $user_logo_id  = get_post_meta($post_id, '_restaurant_logo', true);
+    $admin_logo    = get_field('restaurant_photo', $post_id);
+
+    $logo_id = null;
+    if ($acf_logo) {
+      if (is_array($acf_logo) && isset($acf_logo['ID'])) {
+        $logo_id = $acf_logo['ID'];
+      } elseif (is_numeric($acf_logo)) {
+        $logo_id = intval($acf_logo);
+      }
+    }
+    if (!$logo_id && $user_logo_id) {
+      $logo_id = $user_logo_id;
+    }
+    if (!$logo_id && $admin_logo && is_array($admin_logo) && isset($admin_logo['ID'])) {
+      $logo_id = $admin_logo['ID'];
+    }
+
+    $logo_url = $logo_id ? wp_get_attachment_url($logo_id) : '';
+
+    $completeness_sources = array(
+      $address,
+      $phone,
+      $corkage_fee_amount,
+      $corkage_fee_note,
+      $equipment,
+      $notes,
+      $map_link,
+      $type_labels,
+      $latitude,
+      $longitude,
+    );
+    $completeness_score = 0;
+    foreach ($completeness_sources as $source_value) {
+      if (is_array($source_value)) {
+        if (!empty(array_filter($source_value))) {
+          $completeness_score++;
+        }
+      } else {
+        if (!empty($source_value) || $source_value === 0 || $source_value === '0') {
+          $completeness_score++;
+        }
+      }
+    }
+
+    return array(
+      'id' => $post_id,
+      'title' => $post_title,
+      'permalink' => $permalink,
+      'latitude' => ($latitude !== null && $latitude !== '') ? (float) $latitude : null,
+      'longitude' => ($longitude !== null && $longitude !== '') ? (float) $longitude : null,
+      'address' => $address,
+      'mapLink' => $map_link,
+      'phone' => $phone,
+      'formattedPhone' => $formatted_phone,
+      'verificationStatus' => $verification_info['status'],
+      'verificationLabel' => $verification_info['label'],
+      'verificationIcon' => $verification_info['icon'],
+      'verificationDescription' => $verification_info['description'],
+      'hasPhoto' => $has_gallery_photo,
+      'completenessScore' => $completeness_score,
+      'favoriteCount' => 0,
+      'corkageFee' => $charged_output,
+      'corkageDetails' => $fee_output,
+      'equipment' => $equipment_output,
+      'notes' => $notes,
+      'typeLabels' => array_values((array) $type_labels),
+      'logoUrl' => $logo_url,
+    );
+  }
+}
 
 $byob_google_args = array('libraries' => 'places');
 $byob_google_api_key = apply_filters('byob_google_maps_api_key', '');
@@ -582,12 +949,32 @@ wp_enqueue_script(
       <?php esc_html_e('Locate Again', 'byob'); ?>
     </button>
   </div>
-  <div id="byob-restaurant-map" class="byob-map" role="region" aria-label="<?php esc_attr_e('Map of BYOB restaurants', 'byob'); ?>"></div>
-<p id="byob-map-status" class="byob-map-status"></p>
-<div class="byob-map-attribution">
-  <a href="https://www.flaticon.com/free-icons/wine" title="wine icons">Wine icons created by surang - Flaticon</a>
-</div>
-<div id="byob-nearby-wrapper" class="byob-nearby-wrapper" hidden>
+  <div class="byob-map-layout">
+    <div class="byob-map-canvas">
+      <div id="byob-restaurant-map" class="byob-map" role="region" aria-label="<?php esc_attr_e('Map of BYOB restaurants', 'byob'); ?>"></div>
+      <p id="byob-map-status" class="byob-map-status"></p>
+      <div class="byob-map-attribution">
+        <a href="https://www.flaticon.com/free-icons/wine" title="wine icons">Wine icons created by surang - Flaticon</a>
+      </div>
+    </div>
+    <aside
+      id="byob-map-detail"
+      class="byob-map-detail"
+      aria-live="polite"
+      aria-expanded="false"
+    >
+      <button type="button" class="byob-map-detail__close" aria-label="<?php esc_attr_e('Close restaurant details', 'byob'); ?>">
+        &times;
+      </button>
+      <div class="byob-map-detail__content">
+        <p class="byob-detail__placeholder">
+          <?php esc_html_e('Click a pin to see restaurant info.', 'byob'); ?>
+        </p>
+      </div>
+    </aside>
+  </div>
+  <div id="byob-map-overlay" class="byob-map-overlay" hidden></div>
+  <div id="byob-nearby-wrapper" class="byob-nearby-wrapper" hidden>
     <h3 class="byob-nearby-title"><?php esc_html_e('Closest 5 Restaurants', 'byob'); ?></h3>
     <ul id="byob-nearby-list" class="byob-nearby-list" aria-live="polite"></ul>
   </div>
@@ -960,6 +1347,7 @@ if ($restaurant_pagination_html) {
         'typeLabels' => array_values((array) $type_labels),
         'logoUrl' => $logo_url,
       );
+      $byob_restaurant_js_ids[$post_id] = true;
     ?>
     <div
       class="restaurant-card"
@@ -1226,6 +1614,28 @@ if ($restaurant_pagination_html) {
     <p>No restaurants found.</p>
   <?php endif; ?>
 </div>
+
+<?php
+$all_restaurant_ids = get_posts(array(
+  'post_type' => 'restaurant',
+  'post_status' => 'publish',
+  'fields' => 'ids',
+  'posts_per_page' => -1,
+  'no_found_rows' => true,
+));
+
+if (!empty($all_restaurant_ids)) {
+  foreach ($all_restaurant_ids as $map_post_id) {
+    if (isset($byob_restaurant_js_ids[$map_post_id])) {
+      continue;
+    }
+    $extra_entry = byob_fetch_restaurant_js_entry($map_post_id);
+    if (!empty($extra_entry)) {
+      $byob_restaurant_js_data[] = $extra_entry;
+    }
+  }
+}
+?>
 
 <?php
 // 獲取圖標 URL
