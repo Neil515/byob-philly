@@ -21,6 +21,11 @@
   const nearbyListElement = document.getElementById('byob-nearby-list');
   const retryButton = document.getElementById('byob-retry-location');
   const cardsContainer = document.querySelector('.restaurant-archive-list');
+  const detailPanel = document.getElementById('byob-map-detail');
+  const detailContent = detailPanel ? detailPanel.querySelector('.byob-map-detail__content') : null;
+  const detailCloseButton = detailPanel ? detailPanel.querySelector('.byob-map-detail__close') : null;
+  const detailOverlay = document.getElementById('byob-map-overlay');
+  const detailDefaultContent = detailContent ? detailContent.innerHTML : '';
 
   const markerIndex = new Map();
   let mapInstance = null;
@@ -28,6 +33,8 @@
   let activeMarker = null;
   let userMarker = null;
   let isLocating = false;
+  let lockedMarkerId = null;
+  let infoWindowCloseTimeout = null;
 
   /**
    * Utility helpers
@@ -62,6 +69,13 @@
       return (miles * 5280).toFixed(0) + ' ft';
     }
     return miles.toFixed(miles < 10 ? 1 : 0) + ' mi';
+  }
+
+  function formatMultiline(value) {
+    if (!value) {
+      return '';
+    }
+    return escapeHtml(String(value)).replace(/\n/g, '<br>');
   }
 
   function haversineDistance(lat1, lon1, lat2, lon2) {
@@ -246,7 +260,7 @@
     bounds.extend(position);
 
     marker.addListener('mouseover', () => {
-      if (!hasHoverPointer) {
+      if (!hasHoverPointer || lockedMarkerId) {
         return;
       }
       highlightRestaurant(restaurant.id, true);
@@ -257,12 +271,13 @@
       if (!hasHoverPointer) {
         return;
       }
-      clearHighlights();
+      scheduleInfoWindowClose();
+      clearHighlights(false);
     });
 
     marker.addListener('click', () => {
       highlightRestaurant(restaurant.id, false);
-      openInfoWindow(marker, restaurant);
+      openDetailPanel(restaurant);
     });
   });
 
@@ -278,10 +293,37 @@
     mapInstance.setCenter(fallbackCenter);
   }
 
+  if (mapInstance) {
+    mapInstance.addListener('click', () => {
+      closeDetailPanel();
+    });
+  }
+
+  if (detailCloseButton) {
+    detailCloseButton.addEventListener('click', () => {
+      closeDetailPanel();
+    });
+  }
+
+  if (detailOverlay) {
+    detailOverlay.addEventListener('click', () => {
+      closeDetailPanel();
+    });
+  }
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      closeDetailPanel();
+    }
+  });
+
   /**
    * Highlight helpers
    */
   function highlightRestaurant(restaurantId, fromHover) {
+    if (lockedMarkerId && fromHover) {
+      return;
+    }
     const marker = markerIndex.get(String(restaurantId));
     if (marker) {
       if (activeMarker && activeMarker !== marker) {
@@ -290,6 +332,7 @@
       marker.setIcon(highlightMarkerIcon);
       activeMarker = marker;
       if (!fromHover) {
+        lockedMarkerId = restaurantId;
         mapInstance.panTo(marker.getPosition());
       }
     }
@@ -313,7 +356,10 @@
     }
   }
 
-  function clearHighlights() {
+  function clearHighlights(force = false) {
+    if (!force && lockedMarkerId) {
+      return;
+    }
     if (activeMarker) {
       activeMarker.setIcon(defaultMarkerIcon);
       activeMarker = null;
@@ -335,6 +381,10 @@
     if (!infoWindow) {
       return;
     }
+    if (infoWindowCloseTimeout) {
+      clearTimeout(infoWindowCloseTimeout);
+      infoWindowCloseTimeout = null;
+    }
     const distanceText = restaurant.distanceMiles
       ? `<div class="nearby-meta">${escapeHtml(formatDistance(restaurant.distanceMiles))}</div>`
       : '';
@@ -348,12 +398,125 @@
         <strong>${escapeHtml(restaurant.title)}</strong>
         ${distanceText}
         ${typeLabel}
-        <div style="margin-top:8px;"><a href="${escapeHtml(restaurant.permalink)}" target="_blank" rel="noopener">${escapeHtml('View Details >>')}</a></div>
+        <div class="byob-infowindow__hint">${escapeHtml('Click to open details')}</div>
       </div>
     `;
 
     infoWindow.setContent(content);
     infoWindow.open(mapInstance, marker);
+  }
+
+  function scheduleInfoWindowClose() {
+    if (!infoWindow) {
+      return;
+    }
+    if (infoWindowCloseTimeout) {
+      clearTimeout(infoWindowCloseTimeout);
+    }
+    infoWindowCloseTimeout = window.setTimeout(() => {
+      infoWindow.close();
+      infoWindowCloseTimeout = null;
+    }, 450);
+  }
+
+  function renderDetailContent(restaurant) {
+    if (!detailContent) {
+      return;
+    }
+    const typeLine =
+      Array.isArray(restaurant.typeLabels) && restaurant.typeLabels.length
+        ? escapeHtml(restaurant.typeLabels.join(' / '))
+        : '';
+    const distanceLine =
+      typeof restaurant.distanceMiles === 'number'
+        ? `${escapeHtml(formatDistance(restaurant.distanceMiles))} away`
+        : '';
+    const address = restaurant.address
+      ? restaurant.mapLink
+        ? `<a href="${escapeHtml(restaurant.mapLink)}" target="_blank" rel="noopener">${escapeHtml(
+            restaurant.address
+          )}</a>`
+        : escapeHtml(restaurant.address)
+      : '<span class="byob-detail__muted">N/A</span>';
+    const phone = restaurant.phone
+      ? `<a href="${restaurant.formattedPhone ? escapeHtml(restaurant.formattedPhone) : `tel:${escapeHtml(restaurant.phone)}`}">${escapeHtml(
+          restaurant.phone
+        )}</a>`
+      : '<span class="byob-detail__muted">N/A</span>';
+    const corkage = restaurant.corkageFee
+      ? escapeHtml(restaurant.corkageFee)
+      : '<span class="byob-detail__muted">No corkage info yet</span>';
+    const corkageDetails = restaurant.corkageDetails
+      ? `<div class="byob-detail__subtext">${formatMultiline(restaurant.corkageDetails)}</div>`
+      : '';
+    const equipment = restaurant.equipment
+      ? formatMultiline(restaurant.equipment)
+      : '<span class="byob-detail__muted">Not specified</span>';
+    const notes = restaurant.notes
+      ? formatMultiline(restaurant.notes)
+      : '<span class="byob-detail__muted">—</span>';
+
+    detailContent.innerHTML = `
+      <div class="byob-detail__header">
+        <div>
+          ${typeLine ? `<div class="byob-detail__eyebrow">${typeLine}</div>` : ''}
+          <h3>${escapeHtml(restaurant.title || '')}</h3>
+          ${distanceLine ? `<div class="byob-detail__meta">${distanceLine}</div>` : ''}
+        </div>
+        <a class="byob-detail__cta" href="${escapeHtml(restaurant.permalink || '#')}" target="_blank" rel="noopener">
+          View Details >>
+        </a>
+      </div>
+      <div class="byob-detail__section">
+        <div class="byob-detail__row"><strong>Address:</strong> ${address}</div>
+        <div class="byob-detail__row"><strong>Phone:</strong> ${phone}</div>
+        <div class="byob-detail__row"><strong>Corkage Fee:</strong> ${corkage}</div>
+        ${corkageDetails ? `<div class="byob-detail__row">${corkageDetails}</div>` : ''}
+        <div class="byob-detail__row">
+          <strong>Wine Equipment:</strong> ${equipment}
+        </div>
+        <div class="byob-detail__row">
+          <strong>Notes:</strong> ${notes}
+        </div>
+      </div>
+    `;
+  }
+
+  function toggleDetailOverlay(active) {
+    if (!detailOverlay) {
+      return;
+    }
+    if (active) {
+      detailOverlay.hidden = false;
+      detailOverlay.classList.add('is-active');
+    } else {
+      detailOverlay.classList.remove('is-active');
+      detailOverlay.hidden = true;
+    }
+  }
+
+  function openDetailPanel(restaurant) {
+    if (!detailPanel || !detailContent) {
+      return;
+    }
+    renderDetailContent(restaurant);
+    detailPanel.classList.add('is-active');
+    detailPanel.setAttribute('aria-expanded', 'true');
+    toggleDetailOverlay(true);
+  }
+
+  function closeDetailPanel() {
+    if (!detailPanel || !detailPanel.classList.contains('is-active')) {
+      return;
+    }
+    detailPanel.classList.remove('is-active');
+    detailPanel.setAttribute('aria-expanded', 'false');
+    toggleDetailOverlay(false);
+    lockedMarkerId = null;
+    if (detailContent) {
+      detailContent.innerHTML = detailDefaultContent;
+    }
+    clearHighlights(true);
   }
 
   /**
@@ -424,17 +587,23 @@
 
       if (hasHoverPointer) {
         listItem.addEventListener('mouseenter', () => {
+          if (lockedMarkerId) {
+            return;
+          }
           highlightRestaurant(restaurant.id, true);
         });
         listItem.addEventListener('mouseleave', () => {
-          clearHighlights();
+          if (lockedMarkerId) {
+            return;
+          }
+          clearHighlights(false);
         });
       }
 
       listItem.addEventListener('click', (event) => {
         event.preventDefault();
         highlightRestaurant(restaurant.id, false);
-        openInfoWindow(markerIndex.get(String(restaurant.id)), restaurant);
+        openDetailPanel(restaurant);
       });
 
       fragment.appendChild(listItem);
@@ -550,7 +719,8 @@
 
   if (retryButton) {
     retryButton.addEventListener('click', () => {
-      clearHighlights();
+      closeDetailPanel();
+      clearHighlights(true);
       requestGeolocation();
     });
   }
