@@ -38,6 +38,8 @@ logger = logging.getLogger(__name__)
 GOOGLE_PLACES_BASE_URL = "https://maps.googleapis.com/maps/api/place"
 GOOGLE_CUSTOM_SEARCH_URL = "https://www.googleapis.com/customsearch/v1"
 GOOGLE_GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json"
+# 以市中心座標作為 Location Bias（30km 範圍足夠涵蓋整個費城）
+PHILLY_LOCATION_BIAS = "circle:30000@39.9526,-75.1652"
 
 # 輸入檔案
 INPUT_FILE = Path(__file__).parent / "data" / "Philly BYOB Restaurant_with_websites_merged.xlsx"
@@ -123,6 +125,102 @@ def get_place_details_website(place_id: str, api_key: str) -> Optional[str]:
         logger.error(f"取得 Place Details 時發生錯誤: {str(e)}")
     
     return None
+
+
+def find_place_candidate(address: str, api_key: str) -> Optional[dict]:
+    """
+    先用 Find Place API 取得最符合的 candidate，避免地址被吸附到鄰近門牌
+    """
+    url = f"{GOOGLE_PLACES_BASE_URL}/findplacefromtext/json"
+    params = {
+        "input": address,
+        "inputtype": "textquery",
+        "fields": "place_id,geometry/location",
+        "key": api_key,
+        "locationbias": PHILLY_LOCATION_BIAS,
+    }
+
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        if data.get("status") == "OK" and data.get("candidates"):
+            return data["candidates"][0]
+        if data.get("status") == "ZERO_RESULTS":
+            logger.warning(f"Find Place 無結果: {address}")
+        else:
+            logger.warning(f"Find Place API 錯誤: {data.get('status')}")
+    except Exception as e:
+        logger.error(f"Find Place 呼叫失敗: {str(e)}")
+
+    return None
+
+
+def geocode_place_id(place_id: str, api_key: str) -> Tuple[Optional[float], Optional[float]]:
+    """
+    使用 place_id 查詢經緯度，確保座標對應到指定建物
+    """
+    if not place_id:
+        return None, None
+
+    params = {
+        "place_id": place_id,
+        "key": api_key
+    }
+
+    try:
+        response = requests.get(GOOGLE_GEOCODE_URL, params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+        if data.get("status") == "OK" and data.get("results"):
+            location = data["results"][0].get("geometry", {}).get("location", {})
+            return location.get("lat"), location.get("lng")
+        if data.get("status") == "ZERO_RESULTS":
+            logger.warning(f"Geocoding(place_id) 無結果: {place_id}")
+        else:
+            logger.warning(f"Geocoding(place_id) API 錯誤: {data.get('status')}")
+    except Exception as e:
+        logger.error(f"Geocoding(place_id) 失敗: {str(e)}")
+
+    return None, None
+
+
+def geocode_address_direct(address: str, api_key: str) -> Tuple[Optional[float], Optional[float]]:
+    """
+    傳統的地址查詢，作為 Find Place 失敗時的備援
+    """
+    params = {
+        "address": address,
+        "key": api_key
+    }
+
+    try:
+        logger.info(f"搜尋經緯度 (Geocode): {address}")
+        time.sleep(0.3)  # 避免請求過快
+        response = requests.get(GOOGLE_GEOCODE_URL, params=params, timeout=10)
+
+        if response.status_code == 200:
+            data = response.json()
+
+            if data.get('status') == 'OK':
+                results = data.get('results', [])
+                if results:
+                    location = results[0].get('geometry', {}).get('location', {})
+                    lat = location.get('lat')
+                    lng = location.get('lng')
+
+                    if lat is not None and lng is not None:
+                        logger.info(f"找到經緯度 (Geocode): ({lat}, {lng})")
+                        return lat, lng
+            elif data.get('status') == 'ZERO_RESULTS':
+                logger.warning(f"Geocoding API 無結果: {address}")
+            else:
+                logger.warning(f"Geocoding API 錯誤: {data.get('status')}")
+
+    except Exception as e:
+        logger.error(f"搜尋經緯度時發生錯誤 (Geocode): {str(e)}")
+
+    return None, None
 
 
 def get_yelp_link(restaurant_name: str, api_key: str, cx: str) -> Optional[str]:
@@ -294,55 +392,36 @@ def extract_emails_from_website(website_url: str, restaurant_name: str = None) -
 
 def get_lat_lng_from_address(address: str, api_key: str) -> Tuple[Optional[float], Optional[float]]:
     """
-    使用 Google Geocoding API 根據地址取得經緯度
-    
-    Args:
-        address: 餐廳地址
-        api_key: Google API Key
-        
-    Returns:
-        (latitude, longitude) 元組，如果找不到則返回 (None, None)
+    先透過 Find Place 拿到專屬 place_id，再回填經緯度；若失敗才退回傳統 geocode。
+    這樣可以避免 corner building 或多門牌被誤配到同一個地址。
     """
     if not address or not address.strip():
         logger.warning("地址為空，無法搜尋經緯度")
         return None, None
-    
-    # 確保地址包含 Philadelphia, PA
-    if "Philadelphia" not in address:
-        address = f"{address}, Philadelphia, PA"
-    
-    params = {
-        "address": address,
-        "key": api_key
-    }
-    
-    try:
-        logger.info(f"搜尋經緯度: {address}")
-        time.sleep(0.3)  # 避免請求過快
-        response = requests.get(GOOGLE_GEOCODE_URL, params=params, timeout=10)
-        
-        if response.status_code == 200:
-            data = response.json()
-            
-            if data.get('status') == 'OK':
-                results = data.get('results', [])
-                if results:
-                    location = results[0].get('geometry', {}).get('location', {})
-                    lat = location.get('lat')
-                    lng = location.get('lng')
-                    
-                    if lat and lng:
-                        logger.info(f"找到經緯度: ({lat}, {lng})")
-                        return lat, lng
-            elif data.get('status') == 'ZERO_RESULTS':
-                logger.warning(f"Geocoding API 無結果: {address}")
-            else:
-                logger.warning(f"Geocoding API 錯誤: {data.get('status')}")
-    
-    except Exception as e:
-        logger.error(f"搜尋經緯度時發生錯誤: {str(e)}")
-    
-    return None, None
+
+    normalized_address = address.strip()
+    if "Philadelphia" not in normalized_address:
+        normalized_address = f"{normalized_address}, Philadelphia, PA"
+    elif "PA" not in normalized_address:
+        normalized_address = f"{normalized_address}, PA"
+
+    candidate = find_place_candidate(normalized_address, api_key)
+    if candidate:
+        location = candidate.get("geometry", {}).get("location", {})
+        lat = location.get("lat")
+        lng = location.get("lng")
+        if lat is not None and lng is not None:
+            logger.info(f"找到經緯度 (Find Place): ({lat}, {lng})")
+            return lat, lng
+
+        place_id = candidate.get("place_id")
+        lat, lng = geocode_place_id(place_id, api_key)
+        if lat is not None and lng is not None:
+            logger.info(f"找到經緯度 (Place ID): ({lat}, {lng})")
+            return lat, lng
+
+    # Find Place 無結果或缺少座標，使用舊的地址 geocode 作備援
+    return geocode_address_direct(normalized_address, api_key)
 
 
 def process_restaurant(restaurant_name: str, address: str, website: str, places_api_key: str, 
