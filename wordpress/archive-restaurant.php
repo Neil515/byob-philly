@@ -711,12 +711,16 @@ $type_filter_terms = byob_get_all_restaurant_type_terms();
 $type_filter_display_terms = array();
 $type_filter_active_terms = array();
 $other_filter_slug = byob_get_other_type_slug();
-$has_other_filter_terms = false;
 $other_filter_is_active = in_array($other_filter_slug, $active_type_filters, true);
+$other_filter_term = null;
 
 foreach ($type_filter_terms as $term) {
   if (!empty($term['is_other'])) {
-    $has_other_filter_terms = true;
+    if ($other_filter_term === null) {
+      $term['slug'] = $other_filter_slug;
+      $term['label'] = __('Other', 'byob');
+      $other_filter_term = $term;
+    }
     continue;
   }
   if (in_array($term['slug'], $active_type_filters, true)) {
@@ -728,7 +732,15 @@ foreach ($type_filter_terms as $term) {
 
 $type_filter_display_terms = array_merge($type_filter_active_terms, $type_filter_display_terms);
 
-$has_type_filters_ui = !empty($type_filter_display_terms) || $has_other_filter_terms;
+if ($other_filter_term !== null) {
+  if ($other_filter_is_active) {
+    array_unshift($type_filter_display_terms, $other_filter_term);
+  } else {
+    $type_filter_display_terms[] = $other_filter_term;
+  }
+}
+
+$has_type_filters_ui = !empty($type_filter_display_terms);
 ?>
 <div class="page-header page-header--nearby">
   <h1 class="page-title">BYOB Near You</h1>
@@ -1104,18 +1116,6 @@ document.addEventListener('DOMContentLoaded', function() {
           <?php echo esc_html($term['label']); ?>
         </a>
       <?php endforeach; ?>
-      <?php if ($has_other_filter_terms) :
-        $other_next_filters = byob_toggle_type_filter($active_type_filters, $other_filter_slug);
-        $other_chip_url = byob_build_type_filter_url($other_next_filters);
-      ?>
-        <a
-          class="type-chip<?php echo $other_filter_is_active ? ' is-active' : ''; ?>"
-          href="<?php echo esc_url($other_chip_url); ?>"
-          role="listitem"
-        >
-          <?php esc_html_e('Other', 'byob'); ?>
-        </a>
-      <?php endif; ?>
     </div>
   </div>
 <?php endif; ?>
@@ -1381,7 +1381,13 @@ if ($restaurant_pagination_html) {
       <?php if (!empty($type_terms)) : ?>
         <div class="restaurant-type-chip-group">
           <?php foreach ($type_terms as $chip_term) :
-            $chip_url = byob_build_type_filter_url(array($chip_term['slug']));
+            $chip_slug = !empty($chip_term['is_other']) ? $other_filter_slug : $chip_term['slug'];
+            if ($chip_slug === $other_filter_slug) {
+              $chip_next_filters = byob_toggle_type_filter($active_type_filters, $chip_slug);
+            } else {
+              $chip_next_filters = array($chip_slug);
+            }
+            $chip_url = byob_build_type_filter_url($chip_next_filters);
           ?>
             <a class="type-chip type-chip--compact" href="<?php echo esc_url($chip_url); ?>">
               <?php echo esc_html($chip_term['label']); ?>
