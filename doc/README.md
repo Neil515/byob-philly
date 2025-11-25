@@ -9,17 +9,15 @@
 
 ---
 
-## 🚀 最新進度（2025-11-24）
+## 🚀 最新進度（2025-11-25）
 
 ### 🎯 今日成果
-- **地圖互動全面升級**：`archive-restaurant.php` + `assets/js/byob-nearby.js` 改為「點擊鎖定 → 右側/底部資訊面板」，新增手機 overlay、延遲關閉、安全的新視窗 CTA。
-- **Marker 轉為全量載入**：地圖資料不再受 WordPress 分頁限制，額外查詢全部餐廳 ID，85 家餐廳一次顯示。
-- **經緯度資料流文件化**：為 `lookup_post_ids.py`、`push_acf_latlng.py` 撰寫 README，記錄 slug 產生、REST API 路由、Application Password 與常見錯誤（incorrect_password / rest_no_route）。
+- **Other 類別體驗修正**：更新 `archive-restaurant.php`，讓頂部 chip 與卡片內的 `Other: XXX` 連結同源並可雙向開關，Chip 標籤固定顯示「Other」，篩選狀態一目了然。
+- **進度文件同步**：`doc/Next Task Prompt Byob.md` 與 `doc/ai_progress_byob.md` 已更新至 2025/11/25，明確排定 11/26 的亂碼排查與內容規畫。
 
-### 🗓️ 明日（11/25）計畫
-1. **類別篩選 — Other 修正**：確認聚合邏輯、URL 參數與多選互動，確保前台結果完整。
-2. **網站文章**：產出下一篇導流文章（約 600–800 字），含 CTA、meta title/description，排程發布。
-3. **`restaurant_crawler/` 整理**：盤點腳本/資料用途，寫成簡短 README，淘汰確定不用的舊檔。
+### 🗓️ 明日（11/26）計畫
+1. **餐廳名稱亂碼排查**：鎖定前台列表的亂碼案例、檢查後台資料與輸出流程，確保 UTF-8 顯示正常。
+2. **文章／引流 brief**：與內容/行銷討論下一篇文章題材、CTA 與素材需求，產出可直接寫稿的企劃文件。
 
 ---
 
@@ -53,7 +51,7 @@
 ## 🗂️ 核心文件與工具
 - `doc/philly_byob_complete_plan.md`：費城專案完整實施計畫。
 - `doc/Next Task Prompt Byob.md`：每日任務規畫（目前已更新到 2025/11/25）。
-- `doc/ai_progress_byob.md`：詳細進度日誌（最新日期 2025/11/24）。
+- `doc/ai_progress_byob.md`：詳細進度日誌（最新日期 2025/11/25）。
 - `philly_yelp_crawler/lookup_post_ids.py` + `lookup_post_ids_README.md`：Excel↔WP Post ID 映射。
 - `philly_yelp_crawler/push_acf_latlng.py` + README：將 Excel 經緯度寫入 ACF。
 - `wordpress/assets/js/byob-nearby.js`、`wordpress/archive-restaurant.php`：地圖互動與資料來源。
@@ -70,10 +68,9 @@
 ---
 
 ## 🔭 即將聚焦（短期）
-1. **Other 類別篩選修正**（WordPress query、UI 行為）。
-2. **網站內容輸出**（文章 + CTA + SEO meta）。
-3. **`restaurant_crawler/` 整理**（README/淘汰舊檔）。
-4. **SendGrid 第二封**：等待 11/27 後的 72 小時視窗排程。
+1. **餐廳名稱亂碼排查**（資料庫編碼、模板輸出、`mb_convert_case` 等）。
+2. **文章／引流 brief**（題材、CTA、素材需求、發布渠道）。
+3. **SendGrid 第二封**：等待 11/27 後的 72 小時視窗排程並備妥內容。
 
 ---
 
@@ -84,6 +81,6 @@
 
 ---
 
-*最後更新：2025-11-24*  
-*版本：v25.0*  
-*下一步：Other 類別修正、網站文章、`restaurant_crawler` 整理*
+*最後更新：2025-11-25*  
+*版本：v25.1*  
+*下一步：餐廳名稱亂碼排查、文章／引流 brief、SendGrid 第二封排程*
