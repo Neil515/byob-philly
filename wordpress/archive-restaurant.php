@@ -758,6 +758,7 @@ if (!function_exists('byob_fetch_restaurant_js_entry')) {
     }
 
     $post_title = get_the_title($post_id);
+    $post_title_raw = html_entity_decode($post_title, ENT_QUOTES | ENT_HTML5, get_bloginfo('charset'));
     $permalink = get_permalink($post_id);
 
     $latitude = get_field('latitude', $post_id);
@@ -901,7 +902,7 @@ if (!function_exists('byob_fetch_restaurant_js_entry')) {
 
     return array(
       'id' => $post_id,
-      'title' => $post_title,
+      'title' => $post_title_raw,
       'permalink' => $permalink,
       'latitude' => ($latitude !== null && $latitude !== '') ? (float) $latitude : null,
       'longitude' => ($longitude !== null && $longitude !== '') ? (float) $longitude : null,
@@ -1140,6 +1141,7 @@ if ($restaurant_pagination_html) {
     <?php
       $post_id = get_the_ID();
       $post_title = get_the_title();
+      $post_title_raw = html_entity_decode($post_title, ENT_QUOTES | ENT_HTML5, get_bloginfo('charset'));
       $permalink = get_permalink();
 
       $latitude = get_field('latitude', $post_id);
@@ -1325,7 +1327,7 @@ if ($restaurant_pagination_html) {
 
       $byob_restaurant_js_data[] = array(
         'id' => $post_id,
-        'title' => $post_title,
+        'title' => $post_title_raw,
         'permalink' => $permalink,
         'latitude' => ($latitude !== null && $latitude !== '') ? (float) $latitude : null,
         'longitude' => ($longitude !== null && $longitude !== '') ? (float) $longitude : null,
