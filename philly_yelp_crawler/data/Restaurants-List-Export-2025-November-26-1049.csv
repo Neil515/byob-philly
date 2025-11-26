@@ -1,0 +1,91 @@
+﻿id,Title,philly_restaurant_type,philly_restaurant_type_other_note,philly_corkage_fee,corkage_fee_amount,other_corkage_policy,wine_service_equipment,philly_equipment_other_note,byob_service_level
+1162,"Le SAGE 茱莉金牛排餐酒館",,,,0,,,,
+1174,華西街台南擔仔麵,,,,0,,,,
+1214,我!就厲害燒肉放題西門珍饌店,,,,0,,,,
+1374,Burrata,"a:1:{i:0;s:7:""Italian"";}",,free,,,"a:3:{i:0;s:12:""wine glasses"";i:1;s:16:""opener/corkscrew"";i:2;s:10:""Ice bucket"";}",,self_service
+1376,"White Yak","a:1:{i:0;s:5:""other"";}",Tibetan,free,,,,,": -- 請選擇 --"
+1377,"La Nonna","a:1:{i:0;s:7:""Italian"";}",,free,,,,,basic_service
+1383,"Vientiane Bistro","a:2:{i:0;s:4:""Thai"";i:1;s:5:""other"";}",Laotian,free,,,"a:1:{i:0;s:12:""wine glasses"";}",,self_service
+1387,Yamitsuki,"a:2:{i:0;s:5:""Asian"";i:1;s:5:""other"";}",Ramen,other,,Idk,"a:1:{i:0;s:5:""other"";}","Idk I just walked in here with beers",no_service
+1388,Sakartvelo,"a:1:{i:0;s:5:""other"";}",Georgian,free,,,,,": -- 請選擇 --"
+1389,"Apricot Stone","a:2:{i:0;s:13:""Mediterranean"";i:1;s:5:""other"";}",Armenian/Syrian,free,,,,,": -- 請選擇 --"
+1398,"Chabba Thai bistro","a:1:{i:0;s:4:""Thai"";}",,corkage_fee,,,"a:2:{i:0;s:12:""wine glasses"";i:1;s:16:""opener/corkscrew"";}",,basic_service
+1399,"Yanako restaurant","a:2:{i:0;s:8:""Japanese"";i:1;s:5:""other"";}","Sushi Bars",corkage_fee,,,"a:2:{i:0;s:12:""wine glasses"";i:1;s:16:""opener/corkscrew"";}",,basic_service
+1401,Fiorino,"a:1:{i:0;s:7:""Italian"";}",,free,,,"a:1:{i:0;s:12:""wine glasses"";}",,basic_service
+1402,"Santucci's Original Square Pizza","a:2:{i:0;s:7:""Italian"";i:1;s:5:""other"";}",Pizza,free,0,,,,": -- 請選擇 --"
+1404,"Han dynasty (manayunk)","a:1:{i:0;s:5:""Asian"";}",,free,,,"a:1:{i:0;s:12:""wine glasses"";}",,basic_service
+1407,"Casablanca Mediterranean Grill","a:1:{i:0;s:13:""Mediterranean"";}",,free,,,"a:4:{i:0;s:12:""wine glasses"";i:1;s:12:""shot glasses"";i:2;s:16:""opener/corkscrew"";i:3;s:10:""Ice bucket"";}",,self_service
+1408,"Alyan's Middle Eastern &amp; Mediterranean Restaurant","a:1:{i:0;s:13:""Mediterranean"";}",,free,,,"a:1:{i:0;s:4:""none"";}",,no_service
+1409,Zeppoli,"a:2:{i:0;s:7:""Italian"";i:1;s:13:""Mediterranean"";}",,free,,,"a:3:{i:0;s:12:""wine glasses"";i:1;s:16:""opener/corkscrew"";i:2;s:10:""Ice bucket"";}",,basic_service
+1410,"June BYOB","a:2:{i:0;s:6:""French"";i:1;s:11:""Fine dining"";}",,free,,,"a:3:{i:0;s:12:""wine glasses"";i:1;s:16:""opener/corkscrew"";i:2;s:10:""Ice bucket"";}",,basic_service
+1412,Scampi,"a:1:{i:0;s:7:""Italian"";}",,free,,,"a:3:{i:0;s:12:""wine glasses"";i:1;s:16:""opener/corkscrew"";i:2;s:27:""wine storage locker service"";}",,full_service
+1417,"Kung Fu Hot Pot","a:2:{i:0;s:5:""Asian"";i:1;s:5:""other"";}",Chinese,other,,"I think you just need to bring a bottle opener","a:1:{i:0;s:4:""none"";}",,self_service
+1484,"Blu koi 壽司割烹",,,,500,,,,
+1555,"A Mano","a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1556,"Adoro Restaurant","a:2:{i:0;s:7:""Italian"";i:1;s:5:""other"";}",Sandwiches,free,,,,,": -- 請選擇 --"
+1557,"Ambrosia Ristorante","a:2:{i:0;s:7:""Italian"";i:1;s:5:""other"";}","Breakfast & Brunch",free,,,,,": -- 請選擇 --"
+1558,"Bistro La Baia BYOB","a:3:{i:0;s:7:""Italian"";i:1;s:13:""Mediterranean"";i:2;s:7:""Seafood"";}",,free,,,,,": -- 請選擇 --"
+1559,"Casa Nostra","a:3:{i:0;s:7:""Italian"";i:1;s:7:""Seafood"";i:2;s:5:""other"";}","Pasta Shops",free,,,,,": -- 請選擇 --"
+1560,CHAR,"a:1:{i:0;s:5:""other"";}","Pizza, Desserts",free,,,,,": -- 請選擇 --"
+1561,"El Chingon Philly","a:2:{i:0;s:7:""Mexican"";i:1;s:5:""other"";}","Sandwiches, Tacos",free,,,,,": -- 請選擇 --"
+1562,Elma,"a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1563,"Giorgio On Pine","a:2:{i:0;s:7:""Italian"";i:1;s:5:""other"";}",Pizza,free,,,,,": -- 請選擇 --"
+1564,"Giorgio on Pine II","a:2:{i:0;s:7:""Italian"";i:1;s:5:""other"";}",Pizza,free,,,,,": -- 請選擇 --"
+1565,Helm,"a:1:{i:0;s:5:""other"";}","New American",free,,,,,": -- 請選擇 --"
+1566,"Hikari Sushi","a:2:{i:0;s:8:""Japanese"";i:1;s:5:""other"";}","Sushi Bars",free,,,,,": -- 請選擇 --"
+1567,ILLATA,"a:3:{i:0;s:7:""Italian"";i:1;s:8:""American"";i:2;s:7:""Seafood"";}",,free,,,"a:3:{i:0;s:12:""wine glasses"";i:1;s:16:""opener/corkscrew"";i:2;s:10:""Ice bucket"";}",,": -- 請選擇 --"
+1568,"Kei Sushi","a:3:{i:0;s:7:""Seafood"";i:1;s:8:""Japanese"";i:2;s:5:""other"";}","Sushi Bars",free,,,,,": -- 請選擇 --"
+1569,"Kichi Omakase","a:3:{i:0;s:7:""Seafood"";i:1;s:8:""Japanese"";i:2;s:5:""other"";}","Sushi Bars",free,,,,,": -- 請選擇 --"
+1570,Kinme,"a:2:{i:0;s:8:""Japanese"";i:1;s:5:""other"";}","Sushi Bars",free,,,,,": -- 請選擇 --"
+1571,"KINTO Cozy &amp; Authentic Georgian Restaurant","a:1:{i:0;s:5:""other"";}",Georgian,free,,,,,": -- 請選擇 --"
+1573,"La Viola Bistro","a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1574,"L'Angolo Ristorante","a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1575,L'Anima,"a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1576,"Little Fish BYOB","a:1:{i:0;s:7:""Seafood"";}",,free,,,,,": -- 請選擇 --"
+1577,"Luna BYOB","a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1578,Mawn,"a:1:{i:0;s:5:""other"";}",Cambodian,free,,,,,": -- 請選擇 --"
+1579,Melograno,"a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1580,Mercato,"a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1581,"Nakama Japanese Cuisines &amp; Omakase","a:1:{i:0;s:5:""other"";}","Ramen, Sushi Bars",free,,,,,": -- 請選擇 --"
+1582,"Nori Sushi","a:2:{i:0;s:8:""Japanese"";i:1;s:5:""other"";}","Sushi Bars",free,,,,,": -- 請選擇 --"
+1583,Olea,"a:2:{i:0;s:13:""Mediterranean"";i:1;s:5:""other"";}","Tapas/Small Plates",free,,,,,": -- 請選擇 --"
+1584,Paffuto,"a:2:{i:0;s:7:""Italian"";i:1;s:5:""other"";}","Pop-Up Restaurants",free,,,,,": -- 請選擇 --"
+1585,"Pera Turkish Cuisine","a:3:{i:0;s:13:""Mediterranean"";i:1;s:7:""Seafood"";i:2;s:5:""other"";}",Turkish,free,,,,,": -- 請選擇 --"
+1586,Porcini,"a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1587,"Rice &amp; Sambal","a:2:{i:0;s:5:""Asian"";i:1;s:5:""other"";}","Supper Clubs",free,,,,,": -- 請選擇 --"
+1588,Scannicchio's,"a:3:{i:0;s:7:""Italian"";i:1;s:13:""Mediterranean"";i:2;s:7:""Seafood"";}",,free,,,,,": -- 請選擇 --"
+1589,Stina,"a:2:{i:0;s:13:""Mediterranean"";i:1;s:5:""other"";}",Greek,free,,,,,": -- 請選擇 --"
+1590,"Tamalex Restaurant","a:2:{i:0;s:7:""Mexican"";i:1;s:5:""other"";}","New Mexican Cuisine",free,,,,,": -- 請選擇 --"
+1591,"Thai Square Restaurant","a:1:{i:0;s:4:""Thai"";}",,free,,,,,": -- 請選擇 --"
+1592,"Trattoria Carina","a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1593,"Vic Sushi Bar","a:2:{i:0;s:8:""Japanese"";i:1;s:5:""other"";}","Sushi Bars",free,,,,,": -- 請選擇 --"
+1594,"Vientiane Café","a:2:{i:0;s:4:""Thai"";i:1;s:5:""other"";}",Laotian,free,,,,,": -- 請選擇 --"
+1726,"Ristorante Aroma","a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1727,"Bricco Coal Fired Pizza","a:1:{i:0;s:5:""other"";}",Pizza,free,,,,,": -- 請選擇 --"
+1728,"Buca D'oro Ristorante","a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1729,"Cilantro Mediterranean Cuisine","a:1:{i:0;s:13:""Mediterranean"";}",,free,,,,,": -- 請選擇 --"
+1730,"Cucina Maria South Philly","a:2:{i:0;s:7:""Italian"";i:1;s:7:""Seafood"";}",,free,,,,,": -- 請選擇 --"
+1731,Figs,"a:2:{i:0;s:13:""Mediterranean"";i:1;s:5:""other"";}",Moroccan,free,,,,,": -- 請選擇 --"
+1732,"Gnocchi Restaurant","a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1733,"Golden Gates Restaurant","a:1:{i:0;s:5:""other"";}","Russian, Dance Clubs",free,,,,,": -- 請選擇 --"
+1734,Hardena,"a:2:{i:0;s:5:""Asian"";i:1;s:5:""other"";}",Indonesian,free,,,,,": -- 請選擇 --"
+1735,"Heavy Metal Sausage","a:2:{i:0;s:7:""Italian"";i:1;s:5:""other"";}",Sandwiches,": -- 請選擇 --",,,,,": -- 請選擇 --"
+1736,Kanella,"a:2:{i:0;s:13:""Mediterranean"";i:1;s:5:""other"";}","Middle Eastern",free,,,,,": -- 請選擇 --"
+1737,"La Canasta Mexican Food","a:1:{i:0;s:7:""Mexican"";}",,free,,,,,": -- 請選擇 --"
+1738,"La Fontana Della Citta","a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1739,"La Sera Italiana BYOB","a:2:{i:0;s:7:""Italian"";i:1;s:5:""other"";}","Salad, Burgers",free,,,,,": -- 請選擇 --"
+1740,"La Trattoria","a:1:{i:0;s:7:""Italian"";}",,free,,,,,": -- 請選擇 --"
+1741,"Los Gallos","a:1:{i:0;s:7:""Mexican"";}",,free,,,,,": -- 請選擇 --"
+1742,"México Lindo Y Que Rico Restaurant","a:1:{i:0;s:7:""Mexican"";}",,free,,,,,": -- 請選擇 --"
+1743,"Osteria Ama Philly","a:3:{i:0;s:7:""Italian"";i:1;s:7:""Seafood"";i:2;s:5:""other"";}",Pizza,free,,,,,": -- 請選擇 --"
+1744,"Pizza Richmond","a:1:{i:0;s:5:""other"";}",Pizza,free,,,,,": -- 請選擇 --"
+1745,"Sakana Omakase Sushi","a:2:{i:0;s:8:""Japanese"";i:1;s:5:""other"";}","Sushi Bars",free,,,,,": -- 請選擇 --"
+1746,Tabachoy,"a:2:{i:0;s:5:""Asian"";i:1;s:5:""other"";}",Filipino,free,,,,,": -- 請選擇 --"
+1747,"Tacconelli's Pizza","a:2:{i:0;s:7:""Italian"";i:1;s:5:""other"";}",Pizza,free,,,,,": -- 請選擇 --"
+1748,"Tonalli Philly","a:1:{i:0;s:5:""other"";}","Pizza, Tacos",free,,,,,": -- 請選擇 --"
+1749,"Umai Umai","a:2:{i:0;s:8:""Japanese"";i:1;s:5:""other"";}","Sushi Bars",free,,,,,": -- 請選擇 --"
+1750,Winkel,"a:1:{i:0;s:5:""other"";}","Breakfast & Brunch, Coffee & Tea, Sandwiches",free,,,,,": -- 請選擇 --"
+1754,"Chateau Rouge","a:2:{i:0;s:6:""French"";i:1;s:5:""other"";}",African,other,,"$10 per table",,,": -- 請選擇 --"
+1755,"Baby's Kusina + Market","a:1:{i:0;s:5:""other"";}","Pop-Up Restaurants",free,,,,,": -- 請選擇 --"
+1756,"Yuhiro Omakase Sushi","a:2:{i:0;s:8:""Japanese"";i:1;s:5:""other"";}","Sushi Bars, Wine Bars",free,,,,,": -- 請選擇 --"
+1757,"Mabu Kitchen","a:2:{i:0;s:6:""French"";i:1;s:5:""other"";}","Breakfast & Brunch, Comfort Food",free,,,,,": -- 請選擇 --"
