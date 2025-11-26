@@ -43,6 +43,8 @@ PHILLY_LOCATION_BIAS = "circle:30000@39.9526,-75.1652"
 
 # 輸入檔案
 INPUT_FILE = Path(__file__).parent / "data" / "Philly BYOB Restaurant_with_websites_merged.xlsx"
+# 允許用環境變數覆寫欲處理的日期（可用 | 分隔多個關鍵字）
+DATE_FILTER_TOKEN = os.getenv("TARGET_DATE_FILTER", "11/26|2025-11-26|2025/11/26")
 
 
 def get_website_from_places(restaurant_name: str, api_key: str) -> Optional[str]:
@@ -521,16 +523,26 @@ def main() -> int:
         if email_col not in df.columns:
             df[email_col] = ''
     
-    # 篩選 Date = 2025-11-18 的餐廳
-    date_mask = df['Date'].astype(str).str.strip().str.contains('2025-11-18', na=False, regex=False)
+    # 篩選特定日期的餐廳（支援多個關鍵字，以 | 分隔）
+    date_series = df['Date'].astype(str).str.strip()
+    date_mask = pd.Series(False, index=df.index)
+    tokens = [token.strip() for token in DATE_FILTER_TOKEN.split('|') if token.strip()]
+    if not tokens:
+        logger.error("❌ TARGET_DATE_FILTER 未提供有效內容")
+        print("TARGET_DATE_FILTER 需包含至少一個日期字串", file=sys.stderr)
+        return 1
+    for token in tokens:
+        token_mask = date_series.str.contains(token, na=False, regex=False)
+        date_mask = date_mask | token_mask
+
     target_indices = df[date_mask].index.tolist()
     
     if not target_indices:
-        logger.warning("未找到 Date = 2025-11-18 的餐廳")
+        logger.warning(f"未找到符合日期條件 ({DATE_FILTER_TOKEN}) 的餐廳")
         print("未找到目標餐廳", file=sys.stderr)
         return 1
     
-    logger.info(f"找到 {len(target_indices)} 筆餐廳需要處理")
+    logger.info(f"找到 {len(target_indices)} 筆餐廳需要處理（篩選條件: {DATE_FILTER_TOKEN}）")
     
     # 處理每家餐廳
     success_count = 0
