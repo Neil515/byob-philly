@@ -9,20 +9,20 @@
 
 ---
 
-## 🚀 最新進度（2025-11-26）
+## 🚀 最新進度（2025-11-27）
 
 ### 🌟 今日成果
 
-* 完成初步餐廳清單建立、格式標準化與詳細欄位填寫，包含通訊資訊、Yelp、是否 BYOB、開瓶費、提供設備、類型等。
-* 資料經補齊已達到可直接進入結構設計與前端使用的準備狀態，預備轉成 JSON/CSV 格式。
-* 設計搜尋與篩選邏輯、內部欄位與 UI 對應關係既進入擴寬設計階段，支援最簡 MVP 系統。
-* 更新 `Next Task Prompt Byob.md` 與 `ai_progress_byob.md` 文件，細節述說明日緊接課題與分工說明。
+* **Schema 定稿**：`philly_yelp_crawler/byob_schema_spec.md` 完成，定義 17 個必備欄位、枚舉值與 CSV/JSON 規則。
+* **匯出腳本**：`philly_yelp_crawler/scripts/byob_export.py` 可清洗 Excel、檢查必填欄位並輸出標準 JSON/CSV。
+* **資料輸出**：產出 `philly_yelp_crawler/data/byob_restaurants.json`、`byob_restaurants.csv`（共 85 筆），App MVP 可直接串接。
+* **缺值追蹤**：紀錄 26 個欄位仍空白（官網 / Yelp / 電話 / 兩筆開瓶費金額），已在 issue log 內標示，後續視需求補齊。
 
-### 🗓️ 明日計劃
+### 🗓️ 明日計劃（2025-11-28）
 
-1. JSON / SQL 資料結構轉換
-2. 搜尋條件 / UI 篩選對應表入手
-3. MVP 功能測試集與前端測試
+1. **資料供應管線定稿**：文件化 JSON/CSV 的存放位置、再生產流程與版本控管方式。
+2. **App 資料模型／載入模組**：建立 TypeScript/後端 DTO、靜態 Loader，並設計缺值顯示規則。
+3. **後續任務排程**：整理搜尋／篩選邏輯 backlog、資料補齊責任、以及 11/29 之後的行動清單。
 
 ---
 
@@ -48,7 +48,7 @@
 ### 賽城 BYOB
 
 * ✅ 完成：資料收集、雙表單整合、餐廳接管流程、地圖/定位、驗證徽章、Email 搜尋/批次寄送。
-* 🔄 進行：Email 模板第二封、FAQ/後台英文化、資料夾整理、社群節奏。
+* 🔄 進行：資料匯出與 App 接軌（schema、JSON/CSV、資料載入模組）、Email 模板第二封、社群節奏。
 * ⏳ 後續：榮譽系統、Wine Shop 合作、創始成員計畫、其他城市擴張。
 
 ---
@@ -56,8 +56,11 @@
 ## 📂 核心文件與工具
 
 * `doc/philly_byob_complete_plan.md`：賽城專案完整實施計畫。
-* `doc/Next Task Prompt Byob.md`：每日任務規劃（目前已更新到 2025/11/26）。
-* `doc/ai_progress_byob.md`：詳細進度日誌（最新日期 2025/11/26）。
+* `doc/Next Task Prompt Byob.md`：每日任務規劃（最新至 2025/11/27）。
+* `doc/ai_progress_byob.md`：詳細進度日誌（最新至 2025/11/27）。
+* `philly_yelp_crawler/byob_schema_spec.md`：App 欄位規格表。
+* `philly_yelp_crawler/scripts/byob_export.py`：資料匯出腳本。
+* `philly_yelp_crawler/data/byob_restaurants.{json,csv}`：最新 85 筆 BYOB 餐廳資料。
 * `philly_yelp_crawler/lookup_post_ids.py` + `lookup_post_ids_README.md`：Excel↔WP Post ID 映射。
 * `philly_yelp_crawler/push_acf_latlng.py` + README：將 Excel 經總度寫入 ACF。
 * `wordpress/assets/js/byob-nearby.js`、`wordpress/archive-restaurant.php`：地圖互動與資料來源。
@@ -66,7 +69,7 @@
 
 ## 🔭 即將聚焦（短期）
 
-1. JSON/SQL 資料轉換與 Schema 碼寫入
+1. 資料供應管線定稿與資料載入模組
 2. 搜尋 UI 條件與篩選邏輯實作
 3. SendGrid 第二封配合文案準備
 
@@ -80,6 +83,6 @@
 
 ---
 
-*最後更新：2025-11-26*
-*版本：v25.2*
-*下一步：資料轉換、搜尋 UI 設計、SendGrid 字案配合*
+*最後更新：2025-11-27*
+*版本：v25.3*
+*下一步：資料管線定稿、App 資料模型、SendGrid 第二封*
