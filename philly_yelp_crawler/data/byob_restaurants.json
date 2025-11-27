@@ -1,0 +1,2051 @@
+[
+  {
+    "restaurant_id": "1374",
+    "name": "Burrata",
+    "address": "1247 S 13th St, Philadelphia, PA 19147, United States",
+    "latitude": 39.9339343,
+    "longitude": -75.16524919999999,
+    "phone": "(215) 465-2200",
+    "website_url": "http://www.burrataphilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/burrata-philadelphia",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [
+      "wine_glasses",
+      "opener_corkscrew",
+      "ice_bucket"
+    ],
+    "equipment_other_note": null,
+    "byob_service_level": "self_service",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "contact@sansoxygen.com",
+      "burrataphilly@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1376",
+    "name": "White yak",
+    "address": "6118 Ridge Ave, Philadelphia, PA 19128",
+    "latitude": 40.0337802,
+    "longitude": -75.21579659999999,
+    "phone": "(215) 483-0764",
+    "website_url": "https://whiteyakrestaurant.com/?utm_source=google",
+    "yelp_url": "https://www.yelp.com/biz/white-yak-philadelphia",
+    "restaurant_types": [
+      "other"
+    ],
+    "type_other_note": "Tibetan",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-26",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1377",
+    "name": "La Nonna",
+    "address": "214 South St, Philadelphia, PA 19147",
+    "latitude": 39.9411075,
+    "longitude": -75.1462494,
+    "phone": "(267) 928-3262",
+    "website_url": "http://ristorantelanonna.com/",
+    "yelp_url": "https://www.yelp.com/biz/la-nonna-philadelphia",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": "basic_service",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1383",
+    "name": "Vientiane Bistro",
+    "address": "2537 Kensington Ave, Philadelphia, PA 19125",
+    "latitude": 39.9881099,
+    "longitude": -75.1282341,
+    "phone": "(267) 703-8199",
+    "website_url": "https://www.vientianebistro.com/",
+    "yelp_url": "https://www.yelp.com/biz/vientiane-bistro-philadelphia",
+    "restaurant_types": [
+      "thai",
+      "other"
+    ],
+    "type_other_note": "Laotian",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [
+      "wine_glasses"
+    ],
+    "equipment_other_note": null,
+    "byob_service_level": "self_service",
+    "last_verified_at": "2025-11-26",
+    "emails": [
+      "astigma@astigmatic.com"
+    ]
+  },
+  {
+    "restaurant_id": "1387",
+    "name": "Yamitsuki",
+    "address": "1028 Arch St , Philadelphia, PA 19107",
+    "latitude": 39.9535423,
+    "longitude": -75.1574552,
+    "phone": "(215) 629-3888",
+    "website_url": "https://yamitsuki1028.wixsite.com/yamitsukiramen",
+    "yelp_url": "https://www.yelp.com/biz/yamitsuki-ramen-philadelphia",
+    "restaurant_types": [
+      "asian",
+      "other"
+    ],
+    "type_other_note": "Ramen",
+    "corkage_fee_type": "other",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": "Idk",
+    "wine_service_equipment": [
+      "other"
+    ],
+    "equipment_other_note": "Idk I just walked in here with beers",
+    "byob_service_level": "no_service",
+    "last_verified_at": "2025-11-26",
+    "emails": [
+      "605a7baede844d278b89dc95ae0a9123@sentry-next.wixpress.com",
+      "yamitsuki1028@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1388",
+    "name": "Sakartvelo",
+    "address": "705 Chestnut St, Philadelphia, PA 19106",
+    "latitude": 39.949672,
+    "longitude": -75.15256200000002,
+    "phone": "(267) 319-1631",
+    "website_url": "https://sakartvelopa.com/",
+    "yelp_url": "https://www.yelp.com/biz/sakartvelo-philadelphia",
+    "restaurant_types": [
+      "other"
+    ],
+    "type_other_note": "Georgian",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-26",
+    "emails": [
+      "test@email.com"
+    ]
+  },
+  {
+    "restaurant_id": "1389",
+    "name": "Apricot Stone",
+    "address": "428 W Girard Ave, Philadelphia, PA 19123",
+    "latitude": 39.9698886,
+    "longitude": -75.1440385,
+    "phone": "(267) 606-6596",
+    "website_url": "http://www.apricotstonephilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/apricot-stone-philadelphia-4",
+    "restaurant_types": [
+      "mediterranean",
+      "other"
+    ],
+    "type_other_note": "Armenian/Syrian",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-26",
+    "emails": [
+      "info@apricotstonephilly.com"
+    ]
+  },
+  {
+    "restaurant_id": "1398",
+    "name": "Chabba Thai bistro",
+    "address": "4343 Main St, Philadelphia, PA 19127",
+    "latitude": 40.0256934,
+    "longitude": -75.2233971,
+    "phone": "(215) 483-1979",
+    "website_url": "https://chabaathai.com/",
+    "yelp_url": null,
+    "restaurant_types": [
+      "thai"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "corkage_fee",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [
+      "wine_glasses",
+      "opener_corkscrew"
+    ],
+    "equipment_other_note": null,
+    "byob_service_level": "basic_service",
+    "last_verified_at": "2025-11-26",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1399",
+    "name": "Yanako restaurant",
+    "address": "4345 Main St, Philadelphia, PA 19127",
+    "latitude": 40.0256009,
+    "longitude": -75.2234981,
+    "phone": "(267) 297-8151",
+    "website_url": "https://theyanako.com/",
+    "yelp_url": null,
+    "restaurant_types": [
+      "japanese",
+      "other"
+    ],
+    "type_other_note": "Sushi Bars",
+    "corkage_fee_type": "corkage_fee",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [
+      "wine_glasses",
+      "opener_corkscrew"
+    ],
+    "equipment_other_note": null,
+    "byob_service_level": "basic_service",
+    "last_verified_at": "2025-11-26",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1401",
+    "name": "Fiorino",
+    "address": "3572 Indian Queen Ln, Philadelphia, PA 19129",
+    "latitude": 40.009792,
+    "longitude": -75.1904261,
+    "phone": "(215) 843-1500",
+    "website_url": "https://www.fiorino.us/",
+    "yelp_url": "https://www.yelp.com/biz/fiorino-philadelphia-2",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [
+      "wine_glasses"
+    ],
+    "equipment_other_note": null,
+    "byob_service_level": "basic_service",
+    "last_verified_at": "2025-11-26",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1402",
+    "name": "Santucci's Original Square Pizza",
+    "address": "901 S 10th St Philadelphia, PA 19147",
+    "latitude": 39.9390352,
+    "longitude": -75.1592254,
+    "phone": "(215) 825-5304",
+    "website_url": "https://santuccispizza.com/santuccis-roxborough/",
+    "yelp_url": "https://www.yelp.com/biz/santuccis-original-square-pizza-philadelphia-2",
+    "restaurant_types": [
+      "italian",
+      "other"
+    ],
+    "type_other_note": "Pizza",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": 0.0,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-24",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1404",
+    "name": "Han dynasty (manayunk)",
+    "address": "4356 Main St, Philadelphia, PA 19127",
+    "latitude": 40.0253737,
+    "longitude": -75.22386279999999,
+    "phone": "(215) 508-2066",
+    "website_url": "http://www.handynasty.net/",
+    "yelp_url": "https://www.yelp.com/biz/the-towpath-philadelphia",
+    "restaurant_types": [
+      "asian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [
+      "wine_glasses"
+    ],
+    "equipment_other_note": null,
+    "byob_service_level": "basic_service",
+    "last_verified_at": "2025-11-26",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1407",
+    "name": "Casablanca Mediterranean Grill",
+    "address": "947 Federal St, Philadelphia, PA 19147",
+    "latitude": 39.9346672,
+    "longitude": -75.1602861,
+    "phone": "(267) 324-5165",
+    "website_url": "http://www.casablanca-grill.com/",
+    "yelp_url": "https://www.yelp.com/biz/casablanca-mediterranean-grill-philadelphia",
+    "restaurant_types": [
+      "mediterranean"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [
+      "wine_glasses",
+      "shot_glasses",
+      "opener_corkscrew",
+      "ice_bucket"
+    ],
+    "equipment_other_note": null,
+    "byob_service_level": "self_service",
+    "last_verified_at": "2025-11-26",
+    "emails": [
+      "casablancamg947@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1408",
+    "name": "Alyan\u2019s Middle Eastern & Mediterranean Restaurant",
+    "address": "603 S 4th St, Philadelphia, PA 19147",
+    "latitude": 39.9414148,
+    "longitude": -75.1490542,
+    "phone": "(215) 922-3553",
+    "website_url": null,
+    "yelp_url": null,
+    "restaurant_types": [
+      "mediterranean"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [
+      "none"
+    ],
+    "equipment_other_note": null,
+    "byob_service_level": "no_service",
+    "last_verified_at": "2025-11-26",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1409",
+    "name": "Zeppoli",
+    "address": "618 Collings Ave, Collingswood NJ 08107",
+    "latitude": 39.9107139,
+    "longitude": -75.0844742,
+    "phone": "(856) 854-2670",
+    "website_url": "http://www.zeppolirestaurant.com/",
+    "yelp_url": "https://www.yelp.com/biz/zeppoli-collingswood",
+    "restaurant_types": [
+      "italian",
+      "mediterranean"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [
+      "wine_glasses",
+      "opener_corkscrew",
+      "ice_bucket"
+    ],
+    "equipment_other_note": null,
+    "byob_service_level": "basic_service",
+    "last_verified_at": "2025-11-26",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1410",
+    "name": "June BYOB",
+    "address": "690 Haddon Ave, Collingswood, NJ 08108",
+    "latitude": 39.9162158,
+    "longitude": -75.0694386,
+    "phone": "(856) 240-7041",
+    "website_url": "http://www.junebyob.com/",
+    "yelp_url": "https://www.yelp.com/biz/june-byob-collingswood",
+    "restaurant_types": [
+      "french",
+      "fine_dining"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [
+      "wine_glasses",
+      "opener_corkscrew",
+      "ice_bucket"
+    ],
+    "equipment_other_note": null,
+    "byob_service_level": "basic_service",
+    "last_verified_at": "2025-11-26",
+    "emails": [
+      "info@junebyob.com"
+    ]
+  },
+  {
+    "restaurant_id": "1412",
+    "name": "Scampi",
+    "address": "617 S 3rd St, Philadelphia, PA 19147",
+    "latitude": 39.9408982,
+    "longitude": -75.1475036,
+    "phone": null,
+    "website_url": "https://www.scampiphilly.com/menu",
+    "yelp_url": "https://www.yelp.com/biz/scampi-philadelphia",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [
+      "wine_glasses",
+      "opener_corkscrew",
+      "wine_storage_locker_service"
+    ],
+    "equipment_other_note": null,
+    "byob_service_level": "full_service",
+    "last_verified_at": "2025-11-26",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1417",
+    "name": "Kung Fu Hot Pot",
+    "address": "1008 Cherry St 3rd floor, Philadelphia, PA 19107",
+    "latitude": 39.95446219999999,
+    "longitude": -75.1565415,
+    "phone": "(215) 606-1899",
+    "website_url": null,
+    "yelp_url": "https://www.yelp.com/biz/kungfu-hotpot-philadelphia",
+    "restaurant_types": [
+      "asian",
+      "other"
+    ],
+    "type_other_note": "Chinese",
+    "corkage_fee_type": "other",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": "I think you just need to bring a bottle opener",
+    "wine_service_equipment": [
+      "none"
+    ],
+    "equipment_other_note": null,
+    "byob_service_level": "self_service",
+    "last_verified_at": "2025-11-26",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1555",
+    "name": "A Mano",
+    "address": "2244 Fairmount Ave, Philadelphia, PA 19130",
+    "latitude": 39.9671585,
+    "longitude": -75.1753073,
+    "phone": "(215) 236-1114",
+    "website_url": "http://amanophl.com/",
+    "yelp_url": "https://www.yelp.com/biz/a-mano-philadelphia",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "info@amanophl.com"
+    ]
+  },
+  {
+    "restaurant_id": "1556",
+    "name": "Adoro Restaurant",
+    "address": "769 E Passyunk Ave, Philadelphia, PA 19147",
+    "latitude": 39.9387991,
+    "longitude": -75.1523596,
+    "phone": "(215) 627-1454",
+    "website_url": "https://www.adorobistro.com/",
+    "yelp_url": "https://www.yelp.com/biz/adoro-restaurant-philadelphia",
+    "restaurant_types": [
+      "italian",
+      "other"
+    ],
+    "type_other_note": "Sandwiches",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1557",
+    "name": "Ambrosia Ristorante",
+    "address": "231 S 24th St, Philadelphia, PA 19103, United States",
+    "latitude": 39.9500065,
+    "longitude": -75.1796408,
+    "phone": "(215) 703-2010",
+    "website_url": "https://www.ambrosiaphilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/ambrosia-ristorante-byob-philadelphia",
+    "restaurant_types": [
+      "italian",
+      "other"
+    ],
+    "type_other_note": "Breakfast & Brunch",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1558",
+    "name": "Bistro La Baia BYOB",
+    "address": "1700 Lombard St, Philadelphia, PA 19146, United States",
+    "latitude": 39.945162,
+    "longitude": -75.1702591,
+    "phone": "(267) 687-1561",
+    "website_url": "http://www.bistrolabaia.com/",
+    "yelp_url": null,
+    "restaurant_types": [
+      "italian",
+      "mediterranean",
+      "seafood"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "1700bistrolabaia@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1559",
+    "name": "Casa Nostra",
+    "address": "775 S Front St, Philadelphia, PA 19147",
+    "latitude": 39.9378908,
+    "longitude": -75.1445172,
+    "phone": "(215) 975-0055",
+    "website_url": "http://www.casanostraphilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/casa-nostra-philadelphia",
+    "restaurant_types": [
+      "italian",
+      "seafood",
+      "other"
+    ],
+    "type_other_note": "Pasta Shops",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "casanostraphilly@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1560",
+    "name": "CHAR",
+    "address": "310 Master St, Philadelphia, PA 19122",
+    "latitude": 39.9724372,
+    "longitude": -75.1410186,
+    "phone": "(215) 964-9874",
+    "website_url": "http://char.pizza/",
+    "yelp_url": "https://www.yelp.com/biz/char-philadelphia",
+    "restaurant_types": [
+      "other"
+    ],
+    "type_other_note": "Pizza, Desserts",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "hospitality@char.pizza",
+      "viraj@char.pizza"
+    ]
+  },
+  {
+    "restaurant_id": "1561",
+    "name": "El Chingon Philly",
+    "address": "1524 S 10th St, Philadelphia, PA 19147",
+    "latitude": 39.9301263,
+    "longitude": -75.1616063,
+    "phone": "(267) 239-2131",
+    "website_url": "https://www.elchingonphilly.com/",
+    "yelp_url": null,
+    "restaurant_types": [
+      "mexican",
+      "other"
+    ],
+    "type_other_note": "Sandwiches, Tacos",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "info@elchingonphilly.com"
+    ]
+  },
+  {
+    "restaurant_id": "1562",
+    "name": "Elma",
+    "address": "431 E Girard Ave, Philadelphia, PA 19125",
+    "latitude": 39.9707331,
+    "longitude": -75.1297051,
+    "phone": null,
+    "website_url": "https://www.elmaphilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/elma-philadelphia",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "hello@elmaphilly.com"
+    ]
+  },
+  {
+    "restaurant_id": "1563",
+    "name": "Giorgio On Pine",
+    "address": "1328 Pine St, Philadelphia, PA 19107, United States",
+    "latitude": 39.9452862,
+    "longitude": -75.16406669999999,
+    "phone": "(215) 545-6265",
+    "website_url": "https://www.giorgio-on-pine.com/",
+    "yelp_url": "https://www.yelp.com/biz/giorgio-on-pine-philadelphia-3",
+    "restaurant_types": [
+      "italian",
+      "other"
+    ],
+    "type_other_note": "Pizza",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1564",
+    "name": "Giorgio on Pine II",
+    "address": "1334 Pine St, Philadelphia, PA 19107, United States",
+    "latitude": 39.9453439,
+    "longitude": -75.1642327,
+    "phone": "(215) 545-2482",
+    "website_url": "https://giorgioonpine2.com/",
+    "yelp_url": "https://www.yelp.com/biz/giorgio-on-pine-philadelphia-3",
+    "restaurant_types": [
+      "italian",
+      "other"
+    ],
+    "type_other_note": "Pizza",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1565",
+    "name": "Helm",
+    "address": "1303 N 5th St, Philadelphia, PA 19122, United States",
+    "latitude": 39.9715643,
+    "longitude": -75.1445194,
+    "phone": "(215) 309-2211",
+    "website_url": "http://helmphilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/helm-philadelphia",
+    "restaurant_types": [
+      "other"
+    ],
+    "type_other_note": "New American",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1566",
+    "name": "Hikari Sushi",
+    "address": "1040 N American St #701, Philadelphia, PA 19123",
+    "latitude": 39.96734720000001,
+    "longitude": -75.1409852,
+    "phone": "(215) 923-2654",
+    "website_url": "http://www.hikariphilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/hikari-sushi-philadelphia",
+    "restaurant_types": [
+      "japanese",
+      "other"
+    ],
+    "type_other_note": "Sushi Bars",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "hikariphilly17@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1567",
+    "name": "ILLATA",
+    "address": "2241 Grays Ferry Ave, Philadelphia, PA 19146, United States",
+    "latitude": 39.9448234,
+    "longitude": -75.1800169,
+    "phone": null,
+    "website_url": "http://www.illataphl.com/",
+    "yelp_url": "https://www.yelp.com/biz/illata-philadelphia",
+    "restaurant_types": [
+      "italian",
+      "american",
+      "seafood"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [
+      "wine_glasses",
+      "opener_corkscrew",
+      "ice_bucket"
+    ],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "info@illataphl.com"
+    ]
+  },
+  {
+    "restaurant_id": "1568",
+    "name": "Kei Sushi",
+    "address": "1711 South St, Philadelphia, PA 19146, United States",
+    "latitude": 39.9444195,
+    "longitude": -75.17073789999999,
+    "phone": "(215) 309-2925",
+    "website_url": "https://keisushiphilly.net/?utm_source=google",
+    "yelp_url": "https://www.yelp.com/biz/kei-sushi-restaurant-philadelphia",
+    "restaurant_types": [
+      "seafood",
+      "japanese",
+      "other"
+    ],
+    "type_other_note": "Sushi Bars",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1569",
+    "name": "Kichi Omakase",
+    "address": "112 S 12th St, Philadelphia, PA 19107, United States",
+    "latitude": 39.9499108,
+    "longitude": -75.160455,
+    "phone": "(215) 359-6099",
+    "website_url": null,
+    "yelp_url": "https://www.yelp.com/biz/kichi-omakase-philadelphia-2",
+    "restaurant_types": [
+      "seafood",
+      "japanese",
+      "other"
+    ],
+    "type_other_note": "Sushi Bars",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1570",
+    "name": "Kinme",
+    "address": "1117 Locust St, Philadelphia, PA 19107, United States",
+    "latitude": 39.9477857,
+    "longitude": -75.16010800000001,
+    "phone": "(215) 982-1722",
+    "website_url": "https://kinmepa.com/",
+    "yelp_url": "https://www.yelp.com/biz/kinme-philadelphia",
+    "restaurant_types": [
+      "japanese",
+      "other"
+    ],
+    "type_other_note": "Sushi Bars",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1571",
+    "name": "KINTO Cozy & Authentic Georgian Restaurant",
+    "address": "1144 Frankford Ave, Philadelphia, PA 19125",
+    "latitude": 39.9681268,
+    "longitude": -75.13455739999999,
+    "phone": "(267) 857-9500",
+    "website_url": "https://kintophilly.com/",
+    "yelp_url": null,
+    "restaurant_types": [
+      "other"
+    ],
+    "type_other_note": "Georgian",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1573",
+    "name": "La Viola Bistro",
+    "address": "253 S 16th St, Philadelphia, PA 19102, United States",
+    "latitude": 39.9477943,
+    "longitude": -75.16778529999999,
+    "phone": "(215) 735-8630",
+    "website_url": "http://laviolaphiladelphia.com/",
+    "yelp_url": "https://www.yelp.com/biz/la-viola-ovest-philadelphia?start=40",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1574",
+    "name": "L'Angolo Ristorante",
+    "address": "1415 W Porter St, Philadelphia, PA 19145, United States",
+    "latitude": 39.9196278,
+    "longitude": -75.17138609999999,
+    "phone": "(215) 389-4252",
+    "website_url": null,
+    "yelp_url": "https://www.yelp.com/biz/l-angolo-ristorante-philadelphia-3",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1575",
+    "name": "L'Anima",
+    "address": "1001 S 17th St, Philadelphia, PA 19146, United States",
+    "latitude": 39.9394776,
+    "longitude": -75.1711941,
+    "phone": "(215) 595-2500",
+    "website_url": "http://www.lanimaphiladelphia.com/",
+    "yelp_url": "https://www.yelp.com/biz/l-anima-philadelphia-2",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1576",
+    "name": "Little Fish BYOB",
+    "address": "746 S 6th St, Philadelphia, PA 19147",
+    "latitude": 39.9399907,
+    "longitude": -75.1529637,
+    "phone": "(267) 455-0172",
+    "website_url": "https://www.littlefishbyob.com/",
+    "yelp_url": null,
+    "restaurant_types": [
+      "seafood"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "hello@littlefishbyob.com"
+    ]
+  },
+  {
+    "restaurant_id": "1577",
+    "name": "Luna BYOB",
+    "address": "227 S 20th St, Philadelphia, PA 19103, United States",
+    "latitude": 39.94969150000001,
+    "longitude": -75.17378649999999,
+    "phone": "(215) 693-2220",
+    "website_url": "https://lunabyob.com/",
+    "yelp_url": "https://www.yelp.com/biz/luna-byob-philadelphia",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "info@lunabyob.com",
+      "info@ndiscovered.com"
+    ]
+  },
+  {
+    "restaurant_id": "1578",
+    "name": "Mawn",
+    "address": "764 S 9th St, Philadelphia, PA 19147",
+    "latitude": 39.9399765,
+    "longitude": -75.1578538,
+    "phone": null,
+    "website_url": "https://mawnphilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/mawn-philadelphia",
+    "restaurant_types": [
+      "other"
+    ],
+    "type_other_note": "Cambodian",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1579",
+    "name": "Melograno",
+    "address": "2012 Sansom St, Philadelphia, PA 19103, United States",
+    "latitude": 39.95125090000001,
+    "longitude": -75.17412350000001,
+    "phone": "(215) 875-8116",
+    "website_url": "http://www.melogranophiladelphia.com/",
+    "yelp_url": "https://www.yelp.com/biz/melograno-philadelphia",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "melogranophiladelphia@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1580",
+    "name": "Mercato",
+    "address": "1216 Spruce St, Philadelphia, PA 19107, United States",
+    "latitude": 39.9464992,
+    "longitude": -75.1617682,
+    "phone": "(215) 985-2962",
+    "website_url": "http://www.mercatobyob.com/",
+    "yelp_url": "https://www.yelp.com/biz/mercato-byob-philadelphia",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "events@anni-restaurants.com",
+      "info@mercatobyob.com"
+    ]
+  },
+  {
+    "restaurant_id": "1581",
+    "name": "Nakama Japanese Cuisines & Omakase",
+    "address": "45 N 13th St, Philadelphia, PA 19107",
+    "latitude": 39.9535978,
+    "longitude": -75.1609848,
+    "phone": "(267) 876-7080",
+    "website_url": "https://exploretock.com/nakama-japanese-cuisines--omakase-philadelphia",
+    "yelp_url": "https://www.yelp.com/biz/nakama-japanese-cuisines-and-omakase-philadelphia",
+    "restaurant_types": [
+      "other"
+    ],
+    "type_other_note": "Ramen, Sushi Bars",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1582",
+    "name": "Nori Sushi",
+    "address": "1636 South St, Philadelphia, PA 19146, United States",
+    "latitude": 39.9440412,
+    "longitude": -75.1700197,
+    "phone": "(215) 735-6668",
+    "website_url": "https://norisushi1636.com/",
+    "yelp_url": "https://www.yelp.com/biz/nori-sushi-philadelphia",
+    "restaurant_types": [
+      "japanese",
+      "other"
+    ],
+    "type_other_note": "Sushi Bars",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1583",
+    "name": "Olea",
+    "address": "232 Arch St, Philadelphia, PA 19106",
+    "latitude": 39.9519494,
+    "longitude": -75.1443869,
+    "phone": "(267) 519-8315",
+    "website_url": "http://oleaphilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/olea-philadelphia",
+    "restaurant_types": [
+      "mediterranean",
+      "other"
+    ],
+    "type_other_note": "Tapas/Small Plates",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "luis.oleaphilly@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1584",
+    "name": "Paffuto",
+    "address": "1009 S 8th St, Philadelphia, PA 19147",
+    "latitude": 39.93686930000001,
+    "longitude": -75.1565159,
+    "phone": "(215) 282-7262",
+    "website_url": "https://www.paffutophl.com/",
+    "yelp_url": "https://www.yelp.com/biz/paffuto-philadelphia",
+    "restaurant_types": [
+      "italian",
+      "other"
+    ],
+    "type_other_note": "Pop-Up Restaurants",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "paffutophl@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1585",
+    "name": "Pera Turkish Cuisine",
+    "address": "944 N 2nd St, Philadelphia, PA 19123",
+    "latitude": 39.9653401,
+    "longitude": -75.1407093,
+    "phone": "(215) 660-9471",
+    "website_url": "http://www.peraphiladelphia.com/",
+    "yelp_url": "https://www.yelp.com/biz/pera-turkish-cuisine-philadelphia",
+    "restaurant_types": [
+      "mediterranean",
+      "seafood",
+      "other"
+    ],
+    "type_other_note": "Turkish",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "peraphiladelphia@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1586",
+    "name": "Porcini",
+    "address": "2048 Sansom St, Philadelphia, PA 19103",
+    "latitude": 39.9513535,
+    "longitude": -75.1751156,
+    "phone": "(215) 751-1175",
+    "website_url": null,
+    "yelp_url": "https://www.yelp.com/biz/porcini-philadelphia",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1587",
+    "name": "Rice & Sambal",
+    "address": "1911 E Passyunk Ave, Philadelphia, PA 19148",
+    "latitude": 39.9262755,
+    "longitude": -75.1674637,
+    "phone": "(215) 279-7052",
+    "website_url": "https://ricensambal.com/",
+    "yelp_url": "https://www.yelp.com/biz/rice-and-sambal-philadelphia",
+    "restaurant_types": [
+      "asian",
+      "other"
+    ],
+    "type_other_note": "Supper Clubs",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1588",
+    "name": "Scannicchio's",
+    "address": "2500 S Broad St, Philadelphia, PA 19145",
+    "latitude": 39.9193448,
+    "longitude": -75.17111969999999,
+    "phone": "(215) 468-3900",
+    "website_url": "http://www.scannicchio.online/",
+    "yelp_url": "https://www.yelp.com/biz/scannicchios-philadelphia",
+    "restaurant_types": [
+      "italian",
+      "mediterranean",
+      "seafood"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1589",
+    "name": "Stina",
+    "address": "1705 Snyder Ave, Philadelphia, PA 19145",
+    "latitude": 39.9252204,
+    "longitude": -75.17471669999999,
+    "phone": "(215) 337-3455",
+    "website_url": "http://www.stinapizzeria.com/",
+    "yelp_url": "https://www.yelp.com/biz/stina-philadelphia-3",
+    "restaurant_types": [
+      "mediterranean",
+      "other"
+    ],
+    "type_other_note": "Greek",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "stinapizzeria@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1590",
+    "name": "Tamalex Restaurant",
+    "address": "1163 S 7th St, Philadelphia, PA 19147",
+    "latitude": 39.9339212,
+    "longitude": -75.1555565,
+    "phone": "(215) 465-1665",
+    "website_url": "http://tamalexphilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/tamalex-restaurant-bar-and-griil-philadelphia",
+    "restaurant_types": [
+      "mexican",
+      "other"
+    ],
+    "type_other_note": "New Mexican Cuisine",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1591",
+    "name": "Thai Square Restaurant",
+    "address": "2521 Christian St, Philadelphia, PA 19146, United States",
+    "latitude": 39.9425769,
+    "longitude": -75.18530679999999,
+    "phone": "(215) 454-6683",
+    "website_url": "http://www.thaisquarephilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/thai-square-restaurant-philadelphia-2",
+    "restaurant_types": [
+      "thai"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "thaisquarephilly@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1592",
+    "name": "Trattoria Carina",
+    "address": "2201 Spruce St, Philadelphia, PA 19103, United States",
+    "latitude": 39.9487654,
+    "longitude": -75.1779684,
+    "phone": "(215) 732-5818",
+    "website_url": "http://trattoriacarina.com/",
+    "yelp_url": "https://www.yelp.com/biz/trattoria-carina-philadelphia-2",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": [
+      "info@trattoriacarina.com"
+    ]
+  },
+  {
+    "restaurant_id": "1593",
+    "name": "Vic Sushi Bar",
+    "address": "2035 Sansom St, Philadelphia, PA 19103",
+    "latitude": 39.9515782,
+    "longitude": -75.1748309,
+    "phone": "(215) 564-4339",
+    "website_url": "http://vic-sushi.com/",
+    "yelp_url": "https://www.yelp.com/biz/vic-sushi-bar-philadelphia",
+    "restaurant_types": [
+      "japanese",
+      "other"
+    ],
+    "type_other_note": "Sushi Bars",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1594",
+    "name": "Vientiane Caf\u00e9",
+    "address": "4728 Baltimore Ave, Philadelphia, PA 19143",
+    "latitude": 39.9483882,
+    "longitude": -75.2179448,
+    "phone": "(215) 726-1095",
+    "website_url": "http://www.vientiane-cafe.com/",
+    "yelp_url": "https://www.yelp.com/biz/vientiane-caf%C3%A9-philadelphia-3",
+    "restaurant_types": [
+      "thai",
+      "other"
+    ],
+    "type_other_note": "Laotian",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-08",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1726",
+    "name": "Ristorante Aroma",
+    "address": "1245 S 3rd St, Philadelphia, PA 19147",
+    "latitude": 39.931907,
+    "longitude": -75.1495444,
+    "phone": "(267) 314-5315",
+    "website_url": "http://ristorantearomaphilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/ristorante-aroma-philadelphia-3",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1727",
+    "name": "Bricco Coal Fired Pizza",
+    "address": "128 Haddon Ave, Haddon Township, NJ 08108",
+    "latitude": 39.9104266,
+    "longitude": -75.05006949999999,
+    "phone": "(856) 477-2233",
+    "website_url": null,
+    "yelp_url": "https://www.yelp.com/biz/bricco-coal-fired-pizza-westmont",
+    "restaurant_types": [
+      "other"
+    ],
+    "type_other_note": "Pizza",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1729",
+    "name": "Cilantro Mediterranean Cuisine",
+    "address": "613 S 4th St, Philadelphia, PA 19147",
+    "latitude": 39.9411149,
+    "longitude": -75.1490884,
+    "phone": "(267) 761-9609",
+    "website_url": null,
+    "yelp_url": "https://www.yelp.com/biz/cilantro-new-mediterranean-cuisine-philadelphia",
+    "restaurant_types": [
+      "mediterranean"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1730",
+    "name": "Cucina Maria South Philly",
+    "address": "768 S 8th St, Philadelphia, PA 19147",
+    "latitude": 39.9397045,
+    "longitude": -75.1562596,
+    "phone": "(215) 408-0020",
+    "website_url": null,
+    "yelp_url": "https://www.yelp.com/biz/cucina-maria-philadelphia",
+    "restaurant_types": [
+      "italian",
+      "seafood"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1731",
+    "name": "Figs",
+    "address": "2501 Meredith St, Philadelphia, PA 19130",
+    "latitude": 39.9685181,
+    "longitude": -75.1785197,
+    "phone": "(215) 978-8440",
+    "website_url": "http://www.figs-restaurant.com/",
+    "yelp_url": "https://www.yelp.com/biz/figs-philadelphia",
+    "restaurant_types": [
+      "mediterranean",
+      "other"
+    ],
+    "type_other_note": "Moroccan",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1732",
+    "name": "Gnocchi Restaurant",
+    "address": "613 E Passyunk Ave, Philadelphia, PA 19147",
+    "latitude": 39.9413883,
+    "longitude": -75.15035460000001,
+    "phone": "(215) 592-8300",
+    "website_url": "https://gnocchi-restaurant.com/",
+    "yelp_url": "https://www.yelp.com/biz/gnocchi-restaurant-philadelphia",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": [
+      "team@latofonts.com",
+      "impallari@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1733",
+    "name": "Golden Gates Restaurant",
+    "address": "11058 Rennard St, Philadelphia, PA 19116",
+    "latitude": 40.1219337,
+    "longitude": -75.0343274,
+    "phone": "(215) 677-9337",
+    "website_url": "https://www.goldengatesrestaurant.com/",
+    "yelp_url": "https://www.yelp.com/biz/golden-gates-philadelphia",
+    "restaurant_types": [
+      "other"
+    ],
+    "type_other_note": "Russian, Dance Clubs",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1734",
+    "name": "Hardena",
+    "address": "1754 S Hicks St #2217, Philadelphia, PA 19145",
+    "latitude": 39.9284464,
+    "longitude": -75.1712586,
+    "phone": "(215) 271-9442",
+    "website_url": null,
+    "yelp_url": "https://www.yelp.com/biz/hardena-waroeng-surabaya-restaurant-philadelphia",
+    "restaurant_types": [
+      "asian",
+      "other"
+    ],
+    "type_other_note": "Indonesian",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1735",
+    "name": "Heavy Metal Sausage",
+    "address": "1527 W Porter St, Philadelphia, PA 19145",
+    "latitude": 39.9199012,
+    "longitude": -75.1733832,
+    "phone": null,
+    "website_url": null,
+    "yelp_url": "https://www.yelp.com/biz/heavy-metal-sausage-philadelphia",
+    "restaurant_types": [
+      "italian",
+      "other"
+    ],
+    "type_other_note": "Sandwiches",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1736",
+    "name": "Kanella",
+    "address": "1001 Spruce St, Philadelphia, PA 19107",
+    "latitude": 39.9463188,
+    "longitude": -75.15796089999999,
+    "phone": "(267) 928-2085",
+    "website_url": "http://kanellarestaurant.com/",
+    "yelp_url": "https://www.yelp.com/biz/kanella-philadelphia-4",
+    "restaurant_types": [
+      "mediterranean",
+      "other"
+    ],
+    "type_other_note": "Middle Eastern",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": [
+      "info@kanellarestaurant.com",
+      "culinaryking@hotmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1737",
+    "name": "La Canasta Mexican Food",
+    "address": "2341 S 4th St, Philadelphia, PA 19148",
+    "latitude": 39.9186314,
+    "longitude": -75.15398929999999,
+    "phone": "(267) 639-4060",
+    "website_url": "http://lacanastamexicanfoodpa.com/",
+    "yelp_url": "https://www.yelp.com/biz/la-canasta-mexican-food-philadelphia-3",
+    "restaurant_types": [
+      "mexican"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1738",
+    "name": "La Fontana Della Citta",
+    "address": "1701 Spruce St, Philadelphia, PA 19103",
+    "latitude": 39.947769,
+    "longitude": -75.16970049999999,
+    "phone": "(215) 875-9990",
+    "website_url": "https://www.lafontanaphl.com/",
+    "yelp_url": "https://www.yelp.com/biz/la-fontana-della-citta-philadelphia",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": [
+      "sdaku@dakugroupllc.net"
+    ]
+  },
+  {
+    "restaurant_id": "1739",
+    "name": "La Sera Italiana BYOB",
+    "address": "1608 South St, Philadelphia, PA 19146, United States",
+    "latitude": 39.9439675,
+    "longitude": -75.16915329999999,
+    "phone": "(267) 930-7805",
+    "website_url": null,
+    "yelp_url": "https://www.yelp.com/biz/la-sera-italiana-philadelphia",
+    "restaurant_types": [
+      "italian",
+      "other"
+    ],
+    "type_other_note": "Salad, Burgers",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1740",
+    "name": "La Trattoria",
+    "address": "7131 Germantown Ave, Philadelphia, PA 19119",
+    "latitude": 40.0593185,
+    "longitude": -75.1900363,
+    "phone": "(267) 430-0007",
+    "website_url": "http://www.trattoriamoma.com/",
+    "yelp_url": "https://www.yelp.com/biz/la-trattoria-philadelphia",
+    "restaurant_types": [
+      "italian"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": [
+      "moma.trattoria@gmail.com",
+      "hello@trattoriamoma.com",
+      "hello@latrattoriamtairy.com"
+    ]
+  },
+  {
+    "restaurant_id": "1741",
+    "name": "Los Gallos",
+    "address": "951 Wolf St, Philadelphia, PA 19148",
+    "latitude": 39.9211559,
+    "longitude": -75.16326649999999,
+    "phone": "(215) 551-1245",
+    "website_url": "http://www.losgallos-mexicantaqueria.com/",
+    "yelp_url": "https://www.yelp.com/biz/los-gallos-mexican-taqueria-philadelphia",
+    "restaurant_types": [
+      "mexican"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": [
+      "taquerialosgallos@hotmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1742",
+    "name": "M\u00e9xico Lindo Y Que Rico Restaurant",
+    "address": "700 Moore St, Philadelphia, PA 19148",
+    "latitude": 39.9264057,
+    "longitude": -75.1575356,
+    "phone": "(215) 755-1005",
+    "website_url": "https://www.facebook.com/mlyquerico/",
+    "yelp_url": "https://www.yelp.com/biz/m%C3%A9xico-lindo-philadelphia",
+    "restaurant_types": [
+      "mexican"
+    ],
+    "type_other_note": null,
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1743",
+    "name": "Osteria Ama Philly",
+    "address": "1905 Chestnut St, Philadelphia, PA 19103",
+    "latitude": 39.9521121,
+    "longitude": -75.1721491,
+    "phone": "(484) 355-4133",
+    "website_url": "http://osteriaama-philly.com/",
+    "yelp_url": "https://www.yelp.com/biz/osteria-ama-philadelphia-3",
+    "restaurant_types": [
+      "italian",
+      "seafood",
+      "other"
+    ],
+    "type_other_note": "Pizza",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": [
+      "info@osteriaamaphilly.com"
+    ]
+  },
+  {
+    "restaurant_id": "1744",
+    "name": "Pizza Richmond",
+    "address": "3136 Richmond St, Philadelphia, PA 19134",
+    "latitude": 39.9824852,
+    "longitude": -75.1028396,
+    "phone": "(267) 804-7745",
+    "website_url": "http://pizzarichmond.com/",
+    "yelp_url": "https://www.yelp.com/biz/pizza-richmond-philadelphia",
+    "restaurant_types": [
+      "other"
+    ],
+    "type_other_note": "Pizza",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": [
+      "pizza@pizzarichmond.com"
+    ]
+  },
+  {
+    "restaurant_id": "1745",
+    "name": "Sakana Omakase Sushi",
+    "address": "616 S 2nd St, Philadelphia, PA 19147",
+    "latitude": 39.9407077,
+    "longitude": -75.14604419999999,
+    "phone": "(215) 922-2149",
+    "website_url": "http://phillysakana.com/",
+    "yelp_url": "https://www.yelp.com/biz/sakana-omakas%C3%A8-sushi-philadelphia-3",
+    "restaurant_types": [
+      "japanese",
+      "other"
+    ],
+    "type_other_note": "Sushi Bars",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1746",
+    "name": "Tabachoy",
+    "address": "932 S 10th St, Philadelphia, PA 19147",
+    "latitude": 39.9383334,
+    "longitude": -75.1597839,
+    "phone": "(215) 315-8720",
+    "website_url": "https://www.tabachoyphilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/tabachoy-philadelphia",
+    "restaurant_types": [
+      "asian",
+      "other"
+    ],
+    "type_other_note": "Filipino",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": [
+      "chance@tabachoyphilly.com",
+      "tabachoyphilly@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1747",
+    "name": "Tacconelli's Pizza",
+    "address": "2604 E Somerset St, Philadelphia, PA 19134",
+    "latitude": 39.9803949,
+    "longitude": -75.11313369999999,
+    "phone": "(215) 425-4983",
+    "website_url": "http://www.tacconellispizzeria.com/",
+    "yelp_url": "https://www.yelp.com/biz/tacconellis-pizzeria-at-rivers-casino-philadelphia-philadelphia",
+    "restaurant_types": [
+      "italian",
+      "other"
+    ],
+    "type_other_note": "Pizza",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1748",
+    "name": "Tonalli Philly",
+    "address": "100 Morris St, Philadelphia, PA 19148",
+    "latitude": 39.9263366,
+    "longitude": -75.1474124,
+    "phone": "(215) 608-8145",
+    "website_url": "https://www.tonallimenu.com/",
+    "yelp_url": "https://www.yelp.com/biz/tonalli-philadelphia",
+    "restaurant_types": [
+      "other"
+    ],
+    "type_other_note": "Pizza, Tacos",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1749",
+    "name": "Umai Umai",
+    "address": "533 N 22nd St, Philadelphia, PA 19130",
+    "latitude": 39.9646894,
+    "longitude": -75.1741112,
+    "phone": "(215) 988-0707",
+    "website_url": "https://www.umai-umai.com/",
+    "yelp_url": "https://www.yelp.com/biz/umai-umai-philadelphia",
+    "restaurant_types": [
+      "japanese",
+      "other"
+    ],
+    "type_other_note": "Sushi Bars",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1750",
+    "name": "Winkel",
+    "address": "1119 Locust St, Philadelphia, PA 19107",
+    "latitude": 39.94780600000001,
+    "longitude": -75.1603421,
+    "phone": "(267) 639-3453",
+    "website_url": "https://www.winkelphilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/winkel-philadelphia-4",
+    "restaurant_types": [
+      "other"
+    ],
+    "type_other_note": "Breakfast & Brunch, Coffee & Tea, Sandwiches",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-16",
+    "emails": []
+  },
+  {
+    "restaurant_id": "1754",
+    "name": "Chateau Rouge",
+    "address": "2108 South St, Philadelphia, PA 19146",
+    "latitude": 39.9449727,
+    "longitude": -75.1773951,
+    "phone": "(445) 223-4110",
+    "website_url": "https://chateaurougephilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/chateau-rouge-philadelphia",
+    "restaurant_types": [
+      "french",
+      "other"
+    ],
+    "type_other_note": "African",
+    "corkage_fee_type": "other",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": "$10 per table",
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-17",
+    "emails": [
+      "hello@chateaurougephilly.com"
+    ]
+  },
+  {
+    "restaurant_id": "1755",
+    "name": "Baby's Kusina + Market",
+    "address": "2816 W Girard Ave, Philadelphia, PA 19130",
+    "latitude": 39.9742367,
+    "longitude": -75.18254680000001,
+    "phone": null,
+    "website_url": "https://babysphl.com/",
+    "yelp_url": "https://www.yelp.com/biz/baby-s-kusina-market-philadelphia",
+    "restaurant_types": [
+      "other"
+    ],
+    "type_other_note": "Pop-Up Restaurants",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-17",
+    "emails": [
+      "info@babysphl.com"
+    ]
+  },
+  {
+    "restaurant_id": "1756",
+    "name": "Yuhiro Omakase Sushi",
+    "address": "2146 E Susquehanna Ave, Philadelphia, PA 19125",
+    "latitude": 39.9798258,
+    "longitude": -75.1298355,
+    "phone": "(267) 876-7062",
+    "website_url": "https://www.yuhirosushi.com/",
+    "yelp_url": "https://www.yelp.com/biz/yuhiro-omakase-sushi-and-handroll-bar-philadelphia",
+    "restaurant_types": [
+      "japanese",
+      "other"
+    ],
+    "type_other_note": "Sushi Bars, Wine Bars",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-17",
+    "emails": [
+      "yuhirosushi@gmail.com"
+    ]
+  },
+  {
+    "restaurant_id": "1757",
+    "name": "Mabu Kitchen",
+    "address": "1120 Pine St, Philadelphia, PA 19107",
+    "latitude": 39.9448762,
+    "longitude": -75.1607628,
+    "phone": "(215) 279-7590",
+    "website_url": "http://mabukitchenphilly.com/",
+    "yelp_url": "https://www.yelp.com/biz/mabu-kitchen-philadelphia",
+    "restaurant_types": [
+      "french",
+      "other"
+    ],
+    "type_other_note": "Breakfast & Brunch, Comfort Food",
+    "corkage_fee_type": "free",
+    "corkage_fee_amount": null,
+    "other_corkage_policy": null,
+    "wine_service_equipment": [],
+    "equipment_other_note": null,
+    "byob_service_level": ": -- \u8acb\u9078\u64c7 --",
+    "last_verified_at": "2025-11-18",
+    "emails": [
+      "mabukitchenmanager@outlook.com"
+    ]
+  }
+]
