@@ -2569,20 +2569,16 @@ add_action('wp_loaded', 'byob_check_rewrite_rules');
  * @return bool 是否完整
  */
 function byob_is_restaurant_complete($restaurant_id) {
-    // 檢查 5 個必填欄位（移除 district 限制）
+    // 檢查 3 個必填欄位（名稱 / 地址 / corkage 設定）
     $post = get_post($restaurant_id);
     $restaurant_name = $post ? $post->post_title : '';
-    $phone = function_exists('get_field') ? get_field('phone', $restaurant_id) : '';
     $address = function_exists('get_field') ? get_field('address', $restaurant_id) : '';
-    // $restaurant_type = function_exists('get_field') ? get_field('restaurant_type', $restaurant_id) : '';
     // 改用費城專案欄位：philly_corkage_fee（取代舊 is_charged）
     $corkage_fee = function_exists('get_field') ? get_field('philly_corkage_fee', $restaurant_id) : '';
     
     // 如果所有欄位都有值，返回 true
     return !empty(trim($restaurant_name)) && 
-           !empty(trim($phone)) && 
            !empty(trim($address)) && 
-           // !empty($restaurant_type) &&
            !empty($corkage_fee);
 }
 
