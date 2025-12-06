@@ -42,7 +42,7 @@ GOOGLE_GEOCODE_URL = "https://maps.googleapis.com/maps/api/geocode/json"
 PHILLY_LOCATION_BIAS = "circle:30000@39.9526,-75.1652"
 
 # 輸入檔案
-INPUT_FILE = Path(__file__).parent / "data" / "Philly BYOB Restaurant_with_websites_merged.xlsx"
+INPUT_FILE = Path(__file__).parent / "data" / "Philly BYOB Restaurant.xlsx"
 # 允許用環境變數覆寫欲處理的日期（可用 | 分隔多個關鍵字）
 DATE_FILTER_TOKEN = os.getenv("TARGET_DATE_FILTER", "11/26|2025-11-26|2025/11/26")
 
@@ -426,8 +426,15 @@ def get_lat_lng_from_address(address: str, api_key: str) -> Tuple[Optional[float
     return geocode_address_direct(normalized_address, api_key)
 
 
-def process_restaurant(restaurant_name: str, address: str, website: str, places_api_key: str, 
-                      custom_search_api_key: str, custom_search_cx: str) -> Tuple[Optional[str], Optional[str], Optional[float], Optional[float], List[str]]:
+def process_restaurant(
+        restaurant_name: str,
+        address: str,
+        website: str,
+        places_api_key: str,
+        custom_search_api_key: str,
+        custom_search_cx: str,
+        lat_only: bool = False
+) -> Tuple[Optional[str], Optional[str], Optional[float], Optional[float], List[str]]:
     """
     處理單一餐廳：搜尋官網、Yelp 連結、經緯度和 Email
     
@@ -435,6 +442,10 @@ def process_restaurant(restaurant_name: str, address: str, website: str, places_
         (website, yelp_link, latitude, longitude, emails) 元組
     """
     logger.info(f"\n處理餐廳: {restaurant_name}")
+
+    if lat_only:
+        lat, lng = get_lat_lng_from_address(address, places_api_key)
+        return website, None, lat, lng, []
     
     # 如果沒有官網，先搜尋官網
     if not website or pd.isna(website) or str(website).strip() == '':
@@ -493,6 +504,8 @@ def main() -> int:
         print("請設定 Custom Search Engine ID: set GOOGLE_CUSTOM_SEARCH_CX=your_cx", file=sys.stderr)
         return 1
     
+    lat_only_mode = os.getenv("ONLY_LATLNG", "").strip().lower() in ("1", "true", "yes", "y")
+
     # 檢查檔案是否存在
     if not INPUT_FILE.exists():
         logger.error(f"❌ 找不到檔案: {INPUT_FILE}")
@@ -567,38 +580,49 @@ def main() -> int:
             existing_website,  # 傳入現有官網，如果沒有則會重新搜尋
             places_api_key,
             custom_search_api_key,
-            custom_search_cx
+            custom_search_cx,
+            lat_only=lat_only_mode
         )
         
-        # 更新資料（即使為 None 也要寫入，覆蓋舊資料）
-        df.at[idx, 'Google_Website'] = website if website else ''
-        if 'Yelp_URL' in df.columns:
-            df.at[idx, 'Yelp_URL'] = yelp_link if yelp_link else ''
+        # 更新資料
+        if not lat_only_mode:
+            df.at[idx, 'Google_Website'] = website if website else ''
+            if 'Yelp_URL' in df.columns:
+                df.at[idx, 'Yelp_URL'] = yelp_link if yelp_link else ''
+        else:
+            logger.info("僅更新經緯度（ONLY_LATLNG=1）")
+
         if 'Latitude' in df.columns:
             df.at[idx, 'Latitude'] = lat if lat is not None else ''
         if 'Longitude' in df.columns:
             df.at[idx, 'Longitude'] = lng if lng is not None else ''
         
-        # 將 emails 寫入 Email_1, Email_2, Email_3... 欄位
-        for i, email in enumerate(emails[:max_email_columns], 1):
-            email_col = f'Email_{i}'
-            df.at[idx, email_col] = email
+        if not lat_only_mode:
+            # 將 emails 寫入 Email_1, Email_2, Email_3... 欄位
+            for i, email in enumerate(emails[:max_email_columns], 1):
+                email_col = f'Email_{i}'
+                df.at[idx, email_col] = email
+            
+            # 清除多餘的 email 欄位
+            for i in range(len(emails) + 1, max_email_columns + 1):
+                email_col = f'Email_{i}'
+                df.at[idx, email_col] = ''
         
-        # 清除多餘的 email 欄位
-        for i in range(len(emails) + 1, max_email_columns + 1):
-            email_col = f'Email_{i}'
-            df.at[idx, email_col] = ''
-        
-        if website:
-            website_count += 1
-        if yelp_link:
-            yelp_count += 1
-        if lat is not None and lng is not None:
-            latlng_count += 1
-        if emails:
-            email_count += 1
-        if website or yelp_link or (lat is not None and lng is not None) or emails:
-            success_count += 1
+        if not lat_only_mode:
+            if website:
+                website_count += 1
+            if yelp_link:
+                yelp_count += 1
+            if emails:
+                email_count += 1
+            if website or yelp_link or (lat is not None and lng is not None) or emails:
+                success_count += 1
+            if lat is not None and lng is not None:
+                latlng_count += 1
+        else:
+            if lat is not None and lng is not None:
+                latlng_count += 1
+                success_count += 1
         
         logger.info(f"✅ {restaurant_name}: 官網={bool(website)}, Yelp={bool(yelp_link)}, 經緯度={bool(lat and lng)}, Email={len(emails)}個")
     
