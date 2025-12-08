@@ -1,40 +1,47 @@
 # BYOB 專案開發進度記錄
 
-## 📅 專案概覽（更新：2025-11-27）
+## 📅 專案概覽（更新：2025-12-08）
 
-### **費城 BYOB App — 資料輸出與接軌階段**
-* ✅ `byob_schema_spec.md` 已完成（現存於 `philly_yelp_crawler/`），明確定義 17 個必備欄位與條件式規則。
-* ✅ 新增 `scripts/byob_export.py`，可將 Excel 轉為標準 JSON / CSV，並提供欄位驗證與 issue log。
-* ✅ 產出 `data/byob_restaurants.csv` 與 `data/byob_restaurants.json`（85 筆），供 App MVP 直接使用。
-* ⚠️ 仍有 26 個欄位缺值（官網、Yelp、電話、兩筆開瓶費金額），依決策暫保留空白並在 issue log 中追蹤。
-
----
-
-## ✅ 2025-11-27 — 今日進度摘要
-1. **Schema 文件化**  
-   - 把 Excel 原始欄位映射成 App 端 `snake_case` 欄位，列出枚舉值、相依條件與 CSV/JSON 格式規則。
-2. **資料匯出腳本**  
-   - `byob_export.py` 內建清洗邏輯（移除多餘空白、拆分多值欄位、處理「待確認」狀態），若未補齊欄位會列出 issue 清單並可選擇 `--allow-issues` 輸出。
-3. **JSON / CSV 產物**  
-   - 產出路徑：`philly_yelp_crawler/data/byob_restaurants.{json,csv}`，App 端可直接引用；再生產流程與命令已記錄於 README 草稿。
-4. **缺值追蹤**  
-   - `website_url` 缺 11 筆：1408, 1417, 1569, 1574, 1586, 1727, 1729, 1730, 1734, 1735, 1739  
-   - `yelp_url` 缺 7 筆：1398, 1399, 1408, 1558, 1561, 1571, 1576  
-   - `phone` 缺 6 筆：1412, 1562, 1567, 1578, 1735, 1755  
-   - `corkage_fee_amount` 缺 2 筆：1398, 1399（`philly_corkage_fee = corkage_fee`，暫允許空值）
+### **費城 BYOB App — Glide MVP / BYOB near you 階段**
+* ✅ `Philly BYOB Restaurant.xlsx` 為唯一資料來源，匯入後同步 `BYOB restaurant 12.03` Google Sheet。  
+* ✅ Glide App already running：列表視圖完成基本卡片、電話／Yelp 操作、權限鎖定。  
+* ✅ Map 分頁可讀取 85 筆緯經度（使用 Template → Location 欄位）。  
+* 🟡 待完成：使用者定位 / 距離排序、chips 篩選、實機 PWA 測試與分享。
 
 ---
 
-## 🔜 2025-11-28 — 下一步（詳見《Next Task Prompt Byob》）
-1. **資料供應管線定稿**  
-   - 決定 JSON/CSV 的正式發佈位置與版本控管方式，撰寫再生產流程備忘。
-2. **App 資料模型與載入模組**  
-   - 建立 TypeScript/後端 DTO 型別，先以靜態 JSON Loader 串入 85 筆資料，處理缺值顯示策略。
-3. **後續任務排程**  
-   - 整理搜尋／篩選邏輯、資料補齊責任與 2–3 天 backlog，做為 11/29 之後的行動清單。
+## ✅ 2025-12-08 — 今日進度摘要
+1. **資料維運腳本更新**  
+   - `philly_yelp_crawler/update_1117_restaurants.py` 的 `INPUT_FILE` 改為直接讀寫 `Philly BYOB Restaurant.xlsx`。  
+   - 新增 `ONLY_LATLNG` 環境變數：設 `1` 時僅回填經緯度欄位，跳過官網 / Yelp / Email。  
+   - 重新跑腳本流程：設定 `GOOGLE_API_KEY`、`GOOGLE_CUSTOM_SEARCH_API_KEY`、`GOOGLE_CUSTOM_SEARCH_CX`，搭配 `TARGET_DATE_FILTER` 只處理 2025/12/06 新增的 8 筆。
+
+2. **Glide App 基礎建置**  
+   - 以 `BYOB restaurant 12.03` Google Sheet 為資料源，匯入 85 筆餐廳。  
+   - 卡片列表：關閉新增/編輯/刪除、Title=Name、Description=Address、Meta=Phone / Yelp，確保顯示整潔。  
+   - Map Location：新增 Template 欄將 `latitude,longitude` 組合成字串並轉為 Location 型別，Map 分頁成功顯示 pin。  
+   - 另建「BYOB near you」分頁，採 Details layout：上方 Map（Minimal 樣式）、下方列表待加入篩選。
+
+3. **WordPress 顯示調整（配合資料）**  
+   - `byob_is_restaurant_complete()` 只要求名稱 / 地址 / `philly_corkage_fee`；Elma 無電話仍顯示於列表。  
+   - 確認 `archive-restaurant.php` 顯示 verified 卡片正常。
 
 ---
 
-## 📌 持續建議
-* 補齊缺值欄位後，重新更新 Excel 並跑 `byob_export.py`（無需 `--allow-issues`）即可得到乾淨資料。
-* App 若需更動欄位或新增資料來源，請先更新 `byob_schema_spec.md`，再由腳本輸出新版本，確保所有端點一致。
+## 🔜 2025-12-09 — 下一步（詳見《Next Task Prompt Byob》）
+1. **Glide 使用者定位 + 距離計算**  
+   - User Profiles 新增 `user_location`；按鈕觸發 `Set columns → Current location`。  
+   - 建立 Distance computed column，卡片顯示距離並提供「距離 < 3 公里」篩選 / 排序。  
+2. **Map / Cards 視覺與篩選**  
+   - Map Tooltip 顯示名稱、類別、corkage；Inline List 加入 chips（類別、免 corkage、官網 / Yelp）。  
+   - 行動裝置實測地圖縮放與列表互動。  
+3. **PWA 測試與分享**  
+   - 實機安裝（Add to Home Screen），檢查定位權限、距離 fallback。  
+   - 產生公開連結並記錄於 doc/README，供 12/09 測試使用。
+
+---
+
+## 📌 操作備忘
+* 重新產出資料：更新 Excel → 以 Google Sheet 匯入 → Glide 自動同步；若僅需補經緯度，設定 `ONLY_LATLNG=1` 後執行 `update_1117_restaurants.py`。  
+* Glide Map 目前無內建使用者定位顯示，需透過 User Profiles + Distance 欄位自行儲存 / 計算。  
+* 若需回更舊任務（schema、匯出腳本），請參考 `doc/README.md` 的「核心文件與工具」區段。
