@@ -9,21 +9,19 @@
 
 ---
 
-## 🚀 最新進度（2025-12-11）
+## 🚀 最新進度（2025-12-12）
 
 ### 🌟 今日成果
 
-* **Airtable + Softr 轉換**：`Philly BYOB Restaurant.xlsx` 最新 1794 筆資料已匯入 Airtable，Softr App 以此為唯一資料源，完成 data source 授權。  
-* **Softr 列表頁**：建立 `BYOB near you` 頁面，卡片顯示名稱 / 地址 / 餐廳類別，啟用搜尋列與 chips；更新標題、副標與筆數資訊。  
-* **餐廳詳細頁**：新增共用 Item details block，呈現 corkage / service level / wine equipment / 官網 / Yelp，並加入 `Call` 按鈕（tel 協定），所有餐廳共享模板。  
-* **任務同步**：`doc/Next Task Prompt Byob`、`doc/ai_progress_byob` 皆更新為 Softr 待辦與進度，準備 12/12 進一步完成地圖、CTA、篩選與發佈。
+* **Airtable 欄位清理**：建立 `byob_service_level_tmp` 公式，轉換空值/「請選擇」為 `-`；新增 `byob_service_level_fixed`（Single select，含 `-`），批次貼上整理結果。  
+* **Softr 顯示檢查**：詳細頁 Tag 類型可用，待資料源刷新後改用 `byob_service_level_fixed`。  
+* **任務同步**：`doc/Next Task Prompt Byob`、`doc/ai_progress_byob` 已更新，明日聚焦圖片/封面與餐廳類型呈現。
 
-### 🗓️ 明日計劃（2025-12-12）
+### 🗓️ 明日計劃（2025-12-13）
 
-1. **Map with list 整合**：在 Softr 加入地圖區塊，pin 內容顯示名稱 / 類別 / corkage，與卡片連結至同一詳細頁。  
-2. **CTA 優化**：卡片與詳情頁新增 `Call` / `Website` / `Yelp` / `Open in Google Maps` 按鈕。  
-3. **篩選與排序**：Chips 分組、免開瓶費 toggle、服務層級多選篩選、排序下拉（名稱、最後驗證）。  
-4. **發佈與紀錄**：完成調整後 `Publish`，更新 README 與測試連結，準備 user testing。
+1. **圖片/封面**：列表與詳情補預設圖，確認裁切比例與手機預覽。  
+2. **餐廳類型呈現**：Softr 改用 `byob_service_level_fixed` Tag，主/補充類型併排顯示，空值不露出「請選擇」。  
+3. **發佈與紀錄**：完成調整後 Publish，更新 README 與測試連結；必要時補記 ai_progress。
 
 ---
 
@@ -57,8 +55,8 @@
 ## 📂 核心文件與工具
 
 * `doc/philly_byob_complete_plan.md`：賽城專案完整實施計畫。  
-* `doc/Next Task Prompt Byob.md`：每日任務規劃（已更新至 2025/12/12 Softr 工作）。  
-* `doc/ai_progress_byob.md`：詳細進度日誌（最新至 2025/12/11 Softr 進度）。  
+* `doc/Next Task Prompt Byob.md`：每日任務規劃（已更新至 2025/12/13 Softr 工作）。  
+* `doc/ai_progress_byob.md`：詳細進度日誌（最新至 2025/12/12 Softr 進度）。  
 * `philly_yelp_crawler/update_1117_restaurants.py`：官網 / Yelp / 經緯度 / Email 批次補齊腳本（支援 `ONLY_LATLNG`）。  
 * `philly_yelp_crawler/byob_schema_spec.md`：App 欄位規格表；`philly_yelp_crawler/scripts/byob_export.py`：資料匯出腳本。  
 * `philly_yelp_crawler/data/Philly BYOB Restaurant.xlsx` + Airtable Base：唯一資料來源與 Softr data source。  
@@ -69,7 +67,7 @@
 
 ## 🔭 即將聚焦（短期）
 
-1. Softr「BYOB near you」完整體驗（地圖、CTA、篩選、排序、品牌視覺）。  
+1. Softr「BYOB near you」：圖片/封面、類型/Tag 顯示、地圖/CTA/篩選逐步完成。  
 2. SendGrid 第二封 Email 與行銷素材同步。  
 3. 餐廳資料維運 SOP：Excel 更新 → Airtable 匯入 → Softr 同步；必要時 `update_1117_restaurants.py` 補欄位。
 
@@ -83,6 +81,6 @@
 
 ---
 
-*最後更新：2025-12-11*  
-*版本：v27.0*  
-*下一步：Softr BYOB near you 地圖整合、CTA/篩選優化、發佈測試*
+*最後更新：2025-12-12*  
+*版本：v28.0*  
+*下一步：Softr BYOB near you 圖片/類型顯示優化，刷新欄位並發佈測試*
