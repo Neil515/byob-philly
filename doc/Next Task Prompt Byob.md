@@ -1,35 +1,51 @@
 # 🍹 BYOB 專案工作規劃
 
-## 🗓️ 當前日期：2025-12-13
+## 🗓️ 當前日期：2025-12-14
 
 ---
 
-## ✅ 今日摘要（2025-12-12）
+## ✅ 今日摘要（2025-12-14）
 
-* Airtable 調整 `byob_service_level` 顯示欄位（fixed/select），準備在 Softr 換用。
-* Softr 詳細頁已驗證 tag 顯示正常，待資料源刷新後切換新欄位。
-* 介面調整暫停，明日續作。
+* Softr：搜尋/篩選提示文案調整，明確標示地圖與列表各自獨立，不再追求共用控件。
+* Domain/Logo：確認可用自有網域 byobmap.com；Softr 全域 Logo 上傳受方案限制，需在導航 block 內上傳。
+* App 策略：決定改以 Adalo 製作行動 App（目標 App Store/Play），今日完成專案建立（Mobile Only，Restaurant 模板）並確認基本編輯器操作。
 
 ---
 
-## 🗓️ 明日（2025-12-14）待辦：地圖/列表共用搜尋＆上架前整理
+## 🗓️ 明日（2025-12-15）待辦：Adalo BYOB Map 初版骨架
 
-### 1. 地圖＆列表共用 Search/Filter
-* **目標**：地圖與列表使用同一組搜尋/篩選，避免重複操作。
+### 1. 資料模型建立
+* **目標**：完成核心 Collections（Restaurants、Restaurant Types／Tags、Users 如需登入）。
 * **步驟**：
-  * 優先考慮改用「Map + List」合併模板；若保留現有區塊，關閉列表區的獨立 Search/Filter，改由上方地圖區控件（同一 Data source/view）。
-  * 綁定同欄位（Search：Name/Address/Phone；Filters：`philly_restaurant_type`、`philly_corkage_fee` 等），測試預覽確認地圖與列表同步更新。
-  * 行動版檢查：篩選收合/Chips 排版、Search placeholder 說明「搜尋餐廳/地址」。
-* **完成定義**：一組 Search/Filter 即可同時影響地圖標記與列表卡片，行動端體驗正常。
+  * Restaurants 欄位：name、address、phone、lat、lng、cuisine/type（多選可用關聯）、corkage_fee、image/placeholder、slug/ID。
+  * 若需分類 Chips：建立 Types 集合並關聯多對多；預填常用類別。
+  * 確認可否直接接 Airtable／CSV；若不行先用 Adalo DB 匯入小樣本。
+* **完成定義**：集合與欄位就緒，可在編輯器看到範例資料並可查詢。
 
-### 2. 上架前整理與發布
-* **目標**：完成最後視覺與互動檢查，發布可供測試。
+### 2. 畫面與流程骨架
+* **目標**：建立主要螢幕與導航，替換餐廳模板預設頁。
 * **步驟**：
-  * 版面收尾：移除多餘 block／預設文案，保留單行 CTA（如需要）；列表圖片比例檢查，Placeholder 顯示一致。
-  * 實機預覽（桌機/手機）：測試 Search/Filter、點擊卡片/標記開啟詳情、Load more/分頁。
-  * Publish 並在 `doc/README.md` 更新最新測試連結與狀態，必要時同步 `ai_progress_byob.md`。
-* **完成定義**：新版已發布、主要互動無阻塞，README 已更新連結與簡要變更。
+  * 保留/替換底部導航：Home（列表+搜尋）、Map（地圖）、Favorites/Account（可先占位）。
+  * 列表頁：接 Restaurants 集合，加入搜尋（Name/Address）與篩選 Chips（Cuisine/Type）。
+  * 地圖頁：使用 Map 元件，綁定 lat/lng，點標記開啟餐廳詳情。
+  * 詳情頁：顯示圖/名稱/地址/電話/費用/類型；放收藏或「打開地圖導航」按鈕（可先空白動作）。
+* **完成定義**：導航可切換；列表、地圖、詳情三頁皆可載入同一份假資料。
+
+### 3. 樣式與品牌
+* **目標**：套用基本色系與名稱，去除模板咖啡廳素材。
+* **步驟**：
+  * App Name：Philly BYOB Map（或 Philadelphia BYOB Map）。
+  * Primary/Secondary Colors：套用品牌色（可先 #7B1FA2 / #FFC107 或保留預設，再視覺調整）。
+  * 替換模板圖片為 placeholder，移除咖啡文案。
+* **完成定義**：主要頁面無咖啡示例圖與文字，顏色一致。
+
+### 4. 驗證與下一步準備
+* **目標**：手機預覽確認互動流暢，列出資料匯入與上架需求。
+* **步驟**：
+  * Adalo Preview 測試：搜尋/篩選對列表，地圖標記可點，詳情正常開。
+  * 列出後續：資料批次匯入方案、推播/登入要否啟用、App Store/Play 打包需求。
+* **完成定義**：有可演示的最小互動流，並列出上架前的缺口清單。
 
 ---
 
-> 備註：若需更新資料，只要覆蓋 `philly_yelp_crawler/data/Philly BYOB Restaurant.xlsx` 並重新匯入 Google Sheet，Glide 會即時同步；經緯度更新可透過 `update_1117_restaurants.py`（搭配 `ONLY_LATLNG=1`）批次完成。
+> 備註：Softr 網站暫維持可預覽；行動端改走 Adalo。若要回填真實資料，可先用小批次 CSV/手動輸入測試，後續再決定 Airtable 直連或 API 匯入。
