@@ -5,24 +5,22 @@
 | 城市           | 目標定位               | 目前狀態                                     |
 | ------------ | ------------------ | ---------------------------------------- |
 | 🇹🇼 臺北 BYOB | 自帶酒水餐廳推薦平台         | 核心系統穩定運作，重點在酒商合作與社群推廣，細節集中於各模組文件。 |
-| 🇺🇸 費城 BYOB | Yelp 的 BYOB 專業補充平台 | WordPress 流程完成，現正轉往 Softr App MVP（BYOB near you 地圖體驗）。 |
+| 🇺🇸 費城 BYOB | Yelp 的 BYOB 專業補充平台 | WordPress 流程完成，Softr 保留預覽；行動端改用 Adalo。 |
 
 ---
 
-## 🚀 最新進度（2025-12-14）
+## 🚀 最新進度（2025-12-16）
 
-### 🌟 今日成果
+### 🌟 今日成果（Adalo）
+* **類別顯示**：Airtable 公式 `type_display = ARRAYJOIN({philly_restaurant_type}, " · ")`，保留原多選欄位供篩選。  
+* **列表綁定**：Magic Text 均用 Current Restaurant’s；描述可用空格/符號分隔，圖片以 URL 綁 `fields > cover_image > url`（缺圖用 placeholder）。  
+* **地圖設定**：Marker Collection=Restaurants，Marker Address 單行 `[Latitude], [Longitude]`；可點開 Google Maps 導航。  
+* **欄位同步**：`cover_image`、`type_display` 已在 External Collection；看不到時 Refresh Schema。  
 
-* **Softr 調整**：搜尋/篩選以文案標示「地圖與列表各自獨立」；確認可用自有網域 `byobmap.com`，全域 Logo 上傳受方案限制需在導航 block 內上傳。  
-* **Adalo 啟動**：新建 Mobile Only 專案（Restaurant 模板），設定品牌名稱，熟悉畫布縮放與頁面切換，準備替換預設頁與資料。  
-* **任務同步**：`Next Task Prompt Byob.md` 更新至 12/15，聚焦 Adalo 資料模型、列表/地圖/詳情骨架與樣式替換。
-
-### 🗓️ 明日計劃（2025-12-15）
-
-1. **Adalo 資料模型**：建立 Restaurants（name/address/phone/lat/lng/type/corkage_fee/image/slug）、Types/Tags（多對多），必要時 Users。  
-2. **畫面骨架**：底部導航；列表頁搜尋+篩選 Chips；地圖頁綁 lat/lng，標記開啟詳情；詳情頁顯示餐廳資訊。  
-3. **樣式替換**：移除模板咖啡素材，套品牌色與 placeholder。  
-4. **驗證**：Preview 測試列表/地圖/詳情流程，列出匯入與上架需求。
+### 🗓️ 下一步（2025-12-17，詳見《Next Task Prompt Byob.md》）
+1. 地圖：確認全部筆數標記、點擊可開導航。  
+2. 圖片：列表全面顯示封面，無圖用預設。  
+3. 篩選：類別 chips / 搜尋（用 `type_display` 或原多選，含 All 清空）。
 
 ---
 
@@ -56,8 +54,8 @@
 ## 📂 核心文件與工具
 
 * `doc/philly_byob_complete_plan.md`：賽城專案完整實施計畫。  
-* `doc/Next Task Prompt Byob.md`：每日任務規劃（已更新至 2025/12/15 Adalo 骨架任務）。  
-* `doc/ai_progress_byob.md`：詳細進度日誌（最新至 2025/12/14 Softr 調整與 Adalo 啟動）。  
+* `doc/Next Task Prompt Byob.md`：每日任務規劃（最新至 2025/12/17 地圖/圖片/篩選）。  
+* `doc/ai_progress_byob.md`：進度日誌（最新至 2025/12/16 Adalo 列表/地圖/欄位同步）。  
 * `philly_yelp_crawler/update_1117_restaurants.py`：官網 / Yelp / 經緯度 / Email 批次補齊腳本（支援 `ONLY_LATLNG`）。  
 * `philly_yelp_crawler/byob_schema_spec.md`：App 欄位規格表；`philly_yelp_crawler/scripts/byob_export.py`：資料匯出腳本。  
 * `philly_yelp_crawler/data/Philly BYOB Restaurant.xlsx` + Airtable Base：唯一資料來源與 Softr data source。  
@@ -69,7 +67,7 @@
 
 ## 🔭 即將聚焦（短期）
 
-1. Adalo BYOB Map：完成資料模型與列表/地圖/詳情骨架，進入上架前驗證。  
+1. Adalo BYOB Map：完成地圖標記、圖片顯示與類別篩選，進入上架前驗證。  
 2. Softr 網站：維持可預覽，搜尋/篩選分離並保留提示；必要時更新文案與資料。  
 3. SendGrid 第二封 Email 與行銷素材同步；資料維運 SOP（Excel → Airtable，同步至前端）。
 
@@ -83,6 +81,6 @@
 
 ---
 
-*最後更新：2025-12-14*  
-*版本：v30.0*  
-*下一步：Adalo 完成資料模型與畫面骨架，進行預覽驗證；Softr 保持可預覽與文案提示*
+*最後更新：2025-12-16*  
+*版本：v31.0*  
+*下一步：Adalo 完成地圖/圖片/篩選，進行預覽驗證；Softr 保持可預覽與文案提示*
