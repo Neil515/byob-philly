@@ -1,51 +1,33 @@
 # 🍹 BYOB 專案工作規劃
 
-## 🗓️ 當前日期：2025-12-14
+## 🗓️ 當前日期：2025-12-16
 
 ---
 
-## ✅ 今日摘要（2025-12-14）
+## 🗓️ 明日（2025-12-17）待辦：Adalo 地圖 / 圖片 / 篩選
 
-* Softr：搜尋/篩選提示文案調整，明確標示地圖與列表各自獨立，不再追求共用控件。
-* Domain/Logo：確認可用自有網域 byobmap.com；Softr 全域 Logo 上傳受方案限制，需在導航 block 內上傳。
-* App 策略：決定改以 Adalo 製作行動 App（目標 App Store/Play），今日完成專案建立（Mobile Only，Restaurant 模板）並確認基本編輯器操作。
-
----
-
-## 🗓️ 明日（2025-12-15）待辦：Adalo BYOB Map 初版骨架
-
-### 1. 資料模型建立
-* **目標**：完成核心 Collections（Restaurants、Restaurant Types／Tags、Users 如需登入）。
+### 1. 地圖（Markers 正確帶經緯度）
+* **目標**：地圖標記出現且點擊可開導航。
 * **步驟**：
-  * Restaurants 欄位：name、address、phone、lat、lng、cuisine/type（多選可用關聯）、corkage_fee、image/placeholder、slug/ID。
-  * 若需分類 Chips：建立 Types 集合並關聯多對多；預填常用類別。
-  * 確認可否直接接 Airtable／CSV；若不行先用 Adalo DB 匯入小樣本。
-* **完成定義**：集合與欄位就緒，可在編輯器看到範例資料並可查詢。
+  * Map 元件 → Marker Collection: Restaurants；Number of markers: Multiple。
+  * Marker Address：單行輸入 `[Latitude], [Longitude]`（Magic Text 插入 Latitude、逗號空格、Longitude），確保欄位為數字且無空值。
+  * Click Action：Open Link → `https://maps.google.com/?q=[Latitude],[Longitude]`（Magic Text 插入）。
+  * 驗證 API Key 已啟用 Maps/Geocoding/Places 並可計費；預覽確認標記出現。
+* **完成定義**：每筆餐廳在地圖上有標記，點擊可開啟 Google Maps 導航。
 
-### 2. 畫面與流程骨架
-* **目標**：建立主要螢幕與導航，替換餐廳模板預設頁。
+### 2. 圖片（List 顯示 cover_image）
+* **目標**：列表圖片顯示 Airtable cover_image。
 * **步驟**：
-  * 保留/替換底部導航：Home（列表+搜尋）、Map（地圖）、Favorites/Account（可先占位）。
-  * 列表頁：接 Restaurants 集合，加入搜尋（Name/Address）與篩選 Chips（Cuisine/Type）。
-  * 地圖頁：使用 Map 元件，綁定 lat/lng，點標記開啟餐廳詳情。
-  * 詳情頁：顯示圖/名稱/地址/電話/費用/類型；放收藏或「打開地圖導航」按鈕（可先空白動作）。
-* **完成定義**：導航可切換；列表、地圖、詳情三頁皆可載入同一份假資料。
+  * List 項目內 Image → Image Source: URL → Magic Text 選 `fields > cover_image > url`（或 thumbnails.large.url）。
+  * 若需預設圖：在 Image 設定 Placeholder 或條件顯示（若 url 為空則用內建 placeholder）。
+  * 預覽檢查至少數筆有圖、無圖時顯示預設。
+* **完成定義**：列表每列能正常顯示封面圖；缺圖時不影響版面。
 
-### 3. 樣式與品牌
-* **目標**：套用基本色系與名稱，去除模板咖啡廳素材。
+### 3. 篩選 / 搜尋（類別 chips）
+* **目標**：依餐廳類型快速篩選列表。
 * **步驟**：
-  * App Name：Philly BYOB Map（或 Philadelphia BYOB Map）。
-  * Primary/Secondary Colors：套用品牌色（可先 #7B1FA2 / #FFC107 或保留預設，再視覺調整）。
-  * 替換模板圖片為 placeholder，移除咖啡文案。
-* **完成定義**：主要頁面無咖啡示例圖與文字，顏色一致。
-
-### 4. 驗證與下一步準備
-* **目標**：手機預覽確認互動流暢，列出資料匯入與上架需求。
-* **步驟**：
-  * Adalo Preview 測試：搜尋/篩選對列表，地圖標記可點，詳情正常開。
-  * 列出後續：資料批次匯入方案、推播/登入要否啟用、App Store/Play 打包需求。
-* **完成定義**：有可演示的最小互動流，並列出上架前的缺口清單。
-
----
-
-> 備註：Softr 網站暫維持可預覽；行動端改走 Adalo。若要回填真實資料，可先用小批次 CSV/手動輸入測試，後續再決定 Airtable 直連或 API 匯入。
+  * 使用 `type_display`（公式）或原多選欄位建立篩選邏輯；優先簡單方案：文字包含搜尋。
+  * 在列表畫面加入一排 Chips/Buttons（常見類別：Italian、Asian、Japanese、Mediterranean…），點擊時設定篩選條件（List Filter：Name/Type contains 選定類別）。
+  * 可留一顆「All」清空篩選；若要多選再決定是否增加。
+  * 確認篩選後列表與地圖（如需）同步資料源；若無法同步，先完成列表篩選為主。
+* **完成定義**：點擊類別 chip 後，列表僅顯示該類別餐廳；可恢復為全部。
