@@ -1,6 +1,6 @@
 # BYOB 專案開發進度記錄
 
-## 📅 專案概覽（更新：2025-12-16）
+## 📅 專案概覽（更新：2025-12-17）
 * Airtable 為唯一來源；Softr 網站保留預覽。  
 * 行動端改用 Adalo（Mobile Only + Restaurant 範本），目標上架 App Store/Play。
 
@@ -22,7 +22,18 @@
 
 ---
 
-## 🔭 下一步（詳見《Next Task Prompt Byob.md》12/17）
-* 地圖：確認所有筆數有標記，點擊開導航。  
-* 圖片：列表全面顯示封面，無圖用預設。  
-* 篩選：類別 chips / 搜尋（用 `type_display` 或原多選，含 All 清空）。
+## ✅ 2025-12-17 — 今日進度摘要（Adalo 圖片欄位/載入）
+1) **改用 `cover_image_url` 供 App 綁定**  
+   * Airtable 新增可寫的單行文字欄位 `cover_image_url`，不再依附件物件。  
+   * 依餐廳類型批次寫入 placeholder（使用 `airtable_placeholder_script.md` 連結），提供「安全 fallback」腳本避免無對應類型/空陣列。
+2) **Adalo 綁定調整**  
+   * External Collection 重新建立後抓到 `cover_image_url`；Image Source 改綁該欄位，避免所有餐廳同圖或缺圖顯示 placeholder。  
+3) **問題定位：僅前 10 筆顯示圖片**  
+   * 確認資料筆數有載入，但第 11 筆之後仍顯示預設圖，研判為 Airtable REST 分頁/offset 未設置；規劃改用 `pageSize=100` + offset 分頁，並在 List 啟用 load more/自動分頁。
+
+---
+
+## 🔭 下一步（詳見《Next Task Prompt Byob.md》12/18）
+* 圖片：External Collection 設 `pageSize=100`、Offset 分頁，Image 綁 `cover_image_url`；Airtable 檢查空值並覆蓋補齊，確保 30+ 筆仍顯示封面。  
+* 地圖：Marker 使用 `[Latitude], [Longitude]`，點擊開 Google Maps。  
+* 篩選：類別 chips（含 All），必要時同步地圖顯示。
