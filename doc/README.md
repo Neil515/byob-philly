@@ -9,18 +9,17 @@
 
 ---
 
-## 🚀 最新進度（2025-12-16）
+## 🚀 最新進度（2025-12-17）
 
 ### 🌟 今日成果（Adalo）
-* **類別顯示**：Airtable 公式 `type_display = ARRAYJOIN({philly_restaurant_type}, " · ")`，保留原多選欄位供篩選。  
-* **列表綁定**：Magic Text 均用 Current Restaurant’s；描述可用空格/符號分隔，圖片以 URL 綁 `fields > cover_image > url`（缺圖用 placeholder）。  
-* **地圖設定**：Marker Collection=Restaurants，Marker Address 單行 `[Latitude], [Longitude]`；可點開 Google Maps 導航。  
-* **欄位同步**：`cover_image`、`type_display` 已在 External Collection；看不到時 Refresh Schema。  
+* **封面圖欄位改用文字 URL**：Airtable 新增可寫欄位 `cover_image_url`，以餐廳類型批次寫入 placeholder（依 `airtable_placeholder_script.md`），並提供安全 fallback 腳本避免類型缺值/空陣列。  
+* **App 綁定調整**：Adalo External Collection 重新建立後抓到 `cover_image_url`；Image Source 改綁該欄位，避免前 10 筆後只出現預設圖。  
+* **載入問題定位**：確認資料有載入，但圖片第 11 筆後落回 placeholder，研判需在 Airtable REST 設 `pageSize=100` + offset 分頁並於 List 啟用自動分頁/Load more。
 
-### 🗓️ 下一步（2025-12-17，詳見《Next Task Prompt Byob.md》）
-1. 地圖：確認全部筆數標記、點擊可開導航。  
-2. 圖片：列表全面顯示封面，無圖用預設。  
-3. 篩選：類別 chips / 搜尋（用 `type_display` 或原多選，含 All 清空）。
+### 🗓️ 下一步（2025-12-18，詳見《Next Task Prompt Byob.md》）
+1. 圖片：External Collection 設 `pageSize=100`、Offset 分頁；Image 綁 `cover_image_url`；Airtable 檢查空值並覆蓋補齊，驗證 30+ 筆仍有封面。  
+2. 地圖：Marker 使用 `[Latitude], [Longitude]`，點擊開 Google Maps。  
+3. 篩選：類別 chips（含 All），必要時同步地圖顯示。
 
 ---
 
@@ -54,8 +53,8 @@
 ## 📂 核心文件與工具
 
 * `doc/philly_byob_complete_plan.md`：賽城專案完整實施計畫。  
-* `doc/Next Task Prompt Byob.md`：每日任務規劃（最新至 2025/12/17 地圖/圖片/篩選）。  
-* `doc/ai_progress_byob.md`：進度日誌（最新至 2025/12/16 Adalo 列表/地圖/欄位同步）。  
+* `doc/Next Task Prompt Byob.md`：每日任務規劃（最新至 2025/12/18 圖片分頁/地圖/篩選）。  
+* `doc/ai_progress_byob.md`：進度日誌（最新至 2025/12/17 Adalo 圖片欄位與載入）。  
 * `philly_yelp_crawler/update_1117_restaurants.py`：官網 / Yelp / 經緯度 / Email 批次補齊腳本（支援 `ONLY_LATLNG`）。  
 * `philly_yelp_crawler/byob_schema_spec.md`：App 欄位規格表；`philly_yelp_crawler/scripts/byob_export.py`：資料匯出腳本。  
 * `philly_yelp_crawler/data/Philly BYOB Restaurant.xlsx` + Airtable Base：唯一資料來源與 Softr data source。  
@@ -81,6 +80,6 @@
 
 ---
 
-*最後更新：2025-12-16*  
-*版本：v31.0*  
-*下一步：Adalo 完成地圖/圖片/篩選，進行預覽驗證；Softr 保持可預覽與文案提示*
+*最後更新：2025-12-17*  
+*版本：v32.0*  
+*下一步：Adalo 完成圖片分頁、地圖、篩選；Softr 保持可預覽與文案提示*
