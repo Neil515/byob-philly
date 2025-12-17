@@ -93,13 +93,17 @@ const placeholders = {
   "Vegan": [
     "https://example.com/placeholder/vegan-1.webp"
   ],
-  "other": [
+    "pizza": [
     "https://byobmap.com/wp-content/uploads/2025/11/placeholder_logo_italian_pizza_byob-1.webp",
-    "https://byobmap.com/wp-content/uploads/2025/11/placeholder_logo_italian_pizza_byob-2.webp",
-	"https://byobmap.com/wp-content/uploads/2025/10/placeholder_logo_georgian_byob_khachapuri-2.webp",
-	"https://byobmap.com/wp-content/uploads/2025/11/placeholder_logo_georgian_byob_khachapuri-1.webp",
+    "https://byobmap.com/wp-content/uploads/2025/11/placeholder_logo_italian_pizza_byob-2.webp"
+  ],
+    "ramen": [
 	"https://byobmap.com/wp-content/uploads/2025/12/placeholder-tonkotsu-ramen-byob-japanese-restaurant-philadelphia.webp",
 	"https://byobmap.com/wp-content/uploads/2025/12/placeholder-japanese-ramen-byob-restaurant-philadelphia.webp"
+  ],  
+  "other": [
+	"https://byobmap.com/wp-content/uploads/2025/10/placeholder_logo_georgian_byob_khachapuri-2.webp",
+	"https://byobmap.com/wp-content/uploads/2025/11/placeholder_logo_georgian_byob_khachapuri-1.webp",
   ]
 };
 
