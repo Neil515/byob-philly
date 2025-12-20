@@ -5,21 +5,21 @@
 | 城市           | 目標定位               | 目前狀態                                     |
 | ------------ | ------------------ | ---------------------------------------- |
 | 🇹🇼 臺北 BYOB | 自帶酒水餐廳推薦平台         | 核心系統穩定運作，重點在酒商合作與社群推廣，細節集中於各模組文件。 |
-| 🇺🇸 費城 BYOB | Yelp 的 BYOB 專業補充平台 | WordPress 流程完成，Softr 保留預覽；行動端改用 Adalo。 |
+| 🇺🇸 費城 BYOB | Yelp 的 BYOB 專業補充平台 | WordPress 流程完成，Softr 保留預覽；行動端改用 FlutterFlow（原 Adalo/Thunkable 暫停）。 |
 
 ---
 
-## 🚀 最新進度（2025-12-17）
+## 🚀 最新進度（2025-12-20）
 
-### 🌟 今日成果（Adalo）
-* **封面圖欄位改用文字 URL**：Airtable 新增可寫欄位 `cover_image_url`，以餐廳類型批次寫入 placeholder（依 `airtable_placeholder_script.md`），並提供安全 fallback 腳本避免類型缺值/空陣列。  
-* **App 綁定調整**：Adalo External Collection 重新建立後抓到 `cover_image_url`；Image Source 改綁該欄位，避免前 10 筆後只出現預設圖。  
-* **載入問題定位**：確認資料有載入，但圖片第 11 筆後落回 placeholder，研判需在 Airtable REST 設 `pageSize=100` + offset 分頁並於 List 啟用自動分頁/Load more。
+### 🌟 今日成果（Thunkable→FlutterFlow 決策）
+* 已在 Thunkable 連 Airtable、完成列表與詳情頁導航骨架，但 Data Viewer 無整筆物件輸出，需逐欄位取值手組物件，流程過繁。  
+* 決策：暫停 Thunkable/Adalo，改以 FlutterFlow 建置行動端 MVP（列表→詳情）。
 
-### 🗓️ 下一步（2025-12-18，詳見《Next Task Prompt Byob.md》）
-1. 圖片：External Collection 設 `pageSize=100`、Offset 分頁；Image 綁 `cover_image_url`；Airtable 檢查空值並覆蓋補齊，驗證 30+ 筆仍有封面。  
-2. 地圖：Marker 使用 `[Latitude], [Longitude]`，點擊開 Google Maps。  
-3. 篩選：類別 chips（含 All），必要時同步地圖顯示。
+### 🗓️ 下一步（2025-12-21，詳見《Next Task Prompt Byob.md》）
+1. FlutterFlow：建立空白專案，連 Airtable（restaurants 表，欄位 Name、cover_image_url、type_display、Phone、Add、Latitude、Longitude）。  
+2. 列表頁：List 綁上述欄位（Title/Subtitle/Image），點擊傳 Record 參數並導航。  
+3. 詳情頁：元件綁 Page Parameter；地圖按鈕開 `https://maps.google.com/?q=lat,lng`。  
+4. 預覽驗證：列表載入 30+ 筆、詳情資料正確、地圖導航正常；記錄後續優化。
 
 ---
 
@@ -45,16 +45,16 @@
 ### 費城 BYOB
 
 * ✅ 完成：餐廳資料收集、雙表單整合、餐廳接管流程、WordPress 地圖/定位、驗證徽章、Email 搜尋/批次寄送。
-* 🔄 進行：Softr 網站維持可預覽（搜尋/篩選分離，需文案提示）；Adalo App（行動版，上架為目標）啟動骨架製作；SendGrid 第二封、社群節奏。
-* ⏳ 後續：Adalo 完成後進行上架流程；榮譽系統、Wine Shop 合作、創始成員計畫、其他城市擴張。
+* 🔄 進行：Softr 網站維持可預覽（搜尋/篩選分離，需文案提示）；行動端改用 FlutterFlow 重建列表→詳情 MVP；SendGrid 第二封、社群節奏。
+* ⏳ 後續：FlutterFlow MVP 穩定後考慮上架；榮譽系統、Wine Shop 合作、創始成員計畫、其他城市擴張。
 
 ---
 
 ## 📂 核心文件與工具
 
 * `doc/philly_byob_complete_plan.md`：賽城專案完整實施計畫。  
-* `doc/Next Task Prompt Byob.md`：每日任務規劃（最新至 2025/12/18 圖片分頁/地圖/篩選）。  
-* `doc/ai_progress_byob.md`：進度日誌（最新至 2025/12/17 Adalo 圖片欄位與載入）。  
+* `doc/Next Task Prompt Byob.md`：每日任務規劃（最新至 2025/12/21 FlutterFlow MVP）。  
+* `doc/ai_progress_byob.md`：進度日誌（最新至 2025/12/20 Thunkable→FlutterFlow 決策）。  
 * `philly_yelp_crawler/update_1117_restaurants.py`：官網 / Yelp / 經緯度 / Email 批次補齊腳本（支援 `ONLY_LATLNG`）。  
 * `philly_yelp_crawler/byob_schema_spec.md`：App 欄位規格表；`philly_yelp_crawler/scripts/byob_export.py`：資料匯出腳本。  
 * `philly_yelp_crawler/data/Philly BYOB Restaurant.xlsx` + Airtable Base：唯一資料來源與 Softr data source。  
@@ -66,8 +66,8 @@
 
 ## 🔭 即將聚焦（短期）
 
-1. Adalo BYOB Map：完成地圖標記、圖片顯示與類別篩選，進入上架前驗證。  
-2. Softr 網站：維持可預覽，搜尋/篩選分離並保留提示；必要時更新文案與資料。  
+1. FlutterFlow：完成列表→詳情 MVP，確保圖片/導航正常；記錄效能與 UX 待優化點。  
+2. Softr：維持可預覽，搜尋/篩選分離並保留提示；必要時更新文案與資料。  
 3. SendGrid 第二封 Email 與行銷素材同步；資料維運 SOP（Excel → Airtable，同步至前端）。
 
 ---
@@ -80,6 +80,6 @@
 
 ---
 
-*最後更新：2025-12-17*  
-*版本：v32.0*  
-*下一步：Adalo 完成圖片分頁、地圖、篩選；Softr 保持可預覽與文案提示*
+*最後更新：2025-12-20*  
+*版本：v33.0*  
+*下一步：FlutterFlow 列表→詳情 MVP；Softr 保持可預覽與文案提示*
