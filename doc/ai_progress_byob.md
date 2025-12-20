@@ -1,8 +1,8 @@
 # BYOB 專案開發進度記錄
 
-## 📅 專案概覽（更新：2025-12-17）
-* Airtable 為唯一來源；Softr 網站保留預覽。  
-* 行動端改用 Adalo（Mobile Only + Restaurant 範本），目標上架 App Store/Play。
+## 📅 專案概覽（更新：2025-12-20）
+* Airtable 為唯一資料源；Softr 僅作預覽。  
+* 行動端：Adalo 嘗試告一段落，改以 FlutterFlow 建立 MVP（列表→詳情）。
 
 ---
 
@@ -33,7 +33,16 @@
 
 ---
 
-## 🔭 下一步（詳見《Next Task Prompt Byob.md》12/18）
-* 圖片：External Collection 設 `pageSize=100`、Offset 分頁，Image 綁 `cover_image_url`；Airtable 檢查空值並覆蓋補齊，確保 30+ 筆仍顯示封面。  
-* 地圖：Marker 使用 `[Latitude], [Longitude]`，點擊開 Google Maps。  
-* 篩選：類別 chips（含 All），必要時同步地圖顯示。
+---
+
+## ✅ 2025-12-20 — 今日進度摘要（Thunkable→FlutterFlow 決策）
+1) **Thunkable 列表→詳情嘗試**  
+   * 已在 Thunkable 連接 Airtable、建立列表與詳情頁、設定點擊事件與導航。  
+   * 受限於 Data Viewer 清單未提供整筆物件/欄位讀取積木，需逐欄位以 Data Source 取值並手組物件，流程過於繁瑣。
+2) **決策：改用 FlutterFlow**  
+   * 明日 12/21 轉向 FlutterFlow 重建列表→詳情 MVP。  
+   * 已更新《Next Task Prompt Byob.md》為 FlutterFlow 工作計畫（Airtable 連線、列表綁定、詳情參數、地圖按鈕）。
+
+## 🔭 下一步（詳見《Next Task Prompt Byob.md》2025-12-21）
+* FlutterFlow：建立專案、接 Airtable、列表頁綁 Name/type_display/cover_image_url，點擊傳 Record；詳情頁綁參數並加地圖開啟連結。  
+* 預覽驗證：列表載入 30+ 筆、詳情資料正確、地圖按鈕可開導航；記錄待優化事項。
