@@ -1,8 +1,8 @@
 # BYOB 專案開發進度記錄
 
-## 📅 專案概覽（更新：2025-12-20）
-* Airtable 為唯一資料源；Softr 僅作預覽。  
-* 行動端：Adalo 嘗試告一段落，改以 FlutterFlow 建立 MVP（列表→詳情）。
+## 📅 專案概覽（更新：2025-12-22）
+* 資料源切換：Airtable 退場，改以 Firebase/Firestore 為唯一資料源；Softr 僅保留預覽。  
+* 行動端：將在 FlutterFlow 以 Firebase 重建列表→詳情 MVP（重新起專案）。
 
 ---
 
@@ -43,6 +43,21 @@
    * 明日 12/21 轉向 FlutterFlow 重建列表→詳情 MVP。  
    * 已更新《Next Task Prompt Byob.md》為 FlutterFlow 工作計畫（Airtable 連線、列表綁定、詳情參數、地圖按鈕）。
 
-## 🔭 下一步（詳見《Next Task Prompt Byob.md》2025-12-21）
-* FlutterFlow：建立專案、接 Airtable、列表頁綁 Name/type_display/cover_image_url，點擊傳 Record；詳情頁綁參數並加地圖開啟連結。  
-* 預覽驗證：列表載入 30+ 筆、詳情資料正確、地圖按鈕可開導航；記錄待優化事項。
+---
+
+## ✅ 2025-12-22 — 今日進度摘要（準備改用 Firebase）
+1) **重寫工作計畫**  
+   * 《Next Task Prompt Byob.md》改為 2025-12-23 起用 Firebase/Firestore 重建 FlutterFlow 專案，移除 Airtable 依賴。  
+   * 規劃：新專案或複製清空 → Firestore 集合 `restaurants`（欄位 Name、cover_image_url、type_display、Phone、Add、Latitude、Longitude）→ 列表/詳情綁 Firestore → 取消所有 Airtable API/綁定。
+2) **資料匯入準備**  
+   * Airtable 匯出 CSV，並轉成 JSON（pandas 指令：`df.to_json(..., orient='records', force_ascii=False, indent=2)`），供 Firestore 匯入。  
+   * 明確認定 `cover_image_url` 以文字欄位為主，附件連結過期可忽略。
+3) **模板/專案策略**  
+   * 既有模板無法重複使用時，可直接 Duplicate 現有專案後清空，或用其他相近模板重新建置。  
+   * 清除舊 Airtable Query/綁定：API Group、JSON Path、`record.fields` 綁定、Page Params 需改為 Firestore docId。
+
+## 🔭 下一步（2025-12-23，詳見《Next Task Prompt Byob.md》）
+* 新建或複製專案，僅保留 Firebase；建立 Firestore 集合並匯入 CSV/JSON。  
+* 列表：ListView 綁 Firestore `restaurants`，顯示 cover_image_url / Name / type_display，On Tap 傳 docId。  
+* 詳情：用 docId 取單筆，顯示各欄位，導航按鈕開 `https://maps.google.com/?q=lat,lng`。  
+* 清理殘留 Airtable 連線與綁定，Run/Preview 確認無 Airtable 錯誤。
