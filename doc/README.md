@@ -9,17 +9,19 @@
 
 ---
 
-## 🚀 最新進度（2025-12-20）
+## 🚀 最新進度（2025-12-22）
 
-### 🌟 今日成果（Thunkable→FlutterFlow 決策）
-* 已在 Thunkable 連 Airtable、完成列表與詳情頁導航骨架，但 Data Viewer 無整筆物件輸出，需逐欄位取值手組物件，流程過繁。  
-* 決策：暫停 Thunkable/Adalo，改以 FlutterFlow 建置行動端 MVP（列表→詳情）。
+### 🌟 今日成果
+* 決策：行動端全面改用 Firebase/Firestore，Airtable 退場；FlutterFlow 將以 Firebase 重建列表→詳情 MVP。
+* 已重寫《Next Task Prompt Byob.md》：12/23 開始新專案或複製清空，建立 Firestore 集合 `restaurants`（Name、cover_image_url、type_display、Phone、Add、Latitude、Longitude），列表/詳情改綁 Firestore。
+* 準備資料匯入：從 Airtable 匯出 CSV，轉 JSON（pandas `to_json`）供 Firestore 匯入；以文字欄位 `cover_image_url` 為主，附件連結過期可忽略。
 
-### 🗓️ 下一步（2025-12-21，詳見《Next Task Prompt Byob.md》）
-1. FlutterFlow：建立空白專案，連 Airtable（restaurants 表，欄位 Name、cover_image_url、type_display、Phone、Add、Latitude、Longitude）。  
-2. 列表頁：List 綁上述欄位（Title/Subtitle/Image），點擊傳 Record 參數並導航。  
-3. 詳情頁：元件綁 Page Parameter；地圖按鈕開 `https://maps.google.com/?q=lat,lng`。  
-4. 預覽驗證：列表載入 30+ 筆、詳情資料正確、地圖導航正常；記錄後續優化。
+### 🗓️ 下一步（2025-12-23，詳見《Next Task Prompt Byob.md》）
+1. 新建/複製 FlutterFlow 專案，只保留 Firebase 資料源。  
+2. Firestore 匯入 `restaurants` 資料（CSV/JSON）。  
+3. 列表：ListView 綁 Firestore，顯示 cover_image_url / Name / type_display，On Tap 傳 docId。  
+4. 詳情：用 docId 取單筆，顯示欄位；導航開 `https://maps.google.com/?q=lat,lng`。  
+5. 清除所有 Airtable API/綁定、Page Params、JSON Path；Run/Preview 確認無 Airtable 錯誤。
 
 ---
 
@@ -45,30 +47,29 @@
 ### 費城 BYOB
 
 * ✅ 完成：餐廳資料收集、雙表單整合、餐廳接管流程、WordPress 地圖/定位、驗證徽章、Email 搜尋/批次寄送。
-* 🔄 進行：Softr 網站維持可預覽（搜尋/篩選分離，需文案提示）；行動端改用 FlutterFlow 重建列表→詳情 MVP；SendGrid 第二封、社群節奏。
-* ⏳ 後續：FlutterFlow MVP 穩定後考慮上架；榮譽系統、Wine Shop 合作、創始成員計畫、其他城市擴張。
+* 🔄 進行：Softr 維持可預覽；行動端重建（FlutterFlow + Firebase）；SendGrid 第二封、社群節奏。
+* ⏳ 後續：Firebase 版本 MVP 穩定後考慮上架；榮譽系統、Wine Shop 合作、創始成員計畫、其他城市擴張。
 
 ---
 
 ## 📂 核心文件與工具
 
 * `doc/philly_byob_complete_plan.md`：賽城專案完整實施計畫。  
-* `doc/Next Task Prompt Byob.md`：每日任務規劃（最新至 2025/12/21 FlutterFlow MVP）。  
-* `doc/ai_progress_byob.md`：進度日誌（最新至 2025/12/20 Thunkable→FlutterFlow 決策）。  
+* `doc/Next Task Prompt Byob.md`：每日任務規劃（最新至 2025/12/23 Firebase 重建）。  
+* `doc/ai_progress_byob.md`：進度日誌（最新至 2025/12/22 Firebase 決策與準備）。  
 * `philly_yelp_crawler/update_1117_restaurants.py`：官網 / Yelp / 經緯度 / Email 批次補齊腳本（支援 `ONLY_LATLNG`）。  
 * `philly_yelp_crawler/byob_schema_spec.md`：App 欄位規格表；`philly_yelp_crawler/scripts/byob_export.py`：資料匯出腳本。  
-* `philly_yelp_crawler/data/Philly BYOB Restaurant.xlsx` + Airtable Base：唯一資料來源與 Softr data source。  
+* `philly_yelp_crawler/data/Philly BYOB Restaurant.xlsx` / `byob_restaurants.json`：資料來源（改供 Firestore 匯入）；Airtable 不再作為行動端來源。  
 * `wordpress/archive-restaurant.php`、`byob_is_restaurant_complete()`：前端展示與完整性檢查邏輯（WordPress 版本）。  
 * Softr 網站：`BYOB near you`（地圖 + 詳情，搜尋/篩選各自獨立，文案提示）。
-* Adalo App：行動版 BYOB Map（Mobile Only 專案，Restaurant 範本，製作骨架中，目標 App Store/Play）。
 
 ---
 
 ## 🔭 即將聚焦（短期）
 
-1. FlutterFlow：完成列表→詳情 MVP，確保圖片/導航正常；記錄效能與 UX 待優化點。  
+1. FlutterFlow + Firebase：重建列表→詳情 MVP，資料綁 Firestore，清除 Airtable 依賴。  
 2. Softr：維持可預覽，搜尋/篩選分離並保留提示；必要時更新文案與資料。  
-3. SendGrid 第二封 Email 與行銷素材同步；資料維運 SOP（Excel → Airtable，同步至前端）。
+3. SendGrid 第二封 Email 與社群節奏；資料維運 SOP（Excel/JSON → Firestore，同步前端）。
 
 ---
 
@@ -80,6 +81,6 @@
 
 ---
 
-*最後更新：2025-12-20*  
-*版本：v33.0*  
-*下一步：FlutterFlow 列表→詳情 MVP；Softr 保持可預覽與文案提示*
+*最後更新：2025-12-22*  
+*版本：v34.0*  
+*下一步：FlutterFlow + Firebase 列表→詳情 MVP；匯入 Firestore，清除 Airtable 綁定；Softr 保持預覽*
