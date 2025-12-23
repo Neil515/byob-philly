@@ -9,19 +9,18 @@
 
 ---
 
-## 🚀 最新進度（2025-12-22）
+## 🚀 最新進度（2025-12-23）
 
 ### 🌟 今日成果
-* 決策：行動端全面改用 Firebase/Firestore，Airtable 退場；FlutterFlow 將以 Firebase 重建列表→詳情 MVP。
-* 已重寫《Next Task Prompt Byob.md》：12/23 開始新專案或複製清空，建立 Firestore 集合 `restaurants`（Name、cover_image_url、type_display、Phone、Add、Latitude、Longitude），列表/詳情改綁 Firestore。
-* 準備資料匯入：從 Airtable 匯出 CSV，轉 JSON（pandas `to_json`）供 Firestore 匯入；以文字欄位 `cover_image_url` 為主，附件連結過期可忽略。
+* Firebase/Auth：啟用 Email/Password，`firebase@flutterflow.io` 已加 Editor；Android/iOS 設定檔上傳完成，FlutterFlow 顯示 Firebase Setup Complete。  
+* Firestore 規則：read 開放、write 鎖；Storage 暫時全鎖（未用）。  
+* Schema：`restaurants` 欄位已建並同步 FlutterFlow（`name`、`cover_image_url`、`type_display`、`Phone`、`Add`、`Latitude`、`Longitude`，可後加 `philly_corkage_fee`）。  
+* 列表頁接線：ListView 已連 Firestore `restaurants`，確認綁定路徑（Image 用 Network→`cover_image_url`，文字用 `name`/`type_display` 等）；需清掉 ListView 內多餘靜態區塊，只留卡片樣板。
 
-### 🗓️ 下一步（2025-12-23，詳見《Next Task Prompt Byob.md》）
-1. 新建/複製 FlutterFlow 專案，只保留 Firebase 資料源。  
-2. Firestore 匯入 `restaurants` 資料（CSV/JSON）。  
-3. 列表：ListView 綁 Firestore，顯示 cover_image_url / Name / type_display，On Tap 傳 docId。  
-4. 詳情：用 docId 取單筆，顯示欄位；導航開 `https://maps.google.com/?q=lat,lng`。  
-5. 清除所有 Airtable API/綁定、Page Params、JSON Path；Run/Preview 確認無 Airtable 錯誤。
+### 🗓️ 下一步（2025-12-24，詳見《Next Task Prompt Byob.md》）
+1. 清理 ListView：只保留單一卡片樣板，Banner/Tab bar 置於 ListView 外。  
+2. 完成綁定：Image→`cover_image_url`；Title→`name`；副標→`type_display`；必要時地址/電話。  
+3. Run/Preview 驗證 Firestore 資料正常載入；若有時間再加 `philly_corkage_fee` 顯示邏輯與詳情頁導航。
 
 ---
 
@@ -55,8 +54,8 @@
 ## 📂 核心文件與工具
 
 * `doc/philly_byob_complete_plan.md`：賽城專案完整實施計畫。  
-* `doc/Next Task Prompt Byob.md`：每日任務規劃（最新至 2025/12/23 Firebase 重建）。  
-* `doc/ai_progress_byob.md`：進度日誌（最新至 2025/12/22 Firebase 決策與準備）。  
+* `doc/Next Task Prompt Byob.md`：每日任務規劃（最新至 2025/12/24 列表綁定清理）。  
+* `doc/ai_progress_byob.md`：進度日誌（最新至 2025/12/23 Firebase/FlutterFlow 綁定準備）。  
 * `philly_yelp_crawler/update_1117_restaurants.py`：官網 / Yelp / 經緯度 / Email 批次補齊腳本（支援 `ONLY_LATLNG`）。  
 * `philly_yelp_crawler/byob_schema_spec.md`：App 欄位規格表；`philly_yelp_crawler/scripts/byob_export.py`：資料匯出腳本。  
 * `philly_yelp_crawler/data/Philly BYOB Restaurant.xlsx` / `byob_restaurants.json`：資料來源（改供 Firestore 匯入）；Airtable 不再作為行動端來源。  
@@ -67,7 +66,7 @@
 
 ## 🔭 即將聚焦（短期）
 
-1. FlutterFlow + Firebase：重建列表→詳情 MVP，資料綁 Firestore，清除 Airtable 依賴。  
+1. FlutterFlow + Firebase：清理 ListView、完成卡片綁定，後續詳情頁與 corkage 顯示。  
 2. Softr：維持可預覽，搜尋/篩選分離並保留提示；必要時更新文案與資料。  
 3. SendGrid 第二封 Email 與社群節奏；資料維運 SOP（Excel/JSON → Firestore，同步前端）。
 
@@ -81,6 +80,6 @@
 
 ---
 
-*最後更新：2025-12-22*  
-*版本：v34.0*  
-*下一步：FlutterFlow + Firebase 列表→詳情 MVP；匯入 Firestore，清除 Airtable 綁定；Softr 保持預覽*
+*最後更新：2025-12-23*  
+*版本：v35.0*  
+*下一步：清理 ListView 並完成卡片綁定；Softr 保持預覽*
