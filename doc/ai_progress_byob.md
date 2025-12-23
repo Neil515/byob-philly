@@ -1,6 +1,6 @@
 # BYOB 專案開發進度記錄
 
-## 📅 專案概覽（更新：2025-12-22）
+## 📅 專案概覽（更新：2025-12-23）
 * 資料源切換：Airtable 退場，改以 Firebase/Firestore 為唯一資料源；Softr 僅保留預覽。  
 * 行動端：將在 FlutterFlow 以 Firebase 重建列表→詳情 MVP（重新起專案）。
 
@@ -56,8 +56,24 @@
    * 既有模板無法重複使用時，可直接 Duplicate 現有專案後清空，或用其他相近模板重新建置。  
    * 清除舊 Airtable Query/綁定：API Group、JSON Path、`record.fields` 綁定、Page Params 需改為 Firestore docId。
 
-## 🔭 下一步（2025-12-23，詳見《Next Task Prompt Byob.md》）
-* 新建或複製專案，僅保留 Firebase；建立 Firestore 集合並匯入 CSV/JSON。  
-* 列表：ListView 綁 Firestore `restaurants`，顯示 cover_image_url / Name / type_display，On Tap 傳 docId。  
-* 詳情：用 docId 取單筆，顯示各欄位，導航按鈕開 `https://maps.google.com/?q=lat,lng`。  
-* 清理殘留 Airtable 連線與綁定，Run/Preview 確認無 Airtable 錯誤。
+---
+
+## ✅ 2025-12-23 — 今日進度摘要（FlutterFlow 綁定準備）
+1) **Firebase / FlutterFlow 連線**  
+   * Firebase Auth 啟用 Email/Password，邀請 `firebase@flutterflow.io` 為 Editor。  
+   * 註冊 Android/iOS App，下載並上傳 `google-services.json`、`GoogleService-Info.plist`，FlutterFlow 顯示 Firebase Setup Complete。  
+   * Firestore 規則：read 開放、write 鎖定；Storage 暫時全鎖（不用）。
+2) **Schema 建立**  
+   * Firestore `restaurants` 已建欄位：`name`、`cover_image_url`、`type_display`、`Phone`、`Add`、`Latitude`、`Longitude`（可後加 `philly_corkage_fee`）。  
+   * FlutterFlow Schema 同步建立，解決「has no fields」警告。
+3) **列表頁接線（進行中）**  
+   * ListView 已連 Firestore `restaurants`，但頁面內仍有多餘靜態區塊需清掉。  
+   * 已確認 Image/文字的綁定路徑：Image Type 設 Network → Path 用 `Item at Index > Get Document Property > cover_image_url`；Text 用 `name`、`type_display` 等。  
+   * 尚需：只留一張卡片樣板，刪除 ListView 內多餘 Container/Row/Banner，確保卡片顯示來自 Firestore 的圖片與文字。
+4) **規劃更新**  
+   * 《Next Task Prompt Byob.md》已改寫 12/24 行動：清理 ListView、完整綁定卡片欄位、預覽驗證，若有時間再加 corkage fee 邏輯與詳情頁導航。
+
+## 🔭 下一步（2025-12-24，詳見《Next Task Prompt Byob.md》）
+* 清掉 ListView 內多餘區塊，只留卡片樣板。  
+* 綁定卡片：Image→`cover_image_url`；Title→`name`；副標→`type_display`；必要時地址/電話。  
+* Run/Preview 確認 Firestore 資料正常載入；若有空再加 `philly_corkage_fee` 邏輯與詳情頁導航。
