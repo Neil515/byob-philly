@@ -48,3 +48,7 @@ desktop.ini
 temp/
 tmp/
 
+# 中繼資料資料夾（本地使用，不上傳）
+Mid/
+Mid/**
+
