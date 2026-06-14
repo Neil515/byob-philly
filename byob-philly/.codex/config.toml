@@ -1,0 +1,3 @@
+[mcp_servers.flutterflow_ai]
+command = "dart"
+args = ["run", "C:\\Users\\slow3\\OneDrive\\桌面\\GitHubProjects\\BYOB\\byob-philly\\.flutterflow/sdk/flutterflow_ai\\mcp\\server.dart", "--dir", "C:\\Users\\slow3\\OneDrive\\桌面\\GitHubProjects\\BYOB\\byob-philly"]

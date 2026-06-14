@@ -15,6 +15,7 @@ import sys
 import time
 import requests
 import pandas as pd
+import numpy as np
 from pathlib import Path
 from typing import Optional, Tuple, List
 import logging
@@ -586,35 +587,35 @@ def main() -> int:
         
         # 更新資料
         if not lat_only_mode:
-        df.at[idx, 'Google_Website'] = website if website else ''
-        if 'Yelp_URL' in df.columns:
+            df.at[idx, 'Google_Website'] = website if website else ''
+        if not lat_only_mode and 'Yelp_URL' in df.columns:
             df.at[idx, 'Yelp_URL'] = yelp_link if yelp_link else ''
-        else:
+        elif lat_only_mode:
             logger.info("僅更新經緯度（ONLY_LATLNG=1）")
 
         if 'Latitude' in df.columns:
-            df.at[idx, 'Latitude'] = lat if lat is not None else ''
+            df.at[idx, 'Latitude'] = float(lat) if lat is not None else np.nan
         if 'Longitude' in df.columns:
-            df.at[idx, 'Longitude'] = lng if lng is not None else ''
+            df.at[idx, 'Longitude'] = float(lng) if lng is not None else np.nan
         
         if not lat_only_mode:
-        # 將 emails 寫入 Email_1, Email_2, Email_3... 欄位
-        for i, email in enumerate(emails[:max_email_columns], 1):
-            email_col = f'Email_{i}'
-            df.at[idx, email_col] = email
-        
-        # 清除多餘的 email 欄位
-        for i in range(len(emails) + 1, max_email_columns + 1):
-            email_col = f'Email_{i}'
-            df.at[idx, email_col] = ''
-        
+            # 將 emails 寫入 Email_1, Email_2, Email_3... 欄位
+            for i, email in enumerate(emails[:max_email_columns], 1):
+                email_col = f'Email_{i}'
+                df.at[idx, email_col] = email
+            
+            # 清除多餘的 email 欄位
+            for i in range(len(emails) + 1, max_email_columns + 1):
+                email_col = f'Email_{i}'
+                df.at[idx, email_col] = ''
+
         if not lat_only_mode:
-        if website:
-            website_count += 1
-        if yelp_link:
-            yelp_count += 1
-        if emails:
-            email_count += 1
+            if website:
+                website_count += 1
+            if yelp_link:
+                yelp_count += 1
+            if emails:
+                email_count += 1
         if website or yelp_link or (lat is not None and lng is not None) or emails:
             success_count += 1
             if lat is not None and lng is not None:

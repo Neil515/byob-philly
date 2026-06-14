@@ -9,10 +9,10 @@
 *credentials*.json
 client_secret*.json
 service_account*.json
+*firebase-adminsdk*.json
 
-# WordPress
-# 注意：wp-config.php 需要追蹤，但敏感資訊應從 .env 載入
-wordpress/.htaccess
+# Firebase
+firebase-debug.log
 
 # Python
 __pycache__/
