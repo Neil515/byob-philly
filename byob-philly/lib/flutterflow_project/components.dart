@@ -3,7 +3,11 @@
 library;
 
 import 'package:flutterflow_ai/flutterflow_ai.dart' as ffai;
+import 'components/restaurant_card.dart' show RestaurantCardComponentHandle;
 
 abstract final class Components {
-  static const all = <ffai.ProjectComponentHandle>[];
+  static final restaurantCard = RestaurantCardComponentHandle();
+  static final all = <ffai.ProjectComponentHandle>[
+    restaurantCard,
+  ];
 }

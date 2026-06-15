@@ -19,6 +19,12 @@ final class HomePageParams {
 
 final class HomePageState {
   const HomePageState();
+  ffai.ProjectStateFieldHandle get restaurants =>
+      const ffai.ProjectStateFieldHandle(
+        name: "restaurants",
+        key: "j1pgjuv0",
+        typeName: "List<Document<restaurants>>",
+      );
 }
 
 abstract final class HomePageWidgets {
@@ -28,6 +34,9 @@ abstract final class HomePageWidgets {
       type: "Scaffold",
       path: "HomePage",
       name: "HomePage",
+      triggers: const <String>[
+        "ON_INIT_STATE",
+      ],
       slots: <String, List<ffai.ProjectWidgetHandle>>{
         "appBar": <ffai.ProjectWidgetHandle>[
           ffai.ProjectWidgetHandle(
@@ -40,7 +49,7 @@ abstract final class HomePageWidgets {
                   key: "Text_oxbhtr76",
                   type: "Text",
                   path: "HomePage.appBar[0].title[0]",
-                  text: "Page Title",
+                  text: "BYOB Finder Philadelphia",
                 ),
               ],
             },
@@ -48,9 +57,27 @@ abstract final class HomePageWidgets {
         ],
         "body": <ffai.ProjectWidgetHandle>[
           ffai.ProjectWidgetHandle(
-            key: "Column_kn83rogf",
-            type: "Column",
+            key: "Container_8kn8cy2d",
+            type: "Container",
             path: "HomePage.body[0]",
+            name: "RestaurantListBody",
+            children: <ffai.ProjectWidgetHandle>[
+              ffai.ProjectWidgetHandle(
+                key: "ListView_png3l40t",
+                type: "ListView",
+                path: "HomePage.body[0].children[0]",
+                name: "ListView",
+                children: <ffai.ProjectWidgetHandle>[
+                  ffai.ProjectWidgetHandle(
+                    key: "Container_vfegdi64",
+                    type: "Container",
+                    path: "HomePage.body[0].children[0].children[0]",
+                    name: "RestaurantCard",
+                    componentName: "RestaurantCard",
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       },

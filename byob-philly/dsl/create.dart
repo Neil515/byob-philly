@@ -3,7 +3,8 @@ library;
 import 'dart:io';
 
 import 'package:flutterflow_ai/flutterflow_ai.dart';
-import 'package:__WORKSPACE_PACKAGE__/flutterflow_project.dart' as ff;
+// ignore: unused_import
+import 'package:byob_philly/flutterflow_project.dart' as ff;
 
 Future<void> main(List<String> args) async {
   final options = _parseCliOptions(args);

@@ -15,7 +15,118 @@ abstract final class Structs {
 }
 
 abstract final class Collections {
-  static const all = <ffai.ProjectCollectionHandle>[];
+  static final restaurants = ffai.ProjectCollectionHandle<RestaurantsFields>(
+    name: "restaurants",
+    description: "Philadelphia BYOB restaurants — 94 records in Firestore.",
+    fields: RestaurantsFields(),
+  );
+  static final all = <ffai.ProjectCollectionHandle>[
+    restaurants,
+  ];
+}
+
+final class RestaurantsFields extends MapBase<String, ffai.DslType> {
+  final add = ffai.ProjectCollectionFieldHandle(
+    name: "Add",
+    key: "1t2pppih",
+    typeName: "String",
+    type: ffai.string,
+    description: "",
+  );
+  final latitude = ffai.ProjectCollectionFieldHandle(
+    name: "Latitude",
+    key: "jqf0c63c",
+    typeName: "Double",
+    type: ffai.double_,
+    description: "",
+  );
+  final longitude = ffai.ProjectCollectionFieldHandle(
+    name: "Longitude",
+    key: "jb74owyb",
+    typeName: "Double",
+    type: ffai.double_,
+    description: "",
+  );
+  final name = ffai.ProjectCollectionFieldHandle(
+    name: "Name",
+    key: "1n8bgxro",
+    typeName: "String",
+    type: ffai.string,
+    description: "",
+  );
+  final phone = ffai.ProjectCollectionFieldHandle(
+    name: "Phone",
+    key: "rwn7u2id",
+    typeName: "String",
+    type: ffai.string,
+    description: "",
+  );
+  final corkageFeeAmount = ffai.ProjectCollectionFieldHandle(
+    name: "corkage_fee_amount",
+    key: "mdnizzy9",
+    typeName: "Double",
+    type: ffai.double_,
+    description: "",
+  );
+  final coverImageUrl = ffai.ProjectCollectionFieldHandle(
+    name: "cover_image_url",
+    key: "hics3pop",
+    typeName: "String",
+    type: ffai.string,
+    description: "",
+  );
+  final phillyCorkageFee = ffai.ProjectCollectionFieldHandle(
+    name: "philly_corkage_fee",
+    key: "6ztdq0rf",
+    typeName: "String",
+    type: ffai.string,
+    description: "",
+  );
+  final phillyRestaurantType = ffai.ProjectCollectionFieldHandle(
+    name: "philly_restaurant_type",
+    key: "iahf8tnd",
+    typeName: "String",
+    type: ffai.string,
+    description: "",
+  );
+
+  @override
+  Iterable<String> get keys => const <String>[
+    "Add",
+    "Latitude",
+    "Longitude",
+    "Name",
+    "Phone",
+    "corkage_fee_amount",
+    "cover_image_url",
+    "philly_corkage_fee",
+    "philly_restaurant_type",
+  ];
+
+  @override
+  ffai.DslType? operator [](Object? key) => switch (key) {
+    "Add" => add,
+    "Latitude" => latitude,
+    "Longitude" => longitude,
+    "Name" => name,
+    "Phone" => phone,
+    "corkage_fee_amount" => corkageFeeAmount,
+    "cover_image_url" => coverImageUrl,
+    "philly_corkage_fee" => phillyCorkageFee,
+    "philly_restaurant_type" => phillyRestaurantType,
+    _ => null,
+  };
+
+  @override
+  void operator []=(String key, ffai.DslType value) =>
+      throw UnsupportedError('Generated project SDK fields are read-only.');
+
+  @override
+  void clear() => throw UnsupportedError('Generated project SDK fields are read-only.');
+
+  @override
+  ffai.DslType? remove(Object? key) =>
+      throw UnsupportedError('Generated project SDK fields are read-only.');
 }
 
 abstract final class Tables {

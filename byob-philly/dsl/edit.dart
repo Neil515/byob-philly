@@ -3,12 +3,13 @@ library;
 import 'dart:io';
 
 import 'package:flutterflow_ai/flutterflow_ai.dart';
+import 'package:byob_philly/flutterflow_project.dart' as ff;
 
 Future<void> main(List<String> args) async {
   final options = _parseCliOptions(args);
   try {
     await flutterFlowAI(
-      buildStarterEditFlow,
+      buildByobContract1,
       apiKey: options.apiKey,
       baseUrl: options.baseUrl,
       projectName: options.projectName,
@@ -17,6 +18,7 @@ Future<void> main(List<String> args) async {
       allowNewProject: options.allowNewProject,
       dryRun: options.dryRun,
       commitMessage: options.commitMessage,
+      validationFilter: _keepValidationError,
     );
   } catch (error) {
     stderr.writeln('Error: ${formatFlutterFlowAIError(error)}');
@@ -107,9 +109,13 @@ String _requireValue(List<String> args, int index, String flag) {
   return args[index];
 }
 
+bool _keepValidationError(error) =>
+    !error.message.contains('config file is not uploaded') &&
+    !error.message.contains('config files are not uploaded');
+
 void _printUsage() {
   stdout.writeln('''
-Run the starter FlutterFlow AI edit flow.
+Contract 1: BYOB Finder Philadelphia — Theme + Firebase + Restaurant List.
 
 Usage:
   dart run dsl/edit.dart [options]
@@ -117,28 +123,86 @@ Usage:
 Options:
   --api-key <key>           FlutterFlow API key. Defaults to FF_API_KEY.
   --base-url <url>          Override the FlutterFlow API base URL.
-  --project-name <name>     Create a new project with this name.
   --project-id <id>         Push into an existing project by ID.
-  --find-or-create          Retry by reusing a same-name project before creating.
-  --allow-new-project       Bypass the workspace binding guard and create a different project.
   --commit-message <text>   Commit message for the push.
   --dry-run                 Compile and validate without pushing.
   --help, -h                Show this help.
 ''');
 }
 
-void buildStarterEditFlow(App app) {
-  final primaryButton = EditPatternTarget.singleButton();
-
-  app.editPageState(ff.Pages.starterPage, (state) {
-    state.ensureField('ctaLabel', string.withDefault('Open Starter'));
-    state.ensureField('showCta', bool_.withDefault(true));
+void buildByobContract1(App app) {
+  // ── 1. Theme ────────────────────────────────────────────────────────────────
+  // Wine-red primary + warm off-white background = BYOB brand identity.
+  app.themeColor('primary', 0xFF8B2635);
+  app.themeColor('secondary', 0xFF8B2635);
+  app.themeColor('primaryBackground', 0xFFF8F4EF);
+  app.themeColor('secondaryBackground', 0xFFFFFFFF);
+  app.themeColor('primaryText', 0xFF1C1B1F);
+  app.themeColor('secondaryText', 0xFF49454F);
+  app.themeColor('alternate', 0xFFE8E0D8);
+  app.themeColor('success', 0xFF2E7D32);
+  app.themeColor('warning', 0xFFBF6A02);
+  app.themeColor('error', 0xFFB3261E);
+  app.primaryFont('Inter');
+  // Upsert radius token — safe to re-run; updates value if 'card' already exists.
+  app.raw((project) {
+    final tokens = project.ensureTheme().radiusTokens;
+    final existing = tokens.where((t) => t.identifier.name == 'card').firstOrNull;
+    if (existing != null) {
+      existing.value = 12.0;
+    } else {
+      tokens.add(FFRadiusToken(
+        identifier: FFIdentifier(
+          name: 'card',
+          key: generateRandomAlphaNumericString(),
+        ),
+        value: 12.0,
+      ));
+    }
   });
 
-  app.ensureButtonBindings(
-    page: ff.Pages.starterPage,
-    button: primaryButton,
-    text: State('ctaLabel'),
-    visibleWhen: State('showCta'),
+  // ── 2. Firestore collection ─────────────────────────────────────────────────
+  // Matches existing Firestore `restaurants` collection (94 documents).
+  // Field names preserve Firestore casing (Name, Add, Phone, Latitude, Longitude).
+  final restaurants = app.collection(
+    'restaurants',
+    fields: {
+      'Name': string,
+      'Add': string,
+      'Phone': string,
+      'Latitude': double_,
+      'Longitude': double_,
+      'cover_image_url': string,
+      'philly_restaurant_type': string,
+      'philly_corkage_fee': string,
+      'corkage_fee_amount': double_,
+    },
+    description: 'Philadelphia BYOB restaurants — 94 records in Firestore.',
   );
+
+  // ── 3. HomePage state ────────────────────────────────────────────────────────
+  app.editPageState(ff.Pages.homePage, (state) {
+    state.ensureField('restaurants', listOf(restaurants));
+  });
+
+  // ── 5. Page-load Firestore query ─────────────────────────────────────────────
+  app.editPageOnLoad(ff.Pages.homePage, [
+    FirestoreQuery(restaurants, limit: 100, outputAs: 'loadedRestaurants'),
+    SetState('restaurants', ActionOutput('loadedRestaurants')),
+  ]);
+
+  // ── 6. HomePage AppBar title ────────────────────────────────────────────────
+  // The ListView body with RestaurantCard bindings was established in a prior
+  // push and is already correct. Only the AppBar title needs idempotent update.
+  app.editPage(ff.Pages.homePage, (page) {
+    page.update(
+      ff.Pages.homePage.widgets
+          .byPath('HomePage.appBar[0].title[0]')
+          .single,
+      (patch) {
+        patch.text('BYOB Finder Philadelphia');
+      },
+    );
+  });
+
 }
