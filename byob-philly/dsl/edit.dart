@@ -191,17 +191,16 @@ void buildByobContract1(App app) {
     state.ensureField('restaurants', listOf(restaurants));
   });
 
-  // ── 5. Page-load Firestore query ─────────────────────────────────────────────
+  // ── 5. Page-load Firestore query (kept as production fallback) ───────────────
   app.editPageOnLoad(ff.Pages.homePage, [
     FirestoreQuery(restaurants, limit: 100, outputAs: 'loadedRestaurants'),
     SetState('restaurants', ActionOutput('loadedRestaurants')),
   ]);
 
   // ── 6. HomePage AppBar + ListView binding ───────────────────────────────────
-  // Extract real collection field identifiers from the compiled project before
-  // editPage runs. app.raw() callbacks execute in registration order, and
-  // editPage internally registers its own raw() at the end — so this raw()
-  // fires first, populating the outer variables before mutateNode's closure runs.
+  // All app.raw() callbacks below execute in registration order before the
+  // editPage closure runs, so outer variables are populated by the time
+  // mutateNode's closure executes.
   FFIdentifier? _fieldIdName;
   FFIdentifier? _fieldIdRestaurantType;
   FFIdentifier? _fieldIdCoverImage;
@@ -243,6 +242,60 @@ void buildByobContract1(App app) {
     _fieldIdCorkageFeeAmount = findFieldId('corkage_fee_amount');
   });
 
+  // Build a direct Firestore backend query for the ListView.
+  // Unlike a page-state binding (which requires initState to fire), a
+  // databaseRequest on the node is visible to the FlutterFlow canvas preview
+  // and to run-mode, so cards appear without needing the app to fully boot.
+  FFDatabaseRequest? _dbRequest;
+  FFGeneratorVariable? _genVar;
+  app.raw((project) {
+    for (final coll in project.backend.collections.values) {
+      if (coll.identifier.name != 'restaurants') continue;
+      final collId = coll.identifier.deepCopy();
+
+      final firestoreQuery = FFFirestoreQuery(
+        collectionIdentifier: collId,
+        singleTimeQuery: false, // real-time stream
+      );
+      firestoreQuery.limit = 100;
+
+      // Return type: List<Document<restaurants>>
+      final docType = FFDataTypeV2(
+        scalarType: FFBaseDataType.Document,
+        subType: FFSubType(collectionIdentifier: collId.deepCopy()),
+      );
+
+      _dbRequest = FFDatabaseRequest(
+        firestore: firestoreQuery,
+        returnParameter: FFParameter(
+          identifier: FFIdentifier(
+            name: 'restaurants',
+            key: generateRandomAlphaNumericString(),
+          ),
+          dataType: FFDataTypeV2(
+            listType: docType,
+            subType: FFSubType(collectionIdentifier: collId.deepCopy()),
+          ),
+        ),
+      );
+
+      // The generator variable's variable field must reference FIRESTORE_REQUEST
+      // so the server validator can resolve the list-item type for child bindings.
+      _genVar = FFGeneratorVariable(
+        identifier: FFIdentifier(
+          name: 'restaurant',
+          key: generateRandomAlphaNumericString(),
+        ),
+        variable: FFVariable(
+          source: FFVariableSource.FIRESTORE_REQUEST,
+          nodeKeyRef: FFNodeKeyReference(key: 'ListView_png3l40t'),
+          baseVariable: FFBaseVariable(firestore: FFFirestoreVariable()),
+        ),
+      );
+      break;
+    }
+  });
+
   app.editPage(ff.Pages.homePage, (page) {
     page.update(
       ff.Pages.homePage.widgets
@@ -258,26 +311,13 @@ void buildByobContract1(App app) {
           .byPath('HomePage.body[0].children[0]')
           .single,
       (listView) {
-        // 1. Bind the ListView to page-state 'restaurants'.
-        listView.generatorVariable = FFGeneratorVariable(
-          identifier: FFIdentifier(
-            name: 'restaurant',
-            key: generateRandomAlphaNumericString(),
-          ),
-          variable: FFVariable(
-            source: FFVariableSource.LOCAL_STATE,
-            nodeKeyRef: FFNodeKeyReference(key: 'Scaffold_oa99nxk6'),
-            baseVariable: FFBaseVariable(
-              localState: FFLocalStateVariable(
-                fieldIdentifier: FFIdentifier(
-                  name: 'restaurants',
-                  key: 'j1pgjuv0',
-                ),
-                stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
-              ),
-            ),
-          ),
-        );
+        // 1. Attach a direct Firestore backend query to the ListView.
+        //    This replaces the old page-state binding and makes cards visible
+        //    in the FlutterFlow canvas preview (not just run mode).
+        if (_dbRequest != null && _genVar != null) {
+          listView.databaseRequest = _dbRequest!;
+          listView.generatorVariable = _genVar!;
+        }
 
         // 2. Wire the RestaurantCard template child to Firestore document fields.
         // accessDocumentField (typed form with field identifier key) is required
