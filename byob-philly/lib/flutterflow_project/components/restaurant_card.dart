@@ -103,87 +103,95 @@ abstract final class RestaurantCardWidgets {
               name: "Container",
               children: <ffai.ProjectWidgetHandle>[
                 ffai.ProjectWidgetHandle(
-                  key: "Column_q01tuwv0",
-                  type: "Column",
+                  key: "Row_g6f55smj",
+                  type: "Row",
                   path: "RestaurantCard.children[0].children[0].children[0]",
-                  name: "Column",
+                  name: "CardRow",
                   children: <ffai.ProjectWidgetHandle>[
                     ffai.ProjectWidgetHandle(
-                      key: "Image_ydkzt3hu",
-                      type: "Image",
-                      path: "RestaurantCard.children[0].children[0].children[0].children[0]",
-                      name: "Image",
-                    ),
-                    ffai.ProjectWidgetHandle(
-                      key: "Container_7nxd0t8w",
+                      key: "Container_o5f2o1iv",
                       type: "Container",
-                      path: "RestaurantCard.children[0].children[0].children[0].children[1]",
-                      name: "Container",
+                      path: "RestaurantCard.children[0].children[0].children[0].children[0]",
+                      name: "ImageSection",
                       children: <ffai.ProjectWidgetHandle>[
                         ffai.ProjectWidgetHandle(
-                          key: "Column_j42gqmuo",
+                          key: "Image_k0b1uojj",
+                          type: "Image",
+                          path: "RestaurantCard.children[0].children[0].children[0].children[0].children[0]",
+                          name: "CoverImage",
+                        ),
+                      ],
+                    ),
+                    ffai.ProjectWidgetHandle(
+                      key: "Container_ty23rj0p",
+                      type: "Container",
+                      path: "RestaurantCard.children[0].children[0].children[0].children[1]",
+                      name: "InfoSection",
+                      children: <ffai.ProjectWidgetHandle>[
+                        ffai.ProjectWidgetHandle(
+                          key: "Column_v829hpxw",
                           type: "Column",
                           path: "RestaurantCard.children[0].children[0].children[0].children[1].children[0]",
-                          name: "Column",
+                          name: "InfoColumn",
                           children: <ffai.ProjectWidgetHandle>[
                             ffai.ProjectWidgetHandle(
-                              key: "Text_o9dj2xru",
+                              key: "Text_1kyao6ye",
                               type: "Text",
                               path: "RestaurantCard.children[0].children[0].children[0].children[1].children[0].children[0]",
-                              name: "Text",
+                              name: "NameText",
                             ),
                             ffai.ProjectWidgetHandle(
-                              key: "Text_9d9kj36h",
+                              key: "Text_my2618qt",
                               type: "Text",
                               path: "RestaurantCard.children[0].children[0].children[0].children[1].children[0].children[1]",
-                              name: "Text",
+                              name: "CuisineText",
                             ),
                             ffai.ProjectWidgetHandle(
-                              key: "Row_r03c9uzq",
+                              key: "Row_3wi0fnu5",
                               type: "Row",
                               path: "RestaurantCard.children[0].children[0].children[0].children[1].children[0].children[2]",
-                              name: "Row",
+                              name: "BadgeRow",
                               children: <ffai.ProjectWidgetHandle>[
                                 ffai.ProjectWidgetHandle(
-                                  key: "Container_979srytw",
+                                  key: "Container_hz89k6db",
                                   type: "Container",
                                   path: "RestaurantCard.children[0].children[0].children[0].children[1].children[0].children[2].children[0]",
-                                  name: "Container",
+                                  name: "FreeBadge",
                                   children: <ffai.ProjectWidgetHandle>[
                                     ffai.ProjectWidgetHandle(
-                                      key: "Text_dsl2a8e1",
+                                      key: "Text_bd9t59z5",
                                       type: "Text",
                                       path: "RestaurantCard.children[0].children[0].children[0].children[1].children[0].children[2].children[0].children[0]",
-                                      name: "Text",
+                                      name: "FreeBadgeText",
                                       text: "Free BYOB",
                                     ),
                                   ],
                                 ),
                                 ffai.ProjectWidgetHandle(
-                                  key: "Container_6wtmjk90",
+                                  key: "Container_i8k0xf1i",
                                   type: "Container",
                                   path: "RestaurantCard.children[0].children[0].children[0].children[1].children[0].children[2].children[1]",
-                                  name: "Container",
+                                  name: "CorkageFeeBadge",
                                   children: <ffai.ProjectWidgetHandle>[
                                     ffai.ProjectWidgetHandle(
-                                      key: "Text_b0y53a09",
+                                      key: "Text_ujzogidr",
                                       type: "Text",
                                       path: "RestaurantCard.children[0].children[0].children[0].children[1].children[0].children[2].children[1].children[0]",
-                                      name: "Text",
+                                      name: "CorkageAmountText",
                                     ),
                                   ],
                                 ),
                                 ffai.ProjectWidgetHandle(
-                                  key: "Container_kszxysvs",
+                                  key: "Container_0yp7i1zx",
                                   type: "Container",
                                   path: "RestaurantCard.children[0].children[0].children[0].children[1].children[0].children[2].children[2]",
-                                  name: "Container",
+                                  name: "AskUsBadge",
                                   children: <ffai.ProjectWidgetHandle>[
                                     ffai.ProjectWidgetHandle(
-                                      key: "Text_q055a8eu",
+                                      key: "Text_3t82gowm",
                                       type: "Text",
                                       path: "RestaurantCard.children[0].children[0].children[0].children[1].children[0].children[2].children[2].children[0]",
-                                      name: "Text",
+                                      name: "AskUsText",
                                       text: "Ask Us",
                                     ),
                                   ],
