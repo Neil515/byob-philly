@@ -4,10 +4,13 @@ library;
 
 import 'package:flutterflow_ai/flutterflow_ai.dart' as ffai;
 import 'pages/home_page.dart' show homePageHandle;
+import 'pages/restaurant_detail_page.dart' show restaurantDetailPageHandle;
 
 abstract final class Pages {
   static final homePage = homePageHandle;
+  static final restaurantDetailPage = restaurantDetailPageHandle;
   static final all = <ffai.ProjectPageHandle>[
     homePage,
+    restaurantDetailPage,
   ];
 }

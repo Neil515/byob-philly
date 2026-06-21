@@ -135,6 +135,8 @@ abstract final class Tables {
 
 abstract final class CustomCode {
   static const functions = <String>[
+    "filterRestaurantsByType",
+    "getMapsUrl",
   ];
   static const actions = <String>[
   ];
