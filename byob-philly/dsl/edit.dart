@@ -1453,7 +1453,7 @@ copy.sort((r1, r2) {
   final d2 = hvDist(lat0, lng0, rCoord(r2, 'lat'), rCoord(r2, 'lng'));
   return d1.compareTo(d2);
 });
-return copy.take(3).toList();''',
+return copy.take(3).toList().cast<RestaurantsRecord>();''',
     );
   });
   final getNearestThreeFn = CustomFunctionHandle(
@@ -1479,7 +1479,7 @@ return copy.take(3).toList();''',
 
   // ── 3. Page state: add isMapView + GPS defaults + nearestThree ─────────────
   app.editPageState(ff.Pages.homePage, (state) {
-    state.ensureField('isMapView', bool_);
+    state.ensureField('isMapView', bool_.withDefault(false));
     state.ensureField('userLatitude', double_.withDefault(39.9526));
     state.ensureField('userLongitude', double_.withDefault(-75.1652));
     state.ensureField('nearestThree', listOf(restaurants));

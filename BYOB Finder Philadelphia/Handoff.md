@@ -1,12 +1,12 @@
 # BYOB Finder Philadelphia — Progress Handoff
 
-最後更新：2026-06-21
+最後更新：2026-06-22
 
 ---
 
 ## 1. 目前在哪裡停下來
 
-**階段：Contract 2 ✅、Contract 3 ✅、Contract 4 進行中（cuisine type 顯示邏輯待修）**
+**階段：Contract 8 進行中 — 地圖視角 toggle 已完成，Google Maps 畫面空白待修**
 
 ### Firebase 狀態
 
@@ -29,10 +29,30 @@
 | FlutterFlow 專案 ID | b-y-o-b-philly-a08xby |
 | FlutterFlow workspace 路徑 | C:\Users\slow3\OneDrive\桌面\GitHubProjects\BYOB\byob-philly |
 | Firebase 連接 | ✅ byob-app-5e4db，package: com.smalltoolsstudio.byobphilly |
-| HomePage | ✅ 餐廳列表、卡片（左右分割）、3 種 badge、Filter chips |
+| HomePage | ✅ 列表視角正常；地圖視角 toggle 有效，底部 3 張最近餐廳卡片顯示正常，但地圖畫面空白 |
 | RestaurantCard | ✅ 左右分割，Free BYOB（綠）/ Corkage Fee（酒紅）/ Ask Us（橘） |
-| RestaurantDetailPage | ✅ 名稱、料理、badge、地址、電話、Get Directions 按鈕，全在第一屏 |
-| Filter chips | ⚠️ 部分完成：chips 兩列顯示正常，但篩選邏輯未正確處理 comma-separated 類型 |
+| RestaurantDetailPage | ✅ 名稱、料理、badge、地址（可點導航）、電話（可點撥打）、Get Directions 按鈕，全在第一屏 |
+| Filter chips | ✅ 12 個 chip，多選 OR 邏輯，選中不移位 |
+| 地圖視角 toggle | ✅ App bar 右上角 icon，切換 isMapView boolean |
+| 底部 nearest-3 卡片 | ✅ 顯示最近 3 家，chip 篩選同步更新，點擊進詳情頁 |
+| Google Maps widget | ⚠️ 畫面空白 — 疑似 API key 未啟用 Maps JavaScript API |
+
+### Custom Functions 狀態
+
+| Function | 狀態 | 說明 |
+|----------|------|------|
+| `formatCuisineType` | ✅ | split comma → replace "other" → join " · " |
+| `filterRestaurantsByType` | ✅ | multi-select OR logic，comma-split |
+| `getMapsUrl` | ✅ | body-only，回傳 Google Maps URL |
+| `getPhoneUrl` | ✅ | body-only，回傳 tel: URL |
+| `haversineDistance` | ✅ | 純算術近似（無 dart:math），squared-km proxy |
+| `getNearestThree` | ✅ | 排序後 take(3).cast<RestaurantsRecord>() |
+
+### 已知 DSL 問題
+
+- **updateCustomFunction 歷史問題**：Ralph 之前用 `ensureCustomFunction`（只建不更），改用 `app.raw()` + `updateCustomFunction` 後才能正確覆蓋雲端。現在已修正。
+- **OneDrive file lock**：每次 DSL push 後 `generated_code/` rename 會失敗（Windows/OneDrive lock），但不影響雲端 push，只是本地 stub 是舊的。用以下指令可避免：
+  `Remove-Item -Recurse -Force generated_code -ErrorAction SilentlyContinue; dart run dsl/edit.dart --project-id b-y-o-b-philly-a08xby`
 
 ### 安全狀態
 
@@ -44,107 +64,64 @@
 
 ## 2. 下一步工作（依序執行）
 
-### 🔴 Contract 4 修復（明天第一件事）
+### 🔴 明天第一件事：Contract 8 debug — Google Maps 空白
 
-**背景：** `philly_restaurant_type` 是逗號分隔的複合值（如 "Italian, other"、"Japanese, other"）。現有篩選做完全比對，導致大多數餐廳找不到。另有 `philly_restaurant_type_other_note` 說明 "other" 的實際類型（如 note = "Ramen"）。
+**背景：** 地圖視角 toggle 正常，底部 nearest-3 卡片正常，但 Google Maps widget 畫面完全空白。疑似原因：現有 API key 是 Android key，web preview 需要 Maps JavaScript API 也啟用在同一個 key 上。
 
-**94 間餐廳中 47 間有複合類型。** 這影響：
-1. 列表卡片顯示（如 "Asian, other" 直接顯示很醜）
-2. 篩選邏輯（exact match 失敗）
-3. 詳情頁顯示
-
-#### 明天給 Ralph 的 prompt（直接複製貼上）
+#### 給 Ralph 的 prompt（直接複製貼上）
 
 ```
-Read CLAUDE.md before starting. State your approach in 3-4 lines first.
+Read CLAUDE.md and PRODUCT_BRIEF.md before starting.
+State your planned approach in 3–4 lines first.
 
-This prompt covers fixes across RestaurantCard, HomePage filter, 
-and RestaurantDetailPage. All changes relate to how philly_restaurant_type 
-is parsed and displayed.
+Active contract:
+Contract 8 debug: Google Maps widget blank in web preview / test mode
 
----
+Context:
+Map view toggle works. Bottom 3 nearest restaurant cards display correctly.
+But the Google Maps widget area is completely blank (white) in FlutterFlow
+web test mode.
 
-BACKGROUND: THE DATA PROBLEM
+FlutterFlow workspace folder:
+C:\Users\slow3\OneDrive\桌面\GitHubProjects\BYOB\byob-philly
 
-philly_restaurant_type is a comma-separated string (e.g. "Italian, other", 
-"Japanese, other", "Italian, Mediterranean, Seafood").
+Diagnose and fix:
 
-philly_restaurant_type_other_note contains the real name when "other" 
-appears (e.g. type = "Asian, other", note = "Ramen" → actual = "Asian · Ramen").
+1. The current Google Maps API key is an Android key (set in FlutterFlow
+   Settings → Integrations → Google Maps). Web preview requires Maps
+   JavaScript API to be enabled on the same key.
 
----
+   Check: is Maps JavaScript API enabled on the key in Google Cloud Console
+   (APIs & Services → Enabled APIs)?
 
-FIX 1: New custom function — formatCuisineType
+   If not: instruct Neil exactly how to enable it — go to
+   console.cloud.google.com → project byob-app-5e4db → APIs & Services →
+   Library → search "Maps JavaScript API" → Enable.
+   No new key needed, same key works for both Android and web.
 
-Create a Dart custom function:
-  String formatCuisineType(String typeString, String otherNote)
+2. Also check: does the Google Maps widget have showLocationValue set to true
+   and the container has correct dimensions (Expanded or fixed height)?
+   A zero-height container would also cause a blank map.
 
-Logic:
-1. Split typeString by comma, trim each part
-2. Replace any part that equals "other" (case-insensitive) with otherNote
-   (only if otherNote is non-empty; otherwise drop "other" entirely)
-3. Join remaining parts with " · "
-4. Return result
+3. Confirm whether map blank is web-only or would also affect Android device.
+   If it's web-only AND Maps JavaScript API is already enabled, the blank map
+   in web preview may be a FlutterFlow web rendering limitation and acceptable
+   — the real validation is on a physical Android device.
 
-Examples:
-  "Italian, other", "Mediterranean" → "Italian · Mediterranean"
-  "Asian, other", "Ramen"           → "Asian · Ramen"
-  "Italian, other", ""              → "Italian"
-  "Italian, Mediterranean, Seafood", "" → "Italian · Mediterranean · Seafood"
+Report findings before making any DSL changes.
+Do not change RestaurantCard, filter logic, list view, or detail page.
 
----
-
-FIX 2: RestaurantCard — add cuisineTypeNote param, use formatCuisineType
-
-- Add a new String parameter: cuisineTypeNote
-- Display cuisine using formatCuisineType(cuisineType, cuisineTypeNote)
-  instead of raw cuisineType
-
----
-
-FIX 3: HomePage — pass cuisineTypeNote to RestaurantCard
-
-- Pass philly_restaurant_type_other_note as cuisineTypeNote to each 
-  RestaurantCard in the ListView
-
----
-
-FIX 4: Filter function — fix to handle comma-separated types
-
-Update filterRestaurantsByType logic:
-- Split each restaurant's philly_restaurant_type by comma, trim, lowercase
-- Return restaurants where the selected type (lowercase) is in that list
-- "Other" chip: return restaurants where NONE of these types appear 
-  in their type list: italian, japanese, mediterranean, asian, 
-  mexican, seafood, thai, french
-
----
-
-FIX 5: Filter chips — update chip list
-
-New chip order (sorted by count in data):
-All · Italian · Japanese · Mediterranean · Asian · Seafood · Mexican · Thai · French · Other
-
----
-
-FIX 6: RestaurantDetailPage — use formatCuisineType
-
-Apply the same formatCuisineType function to display cuisine type 
-on the detail page (pass both philly_restaurant_type and 
-philly_restaurant_type_other_note from the page parameters).
-
----
-
-CONSTRAINTS:
-- Push with project ID b-y-o-b-philly-a08xby
-- Do not change card layout, badge logic, or navigation
+Constraints:
 - All user-facing text in English
+- DSL push command:
+  Remove-Item -Recurse -Force generated_code -ErrorAction SilentlyContinue; dart run dsl/edit.dart --project-id b-y-o-b-philly-a08xby
 
-DONE criteria:
-- Screenshot list page with "Japanese" chip selected showing 
-  multiple restaurants
-- Screenshot one card showing formatted cuisine (e.g. "Asian · Ramen")
-- Wait for Neil to confirm before outputting DONE
+Permanent UX constraints:
+- Corkage fee visible on list cards
+- Navigation button on detail page first screen
+- Free BYOB visually distinct from Corkage Fee
+- No login wall
+- All user-facing text in English
 ```
 
 ---
@@ -159,21 +136,30 @@ DONE criteria:
 | 1 | FlutterFlow Theme 設定 + Firebase 連接 + 列表頁基礎綁定 | ✅ | 2026-06-15 |
 | 2 | 餐廳卡片重新設計（左右分割，圖片 1.19:1） | ✅ | 2026-06-21 |
 | 3 | 餐廳詳情頁 + Google Maps 導航按鈕 | ✅ | 2026-06-21 |
-| 4 | 篩選功能（依 philly_restaurant_type） | 🔴 修復中 | — |
+| 4 | 篩選功能（cuisine type 顯示 + comma-separated 解析） | ✅ | 2026-06-22 |
+| 5 | Filter chips 多選 + OR 邏輯 + 新增 American / Indian chip | ✅ | 2026-06-22 |
+| 6 | 電話可點撥打 + 地址可點開導航（RestaurantDetailPage） | ✅ | 2026-06-22 |
+| 7 | Android 打包 + 手機實機測試 | ⏳ 待執行（Neil 手動） | — |
+| 8 | 地圖視角（HomePage toggle + nearest-3 卡片） | 🔴 進行中（地圖空白待修） | — |
 
 ---
 
-## 4. P1 功能完成度
+## 4. P1 + P2 功能完成度
 
-| P1 功能 | 狀態 |
-|---------|------|
-| 餐廳列表頁（Firestore 綁定） | ✅ |
-| 開瓶費 badge 顯示邏輯（3 種） | ✅ |
-| 卡片視覺設計（左右分割） | ✅ |
-| 餐廳詳情頁 | ✅ |
-| Google Maps 導航按鈕 | ✅ |
-| 篩選（依 philly_restaurant_type） | 🔴 chips 顯示正常，篩選邏輯未處理 comma-separated 類型 |
-| 料理類型正確顯示（含 note） | 🔴 待修復 |
+| 功能 | 優先級 | 狀態 |
+|------|--------|------|
+| 餐廳列表頁（Firestore 綁定） | P1 | ✅ |
+| 開瓶費 badge 顯示邏輯（3 種） | P1 | ✅ |
+| 卡片視覺設計（左右分割） | P1 | ✅ |
+| 餐廳詳情頁 | P1 | ✅ |
+| Google Maps 導航按鈕 | P1 | ✅ |
+| 篩選（依 philly_restaurant_type，多選 OR） | P1 | ✅ |
+| 料理類型正確顯示（含 other_note） | P1 | ✅ |
+| 電話號碼可點撥打 | P1 | ✅ |
+| 地址可點開 Google Maps 導航 | P1 | ✅ |
+| 地圖視角（toggle + nearest-3 卡片） | P2 | 🔴 地圖空白待修 |
+| Firestore GeoPoint 欄位（地圖 markers 用） | P2 | ⏳ 待執行（路線 A） |
+| Near me 排序 | P2 | ⏳ 暫緩 |
 
 ---
 
@@ -189,31 +175,35 @@ DONE criteria:
 | Workspace 路徑 | C:\Users\slow3\OneDrive\桌面\GitHubProjects\BYOB\byob-philly |
 | 後端 | 純 Firebase（不需要 Render） |
 | Firebase Storage bucket | byob-app-5e4db.firebasestorage.app |
-| Google Maps API Key | ✅ Android key（Firebase 自動建立）已填入 FlutterFlow Settings → Integrations → Google Maps |
+| Google Maps API Key | ✅ Android key 已填入 FlutterFlow → Maps SDK for Android 已啟用，Maps JavaScript API 狀態未確認 |
 
 ### Firestore 欄位大小寫（注意！）
 
 | 欄位 | 說明 |
 |------|------|
-| `Name` | 餐廳名稱（**大寫 N**）⚠️ FlutterFlow field key: `1n8bgxro`，binding 問題根源 |
+| `Name` | 餐廳名稱（**大寫 N**）⚠️ FlutterFlow field key: `1n8bgxro` |
 | `Add` | 地址（大寫 A） |
 | `Phone` | 電話（大寫 P） |
-| `Latitude` | 緯度（大寫 L） |
-| `Longitude` | 經度（大寫 L） |
+| `Latitude` | 緯度（大寫 L）→ FlutterFlow model accessor: `.latitude` |
+| `Longitude` | 經度（大寫 L）→ FlutterFlow model accessor: `.longitude` |
 | `cover_image_url` | Firebase Storage URL（小寫） |
-| `philly_restaurant_type` | 料理類型（小寫） |
+| `philly_restaurant_type` | 料理類型（逗號分隔複合值） |
+| `philly_restaurant_type_other_note` | "other" 的實際類型說明 |
 | `philly_corkage_fee` | 開瓶費類型：free / corkage_fee / other |
 | `corkage_fee_amount` | 開瓶費金額（數字，部分為空） |
 
 ### 其他注意事項
 
-- `philly_restaurant_type` 是**逗號分隔的複合值**，94 間中 47 間有多種類型
-- `philly_restaurant_type_other_note` 說明 "other" 的實際類型（如 "Ramen"、"Laotian"）
-- 實際出現的主要類型及數量（含複合）：Italian ~38、Japanese ~13、Mediterranean ~12、Asian ~7、Seafood ~7、Mexican ~6、Thai ~4、French ~3
-- DSL push 正確指令：`Remove-Item -Recurse -Force generated_code -ErrorAction SilentlyContinue; dart run dsl/edit.dart --project-id b-y-o-b-philly-a08xby`（需先刪除 generated_code 以避免 OneDrive rename 鎖定問題）
-- 圖片 placeholder 在 `BYOB/Mid/Placeholder/IMAGE_CONVERT/*.webp`
-- DSL push 指令：`dart run dsl/edit.dart --project-id b-y-o-b-philly-a08xby`（用 FlutterFlow ID，不是 Firebase ID）
+- Filter chips 順序（固定）：All · Italian · Japanese · Mediterranean · Asian · Seafood · Mexican · Thai · French · American · Indian · Other
+- "Other" chip 邏輯：不含 italian / japanese / mediterranean / asian / seafood / mexican / thai / french / american / indian
+- Token 數量（含複合）：Italian 36、other 57、Mediterranean 12、Seafood 10、Japanese 10、Asian 6、Mexican 5、Thai 4、French 3、American 2、Indian 2
+- `formatCuisineType(typeString, otherNote)`：split comma → replace "other" with note → join " · "
+- `haversineDistance`：純算術，無 dart:math（dLat*111, dLng*85, squared proxy）
+- `getNearestThree`：回傳 `copy.take(3).toList().cast<RestaurantsRecord>()`
+- DSL push 指令：`Remove-Item -Recurse -Force generated_code -ErrorAction SilentlyContinue; dart run dsl/edit.dart --project-id b-y-o-b-philly-a08xby`
 - `Name` field key 在 FlutterFlow DSL 中為 `1n8bgxro`
+- Ralph 給 Cowork 的 prompt 一律英文（從 Contract 5 起）
+- **重要**：Ralph 更新 custom function 必須用 `app.raw()` + `updateCustomFunction`，不是 `ensureCustomFunction`（後者只建不更新）
 
 ---
 
@@ -221,8 +211,8 @@ DONE criteria:
 
 | 項目 | 暫緩原因 |
 |------|----------|
-| 地圖視圖 | P2，MVP 後 |
-| Near me 排序 | P2，需要 GPS 權限 |
+| Firestore GeoPoint migration | 地圖 markers 需要，等地圖空白問題確認後執行 |
+| Near me 排序 | P2，暫緩 |
 | 用戶驗證功能 | P3 |
 | Wine Shop 推薦 | P3 |
 | 多城市 | P3 |
