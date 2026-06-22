@@ -1396,37 +1396,37 @@ return restaurants.where((r) {
 void buildByobContract8(App app) {
   final restaurants = ff.Collections.restaurants;
 
-  // ── 1. Custom function: haversine distance (km) ─────────────────────────────
-  final haversineDistanceFn = app.customFunction(
-    'haversineDistance',
+  // ── 1. Custom function: squared-km proxy distance (no dart:math) ────────────
+  app.raw((project) {
+    updateCustomFunction(
+      project,
+      name: 'haversineDistance',
+      description: 'Returns squared-km proxy distance between two lat/lng points. Accurate enough for sorting within a small city.',
+      code: '''if (lat1 == null || lng1 == null || lat2 == null || lng2 == null) return 0.0;
+final dLat = (lat2 - lat1) * 111.0;
+final dLng = (lng2 - lng1) * 85.0;
+return dLat * dLat + dLng * dLng;''',
+    );
+  });
+  final haversineDistanceFn = CustomFunctionHandle(
+    name: 'haversineDistance',
     args: {'lat1': double_, 'lng1': double_, 'lat2': double_, 'lng2': double_},
-    returns: double_,
-    description: 'Haversine formula: returns distance in km between two lat/lng points.',
-    code: r'''if (lat1 == null || lng1 == null || lat2 == null || lng2 == null) return null;
-const R = 6371.0;
-final dLat = (lat2 - lat1) * math.pi / 180;
-final dLng = (lng2 - lng1) * math.pi / 180;
-final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
-    math.cos(lat1 * math.pi / 180) * math.cos(lat2 * math.pi / 180) * math.sin(dLng / 2) * math.sin(dLng / 2);
-return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));''',
+    returnType: double_,
   );
 
   // ── 2. Custom function: get 3 nearest restaurants ──────────────────────────
-  final getNearestThreeFn = app.customFunction(
-    'getNearestThree',
-    args: {'restaurants': listOf(restaurants), 'userLat': double_, 'userLng': double_},
-    returns: listOf(restaurants),
-    description: "Returns the 3 restaurants nearest to the user's GPS location.",
-    code: r'''if (restaurants == null || (restaurants as List).isEmpty) return [];
+  app.raw((project) {
+    updateCustomFunction(
+      project,
+      name: 'getNearestThree',
+      description: "Returns the 3 restaurants nearest to the user's GPS location.",
+      code: '''if (restaurants == null || (restaurants as List).isEmpty) return [];
 final lat0 = (userLat ?? 39.9526).toDouble();
 final lng0 = (userLng ?? -75.1652).toDouble();
 double hvDist(double la1, double lo1, double la2, double lo2) {
-  const R = 6371.0;
-  final dLa = (la2 - la1) * math.pi / 180;
-  final dLo = (lo2 - lo1) * math.pi / 180;
-  final x = math.sin(dLa / 2) * math.sin(dLa / 2) +
-      math.cos(la1 * math.pi / 180) * math.cos(la2 * math.pi / 180) * math.sin(dLo / 2) * math.sin(dLo / 2);
-  return R * 2 * math.atan2(math.sqrt(x), math.sqrt(1 - x));
+  final dLa = (la2 - la1) * 111.0;
+  final dLo = (lo2 - lo1) * 85.0;
+  return dLa * dLa + dLo * dLo;
 }
 final copy = List.of(restaurants as List);
 copy.sort((r1, r2) {
@@ -1435,6 +1435,12 @@ copy.sort((r1, r2) {
   return d1.compareTo(d2);
 });
 return copy.take(3).toList();''',
+    );
+  });
+  final getNearestThreeFn = CustomFunctionHandle(
+    name: 'getNearestThree',
+    args: {'restaurants': listOf(restaurants), 'userLat': double_, 'userLng': double_},
+    returnType: listOf(restaurants),
   );
 
   // ── 2b. Enable location permission in project settings ─────────────────────
