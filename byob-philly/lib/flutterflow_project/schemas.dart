@@ -89,6 +89,13 @@ final class RestaurantsFields extends MapBase<String, ffai.DslType> {
     type: ffai.string,
     description: "",
   );
+  final phillyRestaurantTypeOtherNote = ffai.ProjectCollectionFieldHandle(
+    name: "philly_restaurant_type_other_note",
+    key: "79o0dxhs",
+    typeName: "String",
+    type: ffai.string,
+    description: "",
+  );
 
   @override
   Iterable<String> get keys => const <String>[
@@ -101,6 +108,7 @@ final class RestaurantsFields extends MapBase<String, ffai.DslType> {
     "cover_image_url",
     "philly_corkage_fee",
     "philly_restaurant_type",
+    "philly_restaurant_type_other_note",
   ];
 
   @override
@@ -114,6 +122,7 @@ final class RestaurantsFields extends MapBase<String, ffai.DslType> {
     "cover_image_url" => coverImageUrl,
     "philly_corkage_fee" => phillyCorkageFee,
     "philly_restaurant_type" => phillyRestaurantType,
+    "philly_restaurant_type_other_note" => phillyRestaurantTypeOtherNote,
     _ => null,
   };
 
@@ -136,7 +145,14 @@ abstract final class Tables {
 abstract final class CustomCode {
   static const functions = <String>[
     "filterRestaurantsByType",
+    "filterRestaurantsByTypes",
+    "formatCuisineType",
     "getMapsUrl",
+    "getNearestThree",
+    "getPhoneUrl",
+    "haversineDistance",
+    "isNoneSelected",
+    "isTypeSelected",
   ];
   static const actions = <String>[
   ];
