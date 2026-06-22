@@ -1402,12 +1402,13 @@ void buildByobContract8(App app) {
     args: {'lat1': double_, 'lng1': double_, 'lat2': double_, 'lng2': double_},
     returns: double_,
     description: 'Haversine formula: returns distance in km between two lat/lng points.',
-    code: r'''const R = 6371.0;
-final dLat = (lat2 - lat1) * pi / 180;
-final dLng = (lng2 - lng1) * pi / 180;
-final a = sin(dLat / 2) * sin(dLat / 2) +
-    cos(lat1 * pi / 180) * cos(lat2 * pi / 180) * sin(dLng / 2) * sin(dLng / 2);
-return R * 2 * atan2(sqrt(a), sqrt(1 - a));''',
+    code: r'''if (lat1 == null || lng1 == null || lat2 == null || lng2 == null) return null;
+const R = 6371.0;
+final dLat = (lat2 - lat1) * math.pi / 180;
+final dLng = (lng2 - lng1) * math.pi / 180;
+final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+    math.cos(lat1 * math.pi / 180) * math.cos(lat2 * math.pi / 180) * math.sin(dLng / 2) * math.sin(dLng / 2);
+return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a));''',
   );
 
   // ── 2. Custom function: get 3 nearest restaurants ──────────────────────────
@@ -1421,11 +1422,11 @@ final lat0 = (userLat ?? 39.9526).toDouble();
 final lng0 = (userLng ?? -75.1652).toDouble();
 double hvDist(double la1, double lo1, double la2, double lo2) {
   const R = 6371.0;
-  final dLa = (la2 - la1) * pi / 180;
-  final dLo = (lo2 - lo1) * pi / 180;
-  final x = sin(dLa / 2) * sin(dLa / 2) +
-      cos(la1 * pi / 180) * cos(la2 * pi / 180) * sin(dLo / 2) * sin(dLo / 2);
-  return R * 2 * atan2(sqrt(x), sqrt(1 - x));
+  final dLa = (la2 - la1) * math.pi / 180;
+  final dLo = (lo2 - lo1) * math.pi / 180;
+  final x = math.sin(dLa / 2) * math.sin(dLa / 2) +
+      math.cos(la1 * math.pi / 180) * math.cos(la2 * math.pi / 180) * math.sin(dLo / 2) * math.sin(dLo / 2);
+  return R * 2 * math.atan2(math.sqrt(x), math.sqrt(1 - x));
 }
 final copy = List.of(restaurants as List);
 copy.sort((r1, r2) {
