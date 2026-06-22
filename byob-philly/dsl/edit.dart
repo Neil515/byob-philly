@@ -554,10 +554,20 @@ void buildByobContract3(App app) {
     'getMapsUrl',
     args: {'lat': double_, 'lng': double_},
     returns: string,
-    code: '''Future<String> getMapsUrl(double lat, double lng) async {
-  return 'https://www.google.com/maps/dir/?api=1&destination=\$lat,\$lng';
-}''',
+    code: r'''final la = lat ?? 39.9526;
+final lo = lng ?? -75.1652;
+return 'https://www.google.com/maps/dir/?api=1&destination=$la,$lo';''',
   );
+  // Idempotent update — keeps cloud in sync if app.customFunction payload drifts.
+  app.raw((project) {
+    updateCustomFunction(
+      project,
+      name: 'getMapsUrl',
+      code: r'''final la = lat ?? 39.9526;
+final lo = lng ?? -75.1652;
+return 'https://www.google.com/maps/dir/?api=1&destination=$la,$lo';''',
+    );
+  });
 
   // ── 2. Detail page — idempotent rebuild via ensureReplaced ──────────────────
   // Layout budget: 200px image + ~240px info section ≈ 440px total,
@@ -1428,10 +1438,19 @@ double hvDist(double la1, double lo1, double la2, double lo2) {
   final dLo = (lo2 - lo1) * 85.0;
   return dLa * dLa + dLo * dLo;
 }
-final copy = List.of(restaurants as List);
+double rCoord(dynamic r, String prop) {
+  if (r == null) return 0.0;
+  try {
+    final v = prop == 'lat' ? (r as dynamic).latitude : (r as dynamic).longitude;
+    return (v as num? ?? 0).toDouble();
+  } catch (_) {
+    return 0.0;
+  }
+}
+final copy = (restaurants as List).where((r) => r != null).toList();
 copy.sort((r1, r2) {
-  final d1 = hvDist(lat0, lng0, ((r1 as dynamic).latitude ?? 0.0).toDouble(), ((r1 as dynamic).longitude ?? 0.0).toDouble());
-  final d2 = hvDist(lat0, lng0, ((r2 as dynamic).latitude ?? 0.0).toDouble(), ((r2 as dynamic).longitude ?? 0.0).toDouble());
+  final d1 = hvDist(lat0, lng0, rCoord(r1, 'lat'), rCoord(r1, 'lng'));
+  final d2 = hvDist(lat0, lng0, rCoord(r2, 'lat'), rCoord(r2, 'lng'));
   return d1.compareTo(d2);
 });
 return copy.take(3).toList();''',
@@ -1898,10 +1917,16 @@ void buildByobContract6(App app) {
     'getPhoneUrl',
     args: {'phone': string},
     returns: string,
-    code: '''Future<String> getPhoneUrl(String? phone) async {
-  return 'tel:\${phone ?? ''}';
-}''',
+    code: r'''return 'tel:${phone ?? ''}';''',
   );
+  // Idempotent update — keeps cloud in sync if app.customFunction payload drifts.
+  app.raw((project) {
+    updateCustomFunction(
+      project,
+      name: 'getPhoneUrl',
+      code: r'''return 'tel:${phone ?? ''}';''',
+    );
+  });
 
   // getMapsUrl declared in Contract 3 — reference by handle name only.
   final getMapsUrl = CustomFunctionHandle(
