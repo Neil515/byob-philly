@@ -1476,19 +1476,36 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
     }
   });
 
+  // ── 2c. Remove geolocator package and custom actions that used it ──────────
+  // These caused compile errors because FlutterFlow doesn't bundle geolocator.
+  // Replaced by FlutterFlow's built-in RequestPermissions action and the native
+  // PERMISSIONS variable source for reading permission state.
+  app.raw((project) {
+    // Remove geolocator pub dep (idempotent: no-op if already absent)
+    final deps = project.customCode.pubspecPackageInfo.pubspecDependencies;
+    deps.removeWhere((d) => d.name == 'geolocator');
 
-  // ── 3. Page state: add isMapView + GPS defaults + nearestThree ─────────────
+    // Remove the three geolocator-dependent custom actions (idempotent)
+    final actions = project.customCode.customActions;
+    actions.removeWhere((a) =>
+        a.identifier.name == 'getDeviceLat' ||
+        a.identifier.name == 'getDeviceLng' ||
+        a.identifier.name == 'checkAndRequestLocation');
+  });
+
+  // ── 3. Page state: add isMapView + GPS defaults + nearestThree + hasLocationPermission
   app.editPageState(ff.Pages.homePage, (state) {
     state.ensureField('isMapView', bool_.withDefault(false));
     state.ensureField('userLatitude', double_.withDefault(39.9526));
     state.ensureField('userLongitude', double_.withDefault(-75.1652));
     state.ensureField('nearestThree', listOf(restaurants));
+    state.ensureField('hasLocationPermission', bool_.withDefault(false));
   });
 
-  // ── 4. Updated onLoad — adds location request + nearestThree init ───────────
-  // Replaces Contract 5 version. Philadelphia center (39.9526, -75.1652) is the
-  // page-state default for userLat/Lng, so getNearestThree works even if the
-  // user denies location permission.
+  // ── 4. Updated onLoad — request permission + nearestThree init ──────────────
+  // Uses FlutterFlow built-in RequestPermissions action (no geolocator needed).
+  // Philadelphia center (39.9526, -75.1652) are the page-state defaults so
+  // getNearestThree works even when the user denies location permission.
   app.editPageOnLoad(ff.Pages.homePage, [
     FirestoreQuery(restaurants, limit: 100, outputAs: 'loadedRestaurants'),
     SetState('restaurants', ActionOutput('loadedRestaurants')),
@@ -1798,8 +1815,10 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
   });
 
   // ── 8. AppBar toggle button via raw() ────────────────────────────────────────
-  // Runs AFTER compilation, so isMapView field identifier is resolvable from the
-  // classModel. Idempotent: removes any previous MapToggleButton before adding.
+  // Runs AFTER compilation, so all field identifiers are resolvable.
+  // On tap: requests location permission (FlutterFlow built-in), reads the
+  // resulting permission state into hasLocationPermission, then toggles isMapView.
+  // No geolocator / custom action code — pure built-in action chain.
   app.raw((project) {
     FFWidgetClass? homeWC;
     for (final wc in project.widgetClasses.values) {
@@ -1810,21 +1829,75 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
     final appBarNode = findByKey(homeWC.node, 'AppBar_0fjy4eyk');
     if (appBarNode == null) return;
 
-    // Resolve isMapView field identifier from compiled page state
+    // Resolve the two state field identifiers we use in this chain
     FFIdentifier? isMapViewId;
+    FFIdentifier? hasLocPermId;
     for (final field in homeWC.classModel.stateFields) {
-      if (field.parameter.identifier.name == 'isMapView') {
-        isMapViewId = field.parameter.identifier.deepCopy();
-        break;
+      switch (field.parameter.identifier.name) {
+        case 'isMapView': isMapViewId = field.parameter.identifier.deepCopy();
+        case 'hasLocationPermission': hasLocPermId = field.parameter.identifier.deepCopy();
       }
     }
-    if (isMapViewId == null) return;
+    if (isMapViewId == null || hasLocPermId == null) return;
 
+    // ── Build the action chain ──────────────────────────────────────────────────
+    // Step 1: Request location permission — FlutterFlow built-in action.
+    final step1Action = FFAction(
+      key: generateRandomAlphaNumericString(),
+      requestPermissions: FFRequestPermissionsAction(
+        permissionType: FFPermissionType.LOCATION,
+      ),
+    );
+
+    // Step 2: Set hasLocationPermission = current permission state.
+    // FFVariableSource.PERMISSIONS reads the OS-level permission granted/denied
+    // state for the given type — no geolocator or custom action needed.
+    final permissionStateVar = FFVariable(
+      source: FFVariableSource.PERMISSIONS,
+      baseVariable: FFBaseVariable(
+        permissionState: FFPermissionStateVariable(
+          permissionType: FFPermissionType.LOCATION,
+        ),
+      ),
+    );
+    final step2Action = FFAction(
+      key: generateRandomAlphaNumericString(),
+      localStateUpdate: FFLocalStateUpdate(
+        updateType: FFLocalStateUpdate_UpdateType.WIDGET,
+        stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
+        updates: [
+          FFLocalStateFieldUpdate(
+            fieldIdentifier: hasLocPermId!.deepCopy(),
+            setValue: FFValue(variable: permissionStateVar),
+          ),
+        ],
+      ),
+    );
+
+    // Step 3: Toggle isMapView
+    final step3Action = FFAction(
+      key: generateRandomAlphaNumericString(),
+      localStateUpdate: FFLocalStateUpdate(
+        updateType: FFLocalStateUpdate_UpdateType.WIDGET,
+        stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
+        updates: [
+          FFLocalStateFieldUpdate(
+            fieldIdentifier: isMapViewId!.deepCopy(),
+            toggle: FFLocalStateToggle(),
+          ),
+        ],
+      ),
+    );
+
+    // Chain: step1 → step2 → step3
+    final step3Node = FFActionNode(key: generateRandomAlphaNumericString(), action: step3Action);
+    final step2Node = FFActionNode(key: generateRandomAlphaNumericString(), action: step2Action, followUpAction: step3Node);
+    final rootNode = FFActionNode(key: generateRandomAlphaNumericString(), action: step1Action, followUpAction: step2Node);
+
+    // ── Build the IconButton node ──────────────────────────────────────────────
     // Idempotent: remove existing button before re-adding
     appBarNode.children.removeWhere((c) => c.name == 'MapToggleButton');
 
-    // Build the IconButton node manually using public proto API (UI.iconButton
-    // is in the internal SDK and not exported from flutterflow_ai.dart).
     final iconBtnKey = 'IconButton_${generateRandomAlphaNumericString()}';
     final toggleBtn = FFNode(
       key: iconBtnKey,
@@ -1846,22 +1919,7 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
     );
     toggleBtn.triggerActions.add(FFTriggerActions(
       trigger: FFActionTrigger(triggerType: FFActionTriggerType.ON_TAP),
-      rootAction: FFActionNode(
-        key: generateRandomAlphaNumericString(),
-        action: FFAction(
-          key: generateRandomAlphaNumericString(),
-          localStateUpdate: FFLocalStateUpdate(
-            updateType: FFLocalStateUpdate_UpdateType.WIDGET,
-            stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
-            updates: [
-              FFLocalStateFieldUpdate(
-                fieldIdentifier: isMapViewId,
-                toggle: FFLocalStateToggle(),
-              ),
-            ],
-          ),
-        ),
-      ),
+      rootAction: rootNode,
     ));
 
     appBarNode.children.add(toggleBtn);
@@ -1874,8 +1932,8 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
   // Note: docMarkers is intentionally NOT set because the Firestore data uses
   // separate Latitude/Longitude double fields instead of a GeoPoint — FlutterFlow's
   // docMarkers validator requires a GeoPoint (LatLng) field in the collection.
-  // The map shows the user's GPS dot (showLocationValue) and Philadelphia center.
-  // Nearest-3 cards in the bottom strip provide the restaurant location information.
+  // showLocation is bound to hasLocationPermission state (NOT hardcoded true) —
+  // hardcoding true caused SecurityException on Android before permission was granted.
   app.raw((project) {
     FFWidgetClass? homeWC;
     for (final wc in project.widgetClasses.values) {
@@ -1894,14 +1952,69 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
     }
     walk(homeWC.node);
 
-    // Enable GPS dot on map
+    // Bind GPS dot visibility to hasLocationPermission state (safe: no crash before permission granted)
     if (mapInner != null) {
-      mapInner!.props.googleMap.showLocationValue = FFBooleanValue(inputValue: true);
+      FFIdentifier? hasLocPermId;
+      for (final field in homeWC.classModel.stateFields) {
+        if (field.parameter.identifier.name == 'hasLocationPermission') {
+          hasLocPermId = field.parameter.identifier.deepCopy();
+          break;
+        }
+      }
+      if (hasLocPermId != null) {
+        final showLocVar = FFVariable(
+          source: FFVariableSource.LOCAL_STATE,
+          baseVariable: FFBaseVariable(
+            localState: FFLocalStateVariable(
+              fieldIdentifier: hasLocPermId,
+              stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
+            ),
+          ),
+        );
+        showLocVar.nodeKeyRef = FFNodeKeyReference(key: homeWC!.node.key);
+        mapInner!.props.googleMap.showLocationValue = FFBooleanValue(variable: showLocVar);
+      } else {
+        mapInner!.props.googleMap.showLocationValue = FFBooleanValue(inputValue: false);
+      }
     }
 
     // Remove hardcoded 300×200 so Expanded drives the map height
     if (mapOuter != null && mapOuter!.props.hasContainer()) {
       mapOuter!.props.container.clearDimensions();
+    }
+  });
+
+  // ── 10. Fix HomeBody + MapViewColumn mainAxisSize → max ─────────────────────────
+  // DSL Column defaults to minSizeValue=true (MainAxisSize.min).
+  // HomeBody.min → Scaffold body height is not propagated → MapViewColumn gets
+  // unbounded height → Expanded(GoogleMap) collapses to 0px (blank map).
+  // Fix: HomeBody.max propagates bounded height; MapViewColumn.max allows
+  // Expanded(GoogleMap) to fill the remaining space correctly.
+  app.raw((project) {
+    FFWidgetClass? homeWC;
+    for (final wc in project.widgetClasses.values) {
+      if (wc.name == 'HomePage') { homeWC = wc; break; }
+    }
+    if (homeWC == null) return;
+
+    FFNode? homeBody;
+    FFNode? mapViewColumn;
+    void walk(FFNode node) {
+      if (node.name == 'HomeBody' && node.type == FFWidgetType.Column) {
+        homeBody = node;
+      }
+      if (node.name == 'MapViewColumn' && node.type == FFWidgetType.Column) {
+        mapViewColumn = node;
+      }
+      for (final child in node.children) { walk(child); }
+    }
+    walk(homeWC.node);
+
+    if (homeBody != null) {
+      homeBody!.props.column.minSizeValue = FFBooleanValue(inputValue: false);
+    }
+    if (mapViewColumn != null) {
+      mapViewColumn!.props.column.minSizeValue = FFBooleanValue(inputValue: false);
     }
   });
 }
