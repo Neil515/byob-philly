@@ -75,6 +75,13 @@ final class RestaurantsFields extends MapBase<String, ffai.DslType> {
     type: ffai.string,
     description: "",
   );
+  final location = ffai.ProjectCollectionFieldHandle(
+    name: "location",
+    key: "m60ierht",
+    typeName: "LatLng",
+    type: ffai.latLng,
+    description: "",
+  );
   final phillyCorkageFee = ffai.ProjectCollectionFieldHandle(
     name: "philly_corkage_fee",
     key: "6ztdq0rf",
@@ -106,6 +113,7 @@ final class RestaurantsFields extends MapBase<String, ffai.DslType> {
     "Phone",
     "corkage_fee_amount",
     "cover_image_url",
+    "location",
     "philly_corkage_fee",
     "philly_restaurant_type",
     "philly_restaurant_type_other_note",
@@ -120,6 +128,7 @@ final class RestaurantsFields extends MapBase<String, ffai.DslType> {
     "Phone" => phone,
     "corkage_fee_amount" => corkageFeeAmount,
     "cover_image_url" => coverImageUrl,
+    "location" => location,
     "philly_corkage_fee" => phillyCorkageFee,
     "philly_restaurant_type" => phillyRestaurantType,
     "philly_restaurant_type_other_note" => phillyRestaurantTypeOtherNote,
@@ -147,6 +156,8 @@ abstract final class CustomCode {
     "filterRestaurantsByType",
     "filterRestaurantsByTypes",
     "formatCuisineType",
+    "getLatFromLocation",
+    "getLngFromLocation",
     "getMapsUrl",
     "getNearestThree",
     "getPhoneUrl",

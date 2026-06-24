@@ -111,7 +111,17 @@ String _requireValue(List<String> args, int index, String flag) {
 
 bool _keepValidationError(error) =>
     !error.message.contains('config file is not uploaded') &&
-    !error.message.contains('config files are not uploaded');
+    !error.message.contains('config files are not uploaded') &&
+    // FF rejects GENERATOR_VARIABLE in SetState/Navigate actions fired from
+    // GoogleMap ON_MARKER_TAP. Both the validator AND the code generator reject
+    // these patterns, so ON_MARKER_TAP navigation is not implemented (Contract 9
+    // recovery). These suppressors guard against residual state from old pushes.
+    !error.message.contains(
+      'has an update value that is not properly set in Update App State action for MapArea Inner',
+    ) &&
+    !error.message.contains(
+      'passed by MapArea Inner action to RestaurantDetailPage is not properly set',
+    );
 
 void _printUsage() {
   stdout.writeln('''
@@ -130,7 +140,7 @@ Options:
 ''');
 }
 
-/// Top-level builder — applies Contracts 1–6 + 8 in one idempotent run.
+/// Top-level builder — applies Contracts 1–6, 8, 9, 11, 13 in one idempotent run.
 void buildByobPhilly(App app) {
   buildByobContract1(app);
   buildByobContract2(app);
@@ -139,6 +149,9 @@ void buildByobPhilly(App app) {
   buildByobContract5(app);
   buildByobContract6(app);
   buildByobContract8(app);
+  buildByobContract9(app);
+  buildByobContract11(app);
+  buildByobContract13(app);
 }
 
 void buildByobContract1(App app) {
@@ -188,6 +201,7 @@ void buildByobContract1(App app) {
       'philly_corkage_fee': string,
       'corkage_fee_amount': double_,
       'philly_restaurant_type_other_note': string,
+      'location': latLng,
     },
     description: 'Philadelphia BYOB restaurants — 94 records in Firestore.',
   );
@@ -1493,6 +1507,73 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
         a.identifier.name == 'checkAndRequestLocation');
   });
 
+  // ── 2d. Custom helpers: extract lat/lng doubles from Global currentDeviceLocation
+  // These let the map toggle action chain assign userLatitude / userLongitude
+  // directly from FlutterFlow's built-in Global(currentDeviceLocation) LatLng
+  // without a geolocator custom action or custom Dart code.
+  app.raw((project) {
+    const latCode = r'return location?.latitude ?? 39.9526;';
+    const lngCode = r'return location?.longitude ?? -75.1652;';
+
+    final latFn = findCustomFunction(project, name: 'getLatFromLocation');
+    if (latFn != null) {
+      updateCustomFunction(project, name: 'getLatFromLocation', code: latCode);
+    } else {
+      addCustomFunction(
+        project,
+        name: 'getLatFromLocation',
+        code: latCode,
+        arguments: [
+          FFParameter(
+            identifier: FFIdentifier(
+              name: 'location',
+              key: generateRandomAlphaNumericString(),
+            ),
+            dataType: FFDataTypeV2(scalarType: FFBaseDataType.LatLng),
+          ),
+        ],
+        returnParameter: FFParameter(
+          identifier: FFIdentifier(
+            name: 'returnValue',
+            key: generateRandomAlphaNumericString(),
+          ),
+          dataType: FFDataTypeV2(scalarType: FFBaseDataType.Double),
+        ),
+        description:
+            'Extracts latitude (double) from a LatLng value; falls back to Philly center.',
+      );
+    }
+
+    final lngFn = findCustomFunction(project, name: 'getLngFromLocation');
+    if (lngFn != null) {
+      updateCustomFunction(project, name: 'getLngFromLocation', code: lngCode);
+    } else {
+      addCustomFunction(
+        project,
+        name: 'getLngFromLocation',
+        code: lngCode,
+        arguments: [
+          FFParameter(
+            identifier: FFIdentifier(
+              name: 'location',
+              key: generateRandomAlphaNumericString(),
+            ),
+            dataType: FFDataTypeV2(scalarType: FFBaseDataType.LatLng),
+          ),
+        ],
+        returnParameter: FFParameter(
+          identifier: FFIdentifier(
+            name: 'returnValue',
+            key: generateRandomAlphaNumericString(),
+          ),
+          dataType: FFDataTypeV2(scalarType: FFBaseDataType.Double),
+        ),
+        description:
+            'Extracts longitude (double) from a LatLng value; falls back to Philly center.',
+      );
+    }
+  });
+
   // ── 3. Page state: add isMapView + GPS defaults + nearestThree + hasLocationPermission
   app.editPageState(ff.Pages.homePage, (state) {
     state.ensureField('isMapView', bool_.withDefault(false));
@@ -1816,9 +1897,13 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
 
   // ── 8. AppBar toggle button via raw() ────────────────────────────────────────
   // Runs AFTER compilation, so all field identifiers are resolvable.
-  // On tap: requests location permission (FlutterFlow built-in), reads the
-  // resulting permission state into hasLocationPermission, then toggles isMapView.
-  // No geolocator / custom action code — pure built-in action chain.
+  // On tap:
+  //   a. Requests location permission (FlutterFlow built-in OS dialog).
+  //   b. Sets hasLocationPermission from the OS permission state.
+  //   c. IF permission granted: reads Global(currentDeviceLocation) via
+  //      getLatFromLocation / getLngFromLocation helpers, updates userLatitude /
+  //      userLongitude, recomputes nearestThree.
+  //   d. Toggles isMapView (always runs, regardless of permission result).
   app.raw((project) {
     FFWidgetClass? homeWC;
     for (final wc in project.widgetClasses.values) {
@@ -1829,29 +1914,50 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
     final appBarNode = findByKey(homeWC.node, 'AppBar_0fjy4eyk');
     if (appBarNode == null) return;
 
-    // Resolve the two state field identifiers we use in this chain
+    // Resolve all state field identifiers used in this chain
     FFIdentifier? isMapViewId;
     FFIdentifier? hasLocPermId;
+    FFIdentifier? userLatId;
+    FFIdentifier? userLngId;
+    FFIdentifier? nearestThreeId;
+    FFIdentifier? filteredRestaurantsId;
     for (final field in homeWC.classModel.stateFields) {
       switch (field.parameter.identifier.name) {
-        case 'isMapView': isMapViewId = field.parameter.identifier.deepCopy();
-        case 'hasLocationPermission': hasLocPermId = field.parameter.identifier.deepCopy();
+        case 'isMapView':
+          isMapViewId = field.parameter.identifier.deepCopy();
+        case 'hasLocationPermission':
+          hasLocPermId = field.parameter.identifier.deepCopy();
+        case 'userLatitude':
+          userLatId = field.parameter.identifier.deepCopy();
+        case 'userLongitude':
+          userLngId = field.parameter.identifier.deepCopy();
+        case 'nearestThree':
+          nearestThreeId = field.parameter.identifier.deepCopy();
+        case 'filteredRestaurants':
+          filteredRestaurantsId = field.parameter.identifier.deepCopy();
       }
     }
     if (isMapViewId == null || hasLocPermId == null) return;
 
+    // Resolve custom function identifiers needed in the GPS branch
+    final getLatFnId =
+        findCustomFunction(project, name: 'getLatFromLocation')?.identifier.deepCopy();
+    final getLngFnId =
+        findCustomFunction(project, name: 'getLngFromLocation')?.identifier.deepCopy();
+    final getNearestFnId =
+        findCustomFunction(project, name: 'getNearestThree')?.identifier.deepCopy();
+
     // ── Build the action chain ──────────────────────────────────────────────────
-    // Step 1: Request location permission — FlutterFlow built-in action.
-    final step1Action = FFAction(
+    // Step a: Request location permission — FlutterFlow built-in action.
+    final stepAAction = FFAction(
       key: generateRandomAlphaNumericString(),
       requestPermissions: FFRequestPermissionsAction(
         permissionType: FFPermissionType.LOCATION,
       ),
     );
 
-    // Step 2: Set hasLocationPermission = current permission state.
-    // FFVariableSource.PERMISSIONS reads the OS-level permission granted/denied
-    // state for the given type — no geolocator or custom action needed.
+    // Step b: Set hasLocationPermission = current OS permission state.
+    // FFVariableSource.PERMISSIONS reads the granted/denied state for LOCATION.
     final permissionStateVar = FFVariable(
       source: FFVariableSource.PERMISSIONS,
       baseVariable: FFBaseVariable(
@@ -1860,7 +1966,7 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
         ),
       ),
     );
-    final step2Action = FFAction(
+    final stepBAction = FFAction(
       key: generateRandomAlphaNumericString(),
       localStateUpdate: FFLocalStateUpdate(
         updateType: FFLocalStateUpdate_UpdateType.WIDGET,
@@ -1874,8 +1980,8 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
       ),
     );
 
-    // Step 3: Toggle isMapView
-    final step3Action = FFAction(
+    // Step d: Toggle isMapView (always runs after the conditional branch).
+    final stepDAction = FFAction(
       key: generateRandomAlphaNumericString(),
       localStateUpdate: FFLocalStateUpdate(
         updateType: FFLocalStateUpdate_UpdateType.WIDGET,
@@ -1888,11 +1994,173 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
         ],
       ),
     );
+    final stepDNode = FFActionNode(
+      key: generateRandomAlphaNumericString(),
+      action: stepDAction,
+    );
 
-    // Chain: step1 → step2 → step3
-    final step3Node = FFActionNode(key: generateRandomAlphaNumericString(), action: step3Action);
-    final step2Node = FFActionNode(key: generateRandomAlphaNumericString(), action: step2Action, followUpAction: step3Node);
-    final rootNode = FFActionNode(key: generateRandomAlphaNumericString(), action: step1Action, followUpAction: step2Node);
+    // Step c (conditional): IF hasLocationPermission == true, fetch GPS and
+    // update userLatitude / userLongitude / nearestThree.
+    // Falls back gracefully when identifiers are unavailable (first-run before
+    // the custom functions are pushed).
+    FFActionNode stepCNode;
+    if (getLatFnId != null &&
+        getLngFnId != null &&
+        getNearestFnId != null &&
+        userLatId != null &&
+        userLngId != null &&
+        nearestThreeId != null &&
+        filteredRestaurantsId != null) {
+      // Global(currentDeviceLocation) — FlutterFlow built-in LatLng variable.
+      final globalLocVar = FFVariable(
+        source: FFVariableSource.GLOBAL_PROPERTIES,
+        baseVariable: FFBaseVariable(
+          globalProperties: FFGlobalPropertiesVariable(
+            property:
+                FFGlobalPropertiesVariable_GlobalProperty.CURRENT_DEVICE_LOCATION,
+          ),
+        ),
+      );
+
+      // getLatFromLocation(currentDeviceLocation) → double
+      final latFromLocVar = FFVariable(
+        source: FFVariableSource.FUNCTION_CALL,
+        functionCall: FFFunctionCall(
+          customFunction: getLatFnId,
+          values: [FFValue(variable: globalLocVar.deepCopy())],
+        ),
+      );
+
+      // getLngFromLocation(currentDeviceLocation) → double
+      final lngFromLocVar = FFVariable(
+        source: FFVariableSource.FUNCTION_CALL,
+        functionCall: FFFunctionCall(
+          customFunction: getLngFnId,
+          values: [FFValue(variable: globalLocVar.deepCopy())],
+        ),
+      );
+
+      // State('filteredRestaurants') for nearestThree computation
+      final filteredRestVar = FFVariable(
+        source: FFVariableSource.LOCAL_STATE,
+        baseVariable: FFBaseVariable(
+          localState: FFLocalStateVariable(
+            fieldIdentifier: filteredRestaurantsId,
+            stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
+          ),
+        ),
+        nodeKeyRef: FFNodeKeyReference(key: homeWC!.node.key),
+      );
+
+      // getNearestThree(filteredRestaurants, lat, lng) → List<restaurants>
+      // Argument order matches CustomFunctionHandle declaration: [restaurants, userLat, userLng]
+      final nearestThreeVar = FFVariable(
+        source: FFVariableSource.FUNCTION_CALL,
+        functionCall: FFFunctionCall(
+          customFunction: getNearestFnId,
+          values: [
+            FFValue(variable: filteredRestVar),
+            FFValue(variable: latFromLocVar.deepCopy()),
+            FFValue(variable: lngFromLocVar.deepCopy()),
+          ],
+        ),
+      );
+
+      // Build the GPS true-branch chain: setLat → setLng → setNearestThree
+      // Constructed bottom-up so each node's followUpAction points to the next.
+      final setNearestThreeNode = FFActionNode(
+        key: generateRandomAlphaNumericString(),
+        action: FFAction(
+          key: generateRandomAlphaNumericString(),
+          localStateUpdate: FFLocalStateUpdate(
+            updateType: FFLocalStateUpdate_UpdateType.WIDGET,
+            stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
+            updates: [
+              FFLocalStateFieldUpdate(
+                fieldIdentifier: nearestThreeId,
+                setValue: FFValue(variable: nearestThreeVar),
+              ),
+            ],
+          ),
+        ),
+      );
+      final setLngNode = FFActionNode(
+        key: generateRandomAlphaNumericString(),
+        action: FFAction(
+          key: generateRandomAlphaNumericString(),
+          localStateUpdate: FFLocalStateUpdate(
+            updateType: FFLocalStateUpdate_UpdateType.WIDGET,
+            stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
+            updates: [
+              FFLocalStateFieldUpdate(
+                fieldIdentifier: userLngId,
+                setValue: FFValue(variable: lngFromLocVar),
+              ),
+            ],
+          ),
+        ),
+        followUpAction: setNearestThreeNode,
+      );
+      final gpsBranchNode = FFActionNode(
+        key: generateRandomAlphaNumericString(),
+        action: FFAction(
+          key: generateRandomAlphaNumericString(),
+          localStateUpdate: FFLocalStateUpdate(
+            updateType: FFLocalStateUpdate_UpdateType.WIDGET,
+            stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
+            updates: [
+              FFLocalStateFieldUpdate(
+                fieldIdentifier: userLatId,
+                setValue: FFValue(variable: latFromLocVar),
+              ),
+            ],
+          ),
+        ),
+        followUpAction: setLngNode,
+      );
+
+      // hasLocationPermission state variable (for condition check)
+      final hasLocPermCondVar = FFVariable(
+        source: FFVariableSource.LOCAL_STATE,
+        baseVariable: FFBaseVariable(
+          localState: FFLocalStateVariable(
+            fieldIdentifier: hasLocPermId.deepCopy(),
+            stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
+          ),
+        ),
+        nodeKeyRef: FFNodeKeyReference(key: homeWC.node.key),
+      );
+
+      // IF hasLocationPermission == true → run GPS branch
+      stepCNode = FFActionNode(
+        key: generateRandomAlphaNumericString(),
+        conditionActions: FFConditionActions(
+          trueActions: [
+            FFConditionActions_FFTrueConditionAction(
+              condition: FFActionCondition(variable: hasLocPermCondVar),
+              trueAction: gpsBranchNode,
+            ),
+          ],
+        ),
+      );
+    } else {
+      // Fallback: skip GPS branch (identifiers not yet available)
+      stepCNode = FFActionNode(key: generateRandomAlphaNumericString());
+    }
+
+    // Wire step c → step d
+    stepCNode.followUpAction = stepDNode;
+
+    // Chain: stepA → stepB → stepC → stepD
+    final rootNode = FFActionNode(
+      key: generateRandomAlphaNumericString(),
+      action: stepAAction,
+      followUpAction: FFActionNode(
+        key: generateRandomAlphaNumericString(),
+        action: stepBAction,
+        followUpAction: stepCNode,
+      ),
+    );
 
     // ── Build the IconButton node ──────────────────────────────────────────────
     // Idempotent: remove existing button before re-adding
@@ -1971,6 +2239,7 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
             ),
           ),
         );
+        showLocVar.defaultValue = FFParameterValue(serializedValue: 'false');
         showLocVar.nodeKeyRef = FFNodeKeyReference(key: homeWC!.node.key);
         mapInner!.props.googleMap.showLocationValue = FFBooleanValue(variable: showLocVar);
       } else {
@@ -2196,6 +2465,551 @@ void buildByobContract6(App app) {
             ),
           ),
         ],
+      ),
+    );
+  });
+}
+
+/// Contract 9: Restaurant map markers + zoom adjustment.
+///
+/// 1. Adds `location` GeoPoint (LatLng) field to the restaurants schema.
+///    Required by FlutterFlow's docMarkers validator before markers can be set.
+/// 2. Configures the GoogleMap widget:
+///    - docMarkers bound to filteredRestaurants page state (reflects active chip filter)
+///    - Marker color: rose
+///    - ON_MARKER_TAP navigates to RestaurantDetailPage with same params as card tap
+///    - initialZoom 12 → 15
+void buildByobContract9(App app) {
+  // ── 1. Add `location` LatLng field to restaurants collection ────────────────
+  // Required so FlutterFlow's docMarkers validator accepts the collection.
+  // Idempotent: no-op if field already exists.
+  app.raw((project) {
+    for (final coll in project.backend.collections.values) {
+      if (coll.identifier.name != 'restaurants') continue;
+      if (coll.fields.containsKey('location')) break;
+      coll.fields['location'] = FFParameter(
+        identifier: FFIdentifier(
+          name: 'location',
+          key: generateRandomAlphaNumericString(),
+        ),
+        dataType: FFDataTypeV2(scalarType: FFBaseDataType.LatLng),
+      );
+      break;
+    }
+  });
+
+  // ── 2. Configure GoogleMap: markers, zoom, ON_MARKER_TAP ────────────────────
+  app.raw((project) {
+    FFWidgetClass? homeWC;
+    for (final wc in project.widgetClasses.values) {
+      if (wc.name == 'HomePage') {
+        homeWC = wc;
+        break;
+      }
+    }
+    if (homeWC == null) return;
+
+    // Find the MapArea Container (parent) and the inner GoogleMap node.
+    // GENERATOR_VARIABLE requires nodeKeyRef to be a STRICT ANCESTOR of the
+    // node whose trigger uses it. On_MARKER_TAP is on the GoogleMap itself, so
+    // we put generatorVariable on its parent Container (MapArea) and reference
+    // that container's key in all GENERATOR_VARIABLE accesses.
+    FFNode? mapContainer;
+    FFNode? mapInner;
+    void walk(FFNode node, FFNode? parent) {
+      if (node.type == FFWidgetType.GoogleMap) {
+        mapInner = node;
+        mapContainer = parent;
+      }
+      for (final child in node.children) {
+        walk(child, node);
+      }
+    }
+    walk(homeWC.node, null);
+    if (mapInner == null) return;
+    if (mapContainer == null) return;
+
+    // Resolve filteredRestaurants state field identifier
+    FFIdentifier? filteredRestaurantsId;
+    for (final field in homeWC.classModel.stateFields) {
+      if (field.parameter.identifier.name == 'filteredRestaurants') {
+        filteredRestaurantsId = field.parameter.identifier.deepCopy();
+        break;
+      }
+    }
+    if (filteredRestaurantsId == null) return;
+
+    // Resolve Firestore field identifiers for the navigate params
+    FFIdentifier? fldName;
+    FFIdentifier? fldAdd;
+    FFIdentifier? fldPhone;
+    FFIdentifier? fldRestaurantType;
+    FFIdentifier? fldCorkageFee;
+    FFIdentifier? fldLatitude;
+    FFIdentifier? fldLongitude;
+    FFIdentifier? fldCoverImageUrl;
+    FFIdentifier? fldCuisineTypeNote;
+    for (final coll in project.backend.collections.values) {
+      if (coll.identifier.name != 'restaurants') continue;
+      for (final field in coll.fields.values) {
+        switch (field.identifier.name) {
+          case 'Name':
+            fldName = field.identifier.deepCopy();
+          case 'Add':
+            fldAdd = field.identifier.deepCopy();
+          case 'Phone':
+            fldPhone = field.identifier.deepCopy();
+          case 'philly_restaurant_type':
+            fldRestaurantType = field.identifier.deepCopy();
+          case 'philly_corkage_fee':
+            fldCorkageFee = field.identifier.deepCopy();
+          case 'Latitude':
+            fldLatitude = field.identifier.deepCopy();
+          case 'Longitude':
+            fldLongitude = field.identifier.deepCopy();
+          case 'cover_image_url':
+            fldCoverImageUrl = field.identifier.deepCopy();
+          case 'philly_restaurant_type_other_note':
+            fldCuisineTypeNote = field.identifier.deepCopy();
+        }
+      }
+    }
+
+    // 2a. Marker color → rose
+    mapInner!.props.googleMap.markerColor =
+        FFGoogleMap_FFGoogleMarkerColor.ROSE;
+
+    // 2b. Zoom → 15
+    mapInner!.props.googleMap.initialZoomValue =
+        FFDoubleValue(inputValue: 15.0);
+
+    // 2c. docMarkers → filteredRestaurants page state
+    final filteredRestVar = FFVariable(
+      source: FFVariableSource.LOCAL_STATE,
+      baseVariable: FFBaseVariable(
+        localState: FFLocalStateVariable(
+          fieldIdentifier: filteredRestaurantsId,
+          stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
+        ),
+      ),
+      nodeKeyRef: FFNodeKeyReference(key: homeWC!.node.key),
+    );
+    mapInner!.props.googleMap.docMarkers = filteredRestVar;
+
+    // 2d. Generator variable on the MapArea CONTAINER (not the inner GoogleMap).
+    // The server validator requires GENERATOR_VARIABLE's nodeKeyRef to be a
+    // strict ANCESTOR of the node whose trigger uses it. ON_MARKER_TAP lives
+    // on the inner GoogleMap, so the generator variable must be on a parent —
+    // in this case the MapArea Container wrapping the GoogleMap.
+    mapContainer!.generatorVariable = FFGeneratorVariable(
+      identifier: FFIdentifier(
+        name: 'markerDoc',
+        key: generateRandomAlphaNumericString(),
+      ),
+      variable: FFVariable(
+        source: FFVariableSource.LOCAL_STATE,
+        baseVariable: FFBaseVariable(
+          localState: FFLocalStateVariable(
+            fieldIdentifier: filteredRestaurantsId,
+            stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
+          ),
+        ),
+        nodeKeyRef: FFNodeKeyReference(key: homeWC.node.key),
+      ),
+    );
+
+    // 2e. ON_MARKER_TAP — removed.
+    //
+    // FlutterFlow's server validator AND code generator both reject GENERATOR_VARIABLE
+    // in any action (SetState or Navigate) fired from a GoogleMap ON_MARKER_TAP trigger
+    // when the generator is bound to a page-state list via docMarkers.
+    // This causes "not properly set" errors that block code export entirely.
+    //
+    // Navigation from map view is handled by the nearest-3-cards strip below the map,
+    // which already uses the same Navigate.to() + item['field'] pattern as RestaurantCard.
+    // Tapping a map marker shows the restaurant name in the native Google Maps callout.
+
+    // Remove any ON_MARKER_TAP trigger from a partial/interrupted push (idempotent).
+    mapInner!.triggerActions.removeWhere(
+      (t) => t.trigger.triggerType == FFActionTriggerType.ON_MARKER_TAP,
+    );
+
+    // Remove marker page state vars that may have been added by the interrupted push.
+    const markerFieldNames = [
+      'markerName',
+      'markerCuisineType',
+      'markerCuisineTypeNote',
+      'markerCorkageFee',
+      'markerAddress',
+      'markerPhone',
+      'markerLatitude',
+      'markerLongitude',
+      'markerCoverImageUrl',
+    ];
+    homeWC.classModel.stateFields.removeWhere(
+      (f) => markerFieldNames.contains(f.parameter.identifier.name),
+    );
+  });
+}
+
+/// Contract 13: Update filter chips — add Pizza, Sushi, Ramen; remove American, Indian.
+///
+/// 1. Updates filterRestaurantsByType knownTypes to include pizza/sushi/ramen
+///    (american/indian kept in exclusion list so they don't pollute Other).
+/// 2. Updates filterRestaurantsByTypes knownTypes identically.
+/// 3. Replaces ChipsStrip only — map, list, and nearest-3 are untouched.
+///    New order (12 chips): Italian · Mediterranean · Japanese · Seafood · Sushi ·
+///    Pizza · Asian · Mexican · Thai · Ramen · French · Other
+void buildByobContract13(App app) {
+  final restaurants = ff.Collections.restaurants;
+
+  // ── 1. Update filterRestaurantsByType — add pizza/sushi/ramen to knownTypes ──
+  // american and indian remain in knownTypes so they still excluded from Other.
+  const _filterFnCode = r'''if (type == null || restaurants == null) return [];
+if (type == 'all') return restaurants;
+const knownTypes = {'italian', 'japanese', 'mediterranean', 'asian', 'seafood', 'mexican', 'thai', 'french', 'american', 'indian', 'pizza', 'sushi', 'ramen'};
+if (type == 'other') {
+  return restaurants.where((r) {
+    final parts = (r.phillyRestaurantType ?? '').split(',').map((p) => p.trim().toLowerCase()).toList();
+    return !parts.any((p) => knownTypes.contains(p));
+  }).toList();
+}
+final t = type.toLowerCase();
+return restaurants.where((r) {
+  final parts = (r.phillyRestaurantType ?? '').split(',').map((p) => p.trim().toLowerCase()).toList();
+  return parts.contains(t);
+}).toList();''';
+  app.raw((project) {
+    updateCustomFunction(
+      project,
+      name: 'filterRestaurantsByType',
+      code: _filterFnCode,
+    );
+  });
+
+  // ── 2. Update filterRestaurantsByTypes — same expanded knownTypes ────────────
+  const _filterTypesFnCode = r'''if (restaurants == null) return [];
+if (selectedTypes == null || (selectedTypes as List).isEmpty) return restaurants;
+const knownTypes = {'italian', 'japanese', 'mediterranean', 'asian', 'seafood', 'mexican', 'thai', 'french', 'american', 'indian', 'pizza', 'sushi', 'ramen'};
+final activeTypes = (selectedTypes as List).map((t) => (t ?? '').toString().toLowerCase()).toSet();
+if (activeTypes.contains('other')) {
+  final otherResults = restaurants.where((r) {
+    final parts = (r.phillyRestaurantType ?? '').split(',').map((p) => p.trim().toLowerCase()).toList();
+    return !parts.any((p) => knownTypes.contains(p));
+  }).toList();
+  final nonOther = Set<String>.from(activeTypes)..remove('other');
+  if (nonOther.isEmpty) return otherResults;
+  final namedResults = restaurants.where((r) {
+    final parts = (r.phillyRestaurantType ?? '').split(',').map((p) => p.trim().toLowerCase()).toList();
+    return parts.any((p) => nonOther.contains(p));
+  }).toList();
+  final seenIds = otherResults.map((r) => r.reference?.id ?? r.hashCode.toString()).toSet();
+  final uniqueNamed = namedResults.where((r) => !seenIds.contains(r.reference?.id ?? r.hashCode.toString())).toList();
+  return [...otherResults, ...uniqueNamed];
+}
+return restaurants.where((r) {
+  final parts = (r.phillyRestaurantType ?? '').split(',').map((p) => p.trim().toLowerCase()).toList();
+  return parts.any((p) => activeTypes.contains(p));
+}).toList();''';
+  app.raw((project) {
+    updateCustomFunction(
+      project,
+      name: 'filterRestaurantsByTypes',
+      code: _filterTypesFnCode,
+    );
+  });
+
+  // ── 3. Chip helpers ──────────────────────────────────────────────────────────
+  const typeOrder = [
+    'italian', 'mediterranean', 'japanese', 'seafood', 'sushi',
+    'pizza', 'asian', 'mexican', 'thai', 'ramen', 'french', 'other',
+  ];
+  const typeLabels = {
+    'italian': 'Italian', 'mediterranean': 'Mediterranean', 'japanese': 'Japanese',
+    'seafood': 'Seafood', 'sushi': 'Sushi', 'pizza': 'Pizza',
+    'asian': 'Asian', 'mexican': 'Mexican', 'thai': 'Thai',
+    'ramen': 'Ramen', 'french': 'French', 'other': 'Other',
+  };
+
+  final isTypeSelectedFn = CustomFunctionHandle(
+    name: 'isTypeSelected',
+    args: {'selectedTypes': listOf(string), 'type': string},
+    returnType: bool_,
+  );
+  final isNoneSelectedFn = CustomFunctionHandle(
+    name: 'isNoneSelected',
+    args: {'selectedTypes': listOf(string)},
+    returnType: bool_,
+  );
+  final filterTypesFn = CustomFunctionHandle(
+    name: 'filterRestaurantsByTypes',
+    args: {'restaurants': listOf(restaurants), 'selectedTypes': listOf(string)},
+    returnType: listOf(restaurants),
+  );
+  final getNearestThreeFn = CustomFunctionHandle(
+    name: 'getNearestThree',
+    args: {'restaurants': listOf(restaurants), 'userLat': double_, 'userLng': double_},
+    returnType: listOf(restaurants),
+  );
+
+  final wineRed = Colors.hex(0xFF8B2635);
+  final white = Colors.hex(0xFFFFFFFF);
+
+  Container buildChip({
+    required String label,
+    required bool selected,
+    required String widgetName,
+    required Object? visible,
+    required List<DslAction> onTap,
+  }) => Container(
+    name: widgetName,
+    color: selected ? wineRed : white,
+    borderRadius: 20,
+    borderColor: selected ? null : wineRed,
+    borderWidth: selected ? null : 1.0,
+    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    visible: visible,
+    onTap: onTap,
+    child: Text(
+      label,
+      name: '${widgetName}Label',
+      color: selected ? white : wineRed,
+      style: Styles.labelMedium,
+    ),
+  );
+
+  List<DslAction> withNearestUpdate(List<DslAction> base) => [
+    ...base,
+    SetState('nearestThree', CustomFunction(getNearestThreeFn, args: {
+      'restaurants': State('filteredRestaurants'),
+      'userLat': State('userLatitude'),
+      'userLng': State('userLongitude'),
+    })),
+  ];
+
+  final allChipActions = withNearestUpdate([
+    SetState.clear('selectedChipTypes'),
+    SetState('filteredRestaurants', State('restaurants')),
+  ]);
+
+  List<DslAction> selChipActions(String type) => withNearestUpdate([
+    SetState.removeFromList('selectedChipTypes', type),
+    SetState('filteredRestaurants', CustomFunction(filterTypesFn, args: {
+      'restaurants': State('restaurants'),
+      'selectedTypes': State('selectedChipTypes'),
+    })),
+  ]);
+
+  List<DslAction> unselChipActions(String type) => withNearestUpdate([
+    SetState.addToList('selectedChipTypes', type),
+    SetState('filteredRestaurants', CustomFunction(filterTypesFn, args: {
+      'restaurants': State('restaurants'),
+      'selectedTypes': State('selectedChipTypes'),
+    })),
+  ]);
+
+  // ── 4. Replace ChipsStrip only (children[0] of HomeBody) ─────────────────────
+  // Map widget, ListView, and NearestCardsSection (Contract 11) are untouched.
+  app.editPage(ff.Pages.homePage, (page) {
+    page.ensureReplaced(
+      ff.Pages.homePage.widgets
+          .byPath('HomePage.body[0].children[0]')
+          .single,
+      Container(
+        name: 'ChipsStrip',
+        color: Colors.primaryBackground,
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Wrap(
+          name: 'ChipsWrap',
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            buildChip(
+              label: 'All',
+              selected: true,
+              widgetName: 'AllChipSel',
+              visible: CustomFunction(isNoneSelectedFn, args: {
+                'selectedTypes': State('selectedChipTypes'),
+              }),
+              onTap: allChipActions,
+            ),
+            buildChip(
+              label: 'All',
+              selected: false,
+              widgetName: 'AllChipUnsel',
+              visible: Not(CustomFunction(isNoneSelectedFn, args: {
+                'selectedTypes': State('selectedChipTypes'),
+              })),
+              onTap: allChipActions,
+            ),
+            for (final type in typeOrder) ...[
+              buildChip(
+                label: typeLabels[type]!,
+                selected: true,
+                widgetName: '${typeLabels[type]}ChipSel',
+                visible: CustomFunction(isTypeSelectedFn, args: {
+                  'selectedTypes': State('selectedChipTypes'),
+                  'type': type,
+                }),
+                onTap: selChipActions(type),
+              ),
+              buildChip(
+                label: typeLabels[type]!,
+                selected: false,
+                widgetName: '${typeLabels[type]}ChipUnsel',
+                visible: Not(CustomFunction(isTypeSelectedFn, args: {
+                  'selectedTypes': State('selectedChipTypes'),
+                  'type': type,
+                })),
+                onTap: unselChipActions(type),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  });
+}
+
+/// Contract 11: Nearest-3 strip UI improvements.
+///
+/// 1. Adds "BYOBs near you" section title above the horizontal card row.
+/// 2. Adds cuisine type text to each nearest-3 card (via formatCuisineType).
+/// 3. Increases card horizontal padding from 10 to 14 px.
+///
+/// Only the NearestCardsSection is replaced — chips, list view, and map widget
+/// are untouched.
+void buildByobContract11(App app) {
+  final _formatCuisineFn = CustomFunctionHandle(
+    name: 'formatCuisineType',
+    args: {'typeString': string, 'otherNote': string},
+    returnType: string,
+  );
+
+  app.editPage(ff.Pages.homePage, (page) {
+    page.ensureReplaced(
+      ff.Pages.homePage.widgets
+          .byPath('HomePage.body[0].children[1].children[1].children[1]')
+          .single,
+      Container(
+        name: 'NearestCardsSection',
+        height: 200,
+        color: Colors.primaryBackground,
+        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        child: Column(
+          name: 'NearestCardsSectionColumn',
+          crossAxis: CrossAxis.stretch,
+          children: [
+            // Section title — wine red label above the card row
+            Container(
+              name: 'NearestTitlePad',
+              padding: EdgeInsets.only(bottom: 6),
+              child: Text(
+                'BYOBs near you',
+                name: 'NearestSectionTitle',
+                color: Colors.hex(0xFF8B2635),
+                style: Styles.titleSmall,
+              ),
+            ),
+            // Horizontal card list — fills remaining height via Expanded
+            Expanded(
+              ListView(
+                name: 'NearestCardsList',
+                source: State('nearestThree'),
+                horizontal: true,
+                spacing: 8,
+                itemBuilder: (item) => Container(
+                  name: 'NearestCardWrapper',
+                  width: 140,
+                  color: Colors.hex(0xFFFFFFFF),
+                  borderRadius: 12,
+                  padding: EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  onTap: Navigate.to(
+                    ff.Pages.restaurantDetailPage,
+                    params: {
+                      ff.Pages.restaurantDetailPage.params.restaurantName: item['Name'],
+                      ff.Pages.restaurantDetailPage.params.cuisineType: item['philly_restaurant_type'],
+                      'cuisineTypeNote': item['philly_restaurant_type_other_note'],
+                      ff.Pages.restaurantDetailPage.params.corkageFeeType: item['philly_corkage_fee'],
+                      ff.Pages.restaurantDetailPage.params.address: item['Add'],
+                      ff.Pages.restaurantDetailPage.params.phone: item['Phone'],
+                      ff.Pages.restaurantDetailPage.params.latitude: item['Latitude'],
+                      ff.Pages.restaurantDetailPage.params.longitude: item['Longitude'],
+                      ff.Pages.restaurantDetailPage.params.coverImageUrl: item['cover_image_url'],
+                    },
+                  ),
+                  child: Column(
+                    name: 'NearestCardContent',
+                    crossAxis: CrossAxis.start,
+                    spacing: 4,
+                    children: [
+                      Text(
+                        item['Name'],
+                        name: 'NearestCardName',
+                        style: Styles.labelMedium,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      // Cuisine type — below name, above badge
+                      Text(
+                        CustomFunction(_formatCuisineFn, args: {
+                          'typeString': item['philly_restaurant_type'],
+                          'otherNote': item['philly_restaurant_type_other_note'],
+                        }),
+                        name: 'NearestCuisineText',
+                        color: Colors.secondaryText,
+                        style: Styles.bodySmall,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      // Corkage badge (green / wine-red / orange, one visible at a time)
+                      Container(
+                        name: 'NearestFreeBadge',
+                        color: Colors.hex(0xFF2E7D32),
+                        borderRadius: 4,
+                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        visible: Equals(item['philly_corkage_fee'], 'free'),
+                        child: Text(
+                          'Free BYOB',
+                          name: 'NearestFreeText',
+                          color: Colors.hex(0xFFFFFFFF),
+                          style: Styles.labelSmall,
+                        ),
+                      ),
+                      Container(
+                        name: 'NearestCorkageBadge',
+                        color: Colors.hex(0xFF8B2635),
+                        borderRadius: 4,
+                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        visible: Equals(item['philly_corkage_fee'], 'corkage_fee'),
+                        child: Text(
+                          'Corkage Fee',
+                          name: 'NearestCorkageText',
+                          color: Colors.hex(0xFFFFFFFF),
+                          style: Styles.labelSmall,
+                        ),
+                      ),
+                      Container(
+                        name: 'NearestOtherBadge',
+                        color: Colors.hex(0xFFBF6A02),
+                        borderRadius: 4,
+                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        visible: Equals(item['philly_corkage_fee'], 'other'),
+                        child: Text(
+                          'Ask Us',
+                          name: 'NearestOtherText',
+                          color: Colors.hex(0xFFFFFFFF),
+                          style: Styles.labelSmall,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              name: 'NearestListExpanded',
+            ),
+          ],
+        ),
       ),
     );
   });

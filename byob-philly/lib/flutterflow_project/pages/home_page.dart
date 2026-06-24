@@ -25,6 +25,12 @@ final class HomePageState {
         key: "3g7kiw9o",
         typeName: "List<Document<restaurants>>",
       );
+  ffai.ProjectStateFieldHandle get hasLocationPermission =>
+      const ffai.ProjectStateFieldHandle(
+        name: "hasLocationPermission",
+        key: "ik28h6vw",
+        typeName: "Boolean",
+      );
   ffai.ProjectStateFieldHandle get isMapView =>
       const ffai.ProjectStateFieldHandle(
         name: "isMapView",
@@ -88,7 +94,7 @@ abstract final class HomePageWidgets {
             slots: <String, List<ffai.ProjectWidgetHandle>>{
               "actions": <ffai.ProjectWidgetHandle>[
                 ffai.ProjectWidgetHandle(
-                  key: "IconButton_qgmlwbt8",
+                  key: "IconButton_4en85z2o",
                   type: "IconButton",
                   path: "HomePage.appBar[0].actions[0]",
                   name: "MapToggleButton",
@@ -110,25 +116,25 @@ abstract final class HomePageWidgets {
         ],
         "body": <ffai.ProjectWidgetHandle>[
           ffai.ProjectWidgetHandle(
-            key: "Column_sk8q0rn3",
+            key: "Column_n64ukkwh",
             type: "Column",
             path: "HomePage.body[0]",
             name: "HomeBody",
             children: <ffai.ProjectWidgetHandle>[
               ffai.ProjectWidgetHandle(
-                key: "Container_46tu48fd",
+                key: "Container_scprv49z",
                 type: "Container",
                 path: "HomePage.body[0].children[0]",
                 name: "ChipsStrip",
                 children: <ffai.ProjectWidgetHandle>[
                   ffai.ProjectWidgetHandle(
-                    key: "Wrap_ay11nclb",
+                    key: "Wrap_t1d1ypip",
                     type: "Wrap",
                     path: "HomePage.body[0].children[0].children[0]",
                     name: "ChipsWrap",
                     children: <ffai.ProjectWidgetHandle>[
                       ffai.ProjectWidgetHandle(
-                        key: "Container_xitcrjfy",
+                        key: "Container_fz6vh9xi",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[0]",
                         name: "AllChipSel",
@@ -137,7 +143,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_xmkq1kku",
+                            key: "Text_6r0pov8n",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[0].children[0]",
                             name: "AllChipSelLabel",
@@ -146,7 +152,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_v5t9xu1y",
+                        key: "Container_nlypv1cz",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[1]",
                         name: "AllChipUnsel",
@@ -155,7 +161,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_5h376zb2",
+                            key: "Text_7e3y84mx",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[1].children[0]",
                             name: "AllChipUnselLabel",
@@ -164,7 +170,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_j25xn7el",
+                        key: "Container_ofhz75xp",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[2]",
                         name: "ItalianChipSel",
@@ -173,7 +179,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_1ff2dxu1",
+                            key: "Text_cb7ylbde",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[2].children[0]",
                             name: "ItalianChipSelLabel",
@@ -182,7 +188,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_bnh01au1",
+                        key: "Container_c30msayl",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[3]",
                         name: "ItalianChipUnsel",
@@ -191,7 +197,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_f0gtmckr",
+                            key: "Text_gbx13lz5",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[3].children[0]",
                             name: "ItalianChipUnselLabel",
@@ -200,360 +206,396 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_63s1skqk",
+                        key: "Container_ffrs3dr2",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[4]",
-                        name: "JapaneseChipSel",
-                        triggers: const <String>[
-                          "ON_TAP",
-                        ],
-                        children: <ffai.ProjectWidgetHandle>[
-                          ffai.ProjectWidgetHandle(
-                            key: "Text_xgcryrrs",
-                            type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[4].children[0]",
-                            name: "JapaneseChipSelLabel",
-                            text: "Japanese",
-                          ),
-                        ],
-                      ),
-                      ffai.ProjectWidgetHandle(
-                        key: "Container_bkex515c",
-                        type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[5]",
-                        name: "JapaneseChipUnsel",
-                        triggers: const <String>[
-                          "ON_TAP",
-                        ],
-                        children: <ffai.ProjectWidgetHandle>[
-                          ffai.ProjectWidgetHandle(
-                            key: "Text_eo1aspc3",
-                            type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[5].children[0]",
-                            name: "JapaneseChipUnselLabel",
-                            text: "Japanese",
-                          ),
-                        ],
-                      ),
-                      ffai.ProjectWidgetHandle(
-                        key: "Container_wsx7iq6s",
-                        type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[6]",
                         name: "MediterraneanChipSel",
                         triggers: const <String>[
                           "ON_TAP",
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_dqbwgt3h",
+                            key: "Text_qf20sr2z",
                             type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[6].children[0]",
+                            path: "HomePage.body[0].children[0].children[0].children[4].children[0]",
                             name: "MediterraneanChipSelLabel",
                             text: "Mediterranean",
                           ),
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_gnd0sz8c",
+                        key: "Container_zuf1ofyc",
                         type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[7]",
+                        path: "HomePage.body[0].children[0].children[0].children[5]",
                         name: "MediterraneanChipUnsel",
                         triggers: const <String>[
                           "ON_TAP",
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_4rar8lov",
+                            key: "Text_2jjbvw8m",
                             type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[7].children[0]",
+                            path: "HomePage.body[0].children[0].children[0].children[5].children[0]",
                             name: "MediterraneanChipUnselLabel",
                             text: "Mediterranean",
                           ),
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_negoqvkp",
+                        key: "Container_udnsuyk5",
+                        type: "Container",
+                        path: "HomePage.body[0].children[0].children[0].children[6]",
+                        name: "JapaneseChipSel",
+                        triggers: const <String>[
+                          "ON_TAP",
+                        ],
+                        children: <ffai.ProjectWidgetHandle>[
+                          ffai.ProjectWidgetHandle(
+                            key: "Text_rjh0iany",
+                            type: "Text",
+                            path: "HomePage.body[0].children[0].children[0].children[6].children[0]",
+                            name: "JapaneseChipSelLabel",
+                            text: "Japanese",
+                          ),
+                        ],
+                      ),
+                      ffai.ProjectWidgetHandle(
+                        key: "Container_y8fs9qgq",
+                        type: "Container",
+                        path: "HomePage.body[0].children[0].children[0].children[7]",
+                        name: "JapaneseChipUnsel",
+                        triggers: const <String>[
+                          "ON_TAP",
+                        ],
+                        children: <ffai.ProjectWidgetHandle>[
+                          ffai.ProjectWidgetHandle(
+                            key: "Text_hoc6ks0p",
+                            type: "Text",
+                            path: "HomePage.body[0].children[0].children[0].children[7].children[0]",
+                            name: "JapaneseChipUnselLabel",
+                            text: "Japanese",
+                          ),
+                        ],
+                      ),
+                      ffai.ProjectWidgetHandle(
+                        key: "Container_qi199jql",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[8]",
-                        name: "AsianChipSel",
-                        triggers: const <String>[
-                          "ON_TAP",
-                        ],
-                        children: <ffai.ProjectWidgetHandle>[
-                          ffai.ProjectWidgetHandle(
-                            key: "Text_kknirnq3",
-                            type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[8].children[0]",
-                            name: "AsianChipSelLabel",
-                            text: "Asian",
-                          ),
-                        ],
-                      ),
-                      ffai.ProjectWidgetHandle(
-                        key: "Container_4yt7ccgd",
-                        type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[9]",
-                        name: "AsianChipUnsel",
-                        triggers: const <String>[
-                          "ON_TAP",
-                        ],
-                        children: <ffai.ProjectWidgetHandle>[
-                          ffai.ProjectWidgetHandle(
-                            key: "Text_2r29oiel",
-                            type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[9].children[0]",
-                            name: "AsianChipUnselLabel",
-                            text: "Asian",
-                          ),
-                        ],
-                      ),
-                      ffai.ProjectWidgetHandle(
-                        key: "Container_hmvj08ob",
-                        type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[10]",
                         name: "SeafoodChipSel",
                         triggers: const <String>[
                           "ON_TAP",
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_8kgv950y",
+                            key: "Text_dedleu3l",
                             type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[10].children[0]",
+                            path: "HomePage.body[0].children[0].children[0].children[8].children[0]",
                             name: "SeafoodChipSelLabel",
                             text: "Seafood",
                           ),
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_yfamu42h",
+                        key: "Container_li0fbr4p",
                         type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[11]",
+                        path: "HomePage.body[0].children[0].children[0].children[9]",
                         name: "SeafoodChipUnsel",
                         triggers: const <String>[
                           "ON_TAP",
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_odesmqem",
+                            key: "Text_6eebra13",
                             type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[11].children[0]",
+                            path: "HomePage.body[0].children[0].children[0].children[9].children[0]",
                             name: "SeafoodChipUnselLabel",
                             text: "Seafood",
                           ),
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_d4sctx3h",
+                        key: "Container_3fph08rl",
+                        type: "Container",
+                        path: "HomePage.body[0].children[0].children[0].children[10]",
+                        name: "SushiChipSel",
+                        triggers: const <String>[
+                          "ON_TAP",
+                        ],
+                        children: <ffai.ProjectWidgetHandle>[
+                          ffai.ProjectWidgetHandle(
+                            key: "Text_jh22eael",
+                            type: "Text",
+                            path: "HomePage.body[0].children[0].children[0].children[10].children[0]",
+                            name: "SushiChipSelLabel",
+                            text: "Sushi",
+                          ),
+                        ],
+                      ),
+                      ffai.ProjectWidgetHandle(
+                        key: "Container_zo7crruz",
+                        type: "Container",
+                        path: "HomePage.body[0].children[0].children[0].children[11]",
+                        name: "SushiChipUnsel",
+                        triggers: const <String>[
+                          "ON_TAP",
+                        ],
+                        children: <ffai.ProjectWidgetHandle>[
+                          ffai.ProjectWidgetHandle(
+                            key: "Text_o2pm1kk9",
+                            type: "Text",
+                            path: "HomePage.body[0].children[0].children[0].children[11].children[0]",
+                            name: "SushiChipUnselLabel",
+                            text: "Sushi",
+                          ),
+                        ],
+                      ),
+                      ffai.ProjectWidgetHandle(
+                        key: "Container_0d18fzr2",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[12]",
+                        name: "PizzaChipSel",
+                        triggers: const <String>[
+                          "ON_TAP",
+                        ],
+                        children: <ffai.ProjectWidgetHandle>[
+                          ffai.ProjectWidgetHandle(
+                            key: "Text_q9ybt582",
+                            type: "Text",
+                            path: "HomePage.body[0].children[0].children[0].children[12].children[0]",
+                            name: "PizzaChipSelLabel",
+                            text: "Pizza",
+                          ),
+                        ],
+                      ),
+                      ffai.ProjectWidgetHandle(
+                        key: "Container_hr6tbgwc",
+                        type: "Container",
+                        path: "HomePage.body[0].children[0].children[0].children[13]",
+                        name: "PizzaChipUnsel",
+                        triggers: const <String>[
+                          "ON_TAP",
+                        ],
+                        children: <ffai.ProjectWidgetHandle>[
+                          ffai.ProjectWidgetHandle(
+                            key: "Text_hp4ayy2m",
+                            type: "Text",
+                            path: "HomePage.body[0].children[0].children[0].children[13].children[0]",
+                            name: "PizzaChipUnselLabel",
+                            text: "Pizza",
+                          ),
+                        ],
+                      ),
+                      ffai.ProjectWidgetHandle(
+                        key: "Container_81jig0rz",
+                        type: "Container",
+                        path: "HomePage.body[0].children[0].children[0].children[14]",
+                        name: "AsianChipSel",
+                        triggers: const <String>[
+                          "ON_TAP",
+                        ],
+                        children: <ffai.ProjectWidgetHandle>[
+                          ffai.ProjectWidgetHandle(
+                            key: "Text_xq6wdtis",
+                            type: "Text",
+                            path: "HomePage.body[0].children[0].children[0].children[14].children[0]",
+                            name: "AsianChipSelLabel",
+                            text: "Asian",
+                          ),
+                        ],
+                      ),
+                      ffai.ProjectWidgetHandle(
+                        key: "Container_fvroy5wz",
+                        type: "Container",
+                        path: "HomePage.body[0].children[0].children[0].children[15]",
+                        name: "AsianChipUnsel",
+                        triggers: const <String>[
+                          "ON_TAP",
+                        ],
+                        children: <ffai.ProjectWidgetHandle>[
+                          ffai.ProjectWidgetHandle(
+                            key: "Text_6qgvn7ah",
+                            type: "Text",
+                            path: "HomePage.body[0].children[0].children[0].children[15].children[0]",
+                            name: "AsianChipUnselLabel",
+                            text: "Asian",
+                          ),
+                        ],
+                      ),
+                      ffai.ProjectWidgetHandle(
+                        key: "Container_m0mdsv8z",
+                        type: "Container",
+                        path: "HomePage.body[0].children[0].children[0].children[16]",
                         name: "MexicanChipSel",
                         triggers: const <String>[
                           "ON_TAP",
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_kxgdejw1",
+                            key: "Text_zzdax4ze",
                             type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[12].children[0]",
+                            path: "HomePage.body[0].children[0].children[0].children[16].children[0]",
                             name: "MexicanChipSelLabel",
                             text: "Mexican",
                           ),
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_i4ggjnbi",
+                        key: "Container_hy51wwdo",
                         type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[13]",
+                        path: "HomePage.body[0].children[0].children[0].children[17]",
                         name: "MexicanChipUnsel",
                         triggers: const <String>[
                           "ON_TAP",
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_43yqpe1o",
+                            key: "Text_r24pxjb8",
                             type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[13].children[0]",
+                            path: "HomePage.body[0].children[0].children[0].children[17].children[0]",
                             name: "MexicanChipUnselLabel",
                             text: "Mexican",
                           ),
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_lab3o4wk",
+                        key: "Container_1ki27hoj",
                         type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[14]",
+                        path: "HomePage.body[0].children[0].children[0].children[18]",
                         name: "ThaiChipSel",
                         triggers: const <String>[
                           "ON_TAP",
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_2jen1vow",
+                            key: "Text_ooscf7tq",
                             type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[14].children[0]",
+                            path: "HomePage.body[0].children[0].children[0].children[18].children[0]",
                             name: "ThaiChipSelLabel",
                             text: "Thai",
                           ),
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_3batk62q",
+                        key: "Container_qbgzdz5o",
                         type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[15]",
+                        path: "HomePage.body[0].children[0].children[0].children[19]",
                         name: "ThaiChipUnsel",
                         triggers: const <String>[
                           "ON_TAP",
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_5tphekbm",
+                            key: "Text_o4z8ayvg",
                             type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[15].children[0]",
+                            path: "HomePage.body[0].children[0].children[0].children[19].children[0]",
                             name: "ThaiChipUnselLabel",
                             text: "Thai",
                           ),
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_498h0qux",
+                        key: "Container_yvjhgxdx",
                         type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[16]",
+                        path: "HomePage.body[0].children[0].children[0].children[20]",
+                        name: "RamenChipSel",
+                        triggers: const <String>[
+                          "ON_TAP",
+                        ],
+                        children: <ffai.ProjectWidgetHandle>[
+                          ffai.ProjectWidgetHandle(
+                            key: "Text_wy9v12gz",
+                            type: "Text",
+                            path: "HomePage.body[0].children[0].children[0].children[20].children[0]",
+                            name: "RamenChipSelLabel",
+                            text: "Ramen",
+                          ),
+                        ],
+                      ),
+                      ffai.ProjectWidgetHandle(
+                        key: "Container_c0gend5f",
+                        type: "Container",
+                        path: "HomePage.body[0].children[0].children[0].children[21]",
+                        name: "RamenChipUnsel",
+                        triggers: const <String>[
+                          "ON_TAP",
+                        ],
+                        children: <ffai.ProjectWidgetHandle>[
+                          ffai.ProjectWidgetHandle(
+                            key: "Text_zfl8y6wn",
+                            type: "Text",
+                            path: "HomePage.body[0].children[0].children[0].children[21].children[0]",
+                            name: "RamenChipUnselLabel",
+                            text: "Ramen",
+                          ),
+                        ],
+                      ),
+                      ffai.ProjectWidgetHandle(
+                        key: "Container_ck86cvwj",
+                        type: "Container",
+                        path: "HomePage.body[0].children[0].children[0].children[22]",
                         name: "FrenchChipSel",
                         triggers: const <String>[
                           "ON_TAP",
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_rjnpwngr",
+                            key: "Text_j91325r0",
                             type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[16].children[0]",
+                            path: "HomePage.body[0].children[0].children[0].children[22].children[0]",
                             name: "FrenchChipSelLabel",
                             text: "French",
                           ),
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_vcbm3k82",
+                        key: "Container_g018lp9h",
                         type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[17]",
+                        path: "HomePage.body[0].children[0].children[0].children[23]",
                         name: "FrenchChipUnsel",
                         triggers: const <String>[
                           "ON_TAP",
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_twgle5qy",
+                            key: "Text_j36zdohf",
                             type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[17].children[0]",
+                            path: "HomePage.body[0].children[0].children[0].children[23].children[0]",
                             name: "FrenchChipUnselLabel",
                             text: "French",
                           ),
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_pzeo53q9",
+                        key: "Container_le6seydi",
                         type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[18]",
-                        name: "AmericanChipSel",
-                        triggers: const <String>[
-                          "ON_TAP",
-                        ],
-                        children: <ffai.ProjectWidgetHandle>[
-                          ffai.ProjectWidgetHandle(
-                            key: "Text_k4f0e022",
-                            type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[18].children[0]",
-                            name: "AmericanChipSelLabel",
-                            text: "American",
-                          ),
-                        ],
-                      ),
-                      ffai.ProjectWidgetHandle(
-                        key: "Container_j5cf7792",
-                        type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[19]",
-                        name: "AmericanChipUnsel",
-                        triggers: const <String>[
-                          "ON_TAP",
-                        ],
-                        children: <ffai.ProjectWidgetHandle>[
-                          ffai.ProjectWidgetHandle(
-                            key: "Text_3e40t0qo",
-                            type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[19].children[0]",
-                            name: "AmericanChipUnselLabel",
-                            text: "American",
-                          ),
-                        ],
-                      ),
-                      ffai.ProjectWidgetHandle(
-                        key: "Container_877lc6m3",
-                        type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[20]",
-                        name: "IndianChipSel",
-                        triggers: const <String>[
-                          "ON_TAP",
-                        ],
-                        children: <ffai.ProjectWidgetHandle>[
-                          ffai.ProjectWidgetHandle(
-                            key: "Text_nn9iedih",
-                            type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[20].children[0]",
-                            name: "IndianChipSelLabel",
-                            text: "Indian",
-                          ),
-                        ],
-                      ),
-                      ffai.ProjectWidgetHandle(
-                        key: "Container_9dyoo0nu",
-                        type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[21]",
-                        name: "IndianChipUnsel",
-                        triggers: const <String>[
-                          "ON_TAP",
-                        ],
-                        children: <ffai.ProjectWidgetHandle>[
-                          ffai.ProjectWidgetHandle(
-                            key: "Text_ulpvqv16",
-                            type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[21].children[0]",
-                            name: "IndianChipUnselLabel",
-                            text: "Indian",
-                          ),
-                        ],
-                      ),
-                      ffai.ProjectWidgetHandle(
-                        key: "Container_cg6eeymj",
-                        type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[22]",
+                        path: "HomePage.body[0].children[0].children[0].children[24]",
                         name: "OtherChipSel",
                         triggers: const <String>[
                           "ON_TAP",
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_oqmosjzb",
+                            key: "Text_b1kd7w9p",
                             type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[22].children[0]",
+                            path: "HomePage.body[0].children[0].children[0].children[24].children[0]",
                             name: "OtherChipSelLabel",
                             text: "Other",
                           ),
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_kbwdxr28",
+                        key: "Container_vxn6mf72",
                         type: "Container",
-                        path: "HomePage.body[0].children[0].children[0].children[23]",
+                        path: "HomePage.body[0].children[0].children[0].children[25]",
                         name: "OtherChipUnsel",
                         triggers: const <String>[
                           "ON_TAP",
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_qy88u49e",
+                            key: "Text_a8ok6qia",
                             type: "Text",
-                            path: "HomePage.body[0].children[0].children[0].children[23].children[0]",
+                            path: "HomePage.body[0].children[0].children[0].children[25].children[0]",
                             name: "OtherChipUnselLabel",
                             text: "Other",
                           ),
@@ -564,19 +606,19 @@ abstract final class HomePageWidgets {
                 ],
               ),
               ffai.ProjectWidgetHandle(
-                key: "Stack_uf2dd0uv",
+                key: "Stack_26e9hcgg",
                 type: "Stack",
                 path: "HomePage.body[0].children[1]",
                 name: "ViewToggleStack",
                 children: <ffai.ProjectWidgetHandle>[
                   ffai.ProjectWidgetHandle(
-                    key: "ListView_x22aro2z",
+                    key: "ListView_niadwdjw",
                     type: "ListView",
                     path: "HomePage.body[0].children[1].children[0]",
                     name: "RestaurantList",
                     children: <ffai.ProjectWidgetHandle>[
                       ffai.ProjectWidgetHandle(
-                        key: "Container_m0mpsgwf",
+                        key: "Container_zcv7o3ou",
                         type: "Container",
                         path: "HomePage.body[0].children[1].children[0].children[0]",
                         name: "CardWrapper",
@@ -585,7 +627,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Container_73fyoq7m",
+                            key: "Container_s4ttlcza",
                             type: "Container",
                             path: "HomePage.body[0].children[1].children[0].children[0].children[0]",
                             name: "RestaurantCard",
@@ -596,19 +638,19 @@ abstract final class HomePageWidgets {
                     ],
                   ),
                   ffai.ProjectWidgetHandle(
-                    key: "Column_4ukhnxqz",
+                    key: "Column_modx6ite",
                     type: "Column",
                     path: "HomePage.body[0].children[1].children[1]",
                     name: "MapViewColumn",
                     children: <ffai.ProjectWidgetHandle>[
                       ffai.ProjectWidgetHandle(
-                        key: "Container_azo9h4vv",
+                        key: "Container_6xophq27",
                         type: "Container",
                         path: "HomePage.body[0].children[1].children[1].children[0]",
                         name: "MapArea",
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "GoogleMap_ez6jfcum",
+                            key: "GoogleMap_5lvrd8x2",
                             type: "GoogleMap",
                             path: "HomePage.body[0].children[1].children[1].children[0].children[0]",
                             name: "MapArea Inner",
@@ -616,80 +658,109 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_t0c1o3ly",
+                        key: "Container_h1qzl0us",
                         type: "Container",
                         path: "HomePage.body[0].children[1].children[1].children[1]",
                         name: "NearestCardsSection",
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "ListView_uaybejpg",
-                            type: "ListView",
+                            key: "Column_xdrkzqar",
+                            type: "Column",
                             path: "HomePage.body[0].children[1].children[1].children[1].children[0]",
-                            name: "NearestCardsList",
+                            name: "NearestCardsSectionColumn",
                             children: <ffai.ProjectWidgetHandle>[
                               ffai.ProjectWidgetHandle(
-                                key: "Container_n9qoll9n",
+                                key: "Container_kfzws3hy",
                                 type: "Container",
                                 path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[0]",
-                                name: "NearestCardWrapper",
-                                triggers: const <String>[
-                                  "ON_TAP",
-                                ],
+                                name: "NearestTitlePad",
                                 children: <ffai.ProjectWidgetHandle>[
                                   ffai.ProjectWidgetHandle(
-                                    key: "Column_i92x8zld",
-                                    type: "Column",
+                                    key: "Text_ihzap10f",
+                                    type: "Text",
                                     path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[0].children[0]",
-                                    name: "NearestCardContent",
+                                    name: "NearestSectionTitle",
+                                    text: "BYOBs near you",
+                                  ),
+                                ],
+                              ),
+                              ffai.ProjectWidgetHandle(
+                                key: "ListView_echfrkf9",
+                                type: "ListView",
+                                path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1]",
+                                name: "NearestCardsList",
+                                children: <ffai.ProjectWidgetHandle>[
+                                  ffai.ProjectWidgetHandle(
+                                    key: "Container_z7adaep9",
+                                    type: "Container",
+                                    path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0]",
+                                    name: "NearestCardWrapper",
+                                    triggers: const <String>[
+                                      "ON_TAP",
+                                    ],
                                     children: <ffai.ProjectWidgetHandle>[
                                       ffai.ProjectWidgetHandle(
-                                        key: "Text_figj6tju",
-                                        type: "Text",
-                                        path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[0].children[0].children[0]",
-                                        name: "NearestCardName",
-                                      ),
-                                      ffai.ProjectWidgetHandle(
-                                        key: "Container_v6t1m6hp",
-                                        type: "Container",
-                                        path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[0].children[0].children[1]",
-                                        name: "NearestFreeBadge",
+                                        key: "Column_2v0uqzpl",
+                                        type: "Column",
+                                        path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0]",
+                                        name: "NearestCardContent",
                                         children: <ffai.ProjectWidgetHandle>[
                                           ffai.ProjectWidgetHandle(
-                                            key: "Text_yfyq4k1q",
+                                            key: "Text_5zza79c5",
                                             type: "Text",
-                                            path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[0].children[0].children[1].children[0]",
-                                            name: "NearestFreeText",
-                                            text: "Free BYOB",
+                                            path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[0]",
+                                            name: "NearestCardName",
                                           ),
-                                        ],
-                                      ),
-                                      ffai.ProjectWidgetHandle(
-                                        key: "Container_6y5tv8vj",
-                                        type: "Container",
-                                        path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[0].children[0].children[2]",
-                                        name: "NearestCorkageBadge",
-                                        children: <ffai.ProjectWidgetHandle>[
                                           ffai.ProjectWidgetHandle(
-                                            key: "Text_sqj54gdw",
+                                            key: "Text_z0w7ym42",
                                             type: "Text",
-                                            path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[0].children[0].children[2].children[0]",
-                                            name: "NearestCorkageText",
-                                            text: "Corkage Fee",
+                                            path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[1]",
+                                            name: "NearestCuisineText",
                                           ),
-                                        ],
-                                      ),
-                                      ffai.ProjectWidgetHandle(
-                                        key: "Container_ps6iuqve",
-                                        type: "Container",
-                                        path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[0].children[0].children[3]",
-                                        name: "NearestOtherBadge",
-                                        children: <ffai.ProjectWidgetHandle>[
                                           ffai.ProjectWidgetHandle(
-                                            key: "Text_3whlpllc",
-                                            type: "Text",
-                                            path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[0].children[0].children[3].children[0]",
-                                            name: "NearestOtherText",
-                                            text: "Ask Us",
+                                            key: "Container_x8z6hrbe",
+                                            type: "Container",
+                                            path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[2]",
+                                            name: "NearestFreeBadge",
+                                            children: <ffai.ProjectWidgetHandle>[
+                                              ffai.ProjectWidgetHandle(
+                                                key: "Text_uhjjje2h",
+                                                type: "Text",
+                                                path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[2].children[0]",
+                                                name: "NearestFreeText",
+                                                text: "Free BYOB",
+                                              ),
+                                            ],
+                                          ),
+                                          ffai.ProjectWidgetHandle(
+                                            key: "Container_28vl71bc",
+                                            type: "Container",
+                                            path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[3]",
+                                            name: "NearestCorkageBadge",
+                                            children: <ffai.ProjectWidgetHandle>[
+                                              ffai.ProjectWidgetHandle(
+                                                key: "Text_x544uokl",
+                                                type: "Text",
+                                                path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[3].children[0]",
+                                                name: "NearestCorkageText",
+                                                text: "Corkage Fee",
+                                              ),
+                                            ],
+                                          ),
+                                          ffai.ProjectWidgetHandle(
+                                            key: "Container_omg9t8oy",
+                                            type: "Container",
+                                            path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[4]",
+                                            name: "NearestOtherBadge",
+                                            children: <ffai.ProjectWidgetHandle>[
+                                              ffai.ProjectWidgetHandle(
+                                                key: "Text_8vxw2qro",
+                                                type: "Text",
+                                                path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[4].children[0]",
+                                                name: "NearestOtherText",
+                                                text: "Ask Us",
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),

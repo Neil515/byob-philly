@@ -1,12 +1,12 @@
 # BYOB Finder Philadelphia — Progress Handoff
 
-最後更新：2026-06-22
+最後更新：2026-06-24
 
 ---
 
 ## 1. 目前在哪裡停下來
 
-**階段：Contract 8 進行中 — 地圖視角 toggle 已完成，Google Maps 畫面空白待修**
+**階段：Contract 13 ✅ — chip 更新完成（Pizza/Sushi/Ramen）。Contract 12 待執行：搜尋列**
 
 ### Firebase 狀態
 
@@ -19,7 +19,7 @@
 | cover_image_url | ✅ 94/94 筆已更新為 Firebase Storage URL |
 | Firebase Storage CORS | ✅ 已設定，web preview 圖片正常顯示 |
 | Firestore Security Rules | ✅ Read: Everyone, Create/Write/Delete: No One |
-| Google Maps API Key | ✅ Android key（Firebase 自動建立）填入 FlutterFlow Settings，Maps SDK for Android 已啟用 |
+| Google Maps API Key | ✅ Android key 已填入 FlutterFlow，Maps SDK for Android 已啟用並加入 allowed API list |
 
 ### FlutterFlow 狀態
 
@@ -29,13 +29,15 @@
 | FlutterFlow 專案 ID | b-y-o-b-philly-a08xby |
 | FlutterFlow workspace 路徑 | C:\Users\slow3\OneDrive\桌面\GitHubProjects\BYOB\byob-philly |
 | Firebase 連接 | ✅ byob-app-5e4db，package: com.smalltoolsstudio.byobphilly |
-| HomePage | ✅ 列表視角正常；地圖視角 toggle 有效，底部 3 張最近餐廳卡片顯示正常，但地圖畫面空白 |
+| HomePage | ✅ 列表視角正常；地圖視角顯示費城地圖，底部 nearest-3 卡片正常 |
 | RestaurantCard | ✅ 左右分割，Free BYOB（綠）/ Corkage Fee（酒紅）/ Ask Us（橘） |
 | RestaurantDetailPage | ✅ 名稱、料理、badge、地址（可點導航）、電話（可點撥打）、Get Directions 按鈕，全在第一屏 |
 | Filter chips | ✅ 12 個 chip，多選 OR 邏輯，選中不移位 |
 | 地圖視角 toggle | ✅ App bar 右上角 icon，切換 isMapView boolean |
 | 底部 nearest-3 卡片 | ✅ 顯示最近 3 家，chip 篩選同步更新，點擊進詳情頁 |
-| Google Maps widget | ⚠️ 畫面空白 — 疑似 API key 未啟用 Maps JavaScript API |
+| Google Maps widget | ✅ 費城地圖 + 位置權限 + zoom 15 + Rose 色 markers，APK 驗收通過 |
+| Web test mode | ⚠️ 地圖顯示 Google 錯誤（Android key 不支援 web，預期行為，不需處理） |
+| Firestore GeoPoint | ✅ 94 家餐廳 location GeoPoint 欄位已寫入，FlutterFlow schema 已更新 |
 
 ### Custom Functions 狀態
 
@@ -47,6 +49,7 @@
 | `getPhoneUrl` | ✅ | body-only，回傳 tel: URL |
 | `haversineDistance` | ✅ | 純算術近似（無 dart:math），squared-km proxy |
 | `getNearestThree` | ✅ | 排序後 take(3).cast<RestaurantsRecord>() |
+| `searchRestaurantsByName` | ⏳ Contract 12 | 名稱搜尋，case-insensitive |
 
 ### 已知 DSL 問題
 
@@ -64,64 +67,84 @@
 
 ## 2. 下一步工作（依序執行）
 
-### 🔴 明天第一件事：Contract 8 debug — Google Maps 空白
+### 🔴 明天第一件事：Contract 12 — 搜尋列（Ralph prompt 已備妥，直接複製執行）
 
-**背景：** 地圖視角 toggle 正常，底部 nearest-3 卡片正常，但 Google Maps widget 畫面完全空白。疑似原因：現有 API key 是 Android key，web preview 需要 Maps JavaScript API 也啟用在同一個 key 上。
+**範圍：**
+- 搜尋列位置：filter chips 下方
+- 搜尋邏輯：餐廳名稱，real-time（邊打邊篩）
+- 與 filter chips 關係：AND 邏輯（搜尋套用在已篩選結果上）
+- 清除按鈕：搜尋列右側 ×
 
 #### 給 Ralph 的 prompt（直接複製貼上）
 
 ```
-Read CLAUDE.md and PRODUCT_BRIEF.md before starting.
+Read CLAUDE.md before starting.
 State your planned approach in 3–4 lines first.
 
 Active contract:
-Contract 8 debug: Google Maps widget blank in web preview / test mode
+Contract 12: Add search bar to HomePage — filter by restaurant name
 
 Context:
-Map view toggle works. Bottom 3 nearest restaurant cards display correctly.
-But the Google Maps widget area is completely blank (white) in FlutterFlow
-web test mode.
+- HomePage list view has filter chips (cuisine type, multi-select OR logic)
+- filteredRestaurants is the current page state holding the chip-filtered list
+- Goal: add a search bar below the filter chips that further filters
+  filteredRestaurants by restaurant name (AND logic with chips)
+- Real-time: list updates as user types, no submit button needed
 
 FlutterFlow workspace folder:
 C:\Users\slow3\OneDrive\桌面\GitHubProjects\BYOB\byob-philly
 
-Diagnose and fix:
+Changes to make:
 
-1. The current Google Maps API key is an Android key (set in FlutterFlow
-   Settings → Integrations → Google Maps). Web preview requires Maps
-   JavaScript API to be enabled on the same key.
+STEP 1 — Add page state field:
+  - searchText (String, default "")
 
-   Check: is Maps JavaScript API enabled on the key in Google Cloud Console
-   (APIs & Services → Enabled APIs)?
+STEP 2 — Add custom function searchRestaurantsByName:
+  Parameters:
+    - restaurants (List<RestaurantsRecord>)
+    - query (String)
+  Returns: List<RestaurantsRecord>
+  Body: if query is empty or blank, return restaurants unchanged.
+    Otherwise return restaurants where restaurant.name contains
+    query (case-insensitive). Use toLowerCase() on both sides.
+  Use app.raw() + updateCustomFunction (not ensureCustomFunction)
 
-   If not: instruct Neil exactly how to enable it — go to
-   console.cloud.google.com → project byob-app-5e4db → APIs & Services →
-   Library → search "Maps JavaScript API" → Enable.
-   No new key needed, same key works for both Android and web.
+STEP 3 — Add search bar widget below filter chips:
+  - TextField with hint text "Search restaurants..."
+  - Right side: show × IconButton when searchText is not empty,
+    tapping × clears searchText and resets the text field
+  - Style: white background, border radius 12px, border color #8B2635,
+    height 44px, horizontal padding 16px
+  - On change: SetState searchText = typed value
 
-2. Also check: does the Google Maps widget have showLocationValue set to true
-   and the container has correct dimensions (Expanded or fixed height)?
-   A zero-height container would also cause a blank map.
+STEP 4 — Wire search into the list:
+  - The restaurant list currently binds to filteredRestaurants
+  - Change the list binding to:
+    searchRestaurantsByName(filteredRestaurants, searchText)
+  - This gives AND logic: chip filter runs first, search runs on top
 
-3. Confirm whether map blank is web-only or would also affect Android device.
-   If it's web-only AND Maps JavaScript API is already enabled, the blank map
-   in web preview may be a FlutterFlow web rendering limitation and acceptable
-   — the real validation is on a physical Android device.
-
-Report findings before making any DSL changes.
-Do not change RestaurantCard, filter logic, list view, or detail page.
+STEP 5 — Apply same search to nearest-3 (map view):
+  - The nearest-3 computation currently uses filteredRestaurants
+  - Also apply searchRestaurantsByName there so map view and list
+    view stay in sync when search is active
 
 Constraints:
+- Search bar appears in list view only — do not show in map view
+- Do not change filter chip logic, map widget, or detail page
 - All user-facing text in English
-- DSL push command:
-  Remove-Item -Recurse -Force generated_code -ErrorAction SilentlyContinue; dart run dsl/edit.dart --project-id b-y-o-b-philly-a08xby
+- Name field in Firestore is capital N — accessor is .name in DSL
+  (FlutterFlow field key: 1n8bgxro)
+- Use app.raw() + updateCustomFunction for the new custom function
 
-Permanent UX constraints:
-- Corkage fee visible on list cards
-- Navigation button on detail page first screen
-- Free BYOB visually distinct from Corkage Fee
-- No login wall
-- All user-facing text in English
+DSL push command:
+Remove-Item -Recurse -Force generated_code -ErrorAction SilentlyContinue; dart run dsl/edit.dart --project-id b-y-o-b-philly-a08xby
+
+After push, confirm:
+- 0 FlutterFlow errors
+- searchRestaurantsByName function added
+- Search bar visible below filter chips in list view
+- Typing filters the list in real-time
+- × button clears search
 ```
 
 ---
@@ -139,8 +162,23 @@ Permanent UX constraints:
 | 4 | 篩選功能（cuisine type 顯示 + comma-separated 解析） | ✅ | 2026-06-22 |
 | 5 | Filter chips 多選 + OR 邏輯 + 新增 American / Indian chip | ✅ | 2026-06-22 |
 | 6 | 電話可點撥打 + 地址可點開導航（RestaurantDetailPage） | ✅ | 2026-06-22 |
-| 7 | Android 打包 + 手機實機測試 | ⏳ 待執行（Neil 手動） | — |
-| 8 | 地圖視角（HomePage toggle + nearest-3 卡片） | 🔴 進行中（地圖空白待修） | — |
+| 7 | Android 打包 + 手機實機測試 | ✅ | 2026-06-23 |
+| 8 | 地圖視角（HomePage toggle + 位置權限 + GPS 座標） | ✅ | 2026-06-24 |
+| 9 | 地圖 markers（GeoPoint migration + Rose pin + zoom 15） | ✅ | 2026-06-24 |
+| 10 | Marker tap 互動（已研究，放棄） | ⛔ FlutterFlow 系統性封鎖，暫緩 | — |
+| 11 | nearest-3 UI 優化（標題 + 料理類型 + padding） | ✅ | 2026-06-24 |
+| 12 | 搜尋列（名稱搜尋，AND 邏輯，real-time） | ⏳ 待執行 | — |
+| 13 | Chip 更新（Pizza/Sushi/Ramen 新增，American/Indian 移除） | ✅ | 2026-06-24 |
+
+**Contract 8 完成項目：**
+- ✅ 地圖視角 toggle（AppBar icon）
+- ✅ 費城地圖在 Android 實機正常顯示
+- ✅ 底部 nearest-3 卡片（chip 篩選同步）
+- ✅ Google Maps API key 設定（Maps SDK for Android 啟用並加入 allowed list）
+- ✅ SecurityException 修復（showLocation 綁定 hasLocationPermission state）
+- ✅ 使用 FlutterFlow 原生 location action（移除 geolocator custom code）
+- ❌ 位置權限對話框未觸發（manifest 問題，下次優先修）
+- ❌ 餐廳 markers 未顯示（GeoPoint migration 需要）
 
 ---
 
@@ -157,8 +195,11 @@ Permanent UX constraints:
 | 料理類型正確顯示（含 other_note） | P1 | ✅ |
 | 電話號碼可點撥打 | P1 | ✅ |
 | 地址可點開 Google Maps 導航 | P1 | ✅ |
-| 地圖視角（toggle + nearest-3 卡片） | P2 | 🔴 地圖空白待修 |
-| Firestore GeoPoint 欄位（地圖 markers 用） | P2 | ⏳ 待執行（路線 A） |
+| 地圖視角（toggle + 費城地圖 + 位置權限 + GPS） | P2 | ✅ |
+| Firestore GeoPoint + 地圖 markers（Rose pin） | P2 | ✅ |
+| nearest-3 UI 優化（標題 + 料理類型） | P2 | ✅ |
+| Chip 更新（Pizza/Sushi/Ramen） | P2 | ✅ |
+| 搜尋列（名稱搜尋） | P2 | ⏳ Contract 12 |
 | Near me 排序 | P2 | ⏳ 暫緩 |
 
 ---
@@ -175,7 +216,7 @@ Permanent UX constraints:
 | Workspace 路徑 | C:\Users\slow3\OneDrive\桌面\GitHubProjects\BYOB\byob-philly |
 | 後端 | 純 Firebase（不需要 Render） |
 | Firebase Storage bucket | byob-app-5e4db.firebasestorage.app |
-| Google Maps API Key | ✅ Android key 已填入 FlutterFlow → Maps SDK for Android 已啟用，Maps JavaScript API 狀態未確認 |
+| Google Maps API Key | ✅ Android key 已填入 FlutterFlow → Maps SDK for Android 已啟用並加入 allowed API list |
 
 ### Firestore 欄位大小寫（注意！）
 
@@ -194,9 +235,9 @@ Permanent UX constraints:
 
 ### 其他注意事項
 
-- Filter chips 順序（固定）：All · Italian · Japanese · Mediterranean · Asian · Seafood · Mexican · Thai · French · American · Indian · Other
-- "Other" chip 邏輯：不含 italian / japanese / mediterranean / asian / seafood / mexican / thai / french / american / indian
-- Token 數量（含複合）：Italian 36、other 57、Mediterranean 12、Seafood 10、Japanese 10、Asian 6、Mexican 5、Thai 4、French 3、American 2、Indian 2
+- Filter chips 順序（固定）：All · Italian · Mediterranean · Japanese · Seafood · Sushi · Pizza · Asian · Mexican · Thai · Ramen · French · Other
+- "Other" chip 邏輯：不含 italian / japanese / mediterranean / asian / seafood / mexican / thai / french / american / indian / pizza / sushi / ramen
+- Token 數量（migration 後）：Italian 36、other ~40、Mediterranean 12、Sushi ~10、Japanese 10、Seafood 10、Pizza ~9、Asian 6、Mexican 6、Thai 4、Ramen ~4、French 3
 - `formatCuisineType(typeString, otherNote)`：split comma → replace "other" with note → join " · "
 - `haversineDistance`：純算術，無 dart:math（dLat*111, dLng*85, squared proxy）
 - `getNearestThree`：回傳 `copy.take(3).toList().cast<RestaurantsRecord>()`
@@ -204,6 +245,7 @@ Permanent UX constraints:
 - `Name` field key 在 FlutterFlow DSL 中為 `1n8bgxro`
 - Ralph 給 Cowork 的 prompt 一律英文（從 Contract 5 起）
 - **重要**：Ralph 更新 custom function 必須用 `app.raw()` + `updateCustomFunction`，不是 `ensureCustomFunction`（後者只建不更新）
+- **重要**：showLocation 綁定 `hasLocationPermission ?? false`（valueOrDefault<bool>），不可 hardcode true（會導致 SecurityException）
 
 ---
 
@@ -211,7 +253,7 @@ Permanent UX constraints:
 
 | 項目 | 暫緩原因 |
 |------|----------|
-| Firestore GeoPoint migration | 地圖 markers 需要，等地圖空白問題確認後執行 |
+| marker tap → 詳情頁導航 | FlutterFlow 系統性封鎖，三條路全部確認不可行：(1) ON_MARKER_TAP GENERATOR_VARIABLE 封鎖，(2) InfoWindow FlutterFlow 不支援，(3) Camera callbacks 不在 DSL。等 FlutterFlow 原生支援再做。 |
 | Near me 排序 | P2，暫緩 |
 | 用戶驗證功能 | P3 |
 | Wine Shop 推薦 | P3 |
