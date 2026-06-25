@@ -140,7 +140,7 @@ Options:
 ''');
 }
 
-/// Top-level builder — applies Contracts 1–6, 8, 9, 11, 13 in one idempotent run.
+/// Top-level builder — applies Contracts 1–6, 8, 9, 11, 12, 13 in one idempotent run.
 void buildByobPhilly(App app) {
   buildByobContract1(app);
   buildByobContract2(app);
@@ -152,6 +152,8 @@ void buildByobPhilly(App app) {
   buildByobContract9(app);
   buildByobContract11(app);
   buildByobContract13(app);
+  // buildByobContract12AddFn(app); // push 1: done
+  buildByobContract12(app); // push 2: full search bar UI
 }
 
 void buildByobContract1(App app) {
@@ -3012,5 +3014,631 @@ void buildByobContract11(App app) {
         ),
       ),
     );
+  });
+}
+
+/// Contract 12 — Phase 1 (push 1): adds `searchRestaurantsByName` custom function
+/// and `searchText` page state. No UI references to the new function.
+/// After this push succeeds, uncomment buildByobContract12 in buildByobPhilly and
+/// comment out buildByobContract12AddFn to do push 2 (full UI).
+void buildByobContract12AddFn(App app) {
+  app.editPageState(ff.Pages.homePage, (state) {
+    state.ensureField('searchText', string.withDefault(''));
+  });
+
+  const _searchFnCode = r'''if (restaurants == null) return [];
+if (query == null || query.trim().isEmpty) return restaurants;
+final q = query.toLowerCase();
+return restaurants.where((r) => (r.name ?? '').toLowerCase().contains(q)).toList();''';
+
+  app.raw((project) {
+    final existing = findCustomFunction(project, name: 'searchRestaurantsByName');
+    if (existing != null) {
+      updateCustomFunction(
+        project,
+        name: 'searchRestaurantsByName',
+        code: _searchFnCode,
+      );
+    } else {
+      addCustomFunction(
+        project,
+        name: 'searchRestaurantsByName',
+        code: _searchFnCode,
+        description:
+            'Case-insensitive name search: returns restaurants whose name contains the query. Empty query returns all.',
+      );
+    }
+  });
+}
+
+/// Contract 12 — Phase 2 (push 2): full search bar UI.
+/// searchRestaurantsByName must already exist in the project (added by push 1).
+/// Uses searchFilteredRestaurants as an intermediate page state so that:
+///  - ListView source is a simple State reference (no CustomFunction as source)
+///  - Chip actions and search onChange never nest CustomFunction inside CustomFunction
+/// Contract 12: Search bar on HomePage — real-time name filter with AND logic.
+///
+/// 1. Adds searchText page state (String, default "").
+/// 2. Adds searchRestaurantsByName custom function (case-insensitive name contains).
+/// 3. Rebuilds the full HomeBody to insert a search bar between ChipsStrip and the
+///    content area. The search bar is visible in list view only (hidden in map view).
+///    Includes a × clear button visible when searchText is non-empty.
+/// 4. List view source: searchRestaurantsByName(filteredRestaurants, searchText).
+/// 5. Nearest-3 (map view) also filters through searchRestaurantsByName so map and
+///    list views stay in sync when search is active.
+///
+/// This contract does a full body[0] rebuild and is placed LAST in buildByobPhilly.
+/// It bakes in C11 (NearestCardsSection with title + cuisine text) and C13 (12 chips
+/// including Pizza/Sushi/Ramen) so the C12 body is the canonical final structure.
+/// C8/C9 raw() callbacks still run after this and configure the GoogleMap widget.
+void buildByobContract12(App app) {
+  final restaurants = ff.Collections.restaurants;
+
+  // ── 1. Add searchText page state ────────────────────────────────────────────
+  // searchText was added in push 1 (buildByobContract12AddFn); this is idempotent.
+  app.editPageState(ff.Pages.homePage, (state) {
+    state.ensureField('searchText', string.withDefault(''));
+  });
+
+  // ── 2. Add / update searchRestaurantsByName ──────────────────────────────────
+  // r.name accesses the Firestore 'Name' field (capital N) via the generated
+  // RestaurantsRecord accessor. Empty / blank query returns the list unchanged.
+  const _searchFnCode = r'''if (restaurants == null) return [];
+if (query == null || query.trim().isEmpty) return restaurants;
+final q = query.toLowerCase();
+return restaurants.where((r) => (r.name ?? '').toLowerCase().contains(q)).toList();''';
+
+  // Fix the function's type metadata. Push 1 created it with String return type
+  // (addCustomFunction default). We must update arguments and returnParameter so
+  // FlutterFlow's validator accepts SetState(filteredRestaurants, CustomFunction(searchFn)).
+  // Note: collectionDocType/findCollection/stringType are not exported; use raw proto.
+  app.raw((project) {
+    final restaurantsColl = project.backend.collections.values.firstWhere(
+      (c) => c.identifier.name == 'restaurants',
+    );
+    final rid = restaurantsColl.identifier.deepCopy();
+    // restaurants argument: List<RestaurantsRecord>
+    final restaurantListParam = FFParameter(
+      identifier: FFIdentifier(
+        name: 'restaurants',
+        key: generateRandomAlphaNumericString(),
+      ),
+      dataType: FFDataTypeV2(
+        scalarType: FFBaseDataType.Document,
+        subType: FFSubType(collectionIdentifier: rid),
+      ),
+    );
+    restaurantListParam.isList = true;
+    // query argument: String
+    final queryParam = FFParameter(
+      identifier: FFIdentifier(
+        name: 'query',
+        key: generateRandomAlphaNumericString(),
+      ),
+      dataType: FFDataTypeV2(scalarType: FFBaseDataType.String),
+    );
+    // return type: List<RestaurantsRecord>
+    final returnParam = FFParameter(
+      identifier: FFIdentifier(
+        name: 'returnValue',
+        key: generateRandomAlphaNumericString(),
+      ),
+      dataType: FFDataTypeV2(
+        scalarType: FFBaseDataType.Document,
+        subType: FFSubType(collectionIdentifier: rid),
+      ),
+    );
+    returnParam.isList = true;
+    updateCustomFunction(
+      project,
+      name: 'searchRestaurantsByName',
+      code: _searchFnCode,
+      arguments: [restaurantListParam, queryParam],
+      returnParameter: returnParam,
+    );
+  });
+
+  final searchFn = CustomFunctionHandle(
+    name: 'searchRestaurantsByName',
+    args: {'restaurants': listOf(restaurants), 'query': string},
+    returnType: listOf(restaurants),
+  );
+
+  // ── Handles for existing custom functions ────────────────────────────────────
+  final isTypeSelectedFn = CustomFunctionHandle(
+    name: 'isTypeSelected',
+    args: {'selectedTypes': listOf(string), 'type': string},
+    returnType: bool_,
+  );
+  final isNoneSelectedFn = CustomFunctionHandle(
+    name: 'isNoneSelected',
+    args: {'selectedTypes': listOf(string)},
+    returnType: bool_,
+  );
+  final filterTypesFn = CustomFunctionHandle(
+    name: 'filterRestaurantsByTypes',
+    args: {'restaurants': listOf(restaurants), 'selectedTypes': listOf(string)},
+    returnType: listOf(restaurants),
+  );
+  final getNearestThreeFn = CustomFunctionHandle(
+    name: 'getNearestThree',
+    args: {'restaurants': listOf(restaurants), 'userLat': double_, 'userLng': double_},
+    returnType: listOf(restaurants),
+  );
+  final formatCuisineFn = CustomFunctionHandle(
+    name: 'formatCuisineType',
+    args: {'typeString': string, 'otherNote': string},
+    returnType: string,
+  );
+
+  // ── 3+4+5. Full HomeBody rebuild ─────────────────────────────────────────────
+  // Chip order / labels match Contract 13 (12 types, Pizza/Sushi/Ramen replacing
+  // American/Indian from the previous chip strip).
+  const typeOrder = [
+    'italian', 'mediterranean', 'japanese', 'seafood', 'sushi',
+    'pizza', 'asian', 'mexican', 'thai', 'ramen', 'french', 'other',
+  ];
+  const typeLabels = {
+    'italian': 'Italian', 'mediterranean': 'Mediterranean', 'japanese': 'Japanese',
+    'seafood': 'Seafood', 'sushi': 'Sushi', 'pizza': 'Pizza',
+    'asian': 'Asian', 'mexican': 'Mexican', 'thai': 'Thai',
+    'ramen': 'Ramen', 'french': 'French', 'other': 'Other',
+  };
+
+  final wineRed = Colors.hex(0xFF8B2635);
+  final white = Colors.hex(0xFFFFFFFF);
+
+  Container buildChip({
+    required String label,
+    required bool selected,
+    required String widgetName,
+    required Object? visible,
+    required List<DslAction> onTap,
+  }) =>
+      Container(
+        name: widgetName,
+        color: selected ? wineRed : white,
+        borderRadius: 20,
+        borderColor: selected ? null : wineRed,
+        borderWidth: selected ? null : 1.0,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        visible: visible,
+        onTap: onTap,
+        child: Text(
+          label,
+          name: '${widgetName}Label',
+          color: selected ? white : wineRed,
+          style: Styles.labelMedium,
+        ),
+      );
+
+  // After each chip tap: base actions update chip state + filteredRestaurants
+  // (chip-only). Then we re-apply the search query on top of the chip result
+  // by overwriting filteredRestaurants again. ListView source = filteredRestaurants,
+  // so no new state variable needed. Both SetState calls are single-level (no
+  // nested CustomFunction). filteredRestaurants and nearestThree both pre-exist.
+  List<DslAction> withNearestUpdate(List<DslAction> base) => [
+    ...base,
+    SetState('filteredRestaurants', CustomFunction(searchFn, args: {
+      'restaurants': State('filteredRestaurants'),
+      'query': State('searchText'),
+    })),
+    SetState('nearestThree', CustomFunction(getNearestThreeFn, args: {
+      'restaurants': State('filteredRestaurants'),
+      'userLat': State('userLatitude'),
+      'userLng': State('userLongitude'),
+    })),
+  ];
+
+  final allChipActions = withNearestUpdate([
+    SetState.clear('selectedChipTypes'),
+    SetState('filteredRestaurants', State('restaurants')),
+  ]);
+
+  List<DslAction> selChipActions(String type) => withNearestUpdate([
+    SetState.removeFromList('selectedChipTypes', type),
+    SetState('filteredRestaurants', CustomFunction(filterTypesFn, args: {
+      'restaurants': State('restaurants'),
+      'selectedTypes': State('selectedChipTypes'),
+    })),
+  ]);
+
+  List<DslAction> unselChipActions(String type) => withNearestUpdate([
+    SetState.addToList('selectedChipTypes', type),
+    SetState('filteredRestaurants', CustomFunction(filterTypesFn, args: {
+      'restaurants': State('restaurants'),
+      'selectedTypes': State('selectedChipTypes'),
+    })),
+  ]);
+
+  app.editPage(ff.Pages.homePage, (page) {
+    page.ensureReplaced(
+      ff.Pages.homePage.widgets.byPath('HomePage.body[0]').single,
+      Column(
+        name: 'HomeBody',
+        crossAxis: CrossAxis.stretch,
+        children: [
+          // Chip strip — 12 types (C13 content baked in)
+          Container(
+            name: 'ChipsStrip',
+            color: Colors.primaryBackground,
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Wrap(
+              name: 'ChipsWrap',
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                buildChip(
+                  label: 'All',
+                  selected: true,
+                  widgetName: 'AllChipSel',
+                  visible: CustomFunction(isNoneSelectedFn, args: {
+                    'selectedTypes': State('selectedChipTypes'),
+                  }),
+                  onTap: allChipActions,
+                ),
+                buildChip(
+                  label: 'All',
+                  selected: false,
+                  widgetName: 'AllChipUnsel',
+                  visible: Not(CustomFunction(isNoneSelectedFn, args: {
+                    'selectedTypes': State('selectedChipTypes'),
+                  })),
+                  onTap: allChipActions,
+                ),
+                for (final type in typeOrder) ...[
+                  buildChip(
+                    label: typeLabels[type]!,
+                    selected: true,
+                    widgetName: '${typeLabels[type]}ChipSel',
+                    visible: CustomFunction(isTypeSelectedFn, args: {
+                      'selectedTypes': State('selectedChipTypes'),
+                      'type': type,
+                    }),
+                    onTap: selChipActions(type),
+                  ),
+                  buildChip(
+                    label: typeLabels[type]!,
+                    selected: false,
+                    widgetName: '${typeLabels[type]}ChipUnsel',
+                    visible: Not(CustomFunction(isTypeSelectedFn, args: {
+                      'selectedTypes': State('selectedChipTypes'),
+                      'type': type,
+                    })),
+                    onTap: unselChipActions(type),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          // Search bar — list view only (hidden when map toggle is active)
+          Container(
+            name: 'SearchBarContainer',
+            color: Colors.primaryBackground,
+            padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            visible: Not(State('isMapView')),
+            child: Row(
+              name: 'SearchBarRow',
+              crossAxis: CrossAxis.center,
+              children: [
+                // TextField expands to fill available width
+                Expanded(
+                  TextField(
+                    name: 'SearchField',
+                    hint: 'Search restaurants...',
+                    prefixIcon: 'search',
+                    onChanged: [
+                      SetState('searchText', TextValue()),
+                      // Re-run chip filter first so we search within the correct chip subset.
+                      SetState('filteredRestaurants', CustomFunction(filterTypesFn, args: {
+                        'restaurants': State('restaurants'),
+                        'selectedTypes': State('selectedChipTypes'),
+                      })),
+                      // Overwrite filteredRestaurants with chip+search combined result.
+                      SetState('filteredRestaurants', CustomFunction(searchFn, args: {
+                        'restaurants': State('filteredRestaurants'),
+                        'query': TextValue(),
+                      })),
+                      SetState('nearestThree', CustomFunction(getNearestThreeFn, args: {
+                        'restaurants': State('filteredRestaurants'),
+                        'userLat': State('userLatitude'),
+                        'userLng': State('userLongitude'),
+                      })),
+                    ],
+                  ),
+                  name: 'SearchFieldExpanded',
+                ),
+                // × clear button — visible when searchText is non-empty
+                IconButton(
+                  'close',
+                  name: 'ClearSearchButton',
+                  size: 24,
+                  color: Colors.secondaryText,
+                  visible: Not(Equals(State('searchText'), '')),
+                  onTap: [
+                    SetState('searchText', ''),
+                    // ClearTextField omitted — SearchField is new in this push and
+                    // FlutterFlow's validator can't find it by name yet.
+                    // Wire it manually in FlutterFlow UI if needed.
+                    // Restore filteredRestaurants to chip-only result (remove search).
+                    SetState('filteredRestaurants', CustomFunction(filterTypesFn, args: {
+                      'restaurants': State('restaurants'),
+                      'selectedTypes': State('selectedChipTypes'),
+                    })),
+                    SetState('nearestThree', CustomFunction(getNearestThreeFn, args: {
+                      'restaurants': State('filteredRestaurants'),
+                      'userLat': State('userLatitude'),
+                      'userLng': State('userLongitude'),
+                    })),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          // Content area — list OR map (same structure as C8)
+          Expanded(
+            Stack(
+              name: 'ViewToggleStack',
+              alignment: Alignment.topLeft,
+              children: [
+                // List view — source = filteredRestaurants, which holds chip+search
+                // combined result after each SetState chain (chip or search onChange).
+                ListView(
+                  name: 'RestaurantList',
+                  source: State('filteredRestaurants'),
+                  spacing: 0,
+                  visible: Not(State('isMapView')),
+                  itemBuilder: (item) => Container(
+                    name: 'CardWrapper',
+                    onTap: Navigate.to(
+                      ff.Pages.restaurantDetailPage,
+                      params: {
+                        ff.Pages.restaurantDetailPage.params.restaurantName:
+                            item['Name'],
+                        ff.Pages.restaurantDetailPage.params.cuisineType:
+                            item['philly_restaurant_type'],
+                        'cuisineTypeNote':
+                            item['philly_restaurant_type_other_note'],
+                        ff.Pages.restaurantDetailPage.params.corkageFeeType:
+                            item['philly_corkage_fee'],
+                        ff.Pages.restaurantDetailPage.params.address:
+                            item['Add'],
+                        ff.Pages.restaurantDetailPage.params.phone:
+                            item['Phone'],
+                        ff.Pages.restaurantDetailPage.params.latitude:
+                            item['Latitude'],
+                        ff.Pages.restaurantDetailPage.params.longitude:
+                            item['Longitude'],
+                        ff.Pages.restaurantDetailPage.params.coverImageUrl:
+                            item['cover_image_url'],
+                      },
+                    ),
+                    child: ff.Components.restaurantCard(
+                      restaurantName: item['Name'],
+                      cuisineType: item['philly_restaurant_type'],
+                      cuisineTypeNote:
+                          item['philly_restaurant_type_other_note'],
+                      imageUrl: item['cover_image_url'],
+                      corkageFeeType: item['philly_corkage_fee'],
+                    ),
+                  ),
+                ),
+                // Map view — visible when toggle is active
+                Column(
+                  name: 'MapViewColumn',
+                  crossAxis: CrossAxis.stretch,
+                  visible: State('isMapView'),
+                  children: [
+                    Expanded(
+                      MapWidget(
+                        lat: 39.9526,
+                        lng: -75.1652,
+                        zoom: 12,
+                        name: 'MapArea',
+                      ),
+                      name: 'MapExpanded',
+                    ),
+                    // Nearest-3 strip (C11 content baked in)
+                    Container(
+                      name: 'NearestCardsSection',
+                      height: 200,
+                      color: Colors.primaryBackground,
+                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                      child: Column(
+                        name: 'NearestCardsSectionColumn',
+                        crossAxis: CrossAxis.stretch,
+                        children: [
+                          Container(
+                            name: 'NearestTitlePad',
+                            padding: EdgeInsets.only(bottom: 6),
+                            child: Text(
+                              'BYOBs near you',
+                              name: 'NearestSectionTitle',
+                              color: Colors.hex(0xFF8B2635),
+                              style: Styles.titleSmall,
+                            ),
+                          ),
+                          Expanded(
+                            ListView(
+                              name: 'NearestCardsList',
+                              source: State('nearestThree'),
+                              horizontal: true,
+                              spacing: 8,
+                              itemBuilder: (item) => Container(
+                                name: 'NearestCardWrapper',
+                                width: 140,
+                                color: Colors.hex(0xFFFFFFFF),
+                                borderRadius: 12,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 14, vertical: 10),
+                                onTap: Navigate.to(
+                                  ff.Pages.restaurantDetailPage,
+                                  params: {
+                                    ff.Pages.restaurantDetailPage.params
+                                        .restaurantName: item['Name'],
+                                    ff.Pages.restaurantDetailPage.params
+                                        .cuisineType:
+                                        item['philly_restaurant_type'],
+                                    'cuisineTypeNote':
+                                        item['philly_restaurant_type_other_note'],
+                                    ff.Pages.restaurantDetailPage.params
+                                        .corkageFeeType:
+                                        item['philly_corkage_fee'],
+                                    ff.Pages.restaurantDetailPage.params
+                                        .address: item['Add'],
+                                    ff.Pages.restaurantDetailPage.params
+                                        .phone: item['Phone'],
+                                    ff.Pages.restaurantDetailPage.params
+                                        .latitude: item['Latitude'],
+                                    ff.Pages.restaurantDetailPage.params
+                                        .longitude: item['Longitude'],
+                                    ff.Pages.restaurantDetailPage.params
+                                        .coverImageUrl:
+                                        item['cover_image_url'],
+                                  },
+                                ),
+                                child: Column(
+                                  name: 'NearestCardContent',
+                                  crossAxis: CrossAxis.start,
+                                  spacing: 4,
+                                  children: [
+                                    Text(
+                                      item['Name'],
+                                      name: 'NearestCardName',
+                                      style: Styles.labelMedium,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Text(
+                                      CustomFunction(formatCuisineFn, args: {
+                                        'typeString':
+                                            item['philly_restaurant_type'],
+                                        'otherNote':
+                                            item['philly_restaurant_type_other_note'],
+                                      }),
+                                      name: 'NearestCuisineText',
+                                      color: Colors.secondaryText,
+                                      style: Styles.bodySmall,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Container(
+                                      name: 'NearestFreeBadge',
+                                      color: Colors.hex(0xFF2E7D32),
+                                      borderRadius: 4,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
+                                      visible: Equals(
+                                          item['philly_corkage_fee'], 'free'),
+                                      child: Text(
+                                        'Free BYOB',
+                                        name: 'NearestFreeText',
+                                        color: Colors.hex(0xFFFFFFFF),
+                                        style: Styles.labelSmall,
+                                      ),
+                                    ),
+                                    Container(
+                                      name: 'NearestCorkageBadge',
+                                      color: Colors.hex(0xFF8B2635),
+                                      borderRadius: 4,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
+                                      visible: Equals(
+                                          item['philly_corkage_fee'],
+                                          'corkage_fee'),
+                                      child: Text(
+                                        'Corkage Fee',
+                                        name: 'NearestCorkageText',
+                                        color: Colors.hex(0xFFFFFFFF),
+                                        style: Styles.labelSmall,
+                                      ),
+                                    ),
+                                    Container(
+                                      name: 'NearestOtherBadge',
+                                      color: Colors.hex(0xFFBF6A02),
+                                      borderRadius: 4,
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
+                                      visible: Equals(
+                                          item['philly_corkage_fee'], 'other'),
+                                      child: Text(
+                                        'Ask Us',
+                                        name: 'NearestOtherText',
+                                        color: Colors.hex(0xFFFFFFFF),
+                                        style: Styles.labelSmall,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            name: 'NearestListExpanded',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            name: 'ContentExpanded',
+          ),
+        ],
+      ),
+    );
+  });
+
+  // Apply SearchField decoration: white fill, outline border, 12px radius, padded.
+  // Path: body[0] → children[1](SearchBarContainer) → children[0](SearchBarRow)
+  //       → children[0](SearchField, expanded TextField node)
+  app.editPage(ff.Pages.homePage, (page) {
+    page.update(
+      ff.Pages.homePage.widgets
+          .byPath('HomePage.body[0].children[1].children[0].children[0]')
+          .single,
+      (patch) {
+        patch.textFieldFilled(true);
+        patch.textFieldFillColor(white);
+        patch.textFieldBorder(InputBorder.outline);
+        patch.borderRadius(12);
+        patch.textFieldContentPadding(
+            EdgeInsets.symmetric(horizontal: 16, vertical: 8));
+      },
+    );
+  });
+
+  // Fix HomeBody + MapViewColumn mainAxisSize → max (same as C8 raw fix).
+  app.raw((project) {
+    FFWidgetClass? homeWC;
+    for (final wc in project.widgetClasses.values) {
+      if (wc.name == 'HomePage') {
+        homeWC = wc;
+        break;
+      }
+    }
+    if (homeWC == null) return;
+
+    FFNode? homeBody;
+    FFNode? mapViewColumn;
+    void walk(FFNode node) {
+      if (node.name == 'HomeBody' && node.type == FFWidgetType.Column) {
+        homeBody = node;
+      }
+      if (node.name == 'MapViewColumn' && node.type == FFWidgetType.Column) {
+        mapViewColumn = node;
+      }
+      for (final child in node.children) {
+        walk(child);
+      }
+    }
+    walk(homeWC.node);
+
+    if (homeBody != null) {
+      homeBody!.props.column.minSizeValue = FFBooleanValue(inputValue: false);
+    }
+    if (mapViewColumn != null) {
+      mapViewColumn!.props.column.minSizeValue =
+          FFBooleanValue(inputValue: false);
+    }
   });
 }
