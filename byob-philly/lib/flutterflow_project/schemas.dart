@@ -164,6 +164,7 @@ abstract final class CustomCode {
     "haversineDistance",
     "isNoneSelected",
     "isTypeSelected",
+    "searchRestaurantsByName",
   ];
   static const actions = <String>[
   ];

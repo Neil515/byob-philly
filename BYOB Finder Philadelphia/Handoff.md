@@ -1,12 +1,12 @@
 # BYOB Finder Philadelphia — Progress Handoff
 
-最後更新：2026-06-24
+最後更新：2026-06-25
 
 ---
 
 ## 1. 目前在哪裡停下來
 
-**階段：Contract 13 ✅ — chip 更新完成（Pizza/Sushi/Ramen）。Contract 12 待執行：搜尋列**
+**階段：Contract 12 ✅ 今天完成（搜尋列）。明天執行：Contract 14 — 料理類型標籤可點篩選**
 
 ### Firebase 狀態
 
@@ -15,11 +15,10 @@
 | Firebase 專案 "BYOB APP" | ✅ 存在（byob-app-5e4db） |
 | Firestore `restaurants` 集合 | ✅ 94 筆資料，欄位已驗證 |
 | Service account JSON | ✅ 在 BYOB/ 根目錄，已加入 .gitignore |
-| Firebase Storage | ✅ 94 張 placeholder 圖片已上傳 |
-| cover_image_url | ✅ 94/94 筆已更新為 Firebase Storage URL |
+| Firebase Storage | ✅ 94 張 placeholder 圖片已上傳，cover_image_url 94/94 已更新 |
 | Firebase Storage CORS | ✅ 已設定，web preview 圖片正常顯示 |
 | Firestore Security Rules | ✅ Read: Everyone, Create/Write/Delete: No One |
-| Google Maps API Key | ✅ Android key 已填入 FlutterFlow，Maps SDK for Android 已啟用並加入 allowed API list |
+| Google Maps API Key | ✅ Android key 已填入 FlutterFlow，Maps SDK for Android 已啟用 |
 
 ### FlutterFlow 狀態
 
@@ -29,12 +28,13 @@
 | FlutterFlow 專案 ID | b-y-o-b-philly-a08xby |
 | FlutterFlow workspace 路徑 | C:\Users\slow3\OneDrive\桌面\GitHubProjects\BYOB\byob-philly |
 | Firebase 連接 | ✅ byob-app-5e4db，package: com.smalltoolsstudio.byobphilly |
-| HomePage | ✅ 列表視角正常；地圖視角顯示費城地圖，底部 nearest-3 卡片正常 |
+| HomePage | ✅ 列表視角正常；搜尋列在 filter chips 下方；地圖視角顯示費城地圖，底部 nearest-3 卡片正常 |
 | RestaurantCard | ✅ 左右分割，Free BYOB（綠）/ Corkage Fee（酒紅）/ Ask Us（橘） |
 | RestaurantDetailPage | ✅ 名稱、料理、badge、地址（可點導航）、電話（可點撥打）、Get Directions 按鈕，全在第一屏 |
 | Filter chips | ✅ 12 個 chip，多選 OR 邏輯，選中不移位 |
+| 搜尋列 | ✅ filter chips 下方，real-time 名稱搜尋，AND 邏輯，× 清除 |
 | 地圖視角 toggle | ✅ App bar 右上角 icon，切換 isMapView boolean |
-| 底部 nearest-3 卡片 | ✅ 顯示最近 3 家，chip 篩選同步更新，點擊進詳情頁 |
+| 底部 nearest-3 卡片 | ✅ 顯示最近 3 家，chip + 搜尋篩選同步更新，點擊進詳情頁 |
 | Google Maps widget | ✅ 費城地圖 + 位置權限 + zoom 15 + Rose 色 markers，APK 驗收通過 |
 | Web test mode | ⚠️ 地圖顯示 Google 錯誤（Android key 不支援 web，預期行為，不需處理） |
 | Firestore GeoPoint | ✅ 94 家餐廳 location GeoPoint 欄位已寫入，FlutterFlow schema 已更新 |
@@ -43,108 +43,154 @@
 
 | Function | 狀態 | 說明 |
 |----------|------|------|
-| `formatCuisineType` | ✅ | split comma → replace "other" → join " · " |
-| `filterRestaurantsByType` | ✅ | multi-select OR logic，comma-split |
-| `getMapsUrl` | ✅ | body-only，回傳 Google Maps URL |
-| `getPhoneUrl` | ✅ | body-only，回傳 tel: URL |
+| `formatCuisineType` | ✅ 現有，Contract 14 後將不再使用於 UI | split comma → replace "other" → join " · " |
+| `filterRestaurantsByType` | ✅ | multi-select chip OR logic，comma-split |
+| `getMapsUrl` | ✅ | 回傳 Google Maps URL |
+| `getPhoneUrl` | ✅ | 回傳 tel: URL |
 | `haversineDistance` | ✅ | 純算術近似（無 dart:math），squared-km proxy |
 | `getNearestThree` | ✅ | 排序後 take(3).cast<RestaurantsRecord>() |
-| `searchRestaurantsByName` | ⏳ Contract 12 | 名稱搜尋，case-insensitive |
+| `searchRestaurantsByName` | ✅ Contract 12 完成 | 名稱搜尋，case-insensitive |
+| `getCuisineDisplayList` | ⏳ Contract 14 | 回傳 List<String>，取代 formatCuisineType 的顯示用途 |
+| `filterRestaurantsByTypeOrNote` | ⏳ Contract 14 | 同時查 philly_restaurant_type 和 other_note |
 
 ### 已知 DSL 問題
 
-- **updateCustomFunction 歷史問題**：Ralph 之前用 `ensureCustomFunction`（只建不更），改用 `app.raw()` + `updateCustomFunction` 後才能正確覆蓋雲端。現在已修正。
-- **OneDrive file lock**：每次 DSL push 後 `generated_code/` rename 會失敗（Windows/OneDrive lock），但不影響雲端 push，只是本地 stub 是舊的。用以下指令可避免：
+- **updateCustomFunction**：必須用 `app.raw()` + `updateCustomFunction`，不是 `ensureCustomFunction`（後者只建不更新）
+- **OneDrive file lock**：每次 DSL push 後 `generated_code/` rename 會失敗（Windows/OneDrive lock），但不影響雲端 push。用以下指令可避免：
   `Remove-Item -Recurse -Force generated_code -ErrorAction SilentlyContinue; dart run dsl/edit.dart --project-id b-y-o-b-philly-a08xby`
-
-### 安全狀態
-
-| 項目 | 狀態 |
-|------|------|
-| GitHub secret leak | ✅ 已處理：API 金鑰 4 已刪除，.env 從 git 歷史清除，force push 完成 |
 
 ---
 
-## 2. 下一步工作（依序執行）
+## 2. 明天的工作：Contract 14 — 料理類型標籤可點篩選
 
-### 🔴 明天第一件事：Contract 12 — 搜尋列（Ralph prompt 已備妥，直接複製執行）
+### 背景與設計決策（為何這樣做，不要跳過）
 
-**範圍：**
-- 搜尋列位置：filter chips 下方
-- 搜尋邏輯：餐廳名稱，real-time（邊打邊篩）
-- 與 filter chips 關係：AND 邏輯（搜尋套用在已篩選結果上）
-- 清除按鈕：搜尋列右側 ×
+**問題起點：** 目前餐廳卡片和詳情頁的料理類型是一個 Text widget，`formatCuisineType()` 把 `philly_restaurant_type`（逗號分隔）和 `philly_restaurant_type_other_note` 合成一個字串（如 "Italian · Vietnamese"）。這個字串不可點，也無法分辨用戶點的是哪一個類型。
 
-#### 給 Ralph 的 prompt（直接複製貼上）
+**為什麼 "other" 類型必須一起處理：**
+- "other" 的來源：當初讓網友推薦時，表單只列主要類型，以外一律歸 other + 說明。後來從 Yelp 抓類型，不在主要清單的也歸 other。未來店家自行加入也一樣會有 other + note 的情境，這是結構性的，不是暫時現象。
+- 不能用 "Other" chip 近似：Other chip 顯示約 40 家餐廳，但點 "Vietnamese" 的用戶只想看越南菜（可能 1-2 家）。用 Other chip 結果落差太大，比沒反應更糟。
+- 結論：other_note 類型直接比對 `philly_restaurant_type_other_note` 欄位，不走 chip 系統。
+
+**為什麼廢掉 formatCuisineType() 的合成字串：**
+- 要做到「點哪個類型觸發哪個篩選」，必須讓每個類型各自獨立可點。
+- 現在是合成後再在卡片層切開，等於合了又拆，多此一舉。
+- 正確做法：直接從 Firestore 原始值出發，切開後每個值渲染成獨立 widget。
+
+**其他已決定的細節：**
+- 每家餐廳最多 3 種類型（資料設定時就限制了），Ralph 可寫死 3 個 tag 的寬度
+- 每個 tag 寬度固定，超長字串一律 `...` 截斷
+- 卡片層和詳情頁一起做（同一邏輯，兩個入口）
+- 點任何類型標籤（無論有無對應 chip）：push 新的 HomePage 並帶篩選參數，chip 區域不動（不高亮任何 chip）
+- 點 other_note 類型（如 Vietnamese）只篩列表，不高亮 Other chip——因為高亮 Other chip 但只出現 1-2 家會讓用戶困惑
+
+---
+
+### 給 Ralph 的 prompt（直接複製貼上）
 
 ```
 Read CLAUDE.md before starting.
 State your planned approach in 3–4 lines first.
 
 Active contract:
-Contract 12: Add search bar to HomePage — filter by restaurant name
+Contract 14: Tappable cuisine type tags on RestaurantCard and RestaurantDetailPage
 
-Context:
-- HomePage list view has filter chips (cuisine type, multi-select OR logic)
-- filteredRestaurants is the current page state holding the chip-filtered list
-- Goal: add a search bar below the filter chips that further filters
-  filteredRestaurants by restaurant name (AND logic with chips)
-- Real-time: list updates as user types, no submit button needed
+Background:
+- Currently cuisine types are displayed via formatCuisineType() which combines
+  philly_restaurant_type (comma-separated, e.g. "italian,other") and
+  philly_restaurant_type_other_note (e.g. "Vietnamese") into a single Text
+  widget ("Italian · Vietnamese"). This Text is not tappable.
+- This contract replaces that single Text with individual tappable tag widgets,
+  rendered directly from raw Firestore values — no combining step.
+- Tapping a tag navigates to a filtered HomePage showing restaurants of that type.
+- Works for both chip-mapped types (Italian) and other_note types (Vietnamese).
 
 FlutterFlow workspace folder:
 C:\Users\slow3\OneDrive\桌面\GitHubProjects\BYOB\byob-philly
 
-Changes to make:
+Data model:
+- philly_restaurant_type: comma-separated string, max 3 values per restaurant.
+  Known values: italian, mediterranean, japanese, seafood, sushi, pizza, asian,
+  mexican, thai, ramen, french, other, american, indian
+- philly_restaurant_type_other_note: plain string, actual cuisine name when
+  type contains "other" (e.g. "Vietnamese", "Ethiopian")
 
-STEP 1 — Add page state field:
-  - searchText (String, default "")
+STEP 1 — Add custom function: getCuisineDisplayList
+  Parameters:
+    - typeString (String) — philly_restaurant_type raw value
+    - otherNote (String) — philly_restaurant_type_other_note value
+  Returns: List<String>
+  Body: split typeString by comma, trim each value, replace "other" with
+    otherNote (if otherNote is not empty, else keep "Other"), capitalize
+    first letter of each value, return as list.
+  Example: "italian,other", "Vietnamese" → ["Italian", "Vietnamese"]
+  Use app.raw() + updateCustomFunction
 
-STEP 2 — Add custom function searchRestaurantsByName:
+STEP 2 — Add custom function: filterRestaurantsByTypeOrNote
   Parameters:
     - restaurants (List<RestaurantsRecord>)
-    - query (String)
+    - typeValue (String) — the display value tapped (e.g. "Italian" or "Vietnamese")
   Returns: List<RestaurantsRecord>
-  Body: if query is empty or blank, return restaurants unchanged.
-    Otherwise return restaurants where restaurant.name contains
-    query (case-insensitive). Use toLowerCase() on both sides.
-  Use app.raw() + updateCustomFunction (not ensureCustomFunction)
+  Body:
+    - Known chip types (lowercase): italian, mediterranean, japanese, seafood,
+      sushi, pizza, asian, mexican, thai, ramen, french, other, american, indian
+    - If typeValue.toLowerCase() matches a known chip type:
+        return restaurants where philly_restaurant_type contains
+        typeValue.toLowerCase()
+    - Else (it is an other_note value like "Vietnamese"):
+        return restaurants where philly_restaurant_type_other_note
+        contains typeValue (case-insensitive, use toLowerCase() on both sides)
+  Use app.raw() + updateCustomFunction
 
-STEP 3 — Add search bar widget below filter chips:
-  - TextField with hint text "Search restaurants..."
-  - Right side: show × IconButton when searchText is not empty,
-    tapping × clears searchText and resets the text field
-  - Style: white background, border radius 12px, border color #8B2635,
-    height 44px, horizontal padding 16px
-  - On change: SetState searchText = typed value
+STEP 3 — Add page parameter to HomePage:
+  - incomingCuisineFilter (String, default "")
 
-STEP 4 — Wire search into the list:
-  - The restaurant list currently binds to filteredRestaurants
-  - Change the list binding to:
-    searchRestaurantsByName(filteredRestaurants, searchText)
-  - This gives AND logic: chip filter runs first, search runs on top
+STEP 4 — On HomePage page load / initState:
+  If incomingCuisineFilter is not empty:
+    - Set filteredRestaurants = filterRestaurantsByTypeOrNote(
+        allRestaurants, incomingCuisineFilter)
+  Do NOT modify chip state — leave chips showing "All" regardless.
 
-STEP 5 — Apply same search to nearest-3 (map view):
-  - The nearest-3 computation currently uses filteredRestaurants
-  - Also apply searchRestaurantsByName there so map view and list
-    view stay in sync when search is active
+STEP 5 — Replace cuisine Text on RestaurantCard:
+  - Remove the current single Text widget that uses formatCuisineType()
+  - Replace with a Row containing tags built from getCuisineDisplayList()
+  - Each tag style:
+      background: #F8F4EF
+      border: 1px solid #8B2635
+      border radius: 8px
+      horizontal padding: 6px, vertical padding: 2px
+      font size: 11px, color: #8B2635
+      max width: fixed to fit ~12 characters, overflow: ellipsis
+  - Tags separated by 4px horizontal gap
+  - Each tag wrapped in GestureDetector onTap:
+      navigate to HomePage passing incomingCuisineFilter = that tag's display value
+      (e.g. "Italian" or "Vietnamese")
+
+STEP 6 — Replace cuisine Text on RestaurantDetailPage:
+  Same tag rendering as Step 5.
+  Each tag onTap: navigate to HomePage passing
+    incomingCuisineFilter = that tag's display value.
+
+STEP 7 — Leave formatCuisineType() in place (do not delete it).
+  It is no longer used in the UI after Steps 5 and 6, but deleting it
+  may cause DSL errors. Leave it as an unused function.
 
 Constraints:
-- Search bar appears in list view only — do not show in map view
-- Do not change filter chip logic, map widget, or detail page
+- Do not change filter chip logic or chip highlight state
+- No chip gets highlighted when incomingCuisineFilter is applied
 - All user-facing text in English
-- Name field in Firestore is capital N — accessor is .name in DSL
-  (FlutterFlow field key: 1n8bgxro)
-- Use app.raw() + updateCustomFunction for the new custom function
+- Use app.raw() + updateCustomFunction for all new custom functions
 
 DSL push command:
 Remove-Item -Recurse -Force generated_code -ErrorAction SilentlyContinue; dart run dsl/edit.dart --project-id b-y-o-b-philly-a08xby
 
 After push, confirm:
 - 0 FlutterFlow errors
-- searchRestaurantsByName function added
-- Search bar visible below filter chips in list view
-- Typing filters the list in real-time
-- × button clears search
+- RestaurantCard shows individual tappable cuisine tags (not one combined string)
+- RestaurantDetailPage shows individual tappable cuisine tags
+- Tapping "Italian" tag → new HomePage with Italian restaurants, no chip highlighted
+- Tapping "Vietnamese" tag → new HomePage with Vietnamese restaurant(s), no chip highlighted
+- Tags with long names truncate with "..."
 ```
 
 ---
@@ -167,18 +213,9 @@ After push, confirm:
 | 9 | 地圖 markers（GeoPoint migration + Rose pin + zoom 15） | ✅ | 2026-06-24 |
 | 10 | Marker tap 互動（已研究，放棄） | ⛔ FlutterFlow 系統性封鎖，暫緩 | — |
 | 11 | nearest-3 UI 優化（標題 + 料理類型 + padding） | ✅ | 2026-06-24 |
-| 12 | 搜尋列（名稱搜尋，AND 邏輯，real-time） | ⏳ 待執行 | — |
+| 12 | 搜尋列（名稱搜尋，AND 邏輯，real-time） | ✅ | 2026-06-25 |
 | 13 | Chip 更新（Pizza/Sushi/Ramen 新增，American/Indian 移除） | ✅ | 2026-06-24 |
-
-**Contract 8 完成項目：**
-- ✅ 地圖視角 toggle（AppBar icon）
-- ✅ 費城地圖在 Android 實機正常顯示
-- ✅ 底部 nearest-3 卡片（chip 篩選同步）
-- ✅ Google Maps API key 設定（Maps SDK for Android 啟用並加入 allowed list）
-- ✅ SecurityException 修復（showLocation 綁定 hasLocationPermission state）
-- ✅ 使用 FlutterFlow 原生 location action（移除 geolocator custom code）
-- ❌ 位置權限對話框未觸發（manifest 問題，下次優先修）
-- ❌ 餐廳 markers 未顯示（GeoPoint migration 需要）
+| 14 | 料理類型標籤可點篩選（卡片 + 詳情頁） | ⏳ 待執行 | — |
 
 ---
 
@@ -199,7 +236,8 @@ After push, confirm:
 | Firestore GeoPoint + 地圖 markers（Rose pin） | P2 | ✅ |
 | nearest-3 UI 優化（標題 + 料理類型） | P2 | ✅ |
 | Chip 更新（Pizza/Sushi/Ramen） | P2 | ✅ |
-| 搜尋列（名稱搜尋） | P2 | ⏳ Contract 12 |
+| 搜尋列（名稱搜尋） | P2 | ✅ |
+| 料理類型標籤可點篩選 | P2 | ⏳ Contract 14 |
 | Near me 排序 | P2 | ⏳ 暫緩 |
 
 ---
@@ -228,8 +266,8 @@ After push, confirm:
 | `Latitude` | 緯度（大寫 L）→ FlutterFlow model accessor: `.latitude` |
 | `Longitude` | 經度（大寫 L）→ FlutterFlow model accessor: `.longitude` |
 | `cover_image_url` | Firebase Storage URL（小寫） |
-| `philly_restaurant_type` | 料理類型（逗號分隔複合值） |
-| `philly_restaurant_type_other_note` | "other" 的實際類型說明 |
+| `philly_restaurant_type` | 料理類型（逗號分隔，最多 3 個值） |
+| `philly_restaurant_type_other_note` | "other" 的實際類型說明（如 "Vietnamese"） |
 | `philly_corkage_fee` | 開瓶費類型：free / corkage_fee / other |
 | `corkage_fee_amount` | 開瓶費金額（數字，部分為空） |
 
@@ -237,8 +275,7 @@ After push, confirm:
 
 - Filter chips 順序（固定）：All · Italian · Mediterranean · Japanese · Seafood · Sushi · Pizza · Asian · Mexican · Thai · Ramen · French · Other
 - "Other" chip 邏輯：不含 italian / japanese / mediterranean / asian / seafood / mexican / thai / french / american / indian / pizza / sushi / ramen
-- Token 數量（migration 後）：Italian 36、other ~40、Mediterranean 12、Sushi ~10、Japanese 10、Seafood 10、Pizza ~9、Asian 6、Mexican 6、Thai 4、Ramen ~4、French 3
-- `formatCuisineType(typeString, otherNote)`：split comma → replace "other" with note → join " · "
+- Token 數量：Italian 36、other ~40、Mediterranean 12、Sushi ~10、Japanese 10、Seafood 10、Pizza ~9、Asian 6、Mexican 6、Thai 4、Ramen ~4、French 3
 - `haversineDistance`：純算術，無 dart:math（dLat*111, dLng*85, squared proxy）
 - `getNearestThree`：回傳 `copy.take(3).toList().cast<RestaurantsRecord>()`
 - DSL push 指令：`Remove-Item -Recurse -Force generated_code -ErrorAction SilentlyContinue; dart run dsl/edit.dart --project-id b-y-o-b-philly-a08xby`
@@ -254,7 +291,7 @@ After push, confirm:
 | 項目 | 暫緩原因 |
 |------|----------|
 | marker tap → 詳情頁導航 | FlutterFlow 系統性封鎖，三條路全部確認不可行：(1) ON_MARKER_TAP GENERATOR_VARIABLE 封鎖，(2) InfoWindow FlutterFlow 不支援，(3) Camera callbacks 不在 DSL。等 FlutterFlow 原生支援再做。 |
-| Near me 排序 | P2，暫緩 |
+| Near me 排序 | P2，排序依據（距離/名稱/開瓶費優先）尚未決定，暫緩 |
 | 用戶驗證功能 | P3 |
 | Wine Shop 推薦 | P3 |
 | 多城市 | P3 |

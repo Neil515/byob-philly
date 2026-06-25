@@ -49,6 +49,12 @@ final class HomePageState {
         key: "j1pgjuv0",
         typeName: "List<Document<restaurants>>",
       );
+  ffai.ProjectStateFieldHandle get searchText =>
+      const ffai.ProjectStateFieldHandle(
+        name: "searchText",
+        key: "pfgmzy7g",
+        typeName: "String",
+      );
   ffai.ProjectStateFieldHandle get selectedChipTypes =>
       const ffai.ProjectStateFieldHandle(
         name: "selectedChipTypes",
@@ -94,7 +100,7 @@ abstract final class HomePageWidgets {
             slots: <String, List<ffai.ProjectWidgetHandle>>{
               "actions": <ffai.ProjectWidgetHandle>[
                 ffai.ProjectWidgetHandle(
-                  key: "IconButton_4en85z2o",
+                  key: "IconButton_dqhkloxe",
                   type: "IconButton",
                   path: "HomePage.appBar[0].actions[0]",
                   name: "MapToggleButton",
@@ -116,25 +122,25 @@ abstract final class HomePageWidgets {
         ],
         "body": <ffai.ProjectWidgetHandle>[
           ffai.ProjectWidgetHandle(
-            key: "Column_n64ukkwh",
+            key: "Column_mavrvd3j",
             type: "Column",
             path: "HomePage.body[0]",
             name: "HomeBody",
             children: <ffai.ProjectWidgetHandle>[
               ffai.ProjectWidgetHandle(
-                key: "Container_scprv49z",
+                key: "Container_5gpmz08z",
                 type: "Container",
                 path: "HomePage.body[0].children[0]",
                 name: "ChipsStrip",
                 children: <ffai.ProjectWidgetHandle>[
                   ffai.ProjectWidgetHandle(
-                    key: "Wrap_t1d1ypip",
+                    key: "Wrap_zmphfp28",
                     type: "Wrap",
                     path: "HomePage.body[0].children[0].children[0]",
                     name: "ChipsWrap",
                     children: <ffai.ProjectWidgetHandle>[
                       ffai.ProjectWidgetHandle(
-                        key: "Container_fz6vh9xi",
+                        key: "Container_lzqpptaq",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[0]",
                         name: "AllChipSel",
@@ -143,7 +149,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_6r0pov8n",
+                            key: "Text_w10q7bzx",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[0].children[0]",
                             name: "AllChipSelLabel",
@@ -152,7 +158,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_nlypv1cz",
+                        key: "Container_13wzlt77",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[1]",
                         name: "AllChipUnsel",
@@ -161,7 +167,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_7e3y84mx",
+                            key: "Text_hppveg1t",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[1].children[0]",
                             name: "AllChipUnselLabel",
@@ -170,7 +176,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_ofhz75xp",
+                        key: "Container_lkzh96b0",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[2]",
                         name: "ItalianChipSel",
@@ -179,7 +185,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_cb7ylbde",
+                            key: "Text_yo838nj7",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[2].children[0]",
                             name: "ItalianChipSelLabel",
@@ -188,7 +194,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_c30msayl",
+                        key: "Container_ogfa2489",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[3]",
                         name: "ItalianChipUnsel",
@@ -197,7 +203,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_gbx13lz5",
+                            key: "Text_41phlg6j",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[3].children[0]",
                             name: "ItalianChipUnselLabel",
@@ -206,7 +212,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_ffrs3dr2",
+                        key: "Container_6unblyjx",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[4]",
                         name: "MediterraneanChipSel",
@@ -215,7 +221,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_qf20sr2z",
+                            key: "Text_hwhfn8nh",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[4].children[0]",
                             name: "MediterraneanChipSelLabel",
@@ -224,7 +230,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_zuf1ofyc",
+                        key: "Container_plvptwzl",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[5]",
                         name: "MediterraneanChipUnsel",
@@ -233,7 +239,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_2jjbvw8m",
+                            key: "Text_jy5p59pn",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[5].children[0]",
                             name: "MediterraneanChipUnselLabel",
@@ -242,7 +248,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_udnsuyk5",
+                        key: "Container_rol3ngmo",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[6]",
                         name: "JapaneseChipSel",
@@ -251,7 +257,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_rjh0iany",
+                            key: "Text_r42s7q46",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[6].children[0]",
                             name: "JapaneseChipSelLabel",
@@ -260,7 +266,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_y8fs9qgq",
+                        key: "Container_3u35hjm6",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[7]",
                         name: "JapaneseChipUnsel",
@@ -269,7 +275,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_hoc6ks0p",
+                            key: "Text_yi2pxxl4",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[7].children[0]",
                             name: "JapaneseChipUnselLabel",
@@ -278,7 +284,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_qi199jql",
+                        key: "Container_g604qs6v",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[8]",
                         name: "SeafoodChipSel",
@@ -287,7 +293,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_dedleu3l",
+                            key: "Text_2xuvy00g",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[8].children[0]",
                             name: "SeafoodChipSelLabel",
@@ -296,7 +302,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_li0fbr4p",
+                        key: "Container_pflz27y4",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[9]",
                         name: "SeafoodChipUnsel",
@@ -305,7 +311,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_6eebra13",
+                            key: "Text_zlnvw4x5",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[9].children[0]",
                             name: "SeafoodChipUnselLabel",
@@ -314,7 +320,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_3fph08rl",
+                        key: "Container_32o03tmg",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[10]",
                         name: "SushiChipSel",
@@ -323,7 +329,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_jh22eael",
+                            key: "Text_11czptfr",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[10].children[0]",
                             name: "SushiChipSelLabel",
@@ -332,7 +338,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_zo7crruz",
+                        key: "Container_ceb252mp",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[11]",
                         name: "SushiChipUnsel",
@@ -341,7 +347,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_o2pm1kk9",
+                            key: "Text_ptkzxvkw",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[11].children[0]",
                             name: "SushiChipUnselLabel",
@@ -350,7 +356,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_0d18fzr2",
+                        key: "Container_5l42cy4w",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[12]",
                         name: "PizzaChipSel",
@@ -359,7 +365,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_q9ybt582",
+                            key: "Text_yc11maih",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[12].children[0]",
                             name: "PizzaChipSelLabel",
@@ -368,7 +374,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_hr6tbgwc",
+                        key: "Container_772nc0gh",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[13]",
                         name: "PizzaChipUnsel",
@@ -377,7 +383,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_hp4ayy2m",
+                            key: "Text_r6zo3653",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[13].children[0]",
                             name: "PizzaChipUnselLabel",
@@ -386,7 +392,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_81jig0rz",
+                        key: "Container_0ru7nvzx",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[14]",
                         name: "AsianChipSel",
@@ -395,7 +401,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_xq6wdtis",
+                            key: "Text_bxvbmia5",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[14].children[0]",
                             name: "AsianChipSelLabel",
@@ -404,7 +410,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_fvroy5wz",
+                        key: "Container_wwarppbe",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[15]",
                         name: "AsianChipUnsel",
@@ -413,7 +419,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_6qgvn7ah",
+                            key: "Text_869xr51c",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[15].children[0]",
                             name: "AsianChipUnselLabel",
@@ -422,7 +428,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_m0mdsv8z",
+                        key: "Container_5axn1agx",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[16]",
                         name: "MexicanChipSel",
@@ -431,7 +437,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_zzdax4ze",
+                            key: "Text_lu6rvb0r",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[16].children[0]",
                             name: "MexicanChipSelLabel",
@@ -440,7 +446,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_hy51wwdo",
+                        key: "Container_25nacdtk",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[17]",
                         name: "MexicanChipUnsel",
@@ -449,7 +455,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_r24pxjb8",
+                            key: "Text_i47i2j4n",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[17].children[0]",
                             name: "MexicanChipUnselLabel",
@@ -458,7 +464,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_1ki27hoj",
+                        key: "Container_e3xm1g89",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[18]",
                         name: "ThaiChipSel",
@@ -467,7 +473,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_ooscf7tq",
+                            key: "Text_s0nvqy6s",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[18].children[0]",
                             name: "ThaiChipSelLabel",
@@ -476,7 +482,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_qbgzdz5o",
+                        key: "Container_dt160blt",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[19]",
                         name: "ThaiChipUnsel",
@@ -485,7 +491,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_o4z8ayvg",
+                            key: "Text_qe99qrya",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[19].children[0]",
                             name: "ThaiChipUnselLabel",
@@ -494,7 +500,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_yvjhgxdx",
+                        key: "Container_ihlijd7v",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[20]",
                         name: "RamenChipSel",
@@ -503,7 +509,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_wy9v12gz",
+                            key: "Text_ka94y2sg",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[20].children[0]",
                             name: "RamenChipSelLabel",
@@ -512,7 +518,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_c0gend5f",
+                        key: "Container_oslr762m",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[21]",
                         name: "RamenChipUnsel",
@@ -521,7 +527,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_zfl8y6wn",
+                            key: "Text_vqxx29xn",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[21].children[0]",
                             name: "RamenChipUnselLabel",
@@ -530,7 +536,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_ck86cvwj",
+                        key: "Container_tzphkzbx",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[22]",
                         name: "FrenchChipSel",
@@ -539,7 +545,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_j91325r0",
+                            key: "Text_bbngibk1",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[22].children[0]",
                             name: "FrenchChipSelLabel",
@@ -548,7 +554,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_g018lp9h",
+                        key: "Container_gmxz6pu6",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[23]",
                         name: "FrenchChipUnsel",
@@ -557,7 +563,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_j36zdohf",
+                            key: "Text_ysbwem5s",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[23].children[0]",
                             name: "FrenchChipUnselLabel",
@@ -566,7 +572,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_le6seydi",
+                        key: "Container_exdomi5j",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[24]",
                         name: "OtherChipSel",
@@ -575,7 +581,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_b1kd7w9p",
+                            key: "Text_5xiipszx",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[24].children[0]",
                             name: "OtherChipSelLabel",
@@ -584,7 +590,7 @@ abstract final class HomePageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_vxn6mf72",
+                        key: "Container_0nfhegbm",
                         type: "Container",
                         path: "HomePage.body[0].children[0].children[0].children[25]",
                         name: "OtherChipUnsel",
@@ -593,7 +599,7 @@ abstract final class HomePageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Text_a8ok6qia",
+                            key: "Text_9iwc269t",
                             type: "Text",
                             path: "HomePage.body[0].children[0].children[0].children[25].children[0]",
                             name: "OtherChipUnselLabel",
@@ -606,30 +612,65 @@ abstract final class HomePageWidgets {
                 ],
               ),
               ffai.ProjectWidgetHandle(
-                key: "Stack_26e9hcgg",
-                type: "Stack",
+                key: "Container_eq4nwatj",
+                type: "Container",
                 path: "HomePage.body[0].children[1]",
+                name: "SearchBarContainer",
+                children: <ffai.ProjectWidgetHandle>[
+                  ffai.ProjectWidgetHandle(
+                    key: "Row_ou6tlflv",
+                    type: "Row",
+                    path: "HomePage.body[0].children[1].children[0]",
+                    name: "SearchBarRow",
+                    children: <ffai.ProjectWidgetHandle>[
+                      ffai.ProjectWidgetHandle(
+                        key: "TextField_rlxjxry3",
+                        type: "TextField",
+                        path: "HomePage.body[0].children[1].children[0].children[0]",
+                        name: "SearchField",
+                        text: "Search restaurants...",
+                        triggers: const <String>[
+                          "ON_TEXTFIELD_CHANGE",
+                        ],
+                      ),
+                      ffai.ProjectWidgetHandle(
+                        key: "IconButton_p2stslw7",
+                        type: "IconButton",
+                        path: "HomePage.body[0].children[1].children[0].children[1]",
+                        name: "ClearSearchButton",
+                        triggers: const <String>[
+                          "ON_TAP",
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              ffai.ProjectWidgetHandle(
+                key: "Stack_81fvlw2w",
+                type: "Stack",
+                path: "HomePage.body[0].children[2]",
                 name: "ViewToggleStack",
                 children: <ffai.ProjectWidgetHandle>[
                   ffai.ProjectWidgetHandle(
-                    key: "ListView_niadwdjw",
+                    key: "ListView_nnz4kk6l",
                     type: "ListView",
-                    path: "HomePage.body[0].children[1].children[0]",
+                    path: "HomePage.body[0].children[2].children[0]",
                     name: "RestaurantList",
                     children: <ffai.ProjectWidgetHandle>[
                       ffai.ProjectWidgetHandle(
-                        key: "Container_zcv7o3ou",
+                        key: "Container_2iud1s7v",
                         type: "Container",
-                        path: "HomePage.body[0].children[1].children[0].children[0]",
+                        path: "HomePage.body[0].children[2].children[0].children[0]",
                         name: "CardWrapper",
                         triggers: const <String>[
                           "ON_TAP",
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Container_s4ttlcza",
+                            key: "Container_lxqg6ncf",
                             type: "Container",
-                            path: "HomePage.body[0].children[1].children[0].children[0].children[0]",
+                            path: "HomePage.body[0].children[2].children[0].children[0].children[0]",
                             name: "RestaurantCard",
                             componentName: "RestaurantCard",
                           ),
@@ -638,125 +679,125 @@ abstract final class HomePageWidgets {
                     ],
                   ),
                   ffai.ProjectWidgetHandle(
-                    key: "Column_modx6ite",
+                    key: "Column_9ae7he97",
                     type: "Column",
-                    path: "HomePage.body[0].children[1].children[1]",
+                    path: "HomePage.body[0].children[2].children[1]",
                     name: "MapViewColumn",
                     children: <ffai.ProjectWidgetHandle>[
                       ffai.ProjectWidgetHandle(
-                        key: "Container_6xophq27",
+                        key: "Container_wl7r2h4m",
                         type: "Container",
-                        path: "HomePage.body[0].children[1].children[1].children[0]",
+                        path: "HomePage.body[0].children[2].children[1].children[0]",
                         name: "MapArea",
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "GoogleMap_5lvrd8x2",
+                            key: "GoogleMap_pj46mjkp",
                             type: "GoogleMap",
-                            path: "HomePage.body[0].children[1].children[1].children[0].children[0]",
+                            path: "HomePage.body[0].children[2].children[1].children[0].children[0]",
                             name: "MapArea Inner",
                           ),
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_h1qzl0us",
+                        key: "Container_9slklnrb",
                         type: "Container",
-                        path: "HomePage.body[0].children[1].children[1].children[1]",
+                        path: "HomePage.body[0].children[2].children[1].children[1]",
                         name: "NearestCardsSection",
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Column_xdrkzqar",
+                            key: "Column_cny2ngt7",
                             type: "Column",
-                            path: "HomePage.body[0].children[1].children[1].children[1].children[0]",
+                            path: "HomePage.body[0].children[2].children[1].children[1].children[0]",
                             name: "NearestCardsSectionColumn",
                             children: <ffai.ProjectWidgetHandle>[
                               ffai.ProjectWidgetHandle(
-                                key: "Container_kfzws3hy",
+                                key: "Container_4c6ujflt",
                                 type: "Container",
-                                path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[0]",
+                                path: "HomePage.body[0].children[2].children[1].children[1].children[0].children[0]",
                                 name: "NearestTitlePad",
                                 children: <ffai.ProjectWidgetHandle>[
                                   ffai.ProjectWidgetHandle(
-                                    key: "Text_ihzap10f",
+                                    key: "Text_1u7wg329",
                                     type: "Text",
-                                    path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[0].children[0]",
+                                    path: "HomePage.body[0].children[2].children[1].children[1].children[0].children[0].children[0]",
                                     name: "NearestSectionTitle",
                                     text: "BYOBs near you",
                                   ),
                                 ],
                               ),
                               ffai.ProjectWidgetHandle(
-                                key: "ListView_echfrkf9",
+                                key: "ListView_ymey3asl",
                                 type: "ListView",
-                                path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1]",
+                                path: "HomePage.body[0].children[2].children[1].children[1].children[0].children[1]",
                                 name: "NearestCardsList",
                                 children: <ffai.ProjectWidgetHandle>[
                                   ffai.ProjectWidgetHandle(
-                                    key: "Container_z7adaep9",
+                                    key: "Container_m4wmilee",
                                     type: "Container",
-                                    path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0]",
+                                    path: "HomePage.body[0].children[2].children[1].children[1].children[0].children[1].children[0]",
                                     name: "NearestCardWrapper",
                                     triggers: const <String>[
                                       "ON_TAP",
                                     ],
                                     children: <ffai.ProjectWidgetHandle>[
                                       ffai.ProjectWidgetHandle(
-                                        key: "Column_2v0uqzpl",
+                                        key: "Column_n52k0z6t",
                                         type: "Column",
-                                        path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0]",
+                                        path: "HomePage.body[0].children[2].children[1].children[1].children[0].children[1].children[0].children[0]",
                                         name: "NearestCardContent",
                                         children: <ffai.ProjectWidgetHandle>[
                                           ffai.ProjectWidgetHandle(
-                                            key: "Text_5zza79c5",
+                                            key: "Text_b6e3d3ae",
                                             type: "Text",
-                                            path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[0]",
+                                            path: "HomePage.body[0].children[2].children[1].children[1].children[0].children[1].children[0].children[0].children[0]",
                                             name: "NearestCardName",
                                           ),
                                           ffai.ProjectWidgetHandle(
-                                            key: "Text_z0w7ym42",
+                                            key: "Text_sz4m345l",
                                             type: "Text",
-                                            path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[1]",
+                                            path: "HomePage.body[0].children[2].children[1].children[1].children[0].children[1].children[0].children[0].children[1]",
                                             name: "NearestCuisineText",
                                           ),
                                           ffai.ProjectWidgetHandle(
-                                            key: "Container_x8z6hrbe",
+                                            key: "Container_u538r7tl",
                                             type: "Container",
-                                            path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[2]",
+                                            path: "HomePage.body[0].children[2].children[1].children[1].children[0].children[1].children[0].children[0].children[2]",
                                             name: "NearestFreeBadge",
                                             children: <ffai.ProjectWidgetHandle>[
                                               ffai.ProjectWidgetHandle(
-                                                key: "Text_uhjjje2h",
+                                                key: "Text_sltr4k1a",
                                                 type: "Text",
-                                                path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[2].children[0]",
+                                                path: "HomePage.body[0].children[2].children[1].children[1].children[0].children[1].children[0].children[0].children[2].children[0]",
                                                 name: "NearestFreeText",
                                                 text: "Free BYOB",
                                               ),
                                             ],
                                           ),
                                           ffai.ProjectWidgetHandle(
-                                            key: "Container_28vl71bc",
+                                            key: "Container_yj5h5ase",
                                             type: "Container",
-                                            path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[3]",
+                                            path: "HomePage.body[0].children[2].children[1].children[1].children[0].children[1].children[0].children[0].children[3]",
                                             name: "NearestCorkageBadge",
                                             children: <ffai.ProjectWidgetHandle>[
                                               ffai.ProjectWidgetHandle(
-                                                key: "Text_x544uokl",
+                                                key: "Text_fsixfqps",
                                                 type: "Text",
-                                                path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[3].children[0]",
+                                                path: "HomePage.body[0].children[2].children[1].children[1].children[0].children[1].children[0].children[0].children[3].children[0]",
                                                 name: "NearestCorkageText",
                                                 text: "Corkage Fee",
                                               ),
                                             ],
                                           ),
                                           ffai.ProjectWidgetHandle(
-                                            key: "Container_omg9t8oy",
+                                            key: "Container_d346byps",
                                             type: "Container",
-                                            path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[4]",
+                                            path: "HomePage.body[0].children[2].children[1].children[1].children[0].children[1].children[0].children[0].children[4]",
                                             name: "NearestOtherBadge",
                                             children: <ffai.ProjectWidgetHandle>[
                                               ffai.ProjectWidgetHandle(
-                                                key: "Text_8vxw2qro",
+                                                key: "Text_0y56gno1",
                                                 type: "Text",
-                                                path: "HomePage.body[0].children[1].children[1].children[1].children[0].children[1].children[0].children[0].children[4].children[0]",
+                                                path: "HomePage.body[0].children[2].children[1].children[1].children[0].children[1].children[0].children[0].children[4].children[0]",
                                                 name: "NearestOtherText",
                                                 text: "Ask Us",
                                               ),
