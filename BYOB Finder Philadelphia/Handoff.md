@@ -1,12 +1,22 @@
 # BYOB Finder Philadelphia — Progress Handoff
 
-最後更新：2026-06-25
+最後更新：2026-06-29
 
 ---
 
 ## 1. 目前在哪裡停下來
 
-**階段：Contract 12 ✅ 今天完成（搜尋列）。明天執行：Contract 14 — 料理類型標籤可點篩選**
+**階段：Contract 14 部分完成。明天修復：地圖 markers 消失 + Fine Dining 篩選異常**
+
+### Contract 14 完成狀態
+
+| 項目 | 狀態 |
+|------|------|
+| 料理類型標籤（卡片 + 詳情頁） | ✅ 顯示為獨立可點 tag |
+| 點已知類型 tag（Italian 等）→ chip 高亮 | ✅ |
+| 點 other_note 類型（Vietnamese 等）→ 無 chip 高亮 | ✅ |
+| 地圖 Rose pin markers | ❌ C14 後消失，多次修復無效（詳見下方） |
+| Fine Dining 篩選 | ❌ 點選後餐廳列表和 chip 全空白 |
 
 ### Firebase 狀態
 
@@ -61,7 +71,69 @@
 
 ---
 
-## 2. 明天的工作：Contract 14 — 料理類型標籤可點篩選
+## 2. 明天的工作
+
+---
+
+### 工作一：修復地圖 Rose pin markers（最高優先）
+
+#### 來龍去脈
+
+Contract 9 完成時地圖 markers 正常（APK 驗收通過）。Contract 14 push 後 markers 消失。
+
+**根本原因（已確認）：** C14 的 `editPageOnLoad` 改變了 `filteredRestaurants` 的初始化順序，導致 `buildByobContract9` callback 執行時 `filteredRestaurants` 可能尚未有值。
+
+#### 已試過但無效的方法（不要再重複）
+
+| 嘗試 | 做了什麼 | 為何無效 |
+|------|----------|----------|
+| 嘗試 1 | 將 `docMarkers` 從 `filteredRestaurantsId` 改為 `restaurantsId` | Guard condition 仍檢查 `filteredRestaurantsId`，callback 仍 early return |
+| 嘗試 2 | Git diff 找到 C14 改了 guard condition，revert 回 pre-C14 | 同時把 `docMarkers` 也 revert 回 `filteredRestaurantsId`，問題復發 |
+| 嘗試 3 | 完整還原 `buildByobContract9` 至 pre-C14 exact text | C14 的 page load 邏輯（在 callback 外部）仍使 `filteredRestaurants` 為 null，callback 仍 early return |
+| 嘗試 4 | `docMarkers → restaurantsId`，guard → `if (restaurantsId == null) return` | markers 仍未出現，代表問題不只在 data source |
+
+#### 明天的診斷方向
+
+**嘗試 4 後 markers 依然消失，說明問題不在 `docMarkers` 綁定，而在更深層。**
+
+明天要 Ralph 做的事：
+1. 讀取當前 `buildByobContract9` 完整內容，逐行對照 pre-C14 版本（`git show <pre-C14-commit>:dsl/edit.dart | grep -A 100 "buildByobContract9"`），找出除 guard + docMarkers 以外還有哪些差異
+2. 特別檢查：marker 顏色 callback、GeoPoint accessor（`location` 欄位）、Google Maps widget 的 visibility condition
+3. 如果 `buildByobContract9` 完全一致但仍無效，檢查 Google Maps widget 本身（不在 callback 內）是否被 C14 改動過
+4. 最後手段：`git show <pre-C14-commit>:dsl/edit.dart` 取出整個 pre-C14 的 Google Maps widget 區塊，完整替換當前版本
+
+**Pre-C14 的最後好 commit 在 `0n0P5UG8QMuAPXZ9cstg` 之前，用 `git log --oneline` 確認。**
+
+---
+
+### 工作二：調查 Fine Dining 篩選異常
+
+#### 問題描述
+
+點選餐廳卡片上的 "Fine Dining" 類型 tag 後，返回 HomePage：
+- 餐廳列表完全空白
+- chip 篩選也空白（無任何 chip 高亮）
+
+其他類型（Italian、Vietnamese 等）都正常，Fine Dining 是唯一異常。
+
+#### 調查方向（不要直接修，先找原因）
+
+1. **確認 Fine Dining 的資料來源：** 在 Firestore `restaurants` 集合裡，搜尋哪些 document 的 `philly_restaurant_type` 或 `philly_restaurant_type_other_note` 包含 "Fine Dining"（注意大小寫、空格）
+2. **比對實際欄位值：** Fine Dining 可能在 `philly_restaurant_type_other_note` 裡的值不是 "Fine Dining"，而是 "fine dining"、"finedining"、或其他格式
+3. **確認 `filterRestaurantsByTypeOrNote` 的比對邏輯：** 函式用 `toLowerCase()` 做 case-insensitive 比對，但如果欄位值有空格差異或前後空白，仍會失敗
+4. **回報實際欄位值後再決定是否需要修**
+
+---
+
+### ⚠️ 給 Ralph 的提醒（地圖 markers 問題）
+
+- 不要再只改 `buildByobContract9` 的 guard condition 或 `docMarkers` 綁定——已試過無效
+- 不要在未診斷清楚前就 push
+- 診斷步驟：先 read，先 diff，先 report，確認找到新的差異點後才動手
+
+---
+
+## 3. 舊的 Contract 14 prompt（已執行，僅存檔）
 
 ### 背景與設計決策（為何這樣做，不要跳過）
 
@@ -86,7 +158,7 @@
 
 ---
 
-### 給 Ralph 的 prompt（直接複製貼上）
+### 給 Ralph 的 prompt（已執行，僅存檔）
 
 ```
 Read CLAUDE.md before starting.
@@ -215,7 +287,7 @@ After push, confirm:
 | 11 | nearest-3 UI 優化（標題 + 料理類型 + padding） | ✅ | 2026-06-24 |
 | 12 | 搜尋列（名稱搜尋，AND 邏輯，real-time） | ✅ | 2026-06-25 |
 | 13 | Chip 更新（Pizza/Sushi/Ramen 新增，American/Indian 移除） | ✅ | 2026-06-24 |
-| 14 | 料理類型標籤可點篩選（卡片 + 詳情頁） | ⏳ 待執行 | — |
+| 14 | 料理類型標籤可點篩選（卡片 + 詳情頁） | ⚠️ 部分完成，markers 待修 | 2026-06-29 |
 
 ---
 
@@ -237,7 +309,9 @@ After push, confirm:
 | nearest-3 UI 優化（標題 + 料理類型） | P2 | ✅ |
 | Chip 更新（Pizza/Sushi/Ramen） | P2 | ✅ |
 | 搜尋列（名稱搜尋） | P2 | ✅ |
-| 料理類型標籤可點篩選 | P2 | ⏳ Contract 14 |
+| 料理類型標籤可點篩選（tag 顯示 + chip 高亮） | P2 | ⚠️ 部分完成 |
+| 地圖 Rose pin markers | P2 | ❌ C14 後消失，待修 |
+| Fine Dining 篩選異常 | P2 | ❌ 待調查 |
 | Near me 排序 | P2 | ⏳ 暫緩 |
 
 ---
@@ -283,6 +357,8 @@ After push, confirm:
 - Ralph 給 Cowork 的 prompt 一律英文（從 Contract 5 起）
 - **重要**：Ralph 更新 custom function 必須用 `app.raw()` + `updateCustomFunction`，不是 `ensureCustomFunction`（後者只建不更新）
 - **重要**：showLocation 綁定 `hasLocationPermission ?? false`（valueOrDefault<bool>），不可 hardcode true（會導致 SecurityException）
+- **重要（2026-06-29 新增）**：`buildByobContract9` 的 `docMarkers` 必須綁定 `restaurants`（原始 Firestore 資料），不可綁 `filteredRestaurants`（C14 後 page load 順序改變，filteredRestaurants 在 callback 執行時可能為 null）。Guard condition 對應改為 `if (restaurantsId == null) return;`
+- **重要（2026-06-29 新增）**：地圖 markers 問題在 docMarkers + guard 都修正後仍未解決，懷疑問題在更深層（marker color callback 或 Google Maps widget 本身），明天繼續診斷
 
 ---
 

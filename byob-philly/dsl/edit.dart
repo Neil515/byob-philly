@@ -2533,15 +2533,15 @@ void buildByobContract9(App app) {
     if (mapInner == null) return;
     if (mapContainer == null) return;
 
-    // Resolve filteredRestaurants state field identifier
-    FFIdentifier? filteredRestaurantsId;
+    // Resolve restaurants state field identifier
+    FFIdentifier? restaurantsId;
     for (final field in homeWC.classModel.stateFields) {
-      if (field.parameter.identifier.name == 'filteredRestaurants') {
-        filteredRestaurantsId = field.parameter.identifier.deepCopy();
+      if (field.parameter.identifier.name == 'restaurants') {
+        restaurantsId = field.parameter.identifier.deepCopy();
         break;
       }
     }
-    if (filteredRestaurantsId == null) return;
+    if (restaurantsId == null) return;
 
     // Resolve Firestore field identifiers for the navigate params
     FFIdentifier? fldName;
@@ -2587,18 +2587,18 @@ void buildByobContract9(App app) {
     mapInner!.props.googleMap.initialZoomValue =
         FFDoubleValue(inputValue: 15.0);
 
-    // 2c. docMarkers → filteredRestaurants page state
-    final filteredRestVar = FFVariable(
+    // 2c. docMarkers → restaurants page state
+    final restaurantsVar = FFVariable(
       source: FFVariableSource.LOCAL_STATE,
       baseVariable: FFBaseVariable(
         localState: FFLocalStateVariable(
-          fieldIdentifier: filteredRestaurantsId,
+          fieldIdentifier: restaurantsId,
           stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
         ),
       ),
       nodeKeyRef: FFNodeKeyReference(key: homeWC!.node.key),
     );
-    mapInner!.props.googleMap.docMarkers = filteredRestVar;
+    mapInner!.props.googleMap.docMarkers = restaurantsVar;
 
     // 2d. Generator variable on the MapArea CONTAINER (not the inner GoogleMap).
     // The server validator requires GENERATOR_VARIABLE's nodeKeyRef to be a
@@ -2614,7 +2614,7 @@ void buildByobContract9(App app) {
         source: FFVariableSource.LOCAL_STATE,
         baseVariable: FFBaseVariable(
           localState: FFLocalStateVariable(
-            fieldIdentifier: filteredRestaurantsId,
+            fieldIdentifier: restaurantsId,
             stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
           ),
         ),
