@@ -2533,18 +2533,15 @@ void buildByobContract9(App app) {
     if (mapInner == null) return;
     if (mapContainer == null) return;
 
-    // Resolve state field identifiers: restaurants for docMarkers, filteredRestaurants for generator var
+    // Resolve filteredRestaurants state field identifier
     FFIdentifier? filteredRestaurantsId;
-    FFIdentifier? restaurantsId;
     for (final field in homeWC.classModel.stateFields) {
-      switch (field.parameter.identifier.name) {
-        case 'filteredRestaurants':
-          filteredRestaurantsId = field.parameter.identifier.deepCopy();
-        case 'restaurants':
-          restaurantsId = field.parameter.identifier.deepCopy();
+      if (field.parameter.identifier.name == 'filteredRestaurants') {
+        filteredRestaurantsId = field.parameter.identifier.deepCopy();
+        break;
       }
     }
-    if (filteredRestaurantsId == null || restaurantsId == null) return;
+    if (filteredRestaurantsId == null) return;
 
     // Resolve Firestore field identifiers for the navigate params
     FFIdentifier? fldName;
@@ -2590,18 +2587,18 @@ void buildByobContract9(App app) {
     mapInner!.props.googleMap.initialZoomValue =
         FFDoubleValue(inputValue: 15.0);
 
-    // 2c. docMarkers → restaurants page state (full list; always populated after onLoad query).
-    final restaurantsVar = FFVariable(
+    // 2c. docMarkers → filteredRestaurants page state
+    final filteredRestVar = FFVariable(
       source: FFVariableSource.LOCAL_STATE,
       baseVariable: FFBaseVariable(
         localState: FFLocalStateVariable(
-          fieldIdentifier: restaurantsId,
+          fieldIdentifier: filteredRestaurantsId,
           stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
         ),
       ),
       nodeKeyRef: FFNodeKeyReference(key: homeWC!.node.key),
     );
-    mapInner!.props.googleMap.docMarkers = restaurantsVar;
+    mapInner!.props.googleMap.docMarkers = filteredRestVar;
 
     // 2d. Generator variable on the MapArea CONTAINER (not the inner GoogleMap).
     // The server validator requires GENERATOR_VARIABLE's nodeKeyRef to be a
