@@ -140,7 +140,8 @@ Options:
 ''');
 }
 
-/// Top-level builder — applies Contracts 1–6, 8, 9, 11, 12, 13 in one idempotent run.
+/// Top-level builder — applies Contracts 1–6, 8, 9, 12, 14 in one idempotent run.
+/// C11 and C13 are baked into C12's full body rebuild; no separate call needed.
 void buildByobPhilly(App app) {
   buildByobContract1(app);
   buildByobContract2(app);
@@ -150,10 +151,11 @@ void buildByobPhilly(App app) {
   buildByobContract6(app);
   buildByobContract8(app);
   buildByobContract9(app);
-  buildByobContract11(app);
-  buildByobContract13(app);
+  // buildByobContract11(app); // baked into C12
+  // buildByobContract13(app); // baked into C12
   // buildByobContract12AddFn(app); // push 1: done
-  buildByobContract12(app); // push 2: full search bar UI
+  buildByobContract12(app); // push 2: full search bar UI — canonical final body
+  buildByobContract14(app); // tappable cuisine tags
 }
 
 void buildByobContract1(App app) {
@@ -3640,5 +3642,250 @@ return restaurants.where((r) => (r.name ?? '').toLowerCase().contains(q)).toList
       mapViewColumn!.props.column.minSizeValue =
           FFBooleanValue(inputValue: false);
     }
+  });
+}
+
+/// Contract 14: Tappable cuisine type tags on RestaurantCard and RestaurantDetailPage.
+///
+/// 1. Adds getCuisineDisplayList — splits comma-separated type string into display labels.
+/// 2. Adds filterRestaurantsByTypeOrNote — filters by display label. Returns all when
+///    typeValue is empty, so onLoad can call it unconditionally (no If needed).
+/// 3. Adds incomingCuisineFilter param to HomePage; onLoad applies it via the filter fn.
+/// 4. Replaces CuisineText in RestaurantCard with a horizontal ListView of tappable tags.
+/// 5. Same on RestaurantDetailPage. formatCuisineType is left in place.
+void buildByobContract14(App app) {
+  final restaurants = ff.Collections.restaurants;
+
+  // ── 1. getCuisineDisplayList ──────────────────────────────────────────────────
+  const _getCuisineDisplayListCode = r'''if (typeString == null) return <String>[];
+final parts = typeString.split(',').map((p) => p.trim()).toList();
+final result = <String>[];
+for (final p in parts) {
+  if (p.isEmpty) continue;
+  if (p.toLowerCase() == 'other') {
+    final note = (otherNote ?? '').trim();
+    result.add(note.isNotEmpty ? (note[0].toUpperCase() + note.substring(1)) : 'Other');
+  } else {
+    result.add(p[0].toUpperCase() + p.substring(1));
+  }
+}
+return result;''';
+
+  app.raw((project) {
+    if (findCustomFunction(project, name: 'getCuisineDisplayList') == null) {
+      addCustomFunction(
+        project,
+        name: 'getCuisineDisplayList',
+        code: _getCuisineDisplayListCode,
+        description: 'Splits comma-separated cuisine type string into capitalised display labels.',
+      );
+    }
+    FFParameter strParam(String name) => FFParameter(
+          identifier: FFIdentifier(name: name, key: generateRandomAlphaNumericString()),
+          dataType: FFDataTypeV2(scalarType: FFBaseDataType.String),
+        );
+    final returnParam = FFParameter(
+      identifier: FFIdentifier(name: 'returnValue', key: generateRandomAlphaNumericString()),
+      dataType: FFDataTypeV2(scalarType: FFBaseDataType.String),
+    );
+    returnParam.isList = true;
+    updateCustomFunction(
+      project,
+      name: 'getCuisineDisplayList',
+      code: _getCuisineDisplayListCode,
+      arguments: [strParam('typeString'), strParam('otherNote')],
+      returnParameter: returnParam,
+    );
+  });
+
+  final getCuisineDisplayListFn = CustomFunctionHandle(
+    name: 'getCuisineDisplayList',
+    args: {'typeString': string, 'otherNote': string},
+    returnType: listOf(string),
+  );
+
+  // ── 2. filterRestaurantsByTypeOrNote ─────────────────────────────────────────
+  // Returns all restaurants when typeValue is empty — no If action needed in onLoad.
+  const _filterByTypeOrNoteCode = r'''if (restaurants == null) return [];
+const knownTypes = {'italian', 'mediterranean', 'japanese', 'seafood', 'sushi', 'pizza', 'asian', 'mexican', 'thai', 'ramen', 'french', 'other', 'american', 'indian'};
+final tv = (typeValue ?? '').trim();
+if (tv.isEmpty) return restaurants;
+final tvLower = tv.toLowerCase();
+if (knownTypes.contains(tvLower)) {
+  return restaurants.where((r) {
+    final parts = (r.phillyRestaurantType ?? '').split(',').map((p) => p.trim().toLowerCase()).toList();
+    return parts.contains(tvLower);
+  }).toList();
+}
+return restaurants.where((r) {
+  return (r.phillyRestaurantTypeOtherNote ?? '').toLowerCase().contains(tvLower);
+}).toList();''';
+
+  app.raw((project) {
+    final restaurantsColl = project.backend.collections.values
+        .firstWhere((c) => c.identifier.name == 'restaurants');
+    final rid = restaurantsColl.identifier.deepCopy();
+
+    final restaurantsParam = FFParameter(
+      identifier: FFIdentifier(name: 'restaurants', key: generateRandomAlphaNumericString()),
+      dataType: FFDataTypeV2(scalarType: FFBaseDataType.Document, subType: FFSubType(collectionIdentifier: rid)),
+    );
+    restaurantsParam.isList = true;
+
+    final typeValueParam = FFParameter(
+      identifier: FFIdentifier(name: 'typeValue', key: generateRandomAlphaNumericString()),
+      dataType: FFDataTypeV2(scalarType: FFBaseDataType.String),
+    );
+
+    final returnParam = FFParameter(
+      identifier: FFIdentifier(name: 'returnValue', key: generateRandomAlphaNumericString()),
+      dataType: FFDataTypeV2(scalarType: FFBaseDataType.Document, subType: FFSubType(collectionIdentifier: rid.deepCopy())),
+    );
+    returnParam.isList = true;
+
+    if (findCustomFunction(project, name: 'filterRestaurantsByTypeOrNote') == null) {
+      addCustomFunction(
+        project,
+        name: 'filterRestaurantsByTypeOrNote',
+        code: _filterByTypeOrNoteCode,
+        description: 'Filters by cuisine display label. Returns all when typeValue is empty.',
+      );
+    }
+    updateCustomFunction(
+      project,
+      name: 'filterRestaurantsByTypeOrNote',
+      code: _filterByTypeOrNoteCode,
+      arguments: [restaurantsParam, typeValueParam],
+      returnParameter: returnParam,
+    );
+  });
+
+  final filterByTypeOrNoteFn = CustomFunctionHandle(
+    name: 'filterRestaurantsByTypeOrNote',
+    args: {'restaurants': listOf(restaurants), 'typeValue': string},
+    returnType: listOf(restaurants),
+  );
+
+  // ── 3. Add incomingCuisineFilter param to HomePage ───────────────────────────
+  app.editPageParams(ff.Pages.homePage, (params) {
+    params.ensureParam('incomingCuisineFilter', string);
+  });
+
+  // ── 4. Update onLoad — apply cuisine filter unconditionally ──────────────────
+  // filterRestaurantsByTypeOrNote returns all restaurants when typeValue is empty,
+  // so no If action is needed. Chips remain at "All" (selectedChipTypes untouched).
+  final getNearestThreeFn = CustomFunctionHandle(
+    name: 'getNearestThree',
+    args: {'restaurants': listOf(restaurants), 'userLat': double_, 'userLng': double_},
+    returnType: listOf(restaurants),
+  );
+
+  app.editPageOnLoad(ff.Pages.homePage, [
+    FirestoreQuery(restaurants, limit: 100, outputAs: 'loadedRestaurants'),
+    SetState('restaurants', ActionOutput('loadedRestaurants')),
+    SetState('filteredRestaurants', CustomFunction(filterByTypeOrNoteFn, args: {
+      'restaurants': ActionOutput('loadedRestaurants'),
+      'typeValue': Param('incomingCuisineFilter'),
+    })),
+    RequestPermissions(permission: PermissionKind.location),
+    SetState('nearestThree', CustomFunction(getNearestThreeFn, args: {
+      'restaurants': State('filteredRestaurants'),
+      'userLat': State('userLatitude'),
+      'userLng': State('userLongitude'),
+    })),
+  ]);
+
+  // ── 5. Replace CuisineText in RestaurantCard ──────────────────────────────────
+  // ONLY replaces children[0].children[0].children[0].children[1].children[0].children[1]
+  // (the CuisineText Text widget). All other widgets (image, name, badge) are untouched.
+  // A fixed-height Container (24px) wraps the horizontal ListView to give it a
+  // bounded height inside the Column — required for a horizontal scroll view in Flutter.
+  app.editComponent(ff.Components.restaurantCard, (component) {
+    component.ensureReplaced(
+      ff.Components.restaurantCard.widgets
+          .byPath(
+            'RestaurantCard.children[0].children[0].children[0].children[1].children[0].children[1]',
+          )
+          .single,
+      Container(
+        name: 'CuisineTagsContainer',
+        height: 24,
+        child: ListView(
+          name: 'CuisineTagsList',
+          source: CustomFunction(getCuisineDisplayListFn, args: {
+            'typeString': Param('cuisineType'),
+            'otherNote': Param('cuisineTypeNote'),
+          }),
+          horizontal: true,
+          spacing: 4,
+          shrinkWrap: true,
+          itemBuilder: (item) => Container(
+            name: 'CuisineTag',
+            color: Colors.primaryBackground,
+            borderRadius: 8,
+            borderColor: Colors.hex(0xFF8B2635),
+            borderWidth: 1.0,
+            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            onTap: Navigate.to(ff.Pages.homePage, params: {
+              'incomingCuisineFilter': item,
+            }),
+            child: Text(
+              item,
+              name: 'CuisineTagText',
+              color: Colors.hex(0xFF8B2635),
+              style: Styles.labelSmall,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      ),
+    );
+  });
+
+  // ── 6. Replace CuisineText in RestaurantDetailPage ───────────────────────────
+  // ONLY replaces body[0].children[1].children[0].children[1] (CuisineText).
+  // Address, phone, Get Directions, and all other widgets are untouched.
+  app.editPage(ff.Pages.restaurantDetailPage, (page) {
+    page.ensureReplaced(
+      ff.Pages.restaurantDetailPage.widgets
+          .byPath(
+            'RestaurantDetailPage.body[0].children[1].children[0].children[1]',
+          )
+          .single,
+      Container(
+        name: 'CuisineTagsContainer',
+        height: 28,
+        child: ListView(
+          name: 'CuisineTagsList',
+          source: CustomFunction(getCuisineDisplayListFn, args: {
+            'typeString': Param('cuisineType'),
+            'otherNote': Param('cuisineTypeNote'),
+          }),
+          horizontal: true,
+          spacing: 4,
+          shrinkWrap: true,
+          itemBuilder: (item) => Container(
+            name: 'CuisineTag',
+            color: Colors.primaryBackground,
+            borderRadius: 8,
+            borderColor: Colors.hex(0xFF8B2635),
+            borderWidth: 1.0,
+            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            onTap: Navigate.to(ff.Pages.homePage, params: {
+              'incomingCuisineFilter': item,
+            }),
+            child: Text(
+              item,
+              name: 'CuisineTagText',
+              color: Colors.hex(0xFF8B2635),
+              style: Styles.labelSmall,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
+      ),
+    );
   });
 }
