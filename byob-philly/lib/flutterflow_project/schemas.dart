@@ -154,14 +154,18 @@ abstract final class Tables {
 abstract final class CustomCode {
   static const functions = <String>[
     "filterRestaurantsByType",
+    "filterRestaurantsByTypeOrNote",
     "filterRestaurantsByTypes",
     "formatCuisineType",
+    "getChipFilterForTag",
+    "getCuisineDisplayList",
     "getLatFromLocation",
     "getLngFromLocation",
     "getMapsUrl",
     "getNearestThree",
     "getPhoneUrl",
     "haversineDistance",
+    "initChipTypes",
     "isNoneSelected",
     "isTypeSelected",
     "searchRestaurantsByName",

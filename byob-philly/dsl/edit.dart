@@ -2533,15 +2533,18 @@ void buildByobContract9(App app) {
     if (mapInner == null) return;
     if (mapContainer == null) return;
 
-    // Resolve filteredRestaurants state field identifier
+    // Resolve state field identifiers: restaurants for docMarkers, filteredRestaurants for generator var
     FFIdentifier? filteredRestaurantsId;
+    FFIdentifier? restaurantsId;
     for (final field in homeWC.classModel.stateFields) {
-      if (field.parameter.identifier.name == 'filteredRestaurants') {
-        filteredRestaurantsId = field.parameter.identifier.deepCopy();
-        break;
+      switch (field.parameter.identifier.name) {
+        case 'filteredRestaurants':
+          filteredRestaurantsId = field.parameter.identifier.deepCopy();
+        case 'restaurants':
+          restaurantsId = field.parameter.identifier.deepCopy();
       }
     }
-    if (filteredRestaurantsId == null) return;
+    if (filteredRestaurantsId == null || restaurantsId == null) return;
 
     // Resolve Firestore field identifiers for the navigate params
     FFIdentifier? fldName;
@@ -2587,18 +2590,18 @@ void buildByobContract9(App app) {
     mapInner!.props.googleMap.initialZoomValue =
         FFDoubleValue(inputValue: 15.0);
 
-    // 2c. docMarkers → filteredRestaurants page state
-    final filteredRestVar = FFVariable(
+    // 2c. docMarkers → restaurants page state (full list; always populated after onLoad query).
+    final restaurantsVar = FFVariable(
       source: FFVariableSource.LOCAL_STATE,
       baseVariable: FFBaseVariable(
         localState: FFLocalStateVariable(
-          fieldIdentifier: filteredRestaurantsId,
+          fieldIdentifier: restaurantsId,
           stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
         ),
       ),
       nodeKeyRef: FFNodeKeyReference(key: homeWC!.node.key),
     );
-    mapInner!.props.googleMap.docMarkers = filteredRestVar;
+    mapInner!.props.googleMap.docMarkers = restaurantsVar;
 
     // 2d. Generator variable on the MapArea CONTAINER (not the inner GoogleMap).
     // The server validator requires GENERATOR_VARIABLE's nodeKeyRef to be a
@@ -3766,14 +3769,68 @@ return restaurants.where((r) {
     returnType: listOf(restaurants),
   );
 
-  // ── 3. Add incomingCuisineFilter param to HomePage ───────────────────────────
+  // ── 2b. getChipFilterForTag — returns chip key for known types, '' for other_note ──
+  const _getChipFilterCode = r'''const knownTypes = {'italian', 'mediterranean', 'japanese', 'seafood', 'sushi', 'pizza', 'asian', 'mexican', 'thai', 'ramen', 'french', 'other', 'american', 'indian'};
+final lower = (displayLabel ?? '').toLowerCase();
+return knownTypes.contains(lower) ? lower : '';''';
+  app.raw((project) {
+    FFParameter _sp(String n) => FFParameter(
+      identifier: FFIdentifier(name: n, key: generateRandomAlphaNumericString()),
+      dataType: FFDataTypeV2(scalarType: FFBaseDataType.String),
+    );
+    if (findCustomFunction(project, name: 'getChipFilterForTag') == null) {
+      addCustomFunction(project, name: 'getChipFilterForTag', code: _getChipFilterCode,
+          description: 'Returns lowercase chip key for known cuisine types; empty string for other_note types.');
+    }
+    updateCustomFunction(project, name: 'getChipFilterForTag', code: _getChipFilterCode,
+        arguments: [_sp('displayLabel')]);
+  });
+  final getChipFilterForTagFn = CustomFunctionHandle(
+    name: 'getChipFilterForTag',
+    args: {'displayLabel': string},
+    returnType: string,
+  );
+
+  // ── 2c. initChipTypes — resolves selectedChipTypes from page load params
+  // Three outcomes:
+  //   incomingFilter empty          → [] (normal load, All chip highlights)
+  //   incomingFilter non-empty + chipFilter non-empty → [chipFilter] (known type, e.g. Italian)
+  //   incomingFilter non-empty + chipFilter empty     → ['__none__'] (other_note: no chip highlights)
+  const _initChipTypesCode = r'''if (incomingFilter == null || incomingFilter.isEmpty) return <String>[];
+if (chipFilter != null && chipFilter.isNotEmpty) return <String>[chipFilter];
+return <String>['__none__'];''';
+  app.raw((project) {
+    FFParameter _sp(String n) => FFParameter(
+      identifier: FFIdentifier(name: n, key: generateRandomAlphaNumericString()),
+      dataType: FFDataTypeV2(scalarType: FFBaseDataType.String),
+    );
+    final chipTypesReturn = FFParameter(
+      identifier: FFIdentifier(name: 'returnValue', key: generateRandomAlphaNumericString()),
+      dataType: FFDataTypeV2(scalarType: FFBaseDataType.String),
+    );
+    chipTypesReturn.isList = true;
+    if (findCustomFunction(project, name: 'initChipTypes') == null) {
+      addCustomFunction(project, name: 'initChipTypes', code: _initChipTypesCode,
+          description: 'Resolves selectedChipTypes from page params. Returns [] when no filter, [chipFilter] for known types, [\'__none__\'] for other_note types.');
+    }
+    updateCustomFunction(project, name: 'initChipTypes', code: _initChipTypesCode,
+        arguments: [_sp('incomingFilter'), _sp('chipFilter')], returnParameter: chipTypesReturn);
+  });
+  final initChipTypesFn = CustomFunctionHandle(
+    name: 'initChipTypes',
+    args: {'incomingFilter': string, 'chipFilter': string},
+    returnType: listOf(string),
+  );
+
+  // ── 3. Add page params to HomePage ───────────────────────────────────────────
   app.editPageParams(ff.Pages.homePage, (params) {
     params.ensureParam('incomingCuisineFilter', string);
+    params.ensureParam('selectedChipFilter', string);
   });
 
-  // ── 4. Update onLoad — apply cuisine filter unconditionally ──────────────────
-  // filterRestaurantsByTypeOrNote returns all restaurants when typeValue is empty,
-  // so no If action is needed. Chips remain at "All" (selectedChipTypes untouched).
+  // ── 4. Update onLoad — apply cuisine filter + optional chip pre-selection ─────
+  // incomingCuisineFilter drives filteredRestaurants (all types, known + other_note).
+  // selectedChipFilter pre-selects a chip via initChipTypes when non-empty; '' → no chip.
   final getNearestThreeFn = CustomFunctionHandle(
     name: 'getNearestThree',
     args: {'restaurants': listOf(restaurants), 'userLat': double_, 'userLng': double_},
@@ -3786,6 +3843,10 @@ return restaurants.where((r) {
     SetState('filteredRestaurants', CustomFunction(filterByTypeOrNoteFn, args: {
       'restaurants': ActionOutput('loadedRestaurants'),
       'typeValue': Param('incomingCuisineFilter'),
+    })),
+    SetState('selectedChipTypes', CustomFunction(initChipTypesFn, args: {
+      'incomingFilter': Param('incomingCuisineFilter'),
+      'chipFilter': Param('selectedChipFilter'),
     })),
     RequestPermissions(permission: PermissionKind.location),
     SetState('nearestThree', CustomFunction(getNearestThreeFn, args: {
@@ -3828,6 +3889,7 @@ return restaurants.where((r) {
             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             onTap: Navigate.to(ff.Pages.homePage, params: {
               'incomingCuisineFilter': item,
+              'selectedChipFilter': CustomFunction(getChipFilterForTagFn, args: {'displayLabel': item}),
             }),
             child: Text(
               item,
@@ -3874,6 +3936,7 @@ return restaurants.where((r) {
             padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             onTap: Navigate.to(ff.Pages.homePage, params: {
               'incomingCuisineFilter': item,
+              'selectedChipFilter': CustomFunction(getChipFilterForTagFn, args: {'displayLabel': item}),
             }),
             child: Text(
               item,
