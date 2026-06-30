@@ -4,6 +4,6 @@ library;
 
 abstract final class Project {
   static const id = "b-y-o-b-philly-a08xby";
-  static const name = "BYOB Philly";
+  static const name = "BYOB Map";
   static const sdkMetaVersion = 2;
 }

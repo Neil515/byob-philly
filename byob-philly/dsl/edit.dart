@@ -140,7 +140,7 @@ Options:
 ''');
 }
 
-/// Top-level builder — applies Contracts 1–6, 8, 9, 12, 14 in one idempotent run.
+/// Top-level builder — applies Contracts 1–6, 8, 9, 12, 14, 18 in one idempotent run.
 /// C11 and C13 are baked into C12's full body rebuild; no separate call needed.
 void buildByobPhilly(App app) {
   buildByobContract1(app);
@@ -156,6 +156,7 @@ void buildByobPhilly(App app) {
   buildByobContract12(app); // push 2: full search bar UI — canonical final body
   buildByobContract14(app); // tappable cuisine tags
   buildByobContract9(app);  // must run last: raw() configures GoogleMap after C12 body rebuild
+  buildByobContract18(app); // city field + city filter on onLoad query
 }
 
 void buildByobContract1(App app) {
@@ -206,6 +207,7 @@ void buildByobContract1(App app) {
       'corkage_fee_amount': double_,
       'philly_restaurant_type_other_note': string,
       'location': latLng,
+      'city': string,
     },
     description: 'Philadelphia BYOB restaurants — 94 records in Firestore.',
   );
@@ -3719,7 +3721,11 @@ if (knownTypes.contains(tvLower)) {
     return parts.contains(tvLower);
   }).toList();
 }
+// Not a known type: "Fine dining" and similar values live directly in philly_restaurant_type
+// (not in other_note), so check both fields.
 return restaurants.where((r) {
+  final parts = (r.phillyRestaurantType ?? '').split(',').map((p) => p.trim().toLowerCase()).toList();
+  if (parts.contains(tvLower)) return true;
   return (r.phillyRestaurantTypeOtherNote ?? '').toLowerCase().contains(tvLower);
 }).toList();''';
 
@@ -3949,5 +3955,97 @@ return <String>['__none__'];''';
         ),
       ),
     );
+  });
+}
+
+/// Contract 18: Add `city` field to RestaurantsRecord schema + filter onLoad query.
+///
+/// 1. Adds `city` (String) field to the `restaurants` Firestore collection.
+///    This is idempotent — no-op if the field already exists.
+/// 2. Patches the compiled ON_INIT_STATE action chain on HomePage to add
+///    WHERE city == "philadelphia" to the first FFFirestoreQuery found.
+///    The FirestoreQuery DSL action has no filter API, so this is done via raw()
+///    which runs after _compilePages and sees the fully compiled action chain.
+void buildByobContract18(App app) {
+  // ── 1. Add `city` String field to restaurants collection ────────────────────
+  app.raw((project) {
+    for (final coll in project.backend.collections.values) {
+      if (coll.identifier.name != 'restaurants') continue;
+      if (coll.fields.containsKey('city')) break;
+      coll.fields['city'] = FFParameter(
+        identifier: FFIdentifier(
+          name: 'city',
+          key: generateRandomAlphaNumericString(),
+        ),
+        dataType: FFDataTypeV2(scalarType: FFBaseDataType.String),
+      );
+      break;
+    }
+  });
+
+  // ── 2. Patch the compiled onLoad Firestore query with WHERE city == "philadelphia"
+  // raw() runs after _compilePages, so the ON_INIT_STATE chain from C14's
+  // editPageOnLoad is already compiled into the project at this point.
+  app.raw((project) {
+    // Resolve `city` field identifier from the collection
+    FFIdentifier? cityFieldId;
+    for (final coll in project.backend.collections.values) {
+      if (coll.identifier.name != 'restaurants') continue;
+      for (final field in coll.fields.values) {
+        if (field.identifier.name == 'city') {
+          cityFieldId = field.identifier.deepCopy();
+          break;
+        }
+      }
+      break;
+    }
+    if (cityFieldId == null) return;
+
+    // Find HomePage widget class
+    FFWidgetClass? homeWC;
+    for (final wc in project.widgetClasses.values) {
+      if (wc.name == 'HomePage') {
+        homeWC = wc;
+        break;
+      }
+    }
+    if (homeWC == null) return;
+
+    // Build WHERE city == "philadelphia"
+    final cityFilter = FFFirestoreFilter(
+      collectionFieldIdentifier: cityFieldId,
+      relation: FFFirestoreFilter_Relation.EQUAL_TO,
+    );
+    cityFilter.inputValue = FFParameterValue(serializedValue: 'philadelphia');
+
+    final whereClause = FFFirestoreWhere(
+      filters: [FFFirestoreWhere_NestedFilter(baseFilter: cityFilter)],
+      isAnd: true,
+    );
+
+    // Walk the ON_INIT_STATE action chain and patch the first Firestore query.
+    // Uses FFAction.database.firestoreQuery (set by Actions.firestoreQuery).
+    void patchChain(FFActionNode? node) {
+      if (node == null) return;
+      if (node.hasAction()) {
+        final action = node.action;
+        if (action.hasDatabase() && action.database.hasFirestoreQuery()) {
+          final query = action.database.firestoreQuery;
+          if (!query.hasWhere()) {
+            query.where = whereClause;
+          }
+          return; // patched — stop walking
+        }
+      }
+      patchChain(node.followUpAction);
+    }
+
+    for (final triggerAction in homeWC.node.triggerActions) {
+      if (triggerAction.trigger.triggerType ==
+          FFActionTriggerType.ON_INIT_STATE) {
+        patchChain(triggerAction.rootAction);
+        break;
+      }
+    }
   });
 }

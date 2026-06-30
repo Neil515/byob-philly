@@ -85,14 +85,23 @@ abstract final class RestaurantDetailPageWidgets {
       slots: <String, List<ffai.ProjectWidgetHandle>>{
         "appBar": <ffai.ProjectWidgetHandle>[
           ffai.ProjectWidgetHandle(
-            key: "AppBar_3ghjp9k5",
+            key: "AppBar_rvuhtu2w",
             type: "AppBar",
             path: "RestaurantDetailPage.appBar[0]",
-            name: "AppBar",
             slots: <String, List<ffai.ProjectWidgetHandle>>{
+              "leading": <ffai.ProjectWidgetHandle>[
+                ffai.ProjectWidgetHandle(
+                  key: "IconButton_39amxoc3",
+                  type: "IconButton",
+                  path: "RestaurantDetailPage.appBar[0].leading[0]",
+                  triggers: const <String>[
+                    "ON_TAP",
+                  ],
+                ),
+              ],
               "title": <ffai.ProjectWidgetHandle>[
                 ffai.ProjectWidgetHandle(
-                  key: "Text_cwguk6gw",
+                  key: "Text_4p5o03bv",
                   type: "Text",
                   path: "RestaurantDetailPage.appBar[0].title[0]",
                   name: "AppBar Title",
@@ -103,49 +112,49 @@ abstract final class RestaurantDetailPageWidgets {
         ],
         "body": <ffai.ProjectWidgetHandle>[
           ffai.ProjectWidgetHandle(
-            key: "Column_yw9k3kx0",
+            key: "Column_kfh5kl81",
             type: "Column",
             path: "RestaurantDetailPage.body[0]",
             name: "DetailBody",
             children: <ffai.ProjectWidgetHandle>[
               ffai.ProjectWidgetHandle(
-                key: "Image_ilwgjjkg",
+                key: "Image_cpzv7aux",
                 type: "Image",
                 path: "RestaurantDetailPage.body[0].children[0]",
                 name: "CoverImage",
               ),
               ffai.ProjectWidgetHandle(
-                key: "Container_fm00d9jp",
+                key: "Container_xk6ueb7b",
                 type: "Container",
                 path: "RestaurantDetailPage.body[0].children[1]",
                 name: "InfoSection",
                 children: <ffai.ProjectWidgetHandle>[
                   ffai.ProjectWidgetHandle(
-                    key: "Column_nuxaj1y1",
+                    key: "Column_irzyqlle",
                     type: "Column",
                     path: "RestaurantDetailPage.body[0].children[1].children[0]",
                     name: "InfoColumn",
                     children: <ffai.ProjectWidgetHandle>[
                       ffai.ProjectWidgetHandle(
-                        key: "Text_src2w02s",
+                        key: "Text_wsizmnyv",
                         type: "Text",
                         path: "RestaurantDetailPage.body[0].children[1].children[0].children[0]",
                         name: "NameText",
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_lwtxxr2o",
+                        key: "Container_bwnfn7ya",
                         type: "Container",
                         path: "RestaurantDetailPage.body[0].children[1].children[0].children[1]",
                         name: "CuisineTagsContainer",
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "ListView_2r2erazb",
+                            key: "ListView_f5zlbkt3",
                             type: "ListView",
                             path: "RestaurantDetailPage.body[0].children[1].children[0].children[1].children[0]",
                             name: "CuisineTagsList",
                             children: <ffai.ProjectWidgetHandle>[
                               ffai.ProjectWidgetHandle(
-                                key: "Container_5qs8mm3v",
+                                key: "Container_1bqsijl6",
                                 type: "Container",
                                 path: "RestaurantDetailPage.body[0].children[1].children[0].children[1].children[0].children[0]",
                                 name: "CuisineTag",
@@ -154,7 +163,7 @@ abstract final class RestaurantDetailPageWidgets {
                                 ],
                                 children: <ffai.ProjectWidgetHandle>[
                                   ffai.ProjectWidgetHandle(
-                                    key: "Text_yxquppyb",
+                                    key: "Text_v2gz3hig",
                                     type: "Text",
                                     path: "RestaurantDetailPage.body[0].children[1].children[0].children[1].children[0].children[0].children[0]",
                                     name: "CuisineTagText",
@@ -166,19 +175,19 @@ abstract final class RestaurantDetailPageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Row_0f397x4b",
+                        key: "Row_vtio549j",
                         type: "Row",
                         path: "RestaurantDetailPage.body[0].children[1].children[0].children[2]",
                         name: "BadgeRow",
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Container_vd9mexqa",
+                            key: "Container_9nit0rzv",
                             type: "Container",
                             path: "RestaurantDetailPage.body[0].children[1].children[0].children[2].children[0]",
                             name: "FreeBadge",
                             children: <ffai.ProjectWidgetHandle>[
                               ffai.ProjectWidgetHandle(
-                                key: "Text_iru3xhb0",
+                                key: "Text_qn7k7s7t",
                                 type: "Text",
                                 path: "RestaurantDetailPage.body[0].children[1].children[0].children[2].children[0].children[0]",
                                 name: "FreeBadgeText",
@@ -187,13 +196,13 @@ abstract final class RestaurantDetailPageWidgets {
                             ],
                           ),
                           ffai.ProjectWidgetHandle(
-                            key: "Container_pkykwpyv",
+                            key: "Container_rael9dgt",
                             type: "Container",
                             path: "RestaurantDetailPage.body[0].children[1].children[0].children[2].children[1]",
                             name: "CorkageFeeBadge",
                             children: <ffai.ProjectWidgetHandle>[
                               ffai.ProjectWidgetHandle(
-                                key: "Text_pqlld9er",
+                                key: "Text_sq0l7tou",
                                 type: "Text",
                                 path: "RestaurantDetailPage.body[0].children[1].children[0].children[2].children[1].children[0]",
                                 name: "CorkageFeeText",
@@ -202,13 +211,13 @@ abstract final class RestaurantDetailPageWidgets {
                             ],
                           ),
                           ffai.ProjectWidgetHandle(
-                            key: "Container_kf2xtmgq",
+                            key: "Container_n86pfpxc",
                             type: "Container",
                             path: "RestaurantDetailPage.body[0].children[1].children[0].children[2].children[2]",
                             name: "AskUsBadge",
                             children: <ffai.ProjectWidgetHandle>[
                               ffai.ProjectWidgetHandle(
-                                key: "Text_knd1xo4z",
+                                key: "Text_u0f19qy9",
                                 type: "Text",
                                 path: "RestaurantDetailPage.body[0].children[1].children[0].children[2].children[2].children[0]",
                                 name: "AskUsText",
@@ -219,13 +228,13 @@ abstract final class RestaurantDetailPageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_a1jy5h4t",
+                        key: "Container_6y1qgy8e",
                         type: "Container",
                         path: "RestaurantDetailPage.body[0].children[1].children[0].children[3]",
                         name: "Spacer",
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_bapyp4a2",
+                        key: "Container_lwl2cppx",
                         type: "Container",
                         path: "RestaurantDetailPage.body[0].children[1].children[0].children[4]",
                         name: "AddressContainer",
@@ -234,25 +243,25 @@ abstract final class RestaurantDetailPageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Row_o7thn0u3",
+                            key: "Row_xmh14j0r",
                             type: "Row",
                             path: "RestaurantDetailPage.body[0].children[1].children[0].children[4].children[0]",
                             name: "AddressRow",
                             children: <ffai.ProjectWidgetHandle>[
                               ffai.ProjectWidgetHandle(
-                                key: "Icon_bnxkgylm",
+                                key: "Icon_nglshnhi",
                                 type: "Icon",
                                 path: "RestaurantDetailPage.body[0].children[1].children[0].children[4].children[0].children[0]",
                                 name: "Icon",
                               ),
                               ffai.ProjectWidgetHandle(
-                                key: "Container_sodegph3",
+                                key: "Container_5y2w2ck0",
                                 type: "Container",
                                 path: "RestaurantDetailPage.body[0].children[1].children[0].children[4].children[0].children[1]",
                                 name: "Spacer",
                               ),
                               ffai.ProjectWidgetHandle(
-                                key: "Text_wd6q21s3",
+                                key: "Text_g1bf6lx4",
                                 type: "Text",
                                 path: "RestaurantDetailPage.body[0].children[1].children[0].children[4].children[0].children[2]",
                                 name: "AddressText",
@@ -262,7 +271,7 @@ abstract final class RestaurantDetailPageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_oegxh4b6",
+                        key: "Container_3a32no6r",
                         type: "Container",
                         path: "RestaurantDetailPage.body[0].children[1].children[0].children[5]",
                         name: "PhoneContainer",
@@ -271,25 +280,25 @@ abstract final class RestaurantDetailPageWidgets {
                         ],
                         children: <ffai.ProjectWidgetHandle>[
                           ffai.ProjectWidgetHandle(
-                            key: "Row_4jxra11d",
+                            key: "Row_64vkrra7",
                             type: "Row",
                             path: "RestaurantDetailPage.body[0].children[1].children[0].children[5].children[0]",
                             name: "PhoneRow",
                             children: <ffai.ProjectWidgetHandle>[
                               ffai.ProjectWidgetHandle(
-                                key: "Icon_7v7ozlv4",
+                                key: "Icon_52bsl7nx",
                                 type: "Icon",
                                 path: "RestaurantDetailPage.body[0].children[1].children[0].children[5].children[0].children[0]",
                                 name: "Icon",
                               ),
                               ffai.ProjectWidgetHandle(
-                                key: "Container_hqy7i2j2",
+                                key: "Container_yrd6qwvi",
                                 type: "Container",
                                 path: "RestaurantDetailPage.body[0].children[1].children[0].children[5].children[0].children[1]",
                                 name: "Spacer",
                               ),
                               ffai.ProjectWidgetHandle(
-                                key: "Text_uwxan1go",
+                                key: "Text_8c0ftdvw",
                                 type: "Text",
                                 path: "RestaurantDetailPage.body[0].children[1].children[0].children[5].children[0].children[2]",
                                 name: "PhoneText",
@@ -299,13 +308,13 @@ abstract final class RestaurantDetailPageWidgets {
                         ],
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Container_gtkt0amo",
+                        key: "Container_618ij5pd",
                         type: "Container",
                         path: "RestaurantDetailPage.body[0].children[1].children[0].children[6]",
                         name: "Spacer",
                       ),
                       ffai.ProjectWidgetHandle(
-                        key: "Button_ln4dzpja",
+                        key: "Button_6qm284mv",
                         type: "Button",
                         path: "RestaurantDetailPage.body[0].children[1].children[0].children[7]",
                         name: "GetDirectionsButton",

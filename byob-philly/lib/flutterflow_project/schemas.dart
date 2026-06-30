@@ -61,6 +61,13 @@ final class RestaurantsFields extends MapBase<String, ffai.DslType> {
     type: ffai.string,
     description: "",
   );
+  final city = ffai.ProjectCollectionFieldHandle(
+    name: "city",
+    key: "ulfeay3v",
+    typeName: "String",
+    type: ffai.string,
+    description: "",
+  );
   final corkageFeeAmount = ffai.ProjectCollectionFieldHandle(
     name: "corkage_fee_amount",
     key: "mdnizzy9",
@@ -111,6 +118,7 @@ final class RestaurantsFields extends MapBase<String, ffai.DslType> {
     "Longitude",
     "Name",
     "Phone",
+    "city",
     "corkage_fee_amount",
     "cover_image_url",
     "location",
@@ -126,6 +134,7 @@ final class RestaurantsFields extends MapBase<String, ffai.DslType> {
     "Longitude" => longitude,
     "Name" => name,
     "Phone" => phone,
+    "city" => city,
     "corkage_fee_amount" => corkageFeeAmount,
     "cover_image_url" => coverImageUrl,
     "location" => location,
