@@ -150,12 +150,12 @@ void buildByobPhilly(App app) {
   buildByobContract5(app);
   buildByobContract6(app);
   buildByobContract8(app);
-  buildByobContract9(app);
   // buildByobContract11(app); // baked into C12
   // buildByobContract13(app); // baked into C12
   // buildByobContract12AddFn(app); // push 1: done
   buildByobContract12(app); // push 2: full search bar UI — canonical final body
   buildByobContract14(app); // tappable cuisine tags
+  buildByobContract9(app);  // must run last: raw() configures GoogleMap after C12 body rebuild
 }
 
 void buildByobContract1(App app) {
