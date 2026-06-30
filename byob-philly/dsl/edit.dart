@@ -2,6 +2,7 @@ library;
 
 import 'dart:io';
 
+import 'package:fixnum/fixnum.dart' show Int64;
 import 'package:flutterflow_ai/flutterflow_ai.dart';
 import 'package:byob_philly/flutterflow_project.dart' as ff;
 
@@ -157,6 +158,7 @@ void buildByobPhilly(App app) {
   buildByobContract14(app); // tappable cuisine tags
   buildByobContract9(app);  // must run last: raw() configures GoogleMap after C12 body rebuild
   buildByobContract18(app); // city field + city filter on onLoad query
+  buildByobContract19(app); // lock UI values + CuisineTag sizing + DetailPage sizing
 }
 
 void buildByobContract1(App app) {
@@ -326,7 +328,7 @@ void buildByobContract1(App app) {
           .byPath('HomePage.appBar[0].title[0]')
           .single,
       (patch) {
-        patch.text('BYOB Finder Philadelphia');
+        patch.text('BYOB Map');
       },
     );
 
@@ -478,14 +480,14 @@ void buildByobContract2(App app) {
                 name: 'InfoColumn',
                 crossAxis: CrossAxis.start,
                 mainAxis: MainAxis.center,
-                spacing: 4,
+                spacing: 6,
                 children: [
                   // Restaurant name — bold 16 px, primary text
                   Text(
                     Param('restaurantName'),
                     name: 'NameText',
                     style: Styles.titleMedium,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   // Cuisine type — 12 px secondary text
@@ -2182,12 +2184,17 @@ return copy.take(3).toList().cast<RestaurantsRecord>();''',
           iconValue: FFIconValue(
             inputValue: FFIcon(
               iconDataValue: FFIconDataValue(
-                inputValue: FFIconData(name: 'map', family: 'MaterialIcons'),
+                inputValue: FFIconData(name: 'mapMarkedAlt', family: 'FontAwesomeSolid'),
               ),
               sizeValue: FFDoubleValue(inputValue: 24.0),
+              colorValue: FFColorValue(inputValue: FFColor(value: Int64(0xFFFFFFFF))),
             ),
           ),
           buttonSize: FFDim(pixelsValue: FFDoubleValue(inputValue: 40.0)),
+        ),
+        padding: FFPadding(
+          type: FFPadding_PaddingType.FF_PADDING_ONLY,
+          rightValue: FFDoubleValue(inputValue: 8.0),
         ),
       ),
     );
@@ -3875,7 +3882,7 @@ return <String>['__none__'];''';
           .single,
       Container(
         name: 'CuisineTagsContainer',
-        height: 24,
+        height: 28,
         child: ListView(
           name: 'CuisineTagsList',
           source: CustomFunction(getCuisineDisplayListFn, args: {
@@ -3891,7 +3898,7 @@ return <String>['__none__'];''';
             borderRadius: 8,
             borderColor: Colors.hex(0xFF8B2635),
             borderWidth: 1.0,
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             onTap: Navigate.to(ff.Pages.homePage, params: {
               'incomingCuisineFilter': item,
               'selectedChipFilter': CustomFunction(getChipFilterForTagFn, args: {'displayLabel': item}),
@@ -3922,7 +3929,7 @@ return <String>['__none__'];''';
           .single,
       Container(
         name: 'CuisineTagsContainer',
-        height: 28,
+        height: 32,
         child: ListView(
           name: 'CuisineTagsList',
           source: CustomFunction(getCuisineDisplayListFn, args: {
@@ -3938,7 +3945,7 @@ return <String>['__none__'];''';
             borderRadius: 8,
             borderColor: Colors.hex(0xFF8B2635),
             borderWidth: 1.0,
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             onTap: Navigate.to(ff.Pages.homePage, params: {
               'incomingCuisineFilter': item,
               'selectedChipFilter': CustomFunction(getChipFilterForTagFn, args: {'displayLabel': item}),
@@ -3954,6 +3961,76 @@ return <String>['__none__'];''';
           ),
         ),
       ),
+    );
+  });
+}
+
+/// Contract 19: Lock UI values into DSL + CuisineTag sizing + DetailPage sizing.
+///
+/// Part A (lock manually-set values):
+///   1. AppBar title "BYOB Map"             → patched in C1
+///   2. Map toggle: FA map_marked_alt, white, right-pad 8 → patched in C8
+///   3. NameText maxLines=1, InfoColumn spacing=6        → patched in C2
+///
+/// Part B (CuisineTag sizing):
+///   C14 ensureReplaced updated: padding h:10/v:4, height 28/32.
+///   This raw() block patches CuisineTagText to exactly 13px on both surfaces.
+///
+/// Part C (RestaurantDetailPage sizing, ~20% increase):
+///   AddressText 14→17px, PhoneText 14→17px,
+///   GetDirectionsButton text 14→17px + height 52px.
+void buildByobContract19(App app) {
+  // ── Part B: CuisineTagText font size 13px ─────────────────────────────────
+  // C14's ensureReplaced uses Styles.labelSmall (11px). We patch fontSizeValue
+  // to 13px here via raw() after C14 runs, walking by widget name across both
+  // RestaurantCard and RestaurantDetailPage widget classes.
+  app.raw((project) {
+    for (final wc in project.widgetClasses.values) {
+      if (wc.name != 'RestaurantCard' && wc.name != 'RestaurantDetailPage') continue;
+      void walk(FFNode node) {
+        if (node.name == 'CuisineTagText') {
+          node.props.text.fontSizeValue = FFDoubleValue(inputValue: 13.0);
+        }
+        for (final child in node.children) { walk(child); }
+      }
+      walk(wc.node);
+    }
+  });
+
+  // ── Part C: RestaurantDetailPage sizing ───────────────────────────────────
+  app.editPage(ff.Pages.restaurantDetailPage, (page) {
+    // AddressText: bodyMedium (14px) → 17px (~20% increase)
+    // Expanded(Text(...)) does not create a wrapper node — AddressText IS at children[2]
+    page.update(
+      ff.Pages.restaurantDetailPage.widgets
+          .byPath(
+            'RestaurantDetailPage.body[0].children[1].children[0].children[4].children[0].children[2]',
+          )
+          .single,
+      (patch) { patch.fontSize(17); },
+    );
+
+    // PhoneText: bodyMedium (14px) → 17px
+    page.update(
+      ff.Pages.restaurantDetailPage.widgets
+          .byPath(
+            'RestaurantDetailPage.body[0].children[1].children[0].children[5].children[0].children[2]',
+          )
+          .single,
+      (patch) { patch.fontSize(17); },
+    );
+
+    // GetDirectionsButton: font 14→17px, height 40→52px for visual prominence
+    page.update(
+      ff.Pages.restaurantDetailPage.widgets
+          .byPath(
+            'RestaurantDetailPage.body[0].children[1].children[0].children[7]',
+          )
+          .single,
+      (patch) {
+        patch.fontSize(17);
+        patch.size(height: 52);
+      },
     );
   });
 }

@@ -1,22 +1,23 @@
-# BYOB Finder Philadelphia — Progress Handoff
+# BYOB Map — Progress Handoff
 
-最後更新：2026-06-29
+最後更新：2026-06-30（EOD）
 
 ---
 
 ## 1. 目前在哪裡停下來
 
-**階段：Contract 14 部分完成。明天修復：地圖 markers 消失 + Fine Dining 篩選異常**
+**階段：P1 + P2 核心功能全部完成。品牌更名為 BYOB Map。明天第一件事：修 dark mode，然後準備上架。**
 
-### Contract 14 完成狀態
+### 今日完成項目（2026-06-30）
 
-| 項目 | 狀態 |
-|------|------|
-| 料理類型標籤（卡片 + 詳情頁） | ✅ 顯示為獨立可點 tag |
-| 點已知類型 tag（Italian 等）→ chip 高亮 | ✅ |
-| 點 other_note 類型（Vietnamese 等）→ 無 chip 高亮 | ✅ |
-| 地圖 Rose pin markers | ❌ C14 後消失，多次修復無效（詳見下方） |
-| Fine Dining 篩選 | ❌ 點選後餐廳列表和 chip 全空白 |
+| Contract | 內容 | 狀態 |
+|----------|------|------|
+| C15 | 地圖 markers 修復（call order 根本原因診斷） | ✅ |
+| C16 | 地圖 markers 與 filter chips 同步 | ✅ |
+| C17 | Fine Dining 篩選修復（philly_restaurant_type comma-split 比對） | ✅ |
+| C18 | 品牌更名 BYOB Map + multi-city 架構（Firestore city 欄位 + HomePage query filter） | ✅ |
+| C19 | 視覺 polish + DSL 鎖定（App Bar 標題、icon、字體、按鈕尺寸） | ✅ |
+| 手動 | 搜尋欄 X 按鈕修復（Clear Text Fields action + SearchField Initial Value 綁 searchText） | ✅ |
 
 ### Firebase 狀態
 
@@ -53,15 +54,15 @@
 
 | Function | 狀態 | 說明 |
 |----------|------|------|
-| `formatCuisineType` | ✅ 現有，Contract 14 後將不再使用於 UI | split comma → replace "other" → join " · " |
+| `formatCuisineType` | ✅ 留存不刪（C14 後 UI 不再使用，刪除會造成 DSL error） | split comma → replace "other" → join " · " |
 | `filterRestaurantsByType` | ✅ | multi-select chip OR logic，comma-split |
 | `getMapsUrl` | ✅ | 回傳 Google Maps URL |
 | `getPhoneUrl` | ✅ | 回傳 tel: URL |
 | `haversineDistance` | ✅ | 純算術近似（無 dart:math），squared-km proxy |
 | `getNearestThree` | ✅ | 排序後 take(3).cast<RestaurantsRecord>() |
 | `searchRestaurantsByName` | ✅ Contract 12 完成 | 名稱搜尋，case-insensitive |
-| `getCuisineDisplayList` | ⏳ Contract 14 | 回傳 List<String>，取代 formatCuisineType 的顯示用途 |
-| `filterRestaurantsByTypeOrNote` | ⏳ Contract 14 | 同時查 philly_restaurant_type 和 other_note |
+| `getCuisineDisplayList` | ✅ Contract 14 完成 | 回傳 List<String>，取代 formatCuisineType 的顯示用途 |
+| `filterRestaurantsByTypeOrNote` | ✅ Contract 14 完成 | 同時查 philly_restaurant_type 和 other_note |
 
 ### 已知 DSL 問題
 
@@ -71,65 +72,84 @@
 
 ---
 
-## 2. 明天的工作
+## 2. 下一步工作
+
+### 🔴 明天第一項：Dark Mode 修復（C20）
+
+**問題：** App 完全為淺色背景設計（#F8F4EF 米白），用戶手機若開啟深色模式，畫面背景變黑，所有文字、卡片、badge 顯示全部破版。
+
+**截圖已確認：** RestaurantDetailPage 黑底，料理 tag、Free BYOB badge 可見但背景失控；HomePage 黑底，卡片背景消失。
+
+**最快修法（推薦，2 分鐘，不需要 Ralph）：**
+在 FlutterFlow → Settings → App Details → Theme Mode → 選 **"Light"**（強制淺色模式，不跟隨系統）。這是上架前最穩妥的做法，避免為深色模式單獨設計一套顏色。
+
+**如果要真正支援深色模式（需要 Ralph contract）：**
+替每個 Widget 指定 dark mode color variants（背景、文字、badge、卡片等），工作量較大，不建議在上架前做。
+
+→ **執行：FlutterFlow → Settings → App Details → Theme Mode = Light。驗收：深色手機重新下載 APK，確認版面正常。**
 
 ---
 
-### 工作一：修復地圖 Rose pin markers（最高優先）
+### 上架準備（Dark Mode 修復後）
 
-#### 來龍去脈
+以下項目按順序處理：
 
-Contract 9 完成時地圖 markers 正常（APK 驗收通過）。Contract 14 push 後 markers 消失。
+1. **App icon 設計** — 目前是預設 icon，需要 BYOB Map 專屬 icon（1024×1024 PNG）
+2. **Splash screen** — 目前是 placeholder，需替換
+3. **Google Play Store 資料填寫** — 標題、描述、截圖、分類
+4. **APK → AAB 打包** — Google Play 要求 .aab 格式
+5. **Internal testing track** → Closed testing → Production
 
-**根本原因（已確認）：** C14 的 `editPageOnLoad` 改變了 `filteredRestaurants` 的初始化順序，導致 `buildByobContract9` callback 執行時 `filteredRestaurants` 可能尚未有值。
+---
 
-#### 已試過但無效的方法（不要再重複）
+---
+
+## ⚠️ 地圖 Markers 技術記錄（不要刪除，留給以後參考）
+
+### 問題時間軸
+
+Contract 9（2026-06-24）：地圖 markers 正常，APK 驗收通過。
+Contract 14（2026-06-29）：push 後 markers 完全消失。
+Contract 15（2026-06-30）：找到根本原因，markers 重新出現，但失去 filter 同步。
+Contract 16（2026-06-30）：markers 與 filter chips 同步恢復，APK 驗收通過。
+
+### 失敗的修復嘗試（不要重複）
 
 | 嘗試 | 做了什麼 | 為何無效 |
 |------|----------|----------|
 | 嘗試 1 | 將 `docMarkers` 從 `filteredRestaurantsId` 改為 `restaurantsId` | Guard condition 仍檢查 `filteredRestaurantsId`，callback 仍 early return |
 | 嘗試 2 | Git diff 找到 C14 改了 guard condition，revert 回 pre-C14 | 同時把 `docMarkers` 也 revert 回 `filteredRestaurantsId`，問題復發 |
 | 嘗試 3 | 完整還原 `buildByobContract9` 至 pre-C14 exact text | C14 的 page load 邏輯（在 callback 外部）仍使 `filteredRestaurants` 為 null，callback 仍 early return |
-| 嘗試 4 | `docMarkers → restaurantsId`，guard → `if (restaurantsId == null) return` | markers 仍未出現，代表問題不只在 data source |
+| 嘗試 4 | `docMarkers → restaurantsId`，guard → `if (restaurantsId == null) return` | markers 仍未出現，代表問題不在 data source，在更深層 |
 
-#### 明天的診斷方向
+### 根本原因（C15 確認）
 
-**嘗試 4 後 markers 依然消失，說明問題不在 `docMarkers` 綁定，而在更深層。**
+問題不在 `buildByobContract9` 的程式碼本身——pre-C14 和 HEAD 的程式碼幾乎完全一致。
 
-明天要 Ralph 做的事：
-1. 讀取當前 `buildByobContract9` 完整內容，逐行對照 pre-C14 版本（`git show <pre-C14-commit>:dsl/edit.dart | grep -A 100 "buildByobContract9"`），找出除 guard + docMarkers 以外還有哪些差異
-2. 特別檢查：marker 顏色 callback、GeoPoint accessor（`location` 欄位）、Google Maps widget 的 visibility condition
-3. 如果 `buildByobContract9` 完全一致但仍無效，檢查 Google Maps widget 本身（不在 callback 內）是否被 C14 改動過
-4. 最後手段：`git show <pre-C14-commit>:dsl/edit.dart` 取出整個 pre-C14 的 Google Maps widget 區塊，完整替換當前版本
+**真正的原因是 call order（執行順序）：**
 
-**Pre-C14 的最後好 commit 在 `0n0P5UG8QMuAPXZ9cstg` 之前，用 `git log --oneline` 確認。**
+- C12 的 `editPage` 重建了整個 HomePage body，產生了一個帶**新 widget keys** 的 `MapWidget`
+- C9 的 `raw()` callback 在 call-position 3 就先註冊（C12 在 position 8）
+- 結果：C9 的 markers callback 綁在舊的 MapWidget 上，新的 MapWidget 沒有 markers
 
----
+### 最終解法（C15 + C16）
 
-### 工作二：調查 Fine Dining 篩選異常
+**C15**：將 `buildByobContract9` 的執行順序移到 `buildByobContract12`（和 `buildByobContract14`）之後。`docMarkers` 暫時改綁 `restaurantsId`（全部 94 筆）確保不為 null。Markers 重新出現，但不隨 filter 變化。
 
-#### 問題描述
+**C16**：
+1. 確認 `filteredRestaurants` 在 page load 時永遠不為 null（`filterRestaurantsByTypeOrNote` 在 typeValue 為空時直接回傳完整列表）
+2. 將 `docMarkers` 改回綁定 `filteredRestaurantsId`
+3. Guard condition：`if (filteredRestaurantsId == null) return;`
+4. Call-position 保持 C15 的順序不變
 
-點選餐廳卡片上的 "Fine Dining" 類型 tag 後，返回 HomePage：
-- 餐廳列表完全空白
-- chip 篩選也空白（無任何 chip 高亮）
+結果：markers 與 chip 篩選、搜尋、incomingCuisineFilter 全部同步。
 
-其他類型（Italian、Vietnamese 等）都正常，Fine Dining 是唯一異常。
+### DSL 架構注意事項
 
-#### 調查方向（不要直接修，先找原因）
-
-1. **確認 Fine Dining 的資料來源：** 在 Firestore `restaurants` 集合裡，搜尋哪些 document 的 `philly_restaurant_type` 或 `philly_restaurant_type_other_note` 包含 "Fine Dining"（注意大小寫、空格）
-2. **比對實際欄位值：** Fine Dining 可能在 `philly_restaurant_type_other_note` 裡的值不是 "Fine Dining"，而是 "fine dining"、"finedining"、或其他格式
-3. **確認 `filterRestaurantsByTypeOrNote` 的比對邏輯：** 函式用 `toLowerCase()` 做 case-insensitive 比對，但如果欄位值有空格差異或前後空白，仍會失敗
-4. **回報實際欄位值後再決定是否需要修**
-
----
-
-### ⚠️ 給 Ralph 的提醒（地圖 markers 問題）
-
-- 不要再只改 `buildByobContract9` 的 guard condition 或 `docMarkers` 綁定——已試過無效
-- 不要在未診斷清楚前就 push
-- 診斷步驟：先 read，先 diff，先 report，確認找到新的差異點後才動手
+- `buildByobContract9` **必須** 在 `buildByobContract12` 和 `buildByobContract14` 之後執行（在 `buildByobPhilly` 內的順序）
+- `docMarkers` **必須** 綁定 `filteredRestaurantsId`（不是 `restaurantsId`）
+- `filteredRestaurants` 在 page load 時必須初始化為完整列表（不可為 null）
+- 這三個條件缺一不可，任何一個變動都可能讓 markers 再次消失
 
 ---
 
@@ -287,7 +307,12 @@ After push, confirm:
 | 11 | nearest-3 UI 優化（標題 + 料理類型 + padding） | ✅ | 2026-06-24 |
 | 12 | 搜尋列（名稱搜尋，AND 邏輯，real-time） | ✅ | 2026-06-25 |
 | 13 | Chip 更新（Pizza/Sushi/Ramen 新增，American/Indian 移除） | ✅ | 2026-06-24 |
-| 14 | 料理類型標籤可點篩選（卡片 + 詳情頁） | ⚠️ 部分完成，markers 待修 | 2026-06-29 |
+| 14 | 料理類型標籤可點篩選（卡片 + 詳情頁） | ✅ | 2026-06-29 |
+| 15 | 地圖 markers 修復（call order 根本原因診斷） | ✅ | 2026-06-30 |
+| 16 | 地圖 markers 與 filter chips 同步 | ✅ | 2026-06-30 |
+| 17 | Fine Dining 篩選修復（philly_restaurant_type comma-split 比對） | ✅ | 2026-06-30 |
+| 18 | 品牌更名 BYOB Map + multi-city 架構（Firestore city 欄位 migration + HomePage WHERE city=="philadelphia"） | ✅ | 2026-06-30 |
+| 19 | 視覺 polish + DSL 鎖定（AppBar 標題、mapMarkedAlt icon、字體、Get Directions 按鈕高度） | ✅ | 2026-06-30 |
 
 ---
 
@@ -309,9 +334,9 @@ After push, confirm:
 | nearest-3 UI 優化（標題 + 料理類型） | P2 | ✅ |
 | Chip 更新（Pizza/Sushi/Ramen） | P2 | ✅ |
 | 搜尋列（名稱搜尋） | P2 | ✅ |
-| 料理類型標籤可點篩選（tag 顯示 + chip 高亮） | P2 | ⚠️ 部分完成 |
-| 地圖 Rose pin markers | P2 | ❌ C14 後消失，待修 |
-| Fine Dining 篩選異常 | P2 | ❌ 待調查 |
+| 料理類型標籤可點篩選（tag 顯示 + chip 高亮） | P2 | ✅ |
+| 地圖 Rose pin markers（與 filter 同步） | P2 | ✅ C15 + C16 修復 |
+| Fine Dining 篩選修復 | P2 | ✅ C17 完成 |
 | Near me 排序 | P2 | ⏳ 暫緩 |
 
 ---
@@ -345,6 +370,45 @@ After push, confirm:
 | `philly_corkage_fee` | 開瓶費類型：free / corkage_fee / other |
 | `corkage_fee_amount` | 開瓶費金額（數字，部分為空） |
 
+### ⚠️ 手動改動保護清單（Ralph 不可覆蓋）
+
+以下項目已在 DSL（C19）鎖定，Ralph 的任何 contract 觸碰 HomePage 時必須確保以下值：
+
+| 項目 | 值 | DSL 狀態 |
+|------|-----|------|
+| App Bar 標題 | `BYOB Map` | ✅ C19 已鎖入 DSL |
+| 地圖 toggle icon | `FontAwesome.mapMarkedAlt`，顏色 #FFFFFF，右 padding 8 | ✅ C19 已鎖入 DSL |
+| RestaurantCard NameText | maxLines=1，overflow=ellipsis | ✅ C19 已鎖入 DSL |
+| Project / Display Name | `BYOB Map` | FlutterFlow Settings → App Details |
+| Package Name | `com.smalltoolsstudio.byobmap` | FlutterFlow Settings → App Details |
+
+**⚠️ Font Awesome icon 正確名稱：`FontAwesome.mapMarkedAlt`（camelCase）**
+錯誤寫法：`map_marked_alt`、`mapmarkedalt` → FlutterFlow validator 會 reject。
+
+**每個 Ralph prompt 的 Constraints 區塊必須加上：**
+```
+Do not change the App Bar title (must be "BYOB Map").
+Do not change the map toggle icon (must be FontAwesome.mapMarkedAlt, color #FFFFFF, right padding 8).
+Do not change the package name (com.smalltoolsstudio.byobmap) or display name (BYOB Map).
+```
+
+### C18 Multi-city 架構紀錄
+
+- Firestore `restaurants` 集合：所有 95 筆文件已加入 `city: "philadelphia"` 欄位（Node.js firebase-admin migration）
+- HomePage Firestore query：`WHERE city == "philadelphia"`（field key: `ulfeay3v`）
+- 未來新城市：新增文件時帶 `city: "chicago"` 等，query 改為對應 city 即可
+- 為何單 App 不換殼：App Store 4.3 policy 禁止同一 binary 換 metadata 重複上架；multi-city 在同一 App 用 filter 切換是合規做法
+
+### 搜尋欄 X 按鈕修復紀錄（手動，非 DSL）
+
+- Action 1: Update Page State → searchText → [Empty String] + Rebuild Current Page
+- Action 2: Update Page State → filteredRestaurants → filterRestaurantsByTypes(a,b) + Rebuild
+- Action 3: Update Page State → nearestThree → getNearestThree(a,b,c) + Rebuild
+- Action 4: **Clear Text Fields**（Widget Action，target = SearchField）← 這個清除 TextField controller 顯示文字
+- SearchField Initial Value 綁 `searchText`（確保頁面初次載入時搜尋欄為空）
+
+---
+
 ### 其他注意事項
 
 - Filter chips 順序（固定）：All · Italian · Mediterranean · Japanese · Seafood · Sushi · Pizza · Asian · Mexican · Thai · Ramen · French · Other
@@ -357,8 +421,7 @@ After push, confirm:
 - Ralph 給 Cowork 的 prompt 一律英文（從 Contract 5 起）
 - **重要**：Ralph 更新 custom function 必須用 `app.raw()` + `updateCustomFunction`，不是 `ensureCustomFunction`（後者只建不更新）
 - **重要**：showLocation 綁定 `hasLocationPermission ?? false`（valueOrDefault<bool>），不可 hardcode true（會導致 SecurityException）
-- **重要（2026-06-29 新增）**：`buildByobContract9` 的 `docMarkers` 必須綁定 `restaurants`（原始 Firestore 資料），不可綁 `filteredRestaurants`（C14 後 page load 順序改變，filteredRestaurants 在 callback 執行時可能為 null）。Guard condition 對應改為 `if (restaurantsId == null) return;`
-- **重要（2026-06-29 新增）**：地圖 markers 問題在 docMarkers + guard 都修正後仍未解決，懷疑問題在更深層（marker color callback 或 Google Maps widget 本身），明天繼續診斷
+- **重要（2026-06-30 最終確認）**：地圖 markers 的三個必要條件（缺一不可）：(1) `buildByobContract9` 必須在 `buildByobContract12` 和 `buildByobContract14` 之後執行；(2) `docMarkers` 綁定 `filteredRestaurantsId`；(3) `filteredRestaurants` 在 page load 時不為 null。詳見「地圖 Markers 技術記錄」章節。
 
 ---
 
