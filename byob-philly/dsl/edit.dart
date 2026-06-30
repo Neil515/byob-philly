@@ -2533,15 +2533,16 @@ void buildByobContract9(App app) {
     if (mapInner == null) return;
     if (mapContainer == null) return;
 
-    // Resolve restaurants state field identifier
-    FFIdentifier? restaurantsId;
+    // Resolve filteredRestaurants state field identifier
+    // C16: markers must reflect the active chip/search filter, not the full list.
+    FFIdentifier? filteredRestaurantsId;
     for (final field in homeWC.classModel.stateFields) {
-      if (field.parameter.identifier.name == 'restaurants') {
-        restaurantsId = field.parameter.identifier.deepCopy();
+      if (field.parameter.identifier.name == 'filteredRestaurants') {
+        filteredRestaurantsId = field.parameter.identifier.deepCopy();
         break;
       }
     }
-    if (restaurantsId == null) return;
+    if (filteredRestaurantsId == null) return;
 
     // Resolve Firestore field identifiers for the navigate params
     FFIdentifier? fldName;
@@ -2587,18 +2588,19 @@ void buildByobContract9(App app) {
     mapInner!.props.googleMap.initialZoomValue =
         FFDoubleValue(inputValue: 15.0);
 
-    // 2c. docMarkers → restaurants page state
-    final restaurantsVar = FFVariable(
+    // 2c. docMarkers → filteredRestaurants page state
+    // C16: using filteredRestaurants so markers update when a chip or search is active.
+    final filteredVar = FFVariable(
       source: FFVariableSource.LOCAL_STATE,
       baseVariable: FFBaseVariable(
         localState: FFLocalStateVariable(
-          fieldIdentifier: restaurantsId,
+          fieldIdentifier: filteredRestaurantsId,
           stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
         ),
       ),
       nodeKeyRef: FFNodeKeyReference(key: homeWC!.node.key),
     );
-    mapInner!.props.googleMap.docMarkers = restaurantsVar;
+    mapInner!.props.googleMap.docMarkers = filteredVar;
 
     // 2d. Generator variable on the MapArea CONTAINER (not the inner GoogleMap).
     // The server validator requires GENERATOR_VARIABLE's nodeKeyRef to be a
@@ -2614,7 +2616,7 @@ void buildByobContract9(App app) {
         source: FFVariableSource.LOCAL_STATE,
         baseVariable: FFBaseVariable(
           localState: FFLocalStateVariable(
-            fieldIdentifier: restaurantsId,
+            fieldIdentifier: filteredRestaurantsId,
             stateVariableType: FFStateVariableType.WIDGET_CLASS_STATE,
           ),
         ),
