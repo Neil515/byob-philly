@@ -1,14 +1,33 @@
 # BYOB Map — Progress Handoff
 
-最後更新：2026-06-30（EOD）
+最後更新：2026-07-01（EOD）
 
 ---
 
 ## 1. 目前在哪裡停下來
 
-**階段：P1 + P2 核心功能全部完成。品牌更名為 BYOB Map。明天第一件事：修 dark mode，然後準備上架。**
+**階段：App 功能與視覺全部完成，Google Play 上架資料填寫進行到最後一哩路。應用程式內容聲明（廣告/內容分級/目標對象/資料安全性/政府/金融/健康/廣告ID）全部完成。剩「應用程式類別與聯絡資料」「商店資訊（含截圖）」兩項，明天從這兩項開始，做完就可以送審。**
 
-### 今日完成項目（2026-06-30）
+### 👉 明天第一件事
+
+打開 Google Play Console → BYOB Map → 資訊主頁，下滑到「管理應用程式的設定和呈現方式」，兩個連結都可以點（跟已完成項目不同，這兩項本來就還沒填，是有連結的）：
+1. 「選取應用程式類別並提供詳細聯絡資料」— 類別選 **Food & Drink**（`store-listing/play_store_listing.md` 已經寫好），聯絡資料填 Email（`byobmap.tw@gmail.com`，其他欄位視 Play 要求填）
+2. 「設定商店資訊」— 標題/簡短說明/完整說明直接複製 `store-listing/play_store_listing.md`，圖示已經有（`icon/icon-legacy-1024.png`），還缺手機截圖（至少 2 張，建議用 FlutterFlow 預覽或實機截 HomePage + RestaurantDetailPage）和 Feature graphic（1024×500，目前還沒做，這個可能需要跟 Neil 討論怎麼生成）
+
+兩項都填完後，回「發布總覽」把 Internal Testing 的變更送交審查。
+
+### 今日完成項目（2026-07-01）
+
+| Contract | 內容 | 狀態 |
+|----------|------|------|
+| C20 | Dark Mode 修復（FlutterFlow Theme → Colors → Dark Mode Theme 手動填值，非原計畫的 force Light） | ✅ |
+| 手動 | 料理 tag 背景寫死 #F8F4EF（light/dark 都用同一色，不跟 Secondary Background 走） | ✅ |
+| 手動 | 料理 tag 字體 16px、badge 字體 14px（列表卡片 + 詳情頁一致） | ✅ |
+| 文件 | Google Play 上架文案草稿（標題/簡短說明/完整說明） → `store-listing/play_store_listing.md` | ✅ |
+| Play Console | 廣告聲明、內容分級、目標對象、資料安全性、政府/金融/健康聲明、廣告 ID 全部完成 | ✅ |
+| 修復 | 發現並補上 Firebase Performance Monitoring 未揭露問題（隱私政策 + 資料安全性表單） | ✅ |
+
+### 昨日完成項目（2026-06-30）
 
 | Contract | 內容 | 狀態 |
 |----------|------|------|
@@ -72,33 +91,169 @@
 
 ---
 
-## 2. 下一步工作
+## 1.3.5 ✅ App Icon（2026-07-01 完成）
 
-### 🔴 明天第一項：Dark Mode 修復（C20）
-
-**問題：** App 完全為淺色背景設計（#F8F4EF 米白），用戶手機若開啟深色模式，畫面背景變黑，所有文字、卡片、badge 顯示全部破版。
-
-**截圖已確認：** RestaurantDetailPage 黑底，料理 tag、Free BYOB badge 可見但背景失控；HomePage 黑底，卡片背景消失。
-
-**最快修法（推薦，2 分鐘，不需要 Ralph）：**
-在 FlutterFlow → Settings → App Details → Theme Mode → 選 **"Light"**（強制淺色模式，不跟隨系統）。這是上架前最穩妥的做法，避免為深色模式單獨設計一套顏色。
-
-**如果要真正支援深色模式（需要 Ralph contract）：**
-替每個 Widget 指定 dark mode color variants（背景、文字、badge、卡片等），工作量較大，不建議在上架前做。
-
-→ **執行：FlutterFlow → Settings → App Details → Theme Mode = Light。驗收：深色手機重新下載 APK，確認版面正常。**
+- 定案圖：地圖釘融合酒杯剪影，酒紅漸層 + 米白負空間杯身，無金色（在鎖定設計系統色系內）。原始檔存在 `icon/` 資料夾（ChatGPT 產出，1254×1254）
+- 已產出三個版本：
+  - `icon/icon-legacy-1024.png` — 完整方形、含背景色，給一般 Launcher Icon / Play Store / 未來 iOS 用
+  - `icon/icon-adaptive-foreground.png` — 去背透明，圖案縮到畫布 55% 置中（安全區內），給 Android Adaptive Icon 用
+  - `icon/icon-adaptive-background.png` — 純 #F8F4EF 色塊，備用（FlutterFlow 這版是用 Background Type 色票直接選色，不用這個檔案）
+- FlutterFlow 設定位置：Settings → App Assets
+  - Launcher Icon → App Launcher Icon：已上傳 `icon-legacy-1024.png` ✅
+  - Android Adaptive Icon → Foreground Icon：已上傳 `icon-adaptive-foreground.png` ✅
+  - Background Type：Color，`#F8F4EF` ✅
+  - Preview（方形 + 圓形遮罩）確認圖案完整無裁切 ✅
+- ⚠️ **重要坑**：FlutterFlow 明確提示「Foreground Icon 這張圖也會被拿去當 iOS/Web 版的圖示」。目前這張是透明去背、圖案縮小置中的版本，iOS 不支援透明圖示，直接用會破版。**等以後真的要做 iOS 版，Foreground Icon 欄位要換成 `icon-legacy-1024.png`（完整方形有背景那張），不能沿用 Android adaptive 用的透明版。**
+- 備選圖（未採用，留底）：金色外框版本，同樣存在 `icon/` 資料夾原始檔中（ChatGPT Image ...02_16_23.png）
 
 ---
 
-### 上架準備（Dark Mode 修復後）
+## 1.3.6 ✅ Splash Screen（2026-07-01 完成）
 
-以下項目按順序處理：
+FlutterFlow → Settings → App Assets → Splash：
+- Initial Splash Image：`icon-adaptive-foreground.png`（透明去背版）
+- Image Fit：Contain（等比例不變形）
+- Width：240px（Height 留空自動等比例）
+- Background Color：`#F8F4EF`（跟 HomePage 背景一致，切換無色差）
+- Pre-loading Color：`#8B2635`（讀取指示顏色，品牌酒紅）
+- Min Duration：留空（不人為拖慢啟動，符合「30 秒內開始導航」原則）
 
-1. **App icon 設計** — 目前是預設 icon，需要 BYOB Map 專屬 icon（1024×1024 PNG）
-2. **Splash screen** — 目前是 placeholder，需替換
-3. **Google Play Store 資料填寫** — 標題、描述、截圖、分類
-4. **APK → AAB 打包** — Google Play 要求 .aab 格式
-5. **Internal testing track** → Closed testing → Production
+---
+
+## 1.3.7 ✅ AAB 打包（2026-07-01 完成）
+
+- Flutter 專案本機路徑：`C:\Launch\byob-map\b_y_o_b_map\`（FlutterFlow Download Code 解壓出來的，內層資料夾名稱 `b_y_o_b_map` 是自動產生的 snake_case 專案名）
+- 簽名設定：`android\key.properties`（storeFile 指向 `C:/Launch/byobmap.jks`，alias `byobmap`）+ `android\app\build.gradle` 的 `buildTypes.release.signingConfig` 改成 `signingConfigs.release`
+- Build 指令：`flutter build appbundle --release`
+- 產出：`C:\Launch\byob-map\b_y_o_b_map\build\app\outputs\bundle\release\app-release.aab`（44.3 MB，正式簽名，非 debug）
+- ⚠️ **下次 Download Code 後這兩個設定會被洗掉**（FlutterFlow 重新產生 android 資料夾），要重新做一次 Step 1 + Step 2（key.properties 建立 + build.gradle 那一行改簽名），才能再 build 出正式簽名的 AAB
+
+---
+
+## 1.3.7b AAB 打包 — 從房仲 App 專案學到的坑（背景資訊）
+
+參考了另一個專案（Realtors Follow-up，`Realtors_Followup_Progress_Handoff.md`）已經走過的 AAB 上架流程，記錄下通用的風險點：
+
+- **Download Code 每次都會重新產生 `android/app/build.gradle`**，任何手動加的 signingConfig 會被洗掉，代表簽名設定不是設一次就好，是**每次重新 Download Code 後都要重新加回去**。
+- **Download Code 也會把 `pubspec.yaml` 版本號還原**（房仲那專案是還原成 `1.0.0+1`），每次要手動改回正確版本號。
+- **google-services.json 可能也會被 Download Code 覆蓋**——BYOB Map 有沒有這個問題待確認（下次 Download Code 後檢查 `android/app/google-services.json` 是否還是正確的 Firebase 設定，不是的話要找備份或從 Firebase Console 重新下載）。
+- 房仲專案用 **Android Studio 內建 keytool**：`C:\Program Files\Android\Android Studio\jbr\bin\keytool.exe`（代表這台電腦有裝 Android Studio，BYOB Map 產生金鑰也可以用這個路徑）
+- 房仲專案有一行 `flutter pub remove package_info_plus`，是**該專案專屬的依賴問題**，不確定 BYOB Map 是否也有，不要照抄，先看 build 有沒有報錯再說
+- ⚠️ 房仲專案筆記提到「`dart run` 在這台機器被 Windows Application Control Policy 封鎖」——但 BYOB Map 這邊 `dart run dsl/edit.dart` 目前為止都跑得動（見上方 Contract 紀錄），兩邊經驗不一致，暫時不確定原因，如果哪天 DSL push 突然失敗且錯誤跟 Application Control Policy 有關，記得回頭查這條
+
+**BYOB Map 專屬簽名金鑰**：✅ 已產生（2026-07-01）
+- 路徑：`C:\Launch\byobmap.jks`（跟其他 App 的 keystore 放在同一個資料夾，不在任何 git repo 底下）
+- Alias：`byobmap`
+- 密碼：`neil7878`（跟 realtors-followup 共用同一組密碼，非最佳實務但為 Neil 已知取捨）
+- ⚠️ 務必額外備份這個 .jks 檔案到密碼管理器或雲端加密硬碟，弄丟或忘記密碼會導致這個 App 以後無法更新
+- 原本暫存在 `BYOB Finder Philadelphia` 專案資料夾裡的那份已搬到 `C:\Launch\`，`.gitignore` 的 `*.jks` 規則保留當作雙重防護
+
+---
+
+## 1.3.8 Google Play Console 上架流程進行中（最後更新 2026-07-01）
+
+- App 條目已建立：BYOB Map，`com.smalltoolsstudio.byobmap`，帳戶：Small Tools Studio
+- 內部測試已發布（app-release.aab 上傳成功，簽名正確，無 debug 簽名錯誤）
+- **⚠️ 內容分級問卷重要教訓**：「應用是否重點推廣或銷售通常有年齡限制的物品或活動（如菸酒）」這題**務必選「否」**。選「是」的話，即使後面所有子問題都誠實填「否」（不專注推銷酒精等），系統還是會把整個 App 判定為「著重在針對年齡限制商品促銷」，導致巴西/北美/歐洲/德國/南韓幾乎全部跳到 18+ 或 Mature 分級，完全不合理。改選「否」之後分級才正常（ESRB E、PEGI 3、USK 0、其他地區 3+）。以後如果要重填這份問卷，直接選否，不要被「App 內容確實提到酒精」這件事誤導去選是。
+
+### 應用程式內容聲明進度（截至 2026-07-01 EOD）
+
+| 項目 | 狀態 |
+|------|------|
+| 廣告聲明 | ✅ 完成（否，不投放廣告） |
+| 內容分級 | ✅ 完成（全年齡，ESRB E / PEGI 3 / USK 0） |
+| 目標對象和內容 | ✅ 完成 |
+| 資料安全性 | ✅ 完成（含地點/大概位置、應用程式活動、裝置ID、應用程式資訊與效能四類） |
+| 政府應用程式 | ✅ 完成（否） |
+| 金融功能 | ✅ 完成（否） |
+| 健康應用程式 | ✅ 完成（我的應用程式沒有任何健康功能） |
+| 廣告 ID | ✅ 完成（否，manifest 確認無 AD_ID 權限） |
+| **應用程式類別與聯絡資料** | ⏳ **待辦，明天從這裡開始** |
+| **商店資訊（含截圖）** | ⏳ **待辦，明天第二項** |
+
+### 重要發現：Firebase Performance Monitoring 未揭露問題（2026-07-01 修復）
+
+叫 Ralph 查 AD_ID 權限時意外發現 `pubspec.yaml` 有 `firebase_performance: 0.10.1+7`，是真實引入的 SDK，不是 build cache 殘留（用 manifest 裡 ComponentRegistrar 已 merge 進最終版本確認）。這跟隱私政策原本寫的「沒有使用 Crashlytics 或其他當機回報工具」沒有直接衝突（Performance Monitoring ≠ Crashlytics），但確實會收集 App 啟動時間、畫面渲染、網路延遲等診斷資料，原本沒揭露。已修復：
+
+1. `store-listing/privacy_policy.md` 和 `public/byob-map/privacy/index.html` 都補上一段說明 Firebase Performance Monitoring 用途，已用 `firebase deploy --only hosting` 重新部署上線
+2. Google Play Console 資料安全性表單補上「應用程式資訊與效能 → 診斷資料」：收集／非暫時性／需要收集資料（不可關閉）／用途數據分析
+
+### 操作筆記：資料安全性表單編輯入口
+
+「資訊主頁」檢查清單裡已完成的項目（打勾的）**點不動**，這是正常的，不是被鎖住。正確編輯路徑：左側選單「監控及改善 → 政策與計畫 → 應用程式內容」→「已處理」分頁 → 每一項右邊有「管理」連結，點進去就能重新編輯並儲存。廣告 ID、資料安全性等所有已完成聲明都是走這條路徑修改的。
+
+---
+
+## 1.4 資料夾整理（2026-07-01）
+
+專案資料夾重新分類，路徑異動如下：
+- `scripts/` — 四支 Firebase 資料處理 Python 腳本（`add_city_field.py`、`add_new_restaurants.py`、`migrate_restaurant_types.py`、`upload_images_to_firebase.py`）
+- `store-listing/` — 上架文案草稿（`play_store_listing.md`、`privacy_policy.md`）
+- `philly_byob_complete_plan.md`（2025-10-13 舊版規劃文件，內容已被 CLAUDE.md / PRODUCT_BRIEF.md / Handoff.md 取代）已刪除
+- 根目錄留：`CLAUDE.md`、`PRODUCT_BRIEF.md`、`CLAUDE_PROMPT_TEMPLATE.md`、`Handoff.md`（常用核心文件）+ `firebase.json`、`.firebaserc`、`.gitignore`、`.firebase/`、`public/`（Firebase CLI 必須留根目錄，動了會讓 `firebase deploy` 失效）
+
+---
+
+## 1.5 ✅ byobmap.com 接上 Firebase Hosting（2026-07-01 完成）
+
+- Namecheap DNS：刪除舊 A record（`172.238.6.220`，預設停放頁），新增 A record `199.36.158.100` + TXT record `hosting-site=byob-app-5e4db`。Namecheap 之後只有網域續費/DNS 異動才需要回去動，日常不用管
+- Firebase Console custom domain 驗證通過，SSL 已生效，https://byobmap.com 可正常訪問
+- **網站結構（為未來多 App 共用同一網域預留）**：
+  - `byobmap.com`（根目錄）→ 極簡佔位頁「App pages coming soon」，之後可做成多 App 入口頁
+  - `byobmap.com/byob-map/privacy` → BYOB Map 正式隱私政策網址（已驗收，畫面正常）
+  - 之後其他 App 用同一個 pattern：`byobmap.com/<app-slug>/privacy`
+- 隱私政策原始檔：`public/byob-map/privacy/index.html`；根頁面：`public/index.html`
+- **已填入 `store-listing/play_store_listing.md` 的 Privacy Policy URL**：https://byobmap.com/byob-map/privacy
+- ⚠️ 頁面上「Small Tools Studio」開發者名稱仍是推測值，未確認，公開頁面上已可見，Neil 確認後改 `public/byob-map/privacy/index.html` 重新 `firebase deploy --only hosting`
+
+---
+
+## 2. 下一步工作
+
+### ✅ Dark Mode 修復（C20）— 2026-07-01 完成
+
+**問題：** App 完全為淺色背景設計（#F8F4EF 米白），用戶手機若開啟深色模式，畫面背景變黑，所有文字、卡片、badge 顯示全部破版。
+
+**截圖已確認（修復前）：** RestaurantDetailPage 黑底，料理 tag、Free BYOB badge 可見但背景失控；HomePage 黑底，卡片背景消失。
+
+**實際採用的修法（比原計畫的 force Light 更好，保留系統深色模式支援）：**
+FlutterFlow Studio → Theme → Colors → Dark Mode Theme 開關，直接把 unset 欄位填值。因為大部分 widget 是綁定 theme token（不是寫死 hex），填完這幾格就直接修好了，完全不需要 Ralph 動 DSL。
+
+Dark Mode Theme 最終數值（Neil 手動填入，Tertiary / Accent 1-4 / Info 沿用既有值未變動）：
+
+| 欄位 | 值 |
+|------|-----|
+| Primary | #8B2635 |
+| Secondary | #8B2635 |
+| Alternate | #3A3330 |
+| Primary Text | #F5F0EA |
+| Secondary Text | #B0A69D |
+| Primary Background | #1B1613 |
+| Secondary Background | #2A2320 |
+| Success | #4CAF50 |
+| Error | #E5484D |
+| Warning | #FFA726 |
+
+**額外手動覆寫（Colors 面板填值後仍不夠，Neil 另外手動處理）：**
+- 料理 tag（RestaurantCard + RestaurantDetailPage，Contract 14 的 tag 元件）背景寫死 `#F8F4EF`，不綁 Secondary Background token，light/dark 模式都用這個值。原因：如果 tag 背景跟著 Secondary Background 變深色，tag 的酒紅邊框文字在深色底上可讀性會不夠。
+- 料理 tag 字體放大到 16px，badge 字體放大到 14px，列表卡片與詳情頁一致（原本大小未記錄）。
+- 上方 filter chips（All / Italian / Mediterranean 等）本次未變動，維持既有樣式。
+
+**驗收（截圖比對通過）：**
+HomePage 列表：背景轉暖黑、卡片背景正確變深、料理 tag 保持米白背景清楚可讀、Free BYOB 綠色 badge 對比足夠。RestaurantDetailPage：背景、文字、badge、Get Directions 紅色按鈕在第一屏全部清晰。唯一未跟著切換的是搜尋欄背景（仍為白色），不影響任何失敗標準，可之後再補。
+
+---
+
+### 上架準備現況（2026-07-01 EOD）
+
+1. ✅ App icon 設計 — 完成
+2. ✅ Splash screen — 完成
+3. ✅ APK → AAB 打包（正式簽名） — 完成
+4. ✅ Internal testing track 已發布
+5. ✅ 應用程式內容聲明（廣告/內容分級/目標對象/資料安全性/政府/金融/健康/廣告ID）全部完成
+6. ⏳ **應用程式類別與聯絡資料** — 待辦，明天第一項，類別選 Food & Drink
+7. ⏳ **商店資訊（含截圖 + feature graphic 1024×500）** — 待辦，明天第二項，截圖和 feature graphic 都還沒做
+8. 待這兩項填完 → 送交審查 → 通過後才能考慮 Closed testing（需 12 位測試者、14 天）→ Production
 
 ---
 
@@ -313,6 +468,7 @@ After push, confirm:
 | 17 | Fine Dining 篩選修復（philly_restaurant_type comma-split 比對） | ✅ | 2026-06-30 |
 | 18 | 品牌更名 BYOB Map + multi-city 架構（Firestore city 欄位 migration + HomePage WHERE city=="philadelphia"） | ✅ | 2026-06-30 |
 | 19 | 視覺 polish + DSL 鎖定（AppBar 標題、mapMarkedAlt icon、字體、Get Directions 按鈕高度） | ✅ | 2026-06-30 |
+| 20 | Dark Mode 修復（FlutterFlow Theme → Colors → Dark Mode Theme 手動填值 + 料理 tag/badge 手動覆寫） | ✅ | 2026-07-01 |
 
 ---
 
@@ -337,6 +493,7 @@ After push, confirm:
 | 料理類型標籤可點篩選（tag 顯示 + chip 高亮） | P2 | ✅ |
 | 地圖 Rose pin markers（與 filter 同步） | P2 | ✅ C15 + C16 修復 |
 | Fine Dining 篩選修復 | P2 | ✅ C17 完成 |
+| Dark Mode 支援（Theme Colors + 料理 tag/badge 手動覆寫） | P2 | ✅ C20 完成 |
 | Near me 排序 | P2 | ⏳ 暫緩 |
 
 ---
@@ -381,6 +538,10 @@ After push, confirm:
 | RestaurantCard NameText | maxLines=1，overflow=ellipsis | ✅ C19 已鎖入 DSL |
 | Project / Display Name | `BYOB Map` | FlutterFlow Settings → App Details |
 | Package Name | `com.smalltoolsstudio.byobmap` | FlutterFlow Settings → App Details |
+| Dark Mode Theme colors | 見上方 C20 表格（Primary #8B2635 … Warning #FFA726） | ⚠️ 手動填在 FlutterFlow Theme → Colors，未確認是否已同步進 DSL，Ralph push 前務必先確認沒有被覆蓋 |
+| 料理 tag 背景色 | 寫死 `#F8F4EF`（不綁 theme token），light/dark 都用這個值 | ⚠️ 手動改動，未鎖入 DSL |
+| 料理 tag 字體大小 | 16px | ⚠️ 手動改動，未鎖入 DSL |
+| Badge 字體大小 | 14px | ⚠️ 手動改動，未鎖入 DSL |
 
 **⚠️ Font Awesome icon 正確名稱：`FontAwesome.mapMarkedAlt`（camelCase）**
 錯誤寫法：`map_marked_alt`、`mapmarkedalt` → FlutterFlow validator 會 reject。
@@ -390,7 +551,18 @@ After push, confirm:
 Do not change the App Bar title (must be "BYOB Map").
 Do not change the map toggle icon (must be FontAwesome.mapMarkedAlt, color #FFFFFF, right padding 8).
 Do not change the package name (com.smalltoolsstudio.byobmap) or display name (BYOB Map).
+Do not modify the Dark Mode Theme colors in FlutterFlow Theme → Colors
+  (Primary #8B2635, Secondary #8B2635, Alternate #3A3330, Primary Text #F5F0EA,
+  Secondary Text #B0A69D, Primary Background #1B1613, Secondary Background #2A2320,
+  Success #4CAF50, Error #E5484D, Warning #FFA726).
+Do not change the cuisine tag background color on RestaurantCard or
+  RestaurantDetailPage — must stay hardcoded #F8F4EF in both light and dark mode,
+  not bound to a theme background token.
+Do not change the cuisine tag font size (16px) or badge font size (14px) on
+  RestaurantCard or RestaurantDetailPage.
 ```
+
+**⚠️ 這幾項是 Neil 在 FlutterFlow Studio 手動改的，尚未確認是否已寫進 DSL（`generated_code/`）。下一個 contract push 前，先跑一次 DSL diff 確認這些值沒有被 Ralph 的 `editPage` / `updateCustomFunction` 呼叫覆蓋掉，比在 prompt 裡寫 constraint 更保險。**
 
 ### C18 Multi-city 架構紀錄
 
